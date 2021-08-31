@@ -7,7 +7,7 @@ module.exports = function(io) {
     /**
         * Inform participants that user has joined
         */
-    socket.emit('currentUser', socket.id);
+    socket.emit('CurrentUserID', socket.id);
 
     /**
         * Initiate a call to user()

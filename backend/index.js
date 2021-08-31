@@ -1,5 +1,8 @@
+#!/usr/bin/env node
+
+const debug = require('debug')('WebRTC:server');
 const http = require('http');
-const debug = require('debug');
+const cors = require('cors');
 
 const app = require('./app');
 
@@ -11,11 +14,51 @@ const server = http.createServer(app);
 const io = require('socket.io')(server, {
   cors: {
     origin: '*',
-    methods: ['GET', 'POST', ''],
+    methods: ['GET', 'POST'],
   },
 });
 
-require('./websocket')(io);
+app.use(cors());
+// require('./websocket')(io);
+/**
+     * Setup socket connection behaviors
+     */
+io.on('connection', (socket) => {
+  /**
+        * Inform participants that user has joined
+        */
+  socket.emit('CurrentUserID', socket.id);
+
+  /**
+        * Initiate a call to user()
+        */
+  socket.on('callUser', ({userToCall, signalData, from, name}) => {
+    console.log(userToCall);
+    io.to(userToCall).emit('callUser', {signal: signalData, from, name});
+  });
+
+  /**
+        * Accept a call from another user
+        */
+  socket.on('answerCall', (data) => {
+    io.to(data.to).emit('answerCall', data.signal);
+  });
+
+  /**
+        * Inform participants that user has left
+        */
+  socket.on('close', () => {
+    socket.broadcast.emit('endcall');
+  });
+
+  /**
+      * log socket io errors
+      */
+  socket.on('connect_error', (err) => {
+    console.log(`connect_error due to ${err.message}`);
+  });
+});
+
 
 /**
  * Normalize a port into a number, string, or false.

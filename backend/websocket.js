@@ -1,3 +1,5 @@
+const {v4: uuidV4} = require('uuid'); ;
+
 
 module.exports = function(io) {
   /**
@@ -9,34 +11,38 @@ module.exports = function(io) {
         */
     socket.emit('CurrentUserID', socket.id);
 
-    /**
-        * Initiate a call to user()
-        */
-    socket.on('callUser', ({userToCall, signalData, from, name}) => {
-      console.log(userToCall);
-      io.to(userToCall).emit('callUser', {signal: signalData, from, name});
+    socket.on('NewMeeting', () => {
+      socket.emit('NewMeeting', {id: uuidV4()});
     });
 
-    /**
-        * Accept a call from another user
-        */
-    socket.on('answerCall', (data) => {
-      io.to(data.to).emit('answerCall', data.signal);
-    });
+    // /**
+    //     * Initiate a call to user()
+    //     */
+    // socket.on('callUser', ({userToCall, signalData, from, name}) => {
+    //   console.log(userToCall);
+    //   io.to(userToCall).emit('callUser', {signal: signalData, from, name});
+    // });
 
-    /**
-        * Inform participants that user has left
-        */
-    socket.on('close', () => {
-      socket.broadcast.emit('endcall');
-    });
+    // /**
+    //     * Accept a call from another user
+    //     */
+    // socket.on('answerCall', (data) => {
+    //   io.to(data.to).emit('answerCall', data.signal);
+    // });
 
-    /**
-      * log socket io errors
-      */
-    socket.on('connect_error', (err) => {
-      console.log(`connect_error due to ${err.message}`);
-    });
+    // /**
+    //     * Inform participants that user has left
+    //     */
+    // socket.on('close', () => {
+    //   socket.broadcast.emit('endcall');
+    // });
+
+    // /**
+    //   * log socket io errors
+    //   */
+    // socket.on('connect_error', (err) => {
+    //   console.log(`connect_error due to ${err.message}`);
+    // });
   });
 };
 

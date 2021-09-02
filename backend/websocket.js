@@ -3,16 +3,25 @@ const {v4: uuidV4} = require('uuid'); ;
 
 module.exports = function(io) {
   /**
-     * Setup socket connection behaviors
-     */
+  * Setup socket connection behaviors
+  */
   io.on('connection', (socket) => {
     /**
-        * Inform participants that user has joined
-        */
+    * Inform participants that user has joined
+    */
     socket.emit('CurrentUserID', socket.id);
 
     socket.on('NewMeeting', () => {
       socket.emit('NewMeeting', {id: uuidV4()});
+    });
+
+    socket.on('JoinRoom', (meetingData) => {
+      const {userID, roomID} = meetingData;
+      socket.join(roomID);
+      socket.to(roomID).broadcast.emit('NewUserConnected', userID);
+      socket.on('disconnect', () => {
+        socket.to(roomID).broadcast.emit('UserDisconnected', userID);
+      });
     });
 
     // /**

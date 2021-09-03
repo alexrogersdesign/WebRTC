@@ -5,28 +5,24 @@ import {io} from 'socket.io-client';
 import env from 'react-dotenv';
 import Peer, {MediaConnection} from 'peerjs';
 
+import {
+  Meeting,
+  IExternalMedia,
+  IPeers,
+  ISocketIOContex,
+  ChildrenProps,
+} from '../types';
+
 /**
  * Context item to be passed to app
  */
-const SocketIOContext = createContext(null);
+// const SocketIOContext = createContext<ISocketIOContex>();
 const peerServer = env.PEER_SERVER;
 
-type Props = {
-  children: JSX.Element;
+interface Props extends ChildrenProps {
+
 }
 
-export interface Meeting {
-  id: string;
-}
-
-type IMeetingData = {
-  userID: string,
-  roomID: string,
-}
-
-type IPeers = {
-  [key: string]: MediaConnection
-}
 
 /**
  * SocketIO server instance
@@ -40,7 +36,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   useState<MediaStream|null>(null);
   const [currentUserID, setCurrentUserID] = useState('');
   const [meeting, setMeeting] = useState<Meeting | null>(null);
-  const [externalMedia, setExternalMedia] = useState([]);
+  const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [peers, setPeers] = useState<IPeers>({});
   const peerConnection = useRef<Peer | null>(null);
   const currentUserVideo = useRef<HTMLVideoElement>(null);
@@ -138,7 +134,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const removeMedia = (id: string) => {
     setExternalMedia(externalMedia
-        .filter((media:MediaStream) => media.id !== id));
+        .filter((media:IExternalMedia) => media.id !== id));
   };
   /**
    * Helper function to add peer to peer list
@@ -161,9 +157,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
   /**
    * Adds media stream to list of streams to display
-   * @param call The peer information
-   * @param stream the media stream to add
-   * @param userData? any additional data
+   * @param {MediaConnection} call  The peer information
+   * @param {MediaStream} stream the media stream to add
+   * @param {any} userData? any additional data
    */
   const addExternalMedia = (
       call: MediaConnection, stream:MediaStream, userData?: Peer,
@@ -241,6 +237,21 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     socket?.disconnect();
     if (peerConnection.current) peerConnection.current.destroy();
   };
+  const SocketIOContext = createContext<ISocketIOContex>({
+    currentUserID,
+    setCurrentUserID,
+    meeting,
+    externalMedia,
+    peers,
+    peerConnection,
+    currentUserVideo,
+    initializeMediaStream,
+    initializeMeeting,
+    setConnectingPeersListener,
+    connectToUser,
+    newExternalUser,
+    endConnection,
+  });
 
   return (
     <SocketIOContext.Provider
@@ -254,20 +265,15 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         currentUserVideo,
         initializeMediaStream,
         initializeMeeting,
-        connectPeers: setConnectingPeersListener,
+        setConnectingPeersListener,
         connectToUser,
         newExternalUser,
         endConnection,
       }}
     >
       {children}
-      {currentUserID}
     </SocketIOContext.Provider>
   );
 };
 
 export {ContextProvider, SocketIOContext};
-
-ContextProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};

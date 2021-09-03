@@ -13,18 +13,17 @@ import {
   ChildrenProps,
 } from '../types';
 
-/**
- * Context item to be passed to app
- */
-// const SocketIOContext = createContext<ISocketIOContex>();
+
 const peerServer = env.PEER_SERVER;
+const peerServerPort = env.PEER_SERVER_PORT;
 
 interface Props extends ChildrenProps {
 
 }
-
-const SocketIOContext = createContext<Partial<ISocketIOContex>>({
-});
+/**
+ * Context item to be passed to app
+ */
+const SocketIOContext = createContext<Partial<ISocketIOContex>>({});
 
 /**
  * SocketIO server instance
@@ -43,14 +42,18 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const peerConnection = useRef<Peer | null>(null);
   const currentUserVideo = useRef<HTMLVideoElement>(null);
 
-  useEffect(() =>{
+
+  /**
+   * Initilizes all connections
+   */
+  const initializeConnection= () =>{
     /**
      * Initializes peer object on first load
      */
     const initPeerConnection = () => {
       peerConnection.current = new Peer('', {
         host: peerServer,
-        secure: true,
+        port: peerServerPort,
       });
     };
     initPeerConnection();
@@ -79,7 +82,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     socket.on('error', (error) => {
       console.log('Socket Responded With Error: ', error);
     });
-  }, []);
+  };
 
   /**
    * Tells the server to start a new meeting and stores its information.
@@ -243,6 +246,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   return (
     <SocketIOContext.Provider
       value={{
+        initializeConnection,
         currentUserID,
         setCurrentUserID,
         meeting,

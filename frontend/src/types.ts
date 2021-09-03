@@ -25,6 +25,7 @@ export interface IPeers {
 
 
 export interface ISocketIOContex {
+   initializeConnection: () => void;
    currentUserID: string,
    setCurrentUserID: (userID: string) => void,
    meeting: Meeting | null,

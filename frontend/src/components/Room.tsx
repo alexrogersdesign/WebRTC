@@ -1,13 +1,21 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import VideoPlayer from './VideoPlayer';
 
-// import {ChildrenProps} from '../types';
-
+import {SocketIOContext} from '../context/SocketIOContext';
 interface Props {
 
 }
 
+
 const Room = (props: Props) => {
+  // const socketInstance = useref(null);
+  const {initializeConnection, endConnection} = useContext(SocketIOContext);
+  useEffect(() => {
+    initializeConnection && initializeConnection();
+    return () => {
+      endConnection && endConnection();
+    };
+  }, []);
   return (
     <div>
       <VideoPlayer/>

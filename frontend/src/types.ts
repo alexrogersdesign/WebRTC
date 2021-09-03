@@ -36,9 +36,10 @@ export interface ISocketIOContex {
    initializeMediaStream: () => void,
    initializeMeeting: () => void,
    setConnectingPeersListener: () => void,
-   connectToUser: (externalUser: Peer) => void,
+   connectToUser: (externalUser: string) => void,
    newExternalUser: () => void,
    endConnection: () => void,
    setMeeting: (meeting: Meeting) => void,
+   joinMeeting: (meeting: Meeting) => void,
 }
 

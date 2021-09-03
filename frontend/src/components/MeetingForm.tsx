@@ -26,10 +26,10 @@ const styles = createStyles((theme: Theme) => ({
 const MeetingForm = (props: Props) => {
   const [field, setField] = useState('');
 
-  const {setMeeting} = useContext(SocketIOContext);
+  const {joinMeeting} = useContext(SocketIOContext);
 
   const handleClick = (event: any) => {
-    setMeeting && setMeeting({id: field});
+    joinMeeting && joinMeeting({id: field});
   };
   return (
     <Grid className="form" container direction="row">

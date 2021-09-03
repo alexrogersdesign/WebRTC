@@ -3,7 +3,7 @@ import {Grid, Typography, Paper} from '@material-ui/core';
 import {createStyles, withStyles, Theme} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
-
+// import {ISocketIOContex} from '../types';
 
 type Props = {
 }
@@ -30,14 +30,14 @@ const styles = createStyles((theme: Theme) => ({
 
 
 const VideoPlayer = (props: Props) => {
-//   const {CurrentUserVideo} = useContext(SocketIOContext);
+  const {currentUserVideo} = useContext(SocketIOContext);
   return (
     <Grid>
-      <Paper style={styles}>
+      <Paper className='paper'>
         <Grid item>
           <Typography> User Video </Typography>
           <video
-            ref={CurrentUserVideo}
+            ref={currentUserVideo}
             playsInline
             muted
             autoPlay

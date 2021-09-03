@@ -23,6 +23,8 @@ interface Props extends ChildrenProps {
 
 }
 
+const SocketIOContext = createContext<Partial<ISocketIOContex>>({
+});
 
 /**
  * SocketIO server instance
@@ -237,21 +239,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     socket?.disconnect();
     if (peerConnection.current) peerConnection.current.destroy();
   };
-  const SocketIOContext = createContext<ISocketIOContex>({
-    currentUserID,
-    setCurrentUserID,
-    meeting,
-    externalMedia,
-    peers,
-    peerConnection,
-    currentUserVideo,
-    initializeMediaStream,
-    initializeMeeting,
-    setConnectingPeersListener,
-    connectToUser,
-    newExternalUser,
-    endConnection,
-  });
 
   return (
     <SocketIOContext.Provider

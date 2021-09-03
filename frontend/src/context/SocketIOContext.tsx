@@ -14,8 +14,8 @@ import {
 } from '../types';
 
 
-const peerServer = env.PEER_SERVER;
-const peerServerPort = env.PEER_SERVER_PORT;
+// const peerServer = env.PEER_SERVER;
+// const peerServerPort = env.PEER_SERVER_PORT;
 
 interface Props extends ChildrenProps {
 
@@ -52,8 +52,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
      */
     const initPeerConnection = () => {
       peerConnection.current = new Peer('', {
-        host: peerServer,
-        port: peerServerPort,
+        host: '/',
+        port: 5001,
       });
     };
     initPeerConnection();
@@ -87,10 +87,12 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   /**
    * Tells the server to start a new meeting and stores its information.
    */
-  const setupMeeting = () =>{
-    socket.emit('NewMeeting');
-    socket.on('NewMeeting', (meeting) => {
-      setMeeting(meeting);
+  const setupMeeting = async () =>{
+    return new Promise<void>((resolve, reject) => {
+      socket.emit('NewMeeting');
+      socket.on('NewMeeting', (meeting) => {
+        setMeeting(meeting);
+      });
     });
   };
   /**
@@ -119,11 +121,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Starts connection with peer server and retreives user id
    * initializes meeting and tells the backend server than its joining a meeting
    */
-  const initializeMeeting = () => {
-    if (!peerConnection.current) return;
-    peerConnection.current.on('open', (id:string) => {
+  const initializeMeeting = async () => {
+    if (!peerConnection.current) throw new Error('Peer connection missing');
+    peerConnection.current.on('open', async (id:string) => {
       setCurrentUserID(id);
-      setupMeeting();
+      await setupMeeting();
       if (!meeting) throw new Error('Unable to retrieve meeting');
       const meetingData = {
         userID: currentUserID,
@@ -260,6 +262,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         connectToUser,
         newExternalUser,
         endConnection,
+        setMeeting,
       }}
     >
       {children}

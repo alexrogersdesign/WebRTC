@@ -1,3 +1,3 @@
 window.env = {
-  "PEER_SERVER": "/"
+  "PEER_SERVER": "/re"
 };

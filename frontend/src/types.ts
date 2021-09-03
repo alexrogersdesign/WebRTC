@@ -39,5 +39,6 @@ export interface ISocketIOContex {
    connectToUser: (externalUser: Peer) => void,
    newExternalUser: () => void,
    endConnection: () => void,
+   setMeeting: (meeting: Meeting) => void,
 }
 

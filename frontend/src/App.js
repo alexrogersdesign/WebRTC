@@ -2,6 +2,7 @@
 import React, {useEffect} from 'react';
 import {io} from 'socket.io-client';
 // import PropTypes from 'prop-types';
+import {BrowserRouter as Router} from 'react-router-dom';
 
 import Room from './components/Room';
 const socket = io('http://localhost:5000');
@@ -14,9 +15,9 @@ export default function App() {
     socket.on('CurrentUserID', (id) => console.log(id));
   }, []);
   return (
-    <div>
+    <Router>
       <Room/>
-    </div>
+    </Router>
   );
 }
 

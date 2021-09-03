@@ -3,7 +3,6 @@ import {Grid, Typography, Paper} from '@material-ui/core';
 import {createStyles, withStyles, Theme} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
-// import {ISocketIOContex} from '../types';
 
 type Props = {
 }

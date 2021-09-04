@@ -36,7 +36,7 @@ const Room = (props: Props) => {
   });
   return (
     <div>
-      <VideoPlayer/>
+      <VideoPlayer local/>
       <MeetingForm/>
       {externalMedia?.length && videoList}
     </div>

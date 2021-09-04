@@ -7,6 +7,7 @@ import {SocketIOContext} from '../context/SocketIOContext';
 
 type Props = {
   stream?: MediaStream | undefined;
+  local?: boolean
 }
 
 const styles = createStyles((theme: Theme) => ({
@@ -30,41 +31,48 @@ const styles = createStyles((theme: Theme) => ({
 }));
 
 
-const VideoPlayer = ({stream}: Props)=> {
+const VideoPlayer = ({local, stream}: Props)=> {
   const {localVideoRef, meeting} = useContext(SocketIOContext);
-  console.log('stream prop', stream);
-  const RenderVideo = () => {
-    if (stream === null) {
-      return <video
-        ref={localVideoRef}
-        playsInline
-        muted
-        autoPlay
-      />;
-    } else {
-      return <video
-        ref={(video) => {
-          if (video && stream) video.srcObject = stream;
-        }}
-        playsInline
-        autoPlay
-      />;
-    }
-  };
+  // console.log('local prop', local);
+  // const renderVideo = () => {
+  //   if (local) {
+  //     return <video
+  //       ref={localVideoRef}
+  //       playsInline
+  //       muted
+  //       autoPlay
+  //     />;
+  //   } else {
+  //     return <video
+  //       ref={(video) => {
+  //         if (video && stream) video.srcObject = stream;
+  //       }}
+  //       playsInline
+  //       autoPlay
+  //     />;
+  //   }
+  // };
 
   return (
     <Grid>
       <Paper className='paper'>
-        <Grid item>
-          <Typography> {meeting && meeting.id}</Typography>
-          <RenderVideo/>
+        <Typography> {meeting && meeting.id}</Typography>
+        {local &&
+            <video
+              ref={localVideoRef}
+              playsInline
+              muted
+              autoPlay
+            />}
+        {!local &&
           <video
-            ref={localVideoRef}
+            ref={(video) => {
+              if (video && stream) video.srcObject = stream;
+            }}
             playsInline
-            muted
             autoPlay
           />
-        </Grid>
+        }
       </Paper>
     </Grid>
   );

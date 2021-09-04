@@ -97,6 +97,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       socket.emit('NewMeeting');
       socket.on('NewMeeting', (meeting) => {
         setMeeting(meeting);
+        joinMeeting(meeting);
       });
     });
   };
@@ -178,20 +179,21 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
   /**
    * Adds media stream to list of streams to display
-   * @param {MediaConnection} call  The peer information
+   * @param {string} id  The peers id
    * @param {MediaStream} stream the media stream to add
    * @param {any} userData? any additional data
    */
   const addExternalMedia = (
-      call: MediaConnection, stream:MediaStream, userData?: Peer.CallOption,
+      id: string, stream:MediaStream, userData?: Peer.CallOption,
   ) => {
-    const newMedia = [...externalMedia];
-    newMedia.push({
-      id: call.metadata.id,
-      stream: stream,
-      data: userData? userData: undefined,
+    const newMediaItem = {
+      id, stream, data: userData? userData: undefined,
+    };
+
+    setExternalMedia((oldState) => {
+      if (oldState.find((item) => item.id === id)) return oldState;
+      return [...oldState, newMediaItem];
     });
-    setExternalMedia(newMedia);
   };
   /**
    * Listen for a call from connecting peers
@@ -204,9 +206,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
       call.answer(localStream);
+      console.log('call answered', call);
 
       call.on('stream', (stream) => {
-        addExternalMedia(call, stream);
+        addExternalMedia(call.peer, stream);
+        console.log('adding stream');
       });
       call.on('close', ()=> removeMedia(call.metadata.id));
       call.on('error', () => {
@@ -224,10 +228,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const setExternalUserListener = (localStream:MediaStream) => {
     socket.on('NewUserConnected', (id) => {
       console.log('new user connection, userid: ', id);
-      console.log('current user ID: ', currentUserID);
       const callData: Peer.CallOption = {
         metadata: {
-          id: currentUserID,
+          id,
         },
       };
       if (!peerConnection.current) throw new Error('Missing peer connection');
@@ -235,7 +238,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       console.log('Placing call', call);
       // when a stream is received, add it to external media
       call.on('stream', (stream: MediaStream) => {
-        addExternalMedia(call, stream, callData);
+        addExternalMedia(call.peer, stream, callData);
         console.log('call stream', call);
         console.log('stream received', stream);
       });

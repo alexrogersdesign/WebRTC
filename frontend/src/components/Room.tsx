@@ -1,5 +1,6 @@
 import React, {useContext, useEffect} from 'react';
 import VideoPlayer from './VideoPlayer';
+import VideoArray from './VideoArray';
 import {RouteComponentProps, useHistory} from 'react-router-dom';
 
 import {SocketIOContext} from '../context/SocketIOContext';
@@ -31,14 +32,14 @@ const Room = (props: Props) => {
   useEffect(() => {
     console.log('external media', externalMedia);
   }, [, externalMedia]);
-  const videoList = externalMedia?.map(({id, stream}) => {
-    <VideoPlayer key={id} stream={stream}/>;
-  });
+
+
   return (
     <div>
       <VideoPlayer local/>
       <MeetingForm/>
-      {externalMedia?.length && videoList}
+      <VideoArray />
+
     </div>
   );
 };

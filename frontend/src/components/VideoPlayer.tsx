@@ -33,30 +33,10 @@ const styles = createStyles((theme: Theme) => ({
 
 const VideoPlayer = ({local, stream}: Props)=> {
   const {localVideoRef, meeting} = useContext(SocketIOContext);
-  // console.log('local prop', local);
-  // const renderVideo = () => {
-  //   if (local) {
-  //     return <video
-  //       ref={localVideoRef}
-  //       playsInline
-  //       muted
-  //       autoPlay
-  //     />;
-  //   } else {
-  //     return <video
-  //       ref={(video) => {
-  //         if (video && stream) video.srcObject = stream;
-  //       }}
-  //       playsInline
-  //       autoPlay
-  //     />;
-  //   }
-  // };
-
   return (
-    <Grid>
+    <Grid item>
       <Paper className='paper'>
-        <Typography> {meeting && meeting.id}</Typography>
+        <Typography> Meeting: {meeting && meeting.id}</Typography>
         {local &&
             <video
               ref={localVideoRef}

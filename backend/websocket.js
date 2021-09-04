@@ -22,8 +22,8 @@ module.exports = function(io) {
 
     socket.on('JoinRoom', (meetingData) => {
       const {userID, roomID} = meetingData;
-      io.to(roomID).emit('NewUserConnected', userID);
       socket.join(roomID);
+      io.to(roomID).emit('NewUserConnected', userID);
       if (roomID in meetingList) meetingList[roomID].users.push(userID);
       socket.on('disconnect', () => {
         socket.to(roomID).emit('UserDisconnected', userID);

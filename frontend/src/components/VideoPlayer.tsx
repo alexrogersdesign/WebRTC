@@ -4,7 +4,9 @@ import {createStyles, withStyles, Theme} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
 
+
 type Props = {
+  stream?: MediaStream;
 }
 
 const styles = createStyles((theme: Theme) => ({
@@ -28,20 +30,37 @@ const styles = createStyles((theme: Theme) => ({
 }));
 
 
-const VideoPlayer = (props: Props) => {
+const VideoPlayer = (props: Props)=> {
   const {currentUserVideo} = useContext(SocketIOContext);
+  let stream : MediaStream;
+  if (props.stream) stream = props.stream;
+  // console.log(stream);
+
+  const RenderVideo = () => {
+    if (!stream) {
+      return <video
+        ref={currentUserVideo}
+        playsInline
+        muted
+        autoPlay
+      />;
+    } else {
+      return <video
+        ref={(video) => {
+          if (video) video.srcObject = stream;
+        }}
+        playsInline
+        autoPlay
+      />;
+    }
+  };
+
   return (
     <Grid>
       <Paper className='paper'>
         <Grid item>
           <Typography> User Video </Typography>
-          <video
-            ref={currentUserVideo}
-            playsInline
-            muted
-            autoPlay
-          >
-          </video>
+          <RenderVideo/>
         </Grid>
       </Paper>
     </Grid>

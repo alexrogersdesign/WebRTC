@@ -12,11 +12,11 @@ interface Props {
 
 
 const Room = (props: Props) => {
-  // const socketInstance = useref(null);
   const {
     initializeConnection,
     endConnection,
     meeting,
+    externalMedia,
   } = useContext(SocketIOContext);
   const history = useHistory();
   useEffect(() => {
@@ -30,8 +30,11 @@ const Room = (props: Props) => {
   }, [meeting]);
   return (
     <div>
-      <VideoPlayer/>
+      <VideoPlayer />
       <MeetingForm/>
+      {externalMedia && externalMedia.forEach((media) => {
+        <VideoPlayer stream={media.stream}/>;
+      })}
     </div>
   );
 };

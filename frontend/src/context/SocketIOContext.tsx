@@ -33,46 +33,39 @@ const socket = io('http://localhost:5000');
 
 
 const ContextProvider: React.FC<Props> = ({children}) => {
-  const [currentUserMedia, setCurrentUserMedia] =
-  useState<MediaStream|null>(null);
   const [currentUserID, setCurrentUserID] = useState('');
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [peers, setPeers] = useState<IPeers>({});
   const peerConnection = useRef<Peer | null>(null);
-  const currentUserVideo = useRef<HTMLVideoElement>(null);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
 
+  /**
+   * waits for current user id to be received from socket and established
+   */
   useEffect(() => {
-    console.log(currentUserMedia);
-  }, [currentUserMedia]);
+    if (currentUserID) {
+      initPeerConnection();
+      initializeMeeting();
+      initializeMediaStream();
+    }
+  }, [currentUserID]);
 
   /**
    * Initilizes all connections
    */
   const initializeConnection= () =>{
     /**
-     * Initializes peer object on first load
+     * Listens for userId from socket connection.
      */
-    const initPeerConnection = () => {
-      peerConnection.current = new Peer('', {
-        host: '/',
-        port: 5001,
-      });
-    };
-    initPeerConnection();
-    initializeMeeting();
-    initializeMediaStream();
-    setConnectingPeersListener();
-    newExternalUser();
+    socket.on('CurrentUserID', (id) => setCurrentUserID(id));
+
+    console.log('current user id before peer creation', currentUserID);
+
 
     /**
-     * Retrieve current user id from socket
-     */
-    socket.on('currentUserID', (id) => console.log(id));
-
-    /**
-     * Disconnects from peer WebRTC stream
-     * Removes information from peer list and removed media stream
+     * Disconnects from peer WebRTC stream,
+     * removes information from peer list and removes media stream.
      */
     socket.on('UserDisconnected', (userID: string) => {
       if (userID in peers) {
@@ -83,6 +76,16 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     });
     socket.on('error', (error) => {
       console.log('Socket Responded With Error: ', error);
+    });
+  };
+
+  /**
+     * Initializes peer object on first load
+     */
+  const initPeerConnection = () => {
+    peerConnection.current = new Peer(currentUserID, {
+      host: '/',
+      port: 5001,
     });
   };
 
@@ -101,22 +104,20 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Get audio and video stream from the browser
    * Will prompt user for permissions
    */
-  const getUserMedia = async () => {
+  const initializeMediaStream = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia(
           {video: true, audio: true},
       );
-      setCurrentUserMedia(stream);
-      if (currentUserVideo.current) currentUserVideo.current.srcObject = stream;
+      // console.log('local stream', localStream);
+      // setLocalStream(stream);
+      setConnectingPeersListener(stream);
+      setExternalUserListener(stream);
+
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
     } catch (err) {
       console.log(err);
     }
-  };
-  /**
-   * A helper function to enable the frontend to request webcam support
-   */
-  const initializeMediaStream = async () => {
-    await getUserMedia();
   };
 
   /**
@@ -126,7 +127,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const initializeMeeting = async () => {
     if (!peerConnection.current) throw new Error('Peer connection missing');
     peerConnection.current.on('open', async (id:string) => {
-      setCurrentUserID(id);
+      console.log('ID from peer', id);
       await setupMeeting();
     //   if (!meeting) throw new Error('Unable to retrieve meeting');
     //   const meetingData = {
@@ -182,7 +183,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * @param {any} userData? any additional data
    */
   const addExternalMedia = (
-      call: MediaConnection, stream:MediaStream, userData?: Peer,
+      call: MediaConnection, stream:MediaStream, userData?: Peer.CallOption,
   ) => {
     const newMedia = [...externalMedia];
     newMedia.push({
@@ -197,15 +198,13 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * An incoming call is answered and the current user media (local webcam feed)
    * is sent. Cleans up connection on error or if far side closes connection
    * Adds peer to peer list
+   * @param {MediaStream} localStream local webcam stream
    */
-  const setConnectingPeersListener = () => {
+  const setConnectingPeersListener = (localStream: MediaStream) => {
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
-      // if (!currentUserMedia) throw new Error('User Media Missing');
-      if (!currentUserVideo.current?.srcObject) {
-        throw new Error('User Media Missing');
-      }
-      call.answer(currentUserVideo.current.srcObject as MediaStream);
+      call.answer(localStream);
+
       call.on('stream', (stream) => {
         addExternalMedia(call, stream);
       });
@@ -218,50 +217,41 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     });
   };
   /**
-   * Connects to (calls) an external user
+   * Listens for new user connectected event then calls user
    * Cleans up connection on error or if far side closes connection.
-   * @param {string} id
+   * @param {MediaStream} localStream local webcam stream
    */
-  const connectToUser = (id:string) => {
-    console.log('external user id ', id);
-    console.log('connect to user', id);
-    const callData = {
-      metadata: {
-        id: currentUserID,
-      },
-    };
-    if (!peerConnection.current) throw new Error('Missing peer connection');
-    // if (!currentUserMedia) throw new Error('User Media Missing');
-    if (!currentUserVideo.current?.srcObject) {
-      throw new Error('User Media Missing');
-    }
-    const call = peerConnection.current
-        .call(id, currentUserVideo.current.srcObject as MediaStream, callData);
-    console.log('Placing call', call);
-    // const call = peerConnection.current.call(id, currentUserMedia, callData);
-    call.on('stream', (stream: MediaStream) => {
-      addExternalMedia(call, stream);
-      console.log('stream received', stream);
-    });
-    call.on('close', () => {
-      removeMedia(call.metadata.id);
-      console.log('call closed');
-    });
-    call.on('error', () => {
-      console.log('call error: ', call.metadata.id);
-      removeMedia(call.metadata.id);
+  const setExternalUserListener = (localStream:MediaStream) => {
+    socket.on('NewUserConnected', (id) => {
+      console.log('new user connection, userid: ', id);
+      console.log('current user ID: ', currentUserID);
+      const callData: Peer.CallOption = {
+        metadata: {
+          id: currentUserID,
+        },
+      };
+      if (!peerConnection.current) throw new Error('Missing peer connection');
+      const call = peerConnection.current.call(id, localStream, callData);
+      console.log('Placing call', call);
+      // when a stream is received, add it to external media
+      call.on('stream', (stream: MediaStream) => {
+        addExternalMedia(call, stream, callData);
+        console.log('call stream', call);
+        console.log('stream received', stream);
+      });
+      // remove media if closed by far side
+      call.on('close', () => {
+        removeMedia(call.metadata.id);
+        console.log('call closed');
+      });
+      // remove media on call error
+      call.on('error', () => {
+        console.log('call error: ', call.metadata.id);
+        removeMedia(call.metadata.id);
+      });
     });
   };
-  /**
-   * Listens for new users connectect to meeting.
-   * If a new user connects, a call is placed to the connecting user.
-   */
-  const newExternalUser = () => {
-    socket.on('NewUserConnected', (user) => {
-      connectToUser(user);
-      console.log('new user connected of user ', user);
-    });
-  };
+
   /**
    * Cleans up media streams and connections
    */
@@ -276,17 +266,13 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       value={{
         initializeConnection,
         currentUserID,
-        setCurrentUserID,
         meeting,
         externalMedia,
         peers,
         peerConnection,
-        currentUserVideo,
+        localVideoRef,
         initializeMediaStream,
         initializeMeeting,
-        setConnectingPeersListener,
-        connectToUser,
-        newExternalUser,
         endConnection,
         setMeeting,
         joinMeeting,

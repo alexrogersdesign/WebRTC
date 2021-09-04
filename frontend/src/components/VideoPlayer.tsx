@@ -6,7 +6,7 @@ import {SocketIOContext} from '../context/SocketIOContext';
 
 
 type Props = {
-  stream?: MediaStream;
+  stream?: MediaStream | undefined;
 }
 
 const styles = createStyles((theme: Theme) => ({
@@ -30,16 +30,13 @@ const styles = createStyles((theme: Theme) => ({
 }));
 
 
-const VideoPlayer = (props: Props)=> {
-  const {currentUserVideo} = useContext(SocketIOContext);
-  let stream : MediaStream;
-  if (props.stream) stream = props.stream;
-  // console.log(stream);
-
+const VideoPlayer = ({stream}: Props)=> {
+  const {localVideoRef, meeting} = useContext(SocketIOContext);
+  console.log('stream prop', stream);
   const RenderVideo = () => {
-    if (!stream) {
+    if (stream === null) {
       return <video
-        ref={currentUserVideo}
+        ref={localVideoRef}
         playsInline
         muted
         autoPlay
@@ -47,7 +44,7 @@ const VideoPlayer = (props: Props)=> {
     } else {
       return <video
         ref={(video) => {
-          if (video) video.srcObject = stream;
+          if (video && stream) video.srcObject = stream;
         }}
         playsInline
         autoPlay
@@ -59,8 +56,14 @@ const VideoPlayer = (props: Props)=> {
     <Grid>
       <Paper className='paper'>
         <Grid item>
-          <Typography> User Video </Typography>
+          <Typography> {meeting && meeting.id}</Typography>
           <RenderVideo/>
+          <video
+            ref={localVideoRef}
+            playsInline
+            muted
+            autoPlay
+          />
         </Grid>
       </Paper>
     </Grid>

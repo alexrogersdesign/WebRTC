@@ -28,13 +28,17 @@ const Room = (props: Props) => {
   useEffect(() => {
     history.push('/join/'+meeting?.id);
   }, [meeting]);
+  useEffect(() => {
+    console.log('external media', externalMedia);
+  }, [, externalMedia]);
+  const videoList = externalMedia?.map(({id, stream}) => {
+    <VideoPlayer key={id} stream={stream}/>;
+  });
   return (
     <div>
-      <VideoPlayer />
+      <VideoPlayer/>
       <MeetingForm/>
-      {externalMedia && externalMedia.forEach((media) => {
-        <VideoPlayer stream={media.stream}/>;
-      })}
+      {externalMedia?.length && videoList}
     </div>
   );
 };

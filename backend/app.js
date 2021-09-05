@@ -2,9 +2,9 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
-const path = require('path');
+// const path = require('path');
 const cors = require('cors');
-const {v4: uuidV4} = require('uuid');
+// const {v4: uuidV4} = require('uuid');
 
 
 const app = express();
@@ -26,8 +26,8 @@ app.get('/', (req, res) => {
 /**
  * Send uuid meeting link
  */
-app.get('/join', (req, res) => {
-  res.send({link: uuidV4()});
+app.get('/join/:meeting', (req, res) => {
+
 });
 
 // catch 404 and forward to error handler

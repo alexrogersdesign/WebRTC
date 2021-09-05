@@ -3,21 +3,35 @@ const userList = [];
 const meetingList = {};
 
 module.exports = function(io) {
+  const createNewMeeting = (id) => {
+    const newMeeting = {
+      id: id? id : uuidV4(),
+      users: [],
+    };
+    meetingList[newMeeting.id]= newMeeting;
+    return newMeeting;
+  };
+
   /**
   * Setup socket connection behaviors
   */
   io.on('connection', (socket) => {
     const newUserID = uuidV4();
     userList.push(newUserID);
+    const roomID = socket.handshake.query.room;
+    console.log('RoomID', roomID);
     socket.emit('CurrentUserID', newUserID);
+    if (roomID) {
+      if (!(roomID in meetingList)) {
+        socket.emit('NewMeeting', meetingList[roomID]);
+      } else {
+        socket.emit('NewMeeting', createNewMeeting(roomID) );
+      }
+    }
+
 
     socket.on('NewMeeting', () => {
-      const newMeeting = {
-        id: uuidV4(),
-        users: [],
-      };
-      meetingList[newMeeting.id]= newMeeting;
-      socket.emit('NewMeeting', newMeeting);
+      socket.emit('NewMeeting', createNewMeeting());
     });
 
     socket.on('JoinRoom', (meetingData) => {
@@ -27,6 +41,7 @@ module.exports = function(io) {
       if (roomID in meetingList) meetingList[roomID].users.push(userID);
       socket.on('disconnect', () => {
         socket.to(roomID).emit('UserDisconnected', userID);
+        // TODO: clean up room attendees.
       });
     });
   });

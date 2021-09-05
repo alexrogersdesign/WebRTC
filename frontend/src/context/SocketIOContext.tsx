@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import {io} from 'socket.io-client';
 import env from 'react-dotenv';
 import Peer, {MediaConnection} from 'peerjs';
+import validator from 'validator';
+
 
 import {
   Meeting,
@@ -12,6 +14,7 @@ import {
   ISocketIOContex,
   ChildrenProps,
 } from '../types';
+import {createLogicalOr} from 'typescript';
 
 
 // const peerServer = env.PEER_SERVER;
@@ -24,12 +27,16 @@ interface Props extends ChildrenProps {
  * Context item to be passed to app
  */
 const SocketIOContext = createContext<Partial<ISocketIOContex>>({});
-
+let roomParam = new URLSearchParams(window.location.search).get('room');
+console.log('room param', roomParam);
+if (roomParam && !validator.isUUID(roomParam)) roomParam = null;
 /**
  * SocketIO server instance
  * URL of deplyed server goes here
  */
-const socket = io('http://localhost:5000');
+const connectionUrl = `http://localhost:5000?room=${roomParam}`;
+console.log('socket url', connectionUrl);
+const socket = io(connectionUrl);
 
 
 const ContextProvider: React.FC<Props> = ({children}) => {
@@ -44,24 +51,44 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * waits for current user id to be received from socket and established
    */
   useEffect(() => {
-    if (currentUserID) {
-      initPeerConnection();
-      initializeMeeting();
-      initializeMediaStream();
-    }
+    const startApp = () => {
+      if (currentUserID) {
+        initPeerConnection();
+        // check if room param is invalid and retrieve new id.
+        if (!roomParam) getNewMeeting();
+      }
+    };
+    startApp();
   }, [currentUserID]);
+  /**
+   * Waits for a meeting to exist before joining it
+   */
+  useEffect(() => {
+    if (meeting && meeting.id) joinMeeting(meeting);
+  }, [meeting, currentUserID]);
+
+  useEffect(() => {
+    initializeConnection && initializeConnection();
+    return () => {
+      endConnection && endConnection();
+    };
+  }, []);
 
   /**
    * Initilizes all connections
    */
-  const initializeConnection= () =>{
+  const initializeConnection= async () =>{
     /**
      * Listens for userId from socket connection.
      */
     socket.on('CurrentUserID', (id) => setCurrentUserID(id));
-
+    /**
+     * Listens for meeting from socket
+     */
+    socket.on('NewMeeting', (meeting) => setMeeting(meeting));
     console.log('current user id before peer creation', currentUserID);
 
+    await initializeMediaStream();
 
     /**
      * Disconnects from peer WebRTC stream,
@@ -92,14 +119,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   /**
    * Tells the server to start a new meeting and stores its information.
    */
-  const setupMeeting = async () =>{
-    return new Promise<void>((resolve, reject) => {
-      socket.emit('NewMeeting');
-      socket.on('NewMeeting', (meeting) => {
-        setMeeting(meeting);
-        joinMeeting(meeting);
-      });
-    });
+  const getNewMeeting = async () =>{
+    console.log('meeting before requesting', meeting);
+    socket.emit('NewMeeting'); ;
   };
   /**
    * Get audio and video stream from the browser
@@ -127,17 +149,21 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!peerConnection.current) throw new Error('Peer connection missing');
     peerConnection.current.on('open', async (id:string) => {
       console.log('ID from peer', id);
-      await setupMeeting();
+      // check if room param is invalid and retrieve new id.
+      if (!roomParam) await getNewMeeting();
     });
   };
   const joinMeeting = (newMeeting?:Meeting) => {
+    // If a meeting ID is not provided, attempt to use stored variable
     if (!newMeeting && meeting) newMeeting = meeting;
     if (!newMeeting) throw new Error('Unable to retrieve meeting');
-    setMeeting(newMeeting);
+    // If new meeting is not current meeting, update current meeting.
+    if (meeting !== newMeeting) setMeeting(newMeeting);
     const meetingData = {
       userID: currentUserID,
       roomID: newMeeting.id,
     };
+    console.log('joining meeting: ', newMeeting);
     socket.emit('JoinRoom', meetingData);
   };
   /**
@@ -198,6 +224,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * @param {MediaStream} localStream local webcam stream
    */
   const setConnectingPeersListener = (localStream: MediaStream) => {
+    console.log('set conected peer lisener');
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
       call.answer(localStream);
@@ -221,9 +248,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * @param {MediaStream} localStream local webcam stream
    */
   const setExternalUserListener = (localStream:MediaStream) => {
+    console.log('set external user listener');
     socket.on('NewUserConnected', (id) => {
       // Prevent local user from being added.
-      if (id === currentUserID) return;
       console.log('new user connection, userid: ', id);
       const callData: Peer.CallOption = {
         metadata: {

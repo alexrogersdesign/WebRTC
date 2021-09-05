@@ -49,21 +49,23 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Room = (props: Props) => {
   const {
-    initializeConnection,
-    endConnection,
+    // initializeConnection,
+    // endConnection,
     meeting,
   } = useContext(SocketIOContext);
   const history = useHistory();
   const classes = useStyles();
 
+  // useEffect(() => {
+  //   initializeConnection && initializeConnection();
+  //   return () => {
+  //     endConnection && endConnection();
+  //   };
+  // }, []);
   useEffect(() => {
-    initializeConnection && initializeConnection();
-    return () => {
-      endConnection && endConnection();
-    };
-  }, []);
-  useEffect(() => {
-    history.push('/join/'+meeting?.id);
+    if (meeting) {
+      history.push('?room='+meeting?.id);
+    }
   }, [meeting]);
 
 

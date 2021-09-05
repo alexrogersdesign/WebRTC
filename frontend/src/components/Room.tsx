@@ -1,6 +1,6 @@
-import React, {useContext, useEffect} from 'react';
-import {RouteComponentProps, useHistory} from 'react-router-dom';
-import {Grid, Container} from '@material-ui/core';
+import React, {useContext} from 'react';
+// import {RouteComponentProps, useHistory} from 'react-router-dom';
+import {Grid, Container, Typography} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 
@@ -11,9 +11,9 @@ import MeetingForm from '../components/MeetingForm';
 import TopBar from './TopBar';
 // import WebcamComponent from './WebcamComponent';
 interface Props {
-  history: RouteComponentProps['history'];
-  location: RouteComponentProps['location'];
-  match: RouteComponentProps['match'];
+  // history: RouteComponentProps['history'];
+  // location: RouteComponentProps['location'];
+  // match: RouteComponentProps['match'];
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -51,23 +51,9 @@ const Room = (props: Props) => {
   const {
     // initializeConnection,
     // endConnection,
-    meeting,
+    currentUserID,
   } = useContext(SocketIOContext);
-  const history = useHistory();
   const classes = useStyles();
-
-  // useEffect(() => {
-  //   initializeConnection && initializeConnection();
-  //   return () => {
-  //     endConnection && endConnection();
-  //   };
-  // }, []);
-  useEffect(() => {
-    if (meeting) {
-      history.push('?room='+meeting?.id);
-    }
-  }, [meeting]);
-
 
   return (
     <div >
@@ -77,6 +63,7 @@ const Room = (props: Props) => {
         <div className={classes.grid}>
           <VideoArray />
           <Grid item>
+            <Typography>{currentUserID && currentUserID}</Typography>
             <VideoPlayer local/>
             {/* <WebcamComponent/> */}
           </Grid>

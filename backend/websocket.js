@@ -44,6 +44,7 @@ module.exports = function(io) {
         // TODO: clean up room attendees.
       });
     });
+    // socket.on('LeaveRoom', ())
   });
 };
 

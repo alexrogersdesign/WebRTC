@@ -39,5 +39,7 @@ export interface ISocketIOContex {
    endConnection: () => void,
    setMeeting: (meeting: Meeting) => void,
    joinMeeting: (meeting: Meeting) => void,
+   startNewMeeting: () => void,
+   leaveMeeting: () => void,
 }
 

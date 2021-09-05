@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, {createContext, useEffect, useState, useRef} from 'react';
+import {useHistory, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {io} from 'socket.io-client';
 import env from 'react-dotenv';
 import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
+import {v4 as uuidv4} from 'uuid';
 
 
 import {
@@ -14,7 +16,6 @@ import {
   ISocketIOContex,
   ChildrenProps,
 } from '../types';
-import {createLogicalOr} from 'typescript';
 
 
 // const peerServer = env.PEER_SERVER;
@@ -40,12 +41,13 @@ const socket = io(connectionUrl);
 
 
 const ContextProvider: React.FC<Props> = ({children}) => {
-  const [currentUserID, setCurrentUserID] = useState('');
+  const [currentUserID, setCurrentUserID] = useState(uuidv4());
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [peers, setPeers] = useState<IPeers>({});
   const peerConnection = useRef<Peer | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
+  const history = useHistory();
 
   /**
    * waits for current user id to be received from socket and established
@@ -54,19 +56,21 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     const startApp = () => {
       if (currentUserID) {
         initPeerConnection();
-        // check if room param is invalid and retrieve new id.
-        if (!roomParam) getNewMeeting();
       }
     };
     startApp();
-  }, [currentUserID]);
+  }, []);
   /**
    * Waits for a meeting to exist before joining it
    */
   useEffect(() => {
-    if (meeting && meeting.id) joinMeeting(meeting);
+    if (meeting && meeting.id) {
+      joinMeeting(meeting);
+    }
   }, [meeting, currentUserID]);
-
+  /**
+   * Calls initializeConnection on load.
+   */
   useEffect(() => {
     initializeConnection && initializeConnection();
     return () => {
@@ -81,7 +85,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     /**
      * Listens for userId from socket connection.
      */
-    socket.on('CurrentUserID', (id) => setCurrentUserID(id));
+    // socket.on('CurrentUserID', (id) => setCurrentUserID(id));
     /**
      * Listens for meeting from socket
      */
@@ -120,7 +124,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Tells the server to start a new meeting and stores its information.
    */
   const getNewMeeting = async () =>{
-    console.log('meeting before requesting', meeting);
     socket.emit('NewMeeting'); ;
   };
   /**
@@ -165,6 +168,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     };
     console.log('joining meeting: ', newMeeting);
     socket.emit('JoinRoom', meetingData);
+    history.push('?room='+meeting?.id);
   };
   /**
    * Helper function to remove a media stream from the
@@ -251,6 +255,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('set external user listener');
     socket.on('NewUserConnected', (id) => {
       // Prevent local user from being added.
+      if (id === currentUserID) return;
+      console.log('new user connection, current user id', currentUserID);
       console.log('new user connection, userid: ', id);
       const callData: Peer.CallOption = {
         metadata: {
@@ -278,13 +284,23 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       });
     });
   };
+  const startNewMeeting = () => {
+    getNewMeeting();
+    initializeConnection();
+  };
+  const leaveMeeting = () => {
+    setMeeting(null);
+    history.push('');
+    setExternalMedia([]);
+    Object.values(peers).forEach((peer) => peer.close());
+  };
 
   /**
    * Cleans up media streams and connections
    */
   const endConnection = () => {
-    setExternalMedia([]);
     socket?.disconnect();
+    leaveMeeting();
     if (peerConnection.current) peerConnection.current.destroy();
   };
 
@@ -303,6 +319,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         endConnection,
         setMeeting,
         joinMeeting,
+        startNewMeeting,
+        leaveMeeting,
       }}
     >
       {children}

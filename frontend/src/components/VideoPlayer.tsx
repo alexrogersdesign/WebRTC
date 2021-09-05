@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       alignContent: 'center',
       justifyContent: 'center',
+      transform: `scaleX(-1)`,
       // padding: '0 2em 2em',
       [theme.breakpoints.down('xs')]: {
         width: '250px',

@@ -52,12 +52,7 @@ const MeetingInputField = (props: Props) => {
     joinMeeting && field && joinMeeting({id: field});
   };
 
-  // populate field with meeting id
-  useEffect(() => {
-    if (meeting && meeting.id) {
-      setField(meeting?.id);
-    }
-  }, [meeting?.id]);
+
   // set delay for copied tooltip
   useEffect(() => {
     if (copied) {
@@ -78,7 +73,7 @@ const MeetingInputField = (props: Props) => {
       >
         <InputBase
           className={classes.input}
-          placeholder="Meeting ID"
+          placeholder="Joing a Meeting"
           inputProps={{
             'aria-label': 'Meeting ID',
             'spellCheck': 'false',
@@ -87,15 +82,17 @@ const MeetingInputField = (props: Props) => {
           onChange={(e) => setField(e.target.value)}
         />
       </ToolTip>
-      <CopyToClipboard text={field} onCopy={()=> setCopied(true)}>
-        <ToolTip title="Copy Current Meeting">
-          <IconButton
-            className={classes.iconButton}
-            aria-label="copy to clipboard">
-            <FileCopyIcon />
-          </IconButton>
-        </ToolTip>
-      </CopyToClipboard>
+      {meeting &&(
+        <CopyToClipboard text={meeting.id} onCopy={()=> setCopied(true)}>
+          <ToolTip title="Copy Current Meeting">
+            <IconButton
+              className={classes.iconButton}
+              aria-label="copy to clipboard">
+              <FileCopyIcon />
+            </IconButton>
+          </ToolTip>
+        </CopyToClipboard>
+      )}
       <Divider className={classes.divider} orientation="vertical" />
       <ToolTip title="Join Meeting">
         <IconButton

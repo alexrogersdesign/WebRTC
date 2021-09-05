@@ -44,34 +44,52 @@ const useStyles = makeStyles((theme: Theme) =>
 const MeetingInputField = (props: Props) => {
   const classes = useStyles();
   const {joinMeeting, meeting} = useContext(SocketIOContext);
-  const [field, setField] = useState(meeting?.id);
+  const [field, setField] = useState('');
+  const [copied, setCopied] = useState(false);
+
 
   const handleClick = (event: any) => {
     joinMeeting && field && joinMeeting({id: field});
   };
 
+  // populate field with meeting id
   useEffect(() => {
-    setField(meeting?.id);
+    if (meeting && meeting.id) {
+      setField(meeting?.id);
+    }
   }, [meeting?.id]);
+  // set delay for copied tooltio
+  useEffect(() => {
+    if (copied) {
+      setTimeout(()=> setCopied(false), 2000);
+    }
+  }, [copied]);
   return (
     <Paper component="form" className={classes.root}>
       {/* <IconButton className={classes.iconButton} aria-label="menu">
         <MenuIcon />
       </IconButton> */}
-      <InputBase
-        className={classes.input}
-        placeholder="Meeting ID"
-        inputProps={{
-          'aria-label': 'Meeting ID',
-          'spellCheck': 'false',
-        }}
-        value={field}
-        onChange={(e) => setField(e.target.value)}
-      />
-      <CopyToClipboard text={''}>
-        <ToolTip title="Copy to Clipboard">
+      <ToolTip
+        title='Meeting Copied!'
+        disableHoverListener={true}
+        disableFocusListener={true}
+        disableTouchListener={true}
+        open={copied}
+      >
+        <InputBase
+          className={classes.input}
+          placeholder="Meeting ID"
+          inputProps={{
+            'aria-label': 'Meeting ID',
+            'spellCheck': 'false',
+          }}
+          value={field}
+          onChange={(e) => setField(e.target.value)}
+        />
+      </ToolTip>
+      <CopyToClipboard text={field} onCopy={()=> setCopied(true)}>
+        <ToolTip title="Copy Current Meeting">
           <IconButton
-            type="submit"
             className={classes.iconButton}
             aria-label="copy to clipboard">
             <FileCopyIcon />

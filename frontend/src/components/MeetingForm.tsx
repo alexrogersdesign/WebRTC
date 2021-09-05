@@ -1,8 +1,10 @@
 import React, {useState, useContext} from 'react';
-import {Button, TextField, Grid} from '@material-ui/core';
+// import {Button, TextField, Grid} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
+import MeetingInputField from './MeetingInputField';
+
 
 interface Props {
 
@@ -11,7 +13,7 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grid: {
-      width: '500px',
+      // width: '500px',
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
@@ -25,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     textField: {
-      flex: '2 1 auto',
+      // flex: '2 1 auto',
     },
   }),
 );
@@ -40,30 +42,38 @@ const MeetingForm = (props: Props) => {
     joinMeeting && joinMeeting({id: field});
   };
   return (
-    <Grid
-      className={classes.grid}
-      container
-      // direction="row"
-      // spacing={1}
-      // alignItems="center"
-    >
-      <Grid item xs={12} className={classes.textField}>
-        <TextField
-          variant="outlined"
-          label="Meeting ID"
-          value={field}
-          onChange={(e) => setField(e.target.value)}
-        />
-      </Grid>
-      <Grid item xs={6}>
-        <Button
-          // size="large"
-          variant="contained"
-          color="primary"
-          onClick={handleClick}
-        >Join Meeting</Button>
-      </Grid>
-    </Grid>
+    <MeetingInputField
+      className={classes.textField}
+      onClick={handleClick}
+      field={field}
+      setField={setField}
+    />
+    // <Grid
+    //   className={classes.grid}
+    //   container
+    //   // direction="row"
+    //   // spacing={1}
+    //   // alignItems="center"
+    // >
+    //   <Grid item xs={12} className={classes.textField}>
+    //     <TextField
+    //       size="medium"
+    //       fullWidth
+    //       variant="outlined"
+    //       label="Meeting ID"
+    //       value={field}
+    //       onChange={(e) => setField(e.target.value)}
+    //     />
+    //   </Grid>
+    //   <Grid item xs={6}>
+    //     <Button
+    //       size="large"
+    //       variant="contained"
+    //       color="primary"
+    //       onClick={handleClick}
+    //     >Join Meeting</Button>
+    //   </Grid>
+    // </Grid>
   );
 };
 

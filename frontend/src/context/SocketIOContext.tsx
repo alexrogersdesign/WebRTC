@@ -110,8 +110,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       const stream = await navigator.mediaDevices.getUserMedia(
           {video: true, audio: true},
       );
-      // console.log('local stream', localStream);
-      // setLocalStream(stream);
       setConnectingPeersListener(stream);
       setExternalUserListener(stream);
 
@@ -130,12 +128,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     peerConnection.current.on('open', async (id:string) => {
       console.log('ID from peer', id);
       await setupMeeting();
-    //   if (!meeting) throw new Error('Unable to retrieve meeting');
-    //   const meetingData = {
-    //     userID: currentUserID,
-    //     roomID: meeting.id,
-    //   };
-    //   socket.emit('JoinRoom', meetingData);
     });
   };
   const joinMeeting = (newMeeting?:Meeting) => {
@@ -186,11 +178,14 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const addExternalMedia = (
       id: string, stream:MediaStream, userData?: Peer.CallOption,
   ) => {
+    // Prevent local user from being added to the list.
+    if (id === currentUserID) return;
     const newMediaItem = {
       id, stream, data: userData? userData: undefined,
     };
 
     setExternalMedia((oldState) => {
+      // Prevent duplicates from being added
       if (oldState.find((item) => item.id === id)) return oldState;
       return [...oldState, newMediaItem];
     });
@@ -227,6 +222,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const setExternalUserListener = (localStream:MediaStream) => {
     socket.on('NewUserConnected', (id) => {
+      // Prevent local user from being added.
+      if (id === currentUserID) return;
       console.log('new user connection, userid: ', id);
       const callData: Peer.CallOption = {
         metadata: {

@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
-import {Grid, Typography, Paper} from '@material-ui/core';
-import {createStyles, withStyles, Theme} from '@material-ui/core/styles';
+import {Grid, Paper} from '@material-ui/core';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+
 
 import {SocketIOContext} from '../context/SocketIOContext';
 
@@ -10,35 +11,59 @@ type Props = {
   local?: boolean
 }
 
-const styles = createStyles((theme: Theme) => ({
-  video: {
-    width: '550px',
-    [theme.breakpoints.down('xs')]: {
-      width: '300px',
-    },
-  },
-  gridContainer: {
-    justifyContent: 'center',
-    [theme.breakpoints.down('xs')]: {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      padding: 5,
+      display: 'flex',
       flexDirection: 'column',
+      alignItems: 'center',
+      alignContent: 'center',
+      justifyContent: 'center',
+      flexWrap: 'nowrap',
+      backgroundColor: theme.palette.secondary.main,
     },
-  },
-  paper: {
-    padding: '10px',
-    border: '2px solid black',
-    margin: '10px',
-  },
-}));
+    externalVideo: {
+      width: '550px',
+      borderRadius: '10px',
+      display: 'flex',
+      flexWrap: 'nowrap',
+      flexDirection: 'column',
+      alignItems: 'center',
+      alignContent: 'center',
+      justifyContent: 'center',
+      // padding: '0 2em 2em',
+      [theme.breakpoints.down('xs')]: {
+        width: '250px',
+      },
+    },
+    localVideo: {
+      width: '250px',
+      borderRadius: '10px',
+      display: 'flex',
+      flexWrap: 'nowrap',
+      flexDirection: 'column',
+      alignItems: 'center',
+      alignContent: 'center',
+      justifyContent: 'center',
+      // padding: '0 2em 2em',
+      [theme.breakpoints.down('xs')]: {
+        width: '250px',
+      },
+    },
+  }),
+);
 
 
 const VideoPlayer = ({local, stream}: Props)=> {
-  const {localVideoRef, meeting} = useContext(SocketIOContext);
+  const {localVideoRef} = useContext(SocketIOContext);
+  const classes = useStyles();
   return (
-    <Grid item>
-      <Paper className='paper'>
-        <Typography> Meeting: {meeting && meeting.id}</Typography>
+    <Grid item >
+      <Paper className={classes.paper} elevation={3} variant="outlined" >
         {local &&
             <video
+              className={classes.localVideo}
               ref={localVideoRef}
               playsInline
               muted
@@ -46,6 +71,7 @@ const VideoPlayer = ({local, stream}: Props)=> {
             />}
         {!local &&
           <video
+            className={classes.externalVideo}
             ref={(video) => {
               if (video && stream) video.srcObject = stream;
             }}
@@ -58,4 +84,4 @@ const VideoPlayer = ({local, stream}: Props)=> {
   );
 };
 
-export default withStyles(styles)(VideoPlayer);
+export default VideoPlayer;

@@ -1,6 +1,6 @@
 import React, {useState, useContext} from 'react';
 import {Button, TextField, Grid} from '@material-ui/core';
-import {createStyles, withStyles, Theme} from '@material-ui/core/styles';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
 
@@ -8,23 +8,31 @@ interface Props {
 
 }
 
-const styles = createStyles((theme: Theme) => ({
-  button: {
-    width: '150',
-    [theme.breakpoints.down('xs')]: {
-      width: '80',
-    },
-  },
-  form: {
-    justifyContent: 'center',
-    [theme.breakpoints.down('xs')]: {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    grid: {
+      width: '500px',
+      display: 'flex',
       flexDirection: 'row',
+      alignItems: 'center',
+      alignContent: 'center',
+      justifyContent: 'center',
+      flexWrap: 'nowrap',
+      padding: '1em',
+      margin: '.5em',
+      [theme.breakpoints.down('xs')]: {
+        width: '250px',
+      },
     },
-  },
-}));
+    textField: {
+      flex: '2 1 auto',
+    },
+  }),
+);
 
 const MeetingForm = (props: Props) => {
   const [field, setField] = useState('');
+  const classes = useStyles();
 
   const {joinMeeting} = useContext(SocketIOContext);
 
@@ -32,8 +40,14 @@ const MeetingForm = (props: Props) => {
     joinMeeting && joinMeeting({id: field});
   };
   return (
-    <Grid className="form" container direction="row">
-      <Grid item>
+    <Grid
+      className={classes.grid}
+      container
+      // direction="row"
+      // spacing={1}
+      // alignItems="center"
+    >
+      <Grid item xs={12} className={classes.textField}>
         <TextField
           variant="outlined"
           label="Meeting ID"
@@ -41,8 +55,9 @@ const MeetingForm = (props: Props) => {
           onChange={(e) => setField(e.target.value)}
         />
       </Grid>
-      <Grid item>
+      <Grid item xs={6}>
         <Button
+          // size="large"
           variant="contained"
           color="primary"
           onClick={handleClick}
@@ -52,4 +67,4 @@ const MeetingForm = (props: Props) => {
   );
 };
 
-export default withStyles(styles)(MeetingForm);
+export default MeetingForm;

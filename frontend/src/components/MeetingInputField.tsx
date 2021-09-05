@@ -14,10 +14,10 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {SocketIOContext} from '../context/SocketIOContext';
 
 interface Props {
-   onClick: (event:any) => void,
-   field: string,
-   setField: React.Dispatch<React.SetStateAction<string>>,
-   className: string | undefined
+   onClick?: (event:any) => void,
+   field?: string,
+   setField?: React.Dispatch<React.SetStateAction<string>>,
+   className?: string | undefined
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -58,14 +58,14 @@ const MeetingInputField = (props: Props) => {
       setField(meeting?.id);
     }
   }, [meeting?.id]);
-  // set delay for copied tooltio
+  // set delay for copied tooltip
   useEffect(() => {
     if (copied) {
       setTimeout(()=> setCopied(false), 2000);
     }
   }, [copied]);
   return (
-    <Paper component="form" className={classes.root}>
+    <Paper component="form" className={classes.root} elevation={3}>
       {/* <IconButton className={classes.iconButton} aria-label="menu">
         <MenuIcon />
       </IconButton> */}

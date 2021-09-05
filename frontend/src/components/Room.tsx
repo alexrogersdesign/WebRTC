@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from 'react';
 import {RouteComponentProps, useHistory} from 'react-router-dom';
-import {Grid} from '@material-ui/core';
+import {Grid, Container} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 
@@ -18,6 +18,14 @@ interface Props {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      alignContent: 'stretch',
+      justifyContent: 'center',
+      padding: 5,
+    },
     grid: {
       // width: '600px',
 
@@ -32,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('xs')]: {
         width: '250px',
       },
+    },
+    form: {
+      padding: 5,
     },
   }),
 );
@@ -57,16 +68,18 @@ const Room = (props: Props) => {
 
 
   return (
-    <div>
+    <div >
       <TopBar/>
-      <MeetingForm/>
-      <Grid container spacing={2} className={classes.grid}>
-        <VideoArray />
-        <Grid item>
-          <VideoPlayer local/>
-          {/* <WebcamComponent/> */}
-        </Grid>
-      </Grid>
+      <Container className={classes.container}>
+        <MeetingForm />
+        <div className={classes.grid}>
+          <VideoArray />
+          <Grid item>
+            <VideoPlayer local/>
+            {/* <WebcamComponent/> */}
+          </Grid>
+        </div>
+      </Container>
     </div>
   );
 };

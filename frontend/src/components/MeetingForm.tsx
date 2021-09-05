@@ -1,8 +1,8 @@
-import React, {useState, useContext} from 'react';
+import React from 'react';
 // import {Button, TextField, Grid} from '@material-ui/core';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+// import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
-import {SocketIOContext} from '../context/SocketIOContext';
+// import {SocketIOContext} from '../context/SocketIOContext';
 import MeetingInputField from './MeetingInputField';
 
 
@@ -10,43 +10,40 @@ interface Props {
 
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    grid: {
-      // width: '500px',
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      alignContent: 'center',
-      justifyContent: 'center',
-      flexWrap: 'nowrap',
-      padding: '1em',
-      margin: '.5em',
-      [theme.breakpoints.down('xs')]: {
-        width: '250px',
-      },
-    },
-    textField: {
-      // flex: '2 1 auto',
-    },
-  }),
-);
+// const useStyles = makeStyles((theme: Theme) =>
+//   createStyles({
+//     grid: {
+//       // width: '500px',
+//       display: 'flex',
+//       flexDirection: 'row',
+//       alignItems: 'center',
+//       alignContent: 'center',
+//       justifyContent: 'center',
+//       flexWrap: 'nowrap',
+//       padding: '1em',
+//       margin: '.5em',
+//       [theme.breakpoints.down('xs')]: {
+//         width: '250px',
+//       },
+//     },
+//     textField: {
+//       // flex: '2 1 auto',
+//     },
+//   }),
+// );
 
 const MeetingForm = (props: Props) => {
-  const [field, setField] = useState('');
-  const classes = useStyles();
+  // const [field, setField] = useState('');
+  // const classes = useStyles();
 
-  const {joinMeeting} = useContext(SocketIOContext);
+  // const {joinMeeting} = useContext(SocketIOContext);
 
-  const handleClick = (event: any) => {
-    joinMeeting && joinMeeting({id: field});
-  };
+  // const handleClick = (event: any) => {
+  //   joinMeeting && joinMeeting({id: field});
+  // };
   return (
     <MeetingInputField
-      className={classes.textField}
-      onClick={handleClick}
-      field={field}
-      setField={setField}
+
     />
     // <Grid
     //   className={classes.grid}

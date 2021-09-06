@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       alignContent: 'center',
       alignItems: 'center',
-      border: '10px solid',
+      // border: '10px solid',
 
     },
     item: {

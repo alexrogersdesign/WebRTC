@@ -15,6 +15,7 @@ import {
   IPeers,
   ISocketIOContex,
   ChildrenProps,
+  User,
 } from '../types';
 
 // const peerServer = env.PEER_SERVER;
@@ -40,6 +41,8 @@ const socket = io(connectionUrl);
 
 const ContextProvider: React.FC<Props> = ({children}) => {
   const [currentUserID, setCurrentUserID] = useState(uuidv4());
+  const [firstName, setFirstName] = useState('John');
+  const [lastName, setLastName] = useState('Doe');
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [localMedia, setLocalMedia] = useState<MediaStream>();
@@ -175,7 +178,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const removeMedia = (id: string) => {
     setExternalMedia(externalMedia
-        .filter((media:IExternalMedia) => media.id !== id));
+        .filter((media:IExternalMedia) => media.user.id !== id));
   };
   /**
    * Helper function to add peer to peer list
@@ -199,22 +202,22 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
   /**
    * Adds media stream to list of streams to display
-   * @param {string} id  The peers id
+   * @param {User} user  The peer user informatoin
    * @param {MediaStream} stream the media stream to add
-   * @param {any} userData? any additional data
+   * @param {any} data? any additional data
    */
   const addExternalMedia = (
-      id: string, stream:MediaStream, userData?: Peer.CallOption,
+      user: User, stream:MediaStream, data?: Peer.CallOption,
   ) => {
     // Prevent local user from being added to the list.
-    if (id === currentUserID) return;
+    if (user.id === currentUserID) return;
     const newMediaItem = {
-      id, stream, data: userData? userData: undefined,
+      user, stream, data: data? data: undefined,
     };
 
     setExternalMedia((oldState) => {
       // Prevent duplicates from being added
-      if (oldState.find((item) => item.id === id)) return oldState;
+      if (oldState.find((media) => media.user.id === user.id)) return oldState;
       return [...oldState, newMediaItem];
     });
   };
@@ -233,7 +236,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       console.log('call answered', call);
 
       call.on('stream', (stream) => {
-        addExternalMedia(call.peer, stream);
+        const newUser: User = {
+          id: call.peer,
+          ...call.metadata,
+        };
+        addExternalMedia(newUser, stream);
         console.log('adding stream');
       });
       call.on('close', ()=> removeMedia(call.metadata.id));
@@ -256,18 +263,25 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       if (id === currentUserID) return;
       console.log('new user connection, current user id', currentUserID);
       console.log('new user connection, userid: ', id);
-      const callData: Peer.CallOption = {
+      const metadata: Peer.CallOption = {
         metadata: {
-          id,
+          currentUserID,
+          firstName,
+          lastName,
         },
       };
       if (!peerConnection.current) throw new Error('Missing peer connection');
       if (!localMedia) throw new Error('Missing webcam stream');
-      const call = peerConnection.current.call(id, localMedia, callData);
+      const call = peerConnection.current.call(id, localMedia, metadata);
       console.log('Placing call', call);
       // when a stream is received, add it to external media
       call.on('stream', (stream: MediaStream) => {
-        addExternalMedia(call.peer, stream, callData);
+        // TODO retreive metadata from callee
+        const newUser:User = {
+          ...metadata,
+          id: call.peer,
+        };
+        addExternalMedia(newUser, stream, metadata);
         console.log('call stream', call);
         console.log('stream received', stream);
       });

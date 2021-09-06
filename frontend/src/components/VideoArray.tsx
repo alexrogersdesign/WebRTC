@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {SocketIOContext} from '../context/SocketIOContext';
-import {Grid, Typography} from '@material-ui/core';
+import {Grid} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 // import {IExternalMedia} from '../types';
@@ -43,11 +43,10 @@ const useStyles = makeStyles((theme: Theme) =>
 const VideoArray = (props: Props) => {
   const {externalMedia} = useContext(SocketIOContext);
   const classes = useStyles();
-  const videoList = () => externalMedia?.map(({id, stream}) => {
+  const videoList = () => externalMedia?.map(({user, stream}) => {
     return (
-      <Grid item key={id} className={classes.item}>
-        <Typography>User ID: {id}</Typography>
-        <VideoPlayer stream={stream} />
+      <Grid item key={user.id} className={classes.item}>
+        <VideoPlayer stream={stream} user={user}/>
       </Grid>);
   });
   return (

@@ -14,15 +14,21 @@ export interface IMeetingData {
 }
 
 export interface IExternalMedia {
-   id: string,
+   user: User,
    stream: MediaStream,
    data?: any,
+
 }
 
 export interface IPeers {
    [key: string]: MediaConnection
  }
 
+export type User = {
+   id: string,
+   firstName?: string,
+   lastName?: string,
+}
 
 export interface ISocketIOContex {
    initializeConnection: () => void;

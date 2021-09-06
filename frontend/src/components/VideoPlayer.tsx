@@ -5,6 +5,7 @@ import {User} from '../types';
 
 import {SocketIOContext} from '../context/SocketIOContext';
 import VideoAvatar from './VideoAvatar';
+import WebcamControls from './WebcamControls';
 
 type Props = {
   stream?: MediaStream | undefined;
@@ -50,7 +51,8 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 98,
     },
     localContainer: {
-      flexWrap: 'nowrap',
+      // flexWrap: 'nowrap',
+      position: 'relative',
       padding: '5%',
       width: '30em !important',
       // height: 'auto !important',
@@ -60,6 +62,19 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.down('xs')]: {
         // width: '30%',
       },
+    },
+    controls: {
+      display: 'block',
+      // zIndex: 99,
+      // height: '500px',
+      bottom: 20,
+      padding: '1%',
+      // top: 5,
+      // right: 20,
+      // padding: 20,
+      postion: 'absolute !important',
+      border: '10px solid',
+
     },
   }),
 );
@@ -82,6 +97,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
               autoPlay
             />
           </Paper>
+          <WebcamControls className={classes.controls}/>
         </div>
       }
       {

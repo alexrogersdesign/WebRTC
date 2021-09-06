@@ -15,11 +15,20 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grid: {
-      width: '600px',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      flexWrap: 'nowrap',
+
+    },
+    item: {
+      // width: '600px',
       display: 'flex',
+      flex: '1 1 auto`',
       flexDirection: 'column',
       alignItems: 'center',
       alignContent: 'center',
+      alignSelf: 'auto',
       justifyContent: 'center',
       flexWrap: 'nowrap',
       padding: '0 2em 2em',
@@ -36,13 +45,13 @@ const VideoArray = (props: Props) => {
   const classes = useStyles();
   const videoList = () => externalMedia?.map(({id, stream}) => {
     return (
-      <Grid item key={id} className={classes.grid}>
+      <Grid item key={id} className={classes.item}>
         <Typography>User ID: {id}</Typography>
         <VideoPlayer stream={stream} />
       </Grid>);
   });
   return (
-    <Grid>
+    <Grid className={classes.grid}>
       {videoList()}
     </Grid>
   );

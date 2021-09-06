@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 // import {RouteComponentProps, useHistory} from 'react-router-dom';
 import {Grid, Container, Typography} from '@material-ui/core';
@@ -28,17 +29,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     grid: {
       // width: '600px',
-
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      alignContent: 'center',
-      justifyContent: 'center',
+      // display: 'flex',
+      // flexDirection: 'column',
+      // alignItems: 'center',
+      // alignContent: 'center',
+      // justifyContent: 'center',
       flexWrap: 'wrap',
       padding: 20,
       // padding: '0 2em 2em',
       [theme.breakpoints.down('xs')]: {
-        width: '250px',
+        // width: '250px',
       },
     },
     form: {
@@ -62,11 +62,11 @@ const Room = (props: Props) => {
         <MeetingForm />
         <div className={classes.grid}>
           <VideoArray />
-          <Grid item>
+          <div>
             <Typography>{currentUserID && currentUserID}</Typography>
             <VideoPlayer local/>
             {/* <WebcamComponent/> */}
-          </Grid>
+          </div>
         </div>
       </Container>
     </div>

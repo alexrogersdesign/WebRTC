@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import {SocketIOContext} from '../context/SocketIOContext';
 import {Grid} from '@material-ui/core';
@@ -15,25 +16,32 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grid: {
+      display: 'flex',
       flexDirection: 'row',
+      // padding: '5%',
+      // margin: '5%',
+      flexWrap: 'wrap',
       justifyContent: 'center',
-      alignItems: 'flex-start',
-      flexWrap: 'nowrap',
+      alignContent: 'center',
+      alignItems: 'center',
+      border: '10px solid',
 
     },
     item: {
-      // width: '600px',
       display: 'flex',
-      flex: '1 1 auto`',
-      flexDirection: 'column',
-      alignItems: 'center',
-      alignContent: 'center',
-      alignSelf: 'auto',
-      justifyContent: 'center',
-      flexWrap: 'nowrap',
-      padding: '0 2em 2em',
+      flex: '-1 2 auto',
+      width: '40%',
+      margin: '1%',
+      // flex: '1 3 50em',
+      // flexDirection: 'row',
+      // alignItems: 'center',
+      // alignContent: 'center',
+      // alignSelf: 'auto',
+      // justifyContent: 'flex-start',
+      // flexWrap: 'wrap',
+      // padding: '0 2em 2em',
       [theme.breakpoints.down('xs')]: {
-        width: '250px',
+        // width: '250px',
       },
     },
   }),
@@ -45,14 +53,14 @@ const VideoArray = (props: Props) => {
   const classes = useStyles();
   const videoList = () => externalMedia?.map(({user, stream}) => {
     return (
-      <Grid item key={user.id} className={classes.item}>
+      <div key={user.id} className={classes.item}>
         <VideoPlayer stream={stream} user={user}/>
-      </Grid>);
+      </div>);
   });
   return (
-    <Grid className={classes.grid}>
+    <div className={classes.grid}>
       {videoList()}
-    </Grid>
+    </div>
   );
 };
 

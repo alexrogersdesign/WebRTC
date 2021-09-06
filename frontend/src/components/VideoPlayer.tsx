@@ -15,42 +15,32 @@ type Props = {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
-      width: '100%',
       padding: 3,
-      borderRadius: '10px',
+      borderRadius: 'inherit',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: '0 1 10em',
       backgroundColor: theme.palette.secondary.main,
     },
-    div: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-
-    },
-    externalVideo: {
-      position: 'relative',
-      display: 'block',
+    video: {
+      // flex: '0 2 auto',
       width: '100% !important',
       height: 'auto !important',
+      borderRadius: 'inherit',
     },
     externalContainer: {
       position: 'relative',
-      display: 'block',
-      width: '100% !important',
-      height: 'auto !important',
+      // display: 'block',
+      // width: '75% !important',
+      // height: 'auto !important',
       borderRadius: '10px',
-      flex: '1 0 3em',
+      // flex: '0 2 auto',
       flexWrap: 'nowrap',
-      flexDirection: 'column',
-      alignItems: 'center',
-      alignContent: 'center',
-      justifyContent: 'center',
+      // flexDirection: 'column',
+      // alignItems: 'center',
+      // alignContent: 'center',
+      // justifyContent: 'center',
       // padding: '0 2em 2em',
       [theme.breakpoints.down('xs')]: {
-        width: '250px',
+        // width: '40%',
       },
     },
     externalAvatar: {
@@ -60,47 +50,16 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 98,
     },
     localContainer: {
-      display: 'flex',
-      flex: '1 1 auto`',
-      flexDirection: 'column',
-      alignItems: 'center',
-      alignContent: 'center',
-      alignSelf: 'auto',
-      justifyContent: 'center',
       flexWrap: 'nowrap',
-      padding: '0 2em 2em',
-      //
-      position: 'relative',
-      // display: 'block',
-      width: '100% !important',
-      height: 'auto !important',
+      padding: '5%',
+      width: '30em !important',
+      // height: 'auto !important',
       borderRadius: '10px',
-      // flex: '1 0 3em',
-      // flexWrap: 'nowrap',
-      // flexDirection: 'column',
-      // alignItems: 'center',
-      // alignContent: 'center',
-      // justifyContent: 'center',
-      // padding: '0 2em 2em',
+      // border: '10px solid',
+
       [theme.breakpoints.down('xs')]: {
-        width: '250px',
+        // width: '30%',
       },
-    },
-    localVideo: {
-      position: 'relative',
-      display: 'block',
-      width: '100% !important',
-      height: 'auto !important',
-      // width: '300px',
-      // borderRadius: '10px',
-      // display: 'flex',
-      // flexWrap: 'nowrap',
-      // flexDirection: 'column',
-      // alignItems: 'center',
-      // alignContent: 'center',
-      // justifyContent: 'center',
-      // transform: `scaleX(-1)`,
-      // padding: '0 2em 2em',
     },
   }),
 );
@@ -116,7 +75,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
         <div className={classes.localContainer}>
           <Paper className={classes.paper} elevation={3} variant="outlined" >
             <video
-              className={classes.localVideo}
+              className={classes.video}
               ref={localVideoRef}
               playsInline
               muted
@@ -131,7 +90,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
           <Paper className={classes.paper} elevation={3} variant="outlined" >
             <VideoAvatar className={classes.externalAvatar} user={user}/>
             <video
-              className={classes.externalVideo}
+              className={classes.video}
               ref={(video) => {
                 if (video && stream) video.srcObject = stream;
               }}

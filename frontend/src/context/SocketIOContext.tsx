@@ -109,6 +109,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     peerConnection.current = new Peer(currentUserID, {
       host: '/',
       port: 5001,
+      debug: 2,
     });
   };
 
@@ -172,6 +173,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       roomID: newMeeting.id,
     };
     console.log('joining meeting: ', newMeeting);
+    console.log('joining meeting data  ', meetingData);
     socket.emit('JoinRoom', meetingData);
     history.push('?room='+meeting?.id);
     setHasJoinedMeeting(true);

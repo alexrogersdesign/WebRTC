@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       alignContent: 'stretch',
       justifyContent: 'center',
-      padding: 5,
+      padding: '2%',
     },
     grid: {
       // width: '600px',
@@ -34,15 +34,24 @@ const useStyles = makeStyles((theme: Theme) =>
       // alignItems: 'center',
       // alignContent: 'center',
       // justifyContent: 'center',
+      height: '50%',
       flexWrap: 'wrap',
       padding: 20,
+      borderWidth: 40,
       // padding: '0 2em 2em',
       [theme.breakpoints.down('xs')]: {
-        // width: '250px',
+        width: '250px',
       },
     },
     form: {
       padding: 5,
+    },
+    local: {
+      position: 'fixed',
+      float: 'right',
+      right: 0,
+      bottom: 0,
+
     },
   }),
 );
@@ -62,7 +71,7 @@ const Room = (props: Props) => {
         <MeetingForm />
         <div className={classes.grid}>
           <VideoArray />
-          <div>
+          <div className={classes.local}>
             <Typography>{currentUserID && currentUserID}</Typography>
             <VideoPlayer local/>
             {/* <WebcamComponent/> */}

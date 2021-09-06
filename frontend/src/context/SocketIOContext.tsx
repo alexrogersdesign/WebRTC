@@ -90,12 +90,12 @@ const ContextProvider: React.FC<Props> = ({children}) => {
      * Disconnects from peer WebRTC stream,
      * removes information from peer list and removes media stream.
      */
-    socket.on('UserDisconnected', (userID: string) => {
-      if (userID in peers) {
-        peers[userID].close();
+    socket.on('UserDisconnected', (user: User) => {
+      if (user.id in peers) {
+        peers[user.id].close();
       }
-      removePeer(userID);
-      removeMedia(userID);
+      removePeer(user.id);
+      removeMedia(user.id);
     });
     socket.on('error', (error) => {
       console.log('Socket Responded With Error: ', error);
@@ -162,8 +162,13 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!newMeeting) throw new Error('Unable to retrieve meeting');
     // If new meeting is not current meeting, update current meeting.
     if (meeting !== newMeeting) setMeeting(newMeeting);
+    const currentUser = {
+      id: currentUserID,
+      firstName,
+      lastName,
+    };
     const meetingData = {
-      userID: currentUserID,
+      user: currentUser,
       roomID: newMeeting.id,
     };
     console.log('joining meeting: ', newMeeting);
@@ -188,7 +193,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('New peer added', call);
     setPeers({
       ...peers,
-      call,
+      [call.peer]: call,
     });
   };
   /**
@@ -258,11 +263,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const setExternalUserListener = () => {
     console.log('set external user listener');
-    socket.on('NewUserConnected', (id) => {
+    socket.on('NewUserConnected', (user) => {
       // Prevent local user from being added.
-      if (id === currentUserID) return;
+      if (user.id === currentUserID) return;
       console.log('new user connection, current user id', currentUserID);
-      console.log('new user connection, userid: ', id);
+      console.log('new user connection, user ', user);
       const metadata: Peer.CallOption = {
         metadata: {
           currentUserID,
@@ -272,13 +277,13 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       };
       if (!peerConnection.current) throw new Error('Missing peer connection');
       if (!localMedia) throw new Error('Missing webcam stream');
-      const call = peerConnection.current.call(id, localMedia, metadata);
+      const call = peerConnection.current.call(user.id, localMedia, metadata);
       console.log('Placing call', call);
       // when a stream is received, add it to external media
       call.on('stream', (stream: MediaStream) => {
         // TODO retreive metadata from callee
         const newUser:User = {
-          ...metadata,
+          ...user,
           id: call.peer,
         };
         addExternalMedia(newUser, stream, metadata);

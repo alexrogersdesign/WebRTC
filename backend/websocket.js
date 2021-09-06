@@ -35,12 +35,12 @@ module.exports = function(io) {
     });
 
     socket.on('JoinRoom', (meetingData) => {
-      const {userID, roomID} = meetingData;
+      const {user, roomID} = meetingData;
       socket.join(roomID);
-      io.to(roomID).emit('NewUserConnected', userID);
-      if (roomID in meetingList) meetingList[roomID].users.push(userID);
+      io.to(roomID).emit('NewUserConnected', user);
+      if (roomID in meetingList) meetingList[roomID].users.push(user);
       socket.on('disconnect', () => {
-        socket.to(roomID).emit('UserDisconnected', userID);
+        socket.to(roomID).emit('UserDisconnected', user);
         // TODO: clean up room attendees.
       });
     });

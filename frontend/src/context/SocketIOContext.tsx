@@ -16,7 +16,7 @@ import {
   ISocketIOContex,
   ChildrenProps,
 } from '../types';
-
+import {promiseWithTimeout} from '../util/helpers';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -44,7 +44,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const [currentUserID, setCurrentUserID] = useState(uuidv4());
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
+  const [localMedia, setLocalMedia] = useState<MediaStream>(null);
   const [peers, setPeers] = useState<IPeers>({});
+  const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const history = useHistory();
@@ -64,10 +66,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Waits for a meeting to exist before joining it
    */
   useEffect(() => {
-    if (meeting && meeting.id) {
-      joinMeeting(meeting);
+    if (meeting && meeting.id && !hasJoinedMeeting && localMedia) {
+      joinMeeting({id: meeting.id});
     }
-  }, [meeting, currentUserID]);
+  }, [meeting, localMedia]);
+
   /**
    * Calls initializeConnection on load.
    */
@@ -77,6 +80,56 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       endConnection && endConnection();
     };
   }, []);
+
+  const waitForMeeting = () => {
+    return new Promise((resolve)=> {
+      if (meeting) {
+        resolve('Meeting found');
+      }
+    });
+
+    // const waitForMeeting = () => {
+    //   promiseWithTimeout(8000, () => new Promise<unknown>((res) => {
+    //     if (meeting) res('Meeting found');
+    //   }), 'Meeting not found');
+    // };
+  };
+  // const waitForMeeting = () => {
+  //   const timeout = new Promise((resolve, reject) => {
+  //     const id = setTimeout(() => {
+  //       clearTimeout(id);
+  //       reject(new Error('Meeting timed out'));
+  //     }, 8000);
+  //   });
+  //   return Promise.race([
+  //     new Promise((resolve) => {
+  //       if (meeting) {
+  //         resolve(meeting);
+  //       };
+  //     }),
+  //     timeout,
+  //   ]);
+  // };
+
+  // const waitForMeeting = () => {
+  //   return new Promise((res, rej) => {
+  //     const timer = setTimeout(() => {
+  //       rej(new Error('Meeting was not found'));
+  //     }, 8000);
+  //     callback(
+  //         (value) => {
+  //           clearTimeout(timer);
+  //           res(value);
+  //         },
+  //         (error) => {
+  //           clearTimeout(timer);
+  //           rej(error);
+  //         },
+  //     );
+
+  //     if (meeting) res('Meeting was found');
+  //   });
+  // };
 
   /**
    * Initilizes all connections
@@ -93,6 +146,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('current user id before peer creation', currentUserID);
 
     await initializeMediaStream();
+    await waitForMeeting();
+    // meeting && joinMeeting({id: meeting.id});
 
     /**
      * Disconnects from peer WebRTC stream,
@@ -137,6 +192,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       );
       setConnectingPeersListener(stream);
       setExternalUserListener(stream);
+      setLocalMedia(stream);
 
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
     } catch (err) {
@@ -169,6 +225,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('joining meeting: ', newMeeting);
     socket.emit('JoinRoom', meetingData);
     history.push('?room='+meeting?.id);
+    setHasJoinedMeeting(true);
   };
   /**
    * Helper function to remove a media stream from the
@@ -290,6 +347,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
   const leaveMeeting = () => {
     setMeeting(null);
+    setHasJoinedMeeting(false);
     history.push('');
     setExternalMedia([]);
     Object.values(peers).forEach((peer) => peer.close());

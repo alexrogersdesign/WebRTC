@@ -13,6 +13,7 @@ import VolumeUpTwoToneIcon from '@material-ui/icons/VolumeUpTwoTone';
 import VideocamTwoToneIcon from '@material-ui/icons/VideocamTwoTone';
 import VideocamOffTwoToneIcon from '@material-ui/icons/VideocamOffTwoTone';
 import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
+
 import {SocketIOContext} from '../context/SocketIOContext';
 
 interface Props {
@@ -57,16 +58,29 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 const WebcamControls = ({className}: Props) => {
   const classes = useStyles();
-  const {joinMeeting, meeting} = useContext(SocketIOContext);
+  const {
+    setMicMuted,
+    setVideoDisabled,
+    setScreenSharing,
+    setRemoveBackground,
+    micMuted,
+    videoDisabled,
+    screenSharing,
+    removeBackground,
+  } = useContext(SocketIOContext);
 
 
   const handleMuteMicrophone = (event: any) => {
+    setMicMuted && setMicMuted(!micMuted);
   };
   const handleDisableVideo = (event: any) => {
+    setVideoDisabled && setVideoDisabled(!videoDisabled);
   };
   const handleShareScreen = (event: any) => {
+    setScreenSharing && setScreenSharing(!screenSharing);
   };
   const handleRemoveBackground = (event: any) => {
+    setRemoveBackground && setRemoveBackground(!removeBackground);
   };
 
 

@@ -131,15 +131,41 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const initializeMediaStream = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia(
-          {video: true, audio: true},
-      );
+      // retreives webcam or screen share stream based on screenSharing variable
+      const stream = screenSharing?
+      await navigator.mediaDevices.getDisplayMedia():
+      await navigator.mediaDevices.getUserMedia( {
+        // disables video if video is disabled
+        video: !videoDisabled,
+        // disables audio if mic is muted
+        audio: !micMuted,
+      });
       setLocalMedia(stream);
       // stores stream in ref to be used by video element
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      // replace streams to peers if they exist
     } catch (err) {
       console.log(err);
     }
+  };
+  /**
+   * Changes the media stream being sent to peers.
+   * @param {MediaStream} stream the stream to change to
+   */
+  const changePeerStream = (stream:MediaStream) => {
+    Object.values(peers).forEach((peer) =>
+      peer.peerConnection?.getSenders().forEach((sender) => {
+        if (sender?.track?.kind == 'video') {
+          stream.getVideoTracks().length > 0 &&
+        sender.replaceTrack(stream.getVideoTracks()[0]);
+        }
+        if (sender?.track?.kind == 'audio') {
+          stream.getAudioTracks().length > 0 &&
+        sender.replaceTrack(stream.getAudioTracks()[0]);
+        }
+      },
+      ),
+    );
   };
 
   /**

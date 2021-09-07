@@ -7,10 +7,12 @@ declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
     neutral: Palette['primary'];
     disabled: Palette['primary'];
+    neutralGray: Palette['primary'];
   }
   interface PaletteOptions {
     neutral: PaletteOptions['primary'];
     disabled: PaletteOptions['primary'];
+    neutralGray: PaletteOptions['primary'];
   }
 }
 
@@ -52,6 +54,11 @@ const theme = createTheme({
     neutral: {
       main: '#E0E3E1',
       light: '#F5F5F6',
+    },
+    neutralGray: {
+      main: '#757575',
+      light: '#a4a4a4',
+      dark: '#494949',
     },
     disabled: {
       main: '#f44336',

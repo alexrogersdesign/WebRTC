@@ -22,8 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.neutralGray.light,
       position: 'relative',
+      boxShadow: theme.shadows[2],
     },
     video: {
       // flex: '0 2 auto',

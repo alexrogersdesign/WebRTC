@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '2px 4px',
       display: 'flex',
       alignItems: 'center',
+      justifyContent: 'space-around',
       width: 'auto',
       zIndex: 99,
       borderBottomLeftRadius: 10,
@@ -53,7 +54,12 @@ const useStyles = makeStyles((theme: Theme) =>
     divider: {
       height: 28,
       margin: 4,
-      color: '#F5F5F6',
+      color: theme.palette.neutral.light,
+      fill: theme.palette.neutral.light,
+      backgroundColor: theme.palette.neutral.main,
+      opacity: .5,
+      width: 1,
+
     },
   }),
 );
@@ -90,7 +96,10 @@ const WebcamControls = ({className}: Props) => {
       <Paper className={classes.root} elevation={3}>
         <ToolTip title="Mute Microphone">
           <IconButton
-            color="primary"
+            style={
+              {color: micMuted? theme.palette.disabled.main :
+                theme.palette.neutral.light,
+              }}
             className={classes.iconButton}
             aria-label="mute microphone"
             onClick={handleMuteMicrophone}
@@ -102,7 +111,10 @@ const WebcamControls = ({className}: Props) => {
         <ToolTip title="Disable Video">
           <IconButton
             // eslint-disable-next-line max-len
-            color={videoDisabled? theme.palette.disabled.main : theme.palette.neutral.main }
+            style={
+              {color: videoDisabled? theme.palette.disabled.main :
+                theme.palette.neutral.light}
+            }
             className={classes.iconButton}
             aria-label="disable video"
             onClick={handleDisableVideo}
@@ -113,6 +125,10 @@ const WebcamControls = ({className}: Props) => {
         <Divider className={classes.divider} orientation="vertical" />
         <ToolTip title="Share Screen">
           <IconButton
+            style={
+              {color: screenSharing? theme.palette.success.main :
+                theme.palette.neutral.light,
+              }}
             color="primary"
             className={classes.iconButton}
             aria-label="share screen"
@@ -124,7 +140,10 @@ const WebcamControls = ({className}: Props) => {
         <Divider className={classes.divider} orientation="vertical" />
         <ToolTip title="Remove Background">
           <IconButton
-            color="primary"
+            style={
+              {color: removeBackground? theme.palette.success.light :
+                theme.palette.neutral.main,
+              }}
             className={classes.iconButton}
             aria-label="remove background"
             onClick={handleRemoveBackground}

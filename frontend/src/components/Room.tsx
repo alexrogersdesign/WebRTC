@@ -72,7 +72,7 @@ const Room = (props: Props) => {
         <div className={classes.grid}>
           <VideoArray />
           <div className={classes.local}>
-            <Typography>{currentUserID && currentUserID}</Typography>
+            {/* <Typography>{currentUserID && currentUserID}</Typography> */}
             <VideoPlayer local/>
             {/* <WebcamComponent/> */}
           </div>

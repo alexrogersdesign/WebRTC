@@ -31,7 +31,7 @@ export type User = {
 }
 
 export interface ISocketIOContex {
-   initializeConnection: () => void;
+   setupSocketListeners: () => void;
    currentUserID: string,
    setCurrentUserID: (userID: string) => void,
    meeting: Meeting | null,
@@ -40,12 +40,20 @@ export interface ISocketIOContex {
    peerConnection: React.MutableRefObject<Peer | null>,
    localVideoRef: React.RefObject<HTMLVideoElement>,
    initializeMediaStream: () => void,
-   initializeMeeting: () => void,
+   setPeerOpenedConnectionListner: () => void,
    connectToUser: (externalUser: string) => void,
    endConnection: () => void,
    setMeeting: (meeting: Meeting) => void,
    joinMeeting: (meeting: Meeting) => void,
    startNewMeeting: () => void,
    leaveMeeting: () => void,
+   setMicMuted: (boolean: boolean) => void,
+   setVideoDisabled: (boolean: boolean) => void,
+   setScreenSharing: (boolean: boolean) => void,
+   setRemoveBackground: (boolean: boolean) => void,
+   micMuted: boolean,
+   videoDisabled: boolean,
+   screenSharing: boolean,
+   removeBackground: boolean
 }
 

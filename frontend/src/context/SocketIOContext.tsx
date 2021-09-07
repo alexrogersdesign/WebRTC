@@ -44,6 +44,10 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const [firstName, setFirstName] = useState('John');
   const [lastName, setLastName] = useState('Doe');
   const [meeting, setMeeting] = useState<Meeting | null>(null);
+  const [micMuted, setMicMuted] = useState<boolean>(false);
+  const [videoDisabled, setVideoDisabled] = useState<boolean>(false);
+  const [screenSharing, setScreenSharing] = useState<boolean>(false);
+  const [removeBackground, setRemoveBackground] = useState<boolean>(false);
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [localMedia, setLocalMedia] = useState<MediaStream>();
   const [peers, setPeers] = useState<IPeers>({});
@@ -328,7 +332,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   return (
     <SocketIOContext.Provider
       value={{
-        initializeConnection: setupSocketListeners,
+        setupSocketListeners,
         currentUserID,
         meeting,
         externalMedia,
@@ -336,12 +340,20 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         peerConnection,
         localVideoRef,
         initializeMediaStream,
-        initializeMeeting: setPeerOpenedConnectionListner,
+        setPeerOpenedConnectionListner,
         endConnection,
         setMeeting,
         joinMeeting,
         startNewMeeting,
         leaveMeeting,
+        setMicMuted,
+        setVideoDisabled,
+        setScreenSharing,
+        setRemoveBackground,
+        micMuted,
+        videoDisabled,
+        screenSharing,
+        removeBackground,
       }}
     >
       {children}

@@ -15,6 +15,7 @@ import VideocamOffTwoToneIcon from '@material-ui/icons/VideocamOffTwoTone';
 import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 
 import {SocketIOContext} from '../context/SocketIOContext';
+import theme from '../theme';
 
 interface Props {
    onClick?: (event:any) => void,
@@ -44,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     iconButton: {
       padding: 10,
-      color: '#e0e0e0',
+      // color: '#e0e0e0',
       marginLeft: theme.spacing(2),
       marginRight: theme.spacing(2),
 
@@ -100,7 +101,8 @@ const WebcamControls = ({className}: Props) => {
         <Divider className={classes.divider} orientation="vertical" />
         <ToolTip title="Disable Video">
           <IconButton
-            color="primary"
+            // eslint-disable-next-line max-len
+            color={videoDisabled? theme.palette.disabled.main : theme.palette.neutral.main }
             className={classes.iconButton}
             aria-label="disable video"
             onClick={handleDisableVideo}

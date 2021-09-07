@@ -3,6 +3,17 @@
 import red from '@material-ui/core/colors/red';
 import {createTheme} from '@material-ui/core/styles';
 
+declare module '@material-ui/core/styles/createPalette' {
+  interface Palette {
+    neutral: Palette['primary'];
+    disabled: Palette['primary'];
+  }
+  interface PaletteOptions {
+    neutral: PaletteOptions['primary'];
+    disabled: PaletteOptions['primary'];
+  }
+}
+
 // declare module '@material-ui/core/styles/createTheme' {
 //   interface Theme {
 //     status: {
@@ -37,6 +48,15 @@ const theme = createTheme({
       main: '#e57373',
       light: '#ffa4a2',
       dark: '#af4448',
+    },
+    neutral: {
+      main: '#E0E3E1',
+      light: '#F5F5F6',
+    },
+    disabled: {
+      main: '#f44336',
+      light: 'ff7961',
+      dark: 'ba000d',
     },
     error: {
       main: red.A400,

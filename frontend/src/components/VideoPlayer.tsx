@@ -19,13 +19,18 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: 3,
       borderRadius: 'inherit',
       display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
       backgroundColor: theme.palette.secondary.main,
+      position: 'relative',
     },
     video: {
       // flex: '0 2 auto',
       width: '100% !important',
       height: 'auto !important',
       borderRadius: 'inherit',
+      position: 'relative',
     },
     externalContainer: {
       position: 'relative',
@@ -64,16 +69,21 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     controls: {
-      display: 'block',
-      // zIndex: 99,
+      // display: 'block-level',
+      // flexBasis: '100%',
+      zIndex: 99,
       // height: '500px',
-      bottom: 20,
-      padding: '1%',
+      // bottom: '20px !important',
+      // left: '30px',
+      borderRadius: '10',
+      marginTop: '-13%',
+      width: '100%',
+      height: '100%',
       // top: 5,
       // right: 20,
       // padding: 20,
-      postion: 'absolute !important',
-      border: '10px solid',
+      // postion: 'absolute !important',
+      // border: '10px solid',
 
     },
   }),
@@ -96,8 +106,10 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
               muted
               autoPlay
             />
+            <div className={classes.controls}>
+              <WebcamControls />
+            </div>
           </Paper>
-          <WebcamControls className={classes.controls}/>
         </div>
       }
       {

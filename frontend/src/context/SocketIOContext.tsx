@@ -7,6 +7,11 @@ import env from 'react-dotenv';
 import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
 import {v4 as uuidv4} from 'uuid';
+import * as bodyPix from '@tensorflow-models/body-pix';
+// import '@tensorflow/tfjs-core';
+// import '@tensorflow/tfjs-converter';
+// import '@tensorflow/tfjs-backend-webgl';
+import * as tf from '@tensorflow/tfjs-core';
 
 
 import {
@@ -54,6 +59,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const senders = useRef<RTCRtpSender[]>([]);
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
+  const network = useRef<bodyPix.BodyPix>();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const history = useHistory();
 
@@ -89,6 +95,19 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     //   navigator.mediaDevices.getDisplayMedia.
     // }
   }, [screenSharing]);
+
+  /**
+   * Loads background replacing model
+   */
+  useEffect(() => {
+    // bodyPix.load().then((net: bodyPix.BodyPix) => {
+    //   setBodypixnet(net);
+    // });
+    async () => network.current = await bodyPix
+        // .load({modelUrl: '../util/mobilenet@1.0.0.js'});
+        .load();
+    setInterval(()=> segmentVideo(), 100);
+  }, []);
 
   /**
    * Calls startup functions on first load.
@@ -175,30 +194,25 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * @param {MediaStream} stream the stream to change to
    */
   const changePeerStream = (stream:MediaStream) => {
-    console.log('peers', peers.current);
-    localMedia?.getTracks();
-    // .forEach(track => senders.push(peerConnection.current. )
-    // Object.values(peers.current).forEach((peer) => {
-    //   peer.peerConnection.getSenders().forEach((sender)=> {
-    //     console.log('sender', sender);
-    //     if (sender?.track?.kind == 'video') {
-    //       sender.replaceTrack(stream.getVideoTracks()[0]);
-    //       sender.track.enabled = !videoDisabled;
-    //     }
-    //     if (sender?.track?.kind == 'audio') {
-    //       sender.replaceTrack(stream.getAudioTracks()[0]);
-    //       sender.track.enabled = !micMuted;
-    //     }
-    //   });
-    // },
     Object.values(peers.current).forEach((peer) => {
       peer.peerConnection.getSenders()
           .find((sender)=> sender?.track?.kind === 'video')
           ?.replaceTrack(stream.getVideoTracks()[0]);
     },
-
-
     );
+  };
+
+  const segmentVideo = async () => {
+    // localMedia?.getVideoTracks()[0].applyConstraints();
+    if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
+    // const constraints = localMedia?.getVideoTracks()[0]?.getConstraints();
+    const {videoWidth: width, videoHeight: height} = localVideoRef.current;
+    // eslint-disable-next-line max-len
+    // if (!constraints) throw new Error('Unable to get MediaStream Constraints');
+    // const {width, height} = constraints;
+    const body = await network.current
+        ?.segmentPersonParts(localVideoRef.current);
+    console.log('Body', body);
   };
 
   /**

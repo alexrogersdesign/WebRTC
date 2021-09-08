@@ -41,8 +41,6 @@ interface Props {
 
 const VideoAvatar = ({user, className}: Props) => {
   const classes = useStyles();
-  //   const initials = [user?.firstName?.charAt(0), user?.lastName?.charAt(0)];
-  console.log('avatar user', user);
   return (
     <div className={className}>
       <div className={classes.root}>

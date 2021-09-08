@@ -50,7 +50,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const [removeBackground, setRemoveBackground] = useState<boolean>(false);
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [localMedia, setLocalMedia] = useState<MediaStream>();
-  const [peers, setPeers] = useState<IPeers>({});
+  const peers = useRef<IPeers>({});
+  const senders = useRef<RTCRtpSender[]>([]);
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -68,6 +69,26 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       joinMeeting({id: meeting.id});
     }
   }, [meeting, localMedia]);
+
+  /**
+   * Listen for changes in media controls
+   */
+  useEffect(() => {
+    console.log('peers use effect', peers.current);
+    if (localMedia) {
+      localMedia.getAudioTracks()[0].enabled = !micMuted;
+      localMedia.getVideoTracks()[0].enabled = !videoDisabled;
+    }
+  }, [micMuted, videoDisabled]);
+  /**
+   * Listen for changes in screen sharing
+   */
+  useEffect(() => {
+    initializeMediaStream();
+    // if (!screenSharing) {
+    //   navigator.mediaDevices.getDisplayMedia.
+    // }
+  }, [screenSharing]);
 
   /**
    * Calls startup functions on first load.
@@ -95,8 +116,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
      * removes information from peer list and removes media stream.
      */
     socket.on('UserDisconnected', (user: User) => {
-      if (user.id in peers) {
-        peers[user.id].close();
+      console.log('user disconnected', user.id );
+      if (user.id in peers.current) {
+        peers.current[user.id].close();
       }
       removePeer(user.id);
       removeMedia(user.id);
@@ -135,36 +157,47 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       const stream = screenSharing?
       await navigator.mediaDevices.getDisplayMedia():
       await navigator.mediaDevices.getUserMedia( {
-        // disables video if video is disabled
-        video: !videoDisabled,
-        // disables audio if mic is muted
-        audio: !micMuted,
+        video: true,
+        audio: true,
       });
       setLocalMedia(stream);
       // stores stream in ref to be used by video element
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
       // replace streams to peers if they exist
+      changePeerStream(stream);
     } catch (err) {
       console.log(err);
     }
   };
+
   /**
    * Changes the media stream being sent to peers.
    * @param {MediaStream} stream the stream to change to
    */
   const changePeerStream = (stream:MediaStream) => {
-    Object.values(peers).forEach((peer) =>
-      peer.peerConnection?.getSenders().forEach((sender) => {
-        if (sender?.track?.kind == 'video') {
-          stream.getVideoTracks().length > 0 &&
-        sender.replaceTrack(stream.getVideoTracks()[0]);
-        }
-        if (sender?.track?.kind == 'audio') {
-          stream.getAudioTracks().length > 0 &&
-        sender.replaceTrack(stream.getAudioTracks()[0]);
-        }
-      },
-      ),
+    console.log('peers', peers.current);
+    localMedia?.getTracks();
+    // .forEach(track => senders.push(peerConnection.current. )
+    // Object.values(peers.current).forEach((peer) => {
+    //   peer.peerConnection.getSenders().forEach((sender)=> {
+    //     console.log('sender', sender);
+    //     if (sender?.track?.kind == 'video') {
+    //       sender.replaceTrack(stream.getVideoTracks()[0]);
+    //       sender.track.enabled = !videoDisabled;
+    //     }
+    //     if (sender?.track?.kind == 'audio') {
+    //       sender.replaceTrack(stream.getAudioTracks()[0]);
+    //       sender.track.enabled = !micMuted;
+    //     }
+    //   });
+    // },
+    Object.values(peers.current).forEach((peer) => {
+      peer.peerConnection.getSenders()
+          .find((sender)=> sender?.track?.kind === 'video')
+          ?.replaceTrack(stream.getVideoTracks()[0]);
+    },
+
+
     );
   };
 
@@ -223,19 +256,24 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const addPeer = (call:MediaConnection) => {
     console.log('New peer added', call);
-    setPeers({
-      ...peers,
-      [call.peer]: call,
-    });
+    // setPeers({
+    //   ...peers,
+    //   [call.peer]: call,
+    // });
+    peers.current[call.peer] = call;
+    console.log('peers after add', peers.current);
   };
   /**
    * Helper function to remove a peer from the peer list
    * @param {string} id the id of the peer
    */
   const removePeer = (id:string) => {
-    const newPeers = {...peers};
-    delete newPeers[id];
-    setPeers(newPeers);
+    console.log('removing peers', id);
+    delete peers.current[id];
+    // const newPeers = {...peers};
+    // delete newPeers[id];
+    // // setPeers(newPeers);
+    // peers = newPeers;
   };
   /**
    * Adds media stream to list of streams to display
@@ -263,7 +301,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * An incoming call is answered and the current user media (local webcam feed)
    * is sent. Cleans up connection on error or if far side closes connection
    * Adds peer to peer list
-   * @param {MediaStream} localStream local webcam stream
    */
   const setConnectingPeersListener = () => {
     console.log('set conected peer lisener');
@@ -291,7 +328,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   /**
    * Listens for new user connectected event then calls user
    * Cleans up connection on error or if far side closes connection.
-   * @param {MediaStream} localStream local webcam stream
    */
   const setExternalUserListener = () => {
     console.log('set external user listener');
@@ -343,7 +379,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     setHasJoinedMeeting(false);
     history.push('');
     setExternalMedia([]);
-    Object.values(peers).forEach((peer) => peer.close());
+    Object.values(peers.current).forEach((peer) => peer.close());
   };
 
   /**

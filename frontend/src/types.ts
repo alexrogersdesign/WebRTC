@@ -36,7 +36,7 @@ export interface ISocketIOContex {
    setCurrentUserID: (userID: string) => void,
    meeting: Meeting | null,
    externalMedia: IExternalMedia[],
-   peers: IPeers,
+   peers: React.MutableRefObject<IPeers | null>,
    peerConnection: React.MutableRefObject<Peer | null>,
    localVideoRef: React.RefObject<HTMLVideoElement>,
    initializeMediaStream: () => void,

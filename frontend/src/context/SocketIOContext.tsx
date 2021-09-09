@@ -103,10 +103,17 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     // bodyPix.load().then((net: bodyPix.BodyPix) => {
     //   setBodypixnet(net);
     // });
-    async () => network.current = await bodyPix
-        // .load({modelUrl: '../util/mobilenet@1.0.0.js'});
-        .load();
-    setInterval(()=> segmentVideo(), 100);
+    const loadModel = async () => {
+      if (!network.current) {
+        network.current= await bodyPix.load();
+      }
+      // network.current = model;
+      console.log('model', network.current);
+      setInterval(()=> segmentVideo(), 1000);
+    };
+    // .load({modelUrl: '../util/mobilenet@1.0.0.js'});
+    loadModel;
+    console.log('model loaded', network.current);
   }, []);
 
   /**
@@ -210,6 +217,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     // eslint-disable-next-line max-len
     // if (!constraints) throw new Error('Unable to get MediaStream Constraints');
     // const {width, height} = constraints;
+    if (!network.current) throw new Error('model not loaded');
     const body = await network.current
         ?.segmentPersonParts(localVideoRef.current);
     console.log('Body', body);

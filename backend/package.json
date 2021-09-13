@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
-    "debug": "DEBUG=* nodemon index.js"
+    "debug": "DEBUG=* nodemon index.js",
+    "peer": "peerjs --port 5001"
   },
   "repository": {
     "type": "git",

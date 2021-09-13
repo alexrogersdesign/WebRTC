@@ -11,9 +11,9 @@ import * as bodyPix from '@tensorflow-models/body-pix';
 // import '@tensorflow/tfjs-core';
 // import '@tensorflow/tfjs-converter';
 // import '@tensorflow/tfjs-backend-webgl';
-import * as tf from '@tensorflow/tfjs-core';
-
-
+// import * as tf from '@tensorflow/tfjs-core';
+import * as tf from '@tensorflow/tfjs';
+tf.getBackend();
 import {
   Meeting,
   IExternalMedia,
@@ -57,6 +57,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const [localMedia, setLocalMedia] = useState<MediaStream>();
   const peers = useRef<IPeers>({});
   const senders = useRef<RTCRtpSender[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>();
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
   const network = useRef<bodyPix.BodyPix>();
@@ -112,7 +113,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       setInterval(()=> segmentVideo(), 1000);
     };
     // .load({modelUrl: '../util/mobilenet@1.0.0.js'});
-    loadModel;
+    loadModel();
     console.log('model loaded', network.current);
   }, []);
 
@@ -210,17 +211,36 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
 
   const segmentVideo = async () => {
-    // localMedia?.getVideoTracks()[0].applyConstraints();
     if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
-    // const constraints = localMedia?.getVideoTracks()[0]?.getConstraints();
+    // Creates an offscreen canvas to be used in video segmentation
     const {videoWidth: width, videoHeight: height} = localVideoRef.current;
-    // eslint-disable-next-line max-len
-    // if (!constraints) throw new Error('Unable to get MediaStream Constraints');
-    // const {width, height} = constraints;
+    const canvas = new HTMLCanvasElement();
+    canvas.width = width;
+    canvas.height = height;
+    canvasRef.current = canvas;
+
     if (!network.current) throw new Error('model not loaded');
-    const body = await network.current
-        ?.segmentPersonParts(localVideoRef.current);
-    console.log('Body', body);
+    // Check if video is ready
+    if (localVideoRef.current.readyState !== 4) {
+      return;
+    }
+    // eslint-disable-next-line max-len
+    const body = await network.current?.segmentPersonParts(localVideoRef.current);
+    // console.log('Body', body);
+    const detectedPersonParts = bodyPix.toColoredPartMask(body);
+    bodyPix.drawMask(
+        canvasRef.current, // The destination (OffscreenCanvas)
+        localVideoRef.current, // The video source
+        detectedPersonParts, // Person parts detected in the video
+        .7, // The opactiy value of the mask
+        0, // The density of the mask
+        false, // If the output video should be flipped horizontally
+    );
+    const canvasStream = canvasRef.current.captureStream();
+    if (!canvasStream) {
+      throw new Error('No canvas found after segmentation attempt');
+    };
+    changePeerStream(canvasStream);
   };
 
   /**

@@ -2167,6 +2167,13 @@
   "resolved" "https://registry.npmjs.org/@types/validator/-/validator-13.6.3.tgz"
   "version" "13.6.3"
 
+"@types/w3c-image-capture@^1.0.5":
+  "integrity" "sha512-MzkDgLz8bJLzxMlPJYoIQbuFdbYzydlr1DQ3jPcqEZhEWBACxsqvrUB99CegClXCxoTs2BDDdbuvAPOZ/zec1g=="
+  "resolved" "https://registry.npmjs.org/@types/w3c-image-capture/-/w3c-image-capture-1.0.5.tgz"
+  "version" "1.0.5"
+  dependencies:
+    "@types/webrtc" "*"
+
 "@types/webgl-ext@0.0.30":
   "integrity" "sha512-LKVgNmBxN0BbljJrVUwkxwRYqzsAEPcZOe6S2T6ZaBDIrFp0qu4FNlpc5sM1tGbXUYFgdVQIoeLk1Y1UoblyEg=="
   "resolved" "https://registry.npmjs.org/@types/webgl-ext/-/webgl-ext-0.0.30.tgz"
@@ -2197,6 +2204,11 @@
     "@types/uglify-js" "*"
     "@types/webpack-sources" "*"
     "source-map" "^0.6.0"
+
+"@types/webrtc@*":
+  "integrity" "sha512-6RtNrygZrRP8dPMzYejjfRQHiNOGqb6T9dbXaDXorm9opA2N8t6VfFKtHPoJUHErjsSBX/XhDDEf+r+ptmLZJw=="
+  "resolved" "https://registry.npmjs.org/@types/webrtc/-/webrtc-0.0.30.tgz"
+  "version" "0.0.30"
 
 "@types/yargs-parser@*":
   "integrity" "sha512-37RSHht+gzzgYeobbG+KWryeAW8J33Nhr69cjTqSYymXVZEN9NbRYWoYlRtDhHKPVT1FyNKwaTPC1NynKZpzRA=="
@@ -6336,6 +6348,11 @@
   "integrity" "sha512-BMpfD7PpiETpBl/A6S498BaIJ6Y/ABT93ETbby2fP00v4EbvPBXWEoaR1UBPKs3iR53pJY7EtZk5KACI57i1Uw=="
   "resolved" "https://registry.npmjs.org/ignore/-/ignore-5.1.8.tgz"
   "version" "5.1.8"
+
+"image-capture@^0.4.0":
+  "integrity" "sha512-6RWTfqC4ij0AldG+6sQ51XSHTSbwfqMSjVl1GtwNBzbW4UrcfGZeB1Kn749BccvtLb04g5+jSTf1D7q3qHcxpA=="
+  "resolved" "https://registry.npmjs.org/image-capture/-/image-capture-0.4.0.tgz"
+  "version" "0.4.0"
 
 "immer@8.0.1":
   "integrity" "sha512-aqXhGP7//Gui2+UrEtvxZxSquQVXTpZ7KDxfCcKAF3Vysvw0CViVaW9RZ1j1xlIYqaaaipBoqdqeibkc18PNvA=="

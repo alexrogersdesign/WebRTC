@@ -7,6 +7,9 @@
       "esnext",
       "es6"
     ],
+    "types": [
+      "./node_modules/@types/w3c-image-capture"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

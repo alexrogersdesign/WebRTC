@@ -57,7 +57,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const [localMedia, setLocalMedia] = useState<MediaStream>();
   const peers = useRef<IPeers>({});
   const senders = useRef<RTCRtpSender[]>([]);
-  const canvasRef = useRef<HTMLCanvasElement>();
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
   const network = useRef<bodyPix.BodyPix>();
@@ -104,6 +104,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     // bodyPix.load().then((net: bodyPix.BodyPix) => {
     //   setBodypixnet(net);
     // });
+    if (!removeBackground) return;
     const loadModel = async () => {
       if (!network.current) {
         network.current= await bodyPix.load();
@@ -115,7 +116,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     // .load({modelUrl: '../util/mobilenet@1.0.0.js'});
     loadModel();
     console.log('model loaded', network.current);
-  }, []);
+  }, [removeBackground]);
 
   /**
    * Calls startup functions on first load.
@@ -211,26 +212,34 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
 
   const segmentVideo = async () => {
-    if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
-    // Creates an offscreen canvas to be used in video segmentation
-    const {videoWidth: width, videoHeight: height} = localVideoRef.current;
-    const canvas = new HTMLCanvasElement();
+    // TODO get framerate
+    // if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
+    // if (!localMedia?.getVideoTracks()[0].getSettings()) {
+    //   throw new Error('Unable to get webcam stream');
+    // }
+    // const {videoWidth: width, videoHeight: height} = localVideoRef.current;
+    const localMediaVideo = localMedia?.getVideoTracks()[0];
+    const width = localMediaVideo?.getSettings().width;
+    const height = localMediaVideo?.getSettings().height;
+    if (!canvasRef.current) throw new Error('Unable to get canvas');
+    const canvas = canvasRef.current;
+    if (!width || !height) throw new Error('Unable to get video settings ');
     canvas.width = width;
     canvas.height = height;
-    canvasRef.current = canvas;
 
     if (!network.current) throw new Error('model not loaded');
     // Check if video is ready
-    if (localVideoRef.current.readyState !== 4) {
-      return;
-    }
+    // if (localVideoRef.current.readyState !== 4) {
+    //   return;
+    // }
+
     // eslint-disable-next-line max-len
     const body = await network.current?.segmentPersonParts(localVideoRef.current);
     // console.log('Body', body);
     const detectedPersonParts = bodyPix.toColoredPartMask(body);
     bodyPix.drawMask(
         canvasRef.current, // The destination (OffscreenCanvas)
-        localVideoRef.current, // The video source
+        new ImageCapture(localMediaVideo), // The video source
         detectedPersonParts, // Person parts detected in the video
         .7, // The opactiy value of the mask
         0, // The density of the mask
@@ -240,7 +249,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!canvasStream) {
       throw new Error('No canvas found after segmentation attempt');
     };
+    setLocalMedia(canvasStream);
     changePeerStream(canvasStream);
+    // localVideoRef.current.srcObject = canvasStream;
   };
 
   /**
@@ -443,6 +454,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         peers,
         peerConnection,
         localVideoRef,
+        canvasRef,
         initializeMediaStream,
         setPeerOpenedConnectionListner,
         endConnection,

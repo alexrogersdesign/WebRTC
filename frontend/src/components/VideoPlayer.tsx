@@ -92,7 +92,11 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 const VideoPlayer = ({local, stream, user}: Props)=> {
-  const {localVideoRef, canvasRef} = useContext(SocketIOContext);
+  const {
+    localVideoRef,
+    canvasRef,
+    removeBackground,
+  } = useContext(SocketIOContext);
   const classes = useStyles();
   return (
     <>
@@ -100,18 +104,22 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
         local &&
         <div className={classes.localContainer}>
           <Paper className={classes.paper} elevation={3} variant="outlined" >
-            <video
-              className={classes.video}
-              ref={localVideoRef}
-              playsInline
-              muted
-              autoPlay
-            />
+            {!removeBackground && (
+              <video
+                className={classes.video}
+                ref={localVideoRef}
+                playsInline
+                muted
+                autoPlay
+              />
+            )}
+            {removeBackground && (
+              <canvas ref={canvasRef}/>
+            )}
             <div className={classes.controls}>
               <WebcamControls />
             </div>
           </Paper>
-          <canvas ref={canvasRef}/>
         </div>
       }
       {

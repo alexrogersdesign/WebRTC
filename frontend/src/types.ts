@@ -39,6 +39,7 @@ export interface ISocketIOContex {
    peers: React.MutableRefObject<IPeers | null>,
    peerConnection: React.MutableRefObject<Peer | null>,
    localVideoRef: React.RefObject<HTMLVideoElement>,
+   canvasRef: React.RefObject<HTMLCanvasElement>,
    initializeMediaStream: () => void,
    setPeerOpenedConnectionListner: () => void,
    connectToUser: (externalUser: string) => void,

@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 const VideoPlayer = ({local, stream, user}: Props)=> {
-  const {localVideoRef} = useContext(SocketIOContext);
+  const {localVideoRef, canvasRef} = useContext(SocketIOContext);
   const classes = useStyles();
   return (
     <>
@@ -111,6 +111,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
               <WebcamControls />
             </div>
           </Paper>
+          <canvas ref={canvasRef}/>
         </div>
       }
       {

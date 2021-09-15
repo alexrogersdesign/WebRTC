@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import {Paper} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
@@ -98,14 +99,15 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
               playsInline
               muted
               autoPlay
-              // style={{display: removeBackground? 'none': 'block'}}
+              style={{display: removeBackground? 'none': 'block'}}
             />
             <canvas
               className={classes.localVideo}
               ref={canvasRef}
               style={{
                 display: !removeBackground? 'none': 'block',
-                backgroundImage: `url(${tree})`,
+                // backgroundImage: `url(${tree})`,
+                // backgroundSize: 'cover',
               }}
             />
             <div className={classes.controls}>

@@ -6,7 +6,7 @@ import {User} from '../types';
 import {SocketIOContext} from '../context/SocketIOContext';
 import VideoAvatar from './VideoAvatar';
 import WebcamControls from './WebcamControls';
-
+import tree from '../util/img/tree.jpeg';
 type Props = {
   stream?: MediaStream | undefined;
   local?: boolean,
@@ -27,25 +27,24 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[2],
     },
     video: {
-      // flex: '0 2 auto',
       width: '100% !important',
       height: 'auto !important',
       borderRadius: 'inherit',
       position: 'relative',
     },
+    localVideo: {
+      width: '100% !important',
+      height: 'auto !important',
+      borderRadius: 'inherit',
+      position: 'relative',
+      transform: 'rotateY(180deg)',
+    },
     externalContainer: {
       position: 'relative',
-      // display: 'block',
-      // width: '75% !important',
-      // height: 'auto !important',
       borderRadius: '10px',
       // flex: '0 2 auto',
       flexWrap: 'nowrap',
-      // flexDirection: 'column',
-      // alignItems: 'center',
-      // alignContent: 'center',
-      // justifyContent: 'center',
-      // padding: '0 2em 2em',
+
       [theme.breakpoints.down('xs')]: {
         // width: '40%',
       },
@@ -70,31 +69,20 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     controls: {
-      // display: 'block-level',
-      // flexBasis: '100%',
       zIndex: 99,
-      // height: '500px',
-      // bottom: '20px !important',
-      // left: '30px',
       borderRadius: '10',
       marginTop: '-13%',
       width: '100%',
       height: '100%',
-      // top: 5,
-      // right: 20,
-      // padding: 20,
-      // postion: 'absolute !important',
-      // border: '10px solid',
-
     },
   }),
 );
-
 
 const VideoPlayer = ({local, stream, user}: Props)=> {
   const {
     localVideoRef,
     canvasRef,
+    // eslint-disable-next-line no-unused-vars
     removeBackground,
   } = useContext(SocketIOContext);
   const classes = useStyles();
@@ -104,18 +92,22 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
         local &&
         <div className={classes.localContainer}>
           <Paper className={classes.paper} elevation={3} variant="outlined" >
-            {!removeBackground && (
-              <video
-                className={classes.video}
-                ref={localVideoRef}
-                playsInline
-                muted
-                autoPlay
-              />
-            )}
-            {removeBackground && (
-              <canvas ref={canvasRef}/>
-            )}
+            <video
+              className={classes.localVideo}
+              ref={localVideoRef}
+              playsInline
+              muted
+              autoPlay
+              // style={{display: removeBackground? 'none': 'block'}}
+            />
+            <canvas
+              className={classes.localVideo}
+              ref={canvasRef}
+              style={{
+                display: !removeBackground? 'none': 'block',
+                backgroundImage: `url(${tree})`,
+              }}
+            />
             <div className={classes.controls}>
               <WebcamControls />
             </div>

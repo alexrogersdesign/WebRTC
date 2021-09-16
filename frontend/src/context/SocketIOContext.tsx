@@ -97,20 +97,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   }, [screenSharing]);
 
   /**
-   * Loads background replacing model
-   */
-  useEffect(() => {
-    // if (!removeBackground) return;
-    const loadModel = async () => {
-      // if (!network.current) {
-      //   network.current= await bodyPix.load();
-      // }
-      segmentVideo();
-    };
-    loadModel();
-  }, [removeBackground]);
-
-  /**
    * Calls startup functions on first load.
    */
   useEffect(() => {
@@ -205,9 +191,25 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     );
   };
 
+  /**
+   * Loads background replacing model
+   */
+  useEffect(() => {
+    // if (!removeBackground) return;
+    const loadModel = async () => {
+      // if (!network.current) {
+      //   network.current= await bodyPix.load();
+      // }
+      segmentVideo();
+    };
+    loadModel();
+  }, [, removeBackground]);
+
+
   const tempVideo = useRef(document.createElement('video'));
   // a variable used to stop the segmenting animation from running
   const segmentingStopped = useRef(false);
+  const [segmentationReady, setSegmentationReady] = useState(false);
 
   const segmentVideo = async () => {
     // TODO update request animation frame to render when not focused
@@ -222,10 +224,10 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       localMedia && changePeerStream(localMedia);
       requestID && cancelAnimationFrame(requestID);
       segmentingStopped.current = true;
+      setSegmentationReady(false);
       return;
     };
     if (!network.current) network.current= await bodyPix.load();
-
 
     const webcam = tempVideo.current;
     if (!canvasRef.current) return;
@@ -239,7 +241,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!network.current) throw new Error('model not loaded');
     const processImage = async () => {
       if (!segmentingStopped.current) requestID = requestAnimationFrame(processImage);
-      console.log('remove background', removeBackground);
       if (tempVideo.current.readyState !== 4) return;
       const modelConfig= {
         internalResolution: .25, // how accurate the model is (time tradeoff)
@@ -266,6 +267,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!canvasStream) {
       throw new Error('No canvas found after segmentation attempt');
     };
+    setSegmentationReady(true);
     changePeerStream(canvasStream);
     outgoingMedia.current= canvasStream;
   };
@@ -484,6 +486,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         videoDisabled,
         screenSharing,
         removeBackground,
+        segmentationReady,
       }}
     >
       {children}

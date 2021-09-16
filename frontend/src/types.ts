@@ -55,6 +55,7 @@ export interface ISocketIOContex {
    micMuted: boolean,
    videoDisabled: boolean,
    screenSharing: boolean,
-   removeBackground: boolean
+   removeBackground: boolean,
+   segmentationReady: boolean,
 }
 

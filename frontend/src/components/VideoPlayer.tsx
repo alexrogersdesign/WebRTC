@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect, useRef} from 'react';
 import {Paper} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {User} from '../types';
@@ -84,31 +84,49 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
     localVideoRef,
     canvasRef,
     removeBackground,
+    segmentationReady,
   } = useContext(SocketIOContext);
   const classes = useStyles();
+  const [showBackground, setShowBackground] = useState(true);
+  useEffect(() => {
+    console.log('removeBackground', removeBackground);
+    console.log('segmentationReady', segmentationReady);
+    if (removeBackground && segmentationReady) setShowBackground(false);
+    else setShowBackground(true);
+  }, [removeBackground, segmentationReady]);
   return (
     <>
       {
         local &&
         <div className={classes.localContainer}>
           <Paper className={classes.paper} elevation={3} variant="outlined" >
-            <video
-              className={classes.localVideo}
-              ref={localVideoRef}
-              playsInline
-              muted
-              autoPlay
-              style={{display: removeBackground? 'none': 'block'}}
-            />
-            <canvas
-              className={classes.localVideo}
-              ref={canvasRef}
-              style={{
-                display: !removeBackground? 'none': 'block',
+            { (
+              <video
+                className={classes.localVideo}
+                ref={localVideoRef}
+                playsInline
+                muted
+                autoPlay
+                style={{
+                  display: showBackground?
+                'block' :
+                'none',
+                }}
+              />
+            )}
+            { (
+              <canvas
+                className={classes.localVideo}
+                ref={canvasRef}
+                style={{
+                  display: !showBackground?
+                 'block':
+                 'none',
                 // backgroundImage: `url(${tree})`,
                 // backgroundSize: 'cover',
-              }}
-            />
+                }}
+              />
+            )}
             <div className={classes.controls}>
               <WebcamControls />
             </div>

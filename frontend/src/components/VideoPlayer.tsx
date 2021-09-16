@@ -83,7 +83,6 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
   const {
     localVideoRef,
     canvasRef,
-    // eslint-disable-next-line no-unused-vars
     removeBackground,
   } = useContext(SocketIOContext);
   const classes = useStyles();

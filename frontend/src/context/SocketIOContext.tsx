@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
 import React, {createContext, useEffect, useState, useRef} from 'react';
 import {useHistory, withRouter} from 'react-router-dom';
@@ -108,8 +109,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       }
       console.log('model loaded', network.current);
       // console.log('model', network.current);
-      setInterval(()=> segmentVideo(), 1000);
+      // setInterval(()=> segmentVideo(), 250);
       // await drawBackground();
+      segmentVideo();
       console.log('drawing background');
     };
     loadModel();
@@ -188,6 +190,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       setLocalMedia(stream);
       // stores stream in ref to be used by video element
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      tempVideo.current.srcObject = stream;
       // replace streams to peers if they exist
       changePeerStream(stream);
     } catch (err) {
@@ -208,76 +211,146 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     );
   };
 
+  const tempVideo = useRef(document.createElement('video'));
+
+  // const segmentVideo = async () => {
+  //   // TODO get framerate
+  //   // const tempVideo = document.createElement('video');
+  //   if (!localMedia) return;
+  //   if (!localVideoRef.current) return;
+  //   // tempVideo.current.srcObject = localMedia;
+  //   // if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
+  //   const localMediaVideo = localMedia?.getVideoTracks()[0];
+  //   const width = localMediaVideo?.getSettings().width;
+  //   const height = localMediaVideo?.getSettings().height;
+  //   if (!canvasRef.current) return;
+  //   tempVideo.current.load();
+  //   tempVideo.current.playsInline= true;
+  //   tempVideo.current.autoplay = true;
+  //   const canvas = canvasRef.current;
+  //   // if (!width || !height) throw new Error('Unable to get video settings');
+  //   if (!width || !height) return;
+  //   canvas.width = width;
+  //   canvas.height = height;
+  //   if (!network.current) throw new Error('model not loaded');
+  //   const processImage = async () => {
+  //     // eslint-disable-next-line max-len
+  //     const body = await network.current?.segmentPersonParts(tempVideo.current);
+  //     // console.log('Body', body);
+  //     if (!body) throw new Error('Failure at segmenting');
+  //     const detectedPersonParts = bodyPix.toColoredPartMask(body);
+  //     bodyPix.drawMask(
+  //         canvasRef.current, // The destination
+  //         tempVideo.current, // The video source
+  //         detectedPersonParts, // Person parts detected in the video
+  //         .7, // The opactiy value of the mask
+  //         .5, // The density of the mask
+  //         false, // If the output video should be flipped horizontally
+  //     );
+  //     //   if (!localVideoRef.current) throw new Error('Local webcam missing');
+  //     //   localVideoRef.current.srcObject = canvasStream;
+  //   };
+  //   // Check if video is ready
+  //   tempVideo.current.onloadeddata = () => processImage();
+  //   const canvasStream = canvasRef.current?.captureStream();
+  //   if (!canvasStream) {
+  //     throw new Error('No canvas found after segmentation attempt');
+  //   };
+  //   // setLocalMedia(canvasStream);
+  //   // changePeerStream(canvasStream);
+  //   console.log('temp video', tempVideo.current.srcObject);
+  //   // tempVideo.current.remove();
+  // };
   const segmentVideo = async () => {
     // TODO get framerate
-    const tempVideo = document.createElement('video');
+    // const tempVideo = document.createElement('video');
     if (!localMedia) return;
-    tempVideo.srcObject = localMedia;
+    if (!localVideoRef.current) return;
+    // tempVideo.current.srcObject = localMedia;
     // if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
     const localMediaVideo = localMedia?.getVideoTracks()[0];
     const width = localMediaVideo?.getSettings().width;
     const height = localMediaVideo?.getSettings().height;
     if (!canvasRef.current) return;
+    tempVideo.current.load();
+    tempVideo.current.playsInline= true;
+    tempVideo.current.autoplay = true;
     const canvas = canvasRef.current;
     // if (!width || !height) throw new Error('Unable to get video settings');
     if (!width || !height) return;
     canvas.width = width;
     canvas.height = height;
-
     if (!network.current) throw new Error('model not loaded');
-
     const processImage = async () => {
+      if (removeBackground) requestAnimationFrame(processImage);
+      if (tempVideo.current.readyState !== 4) return;
       // eslint-disable-next-line max-len
-      const body = await network.current?.segmentPersonParts(tempVideo);
+      const modelConfig = {
+        flipHorizontal: false, // whether the image if flipped horizontally
+        internalResolution: 'low', // how accurate the model is (time tradeoff)
+        segmentationThreshold: 0.9, // to what confidence level background is removed
+      };
+      const body = await network.current?.segmentPerson(tempVideo.current);
       // console.log('Body', body);
-      const detectedPersonParts = bodyPix.toColoredPartMask(body);
+      if (!body) throw new Error('Failure at segmenting');
+      const detectedPersonParts = bodyPix.toMask(body);
       bodyPix.drawMask(
-          canvasRef.current, // The destination (OffscreenCanvas)
-          tempVideo, // The video source
+          canvasRef.current, // The destination
+          tempVideo.current, // The video source
           detectedPersonParts, // Person parts detected in the video
-          .7, // The opactiy value of the mask
-          0, // The density of the mask
+          1, // The opacity value of the mask
+          10, // The amount of blur
           false, // If the output video should be flipped horizontally
       );
-      const canvasStream = canvasRef.current.captureStream();
-      if (!canvasStream) {
-        throw new Error('No canvas found after segmentation attempt');
-      };
-      setLocalMedia(canvasStream);
-      changePeerStream(canvasStream);
-      // localVideoRef.current.srcObject = canvasStream;
+      //   if (!localVideoRef.current) throw new Error('Local webcam missing');
+      //   localVideoRef.current.srcObject = canvasStream;
     };
     // Check if video is ready
-    tempVideo.onloadeddata = () => processImage();
+    tempVideo.current.onloadeddata = () => processImage();
+    const canvasStream = canvasRef.current?.captureStream();
+    if (!canvasStream) {
+      throw new Error('No canvas found after segmentation attempt');
+    };
+    // setLocalMedia(canvasStream);
+    // changePeerStream(canvasStream);
+    console.log('temp video', tempVideo.current.srcObject);
+    // tempVideo.current.remove();
   };
 
   const drawBackground = async () => {
-    if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
-    const localMediaVideo = localMedia?.getVideoTracks()[0];
-    const width = localMediaVideo?.getSettings().width;
-    const height = localMediaVideo?.getSettings().height;
-    if (!width || !height) throw new Error('Unable to get video settings ');
-    const canvas = canvasRef?.current;
+    // if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
+    const webcam = tempVideo.current;
+    // const localMediaVideo = localMedia?.getVideoTracks()[0];
+    // const width = localMediaVideo?.getSettings().width;
+    // const height = localMediaVideo?.getSettings().height;
+    // if (!width || !height) throw new Error('Unable to get video settings ');
+    if (!canvasRef.current) return;
+    const canvas = canvasRef.current;
+    webcam.width = canvas.width = webcam.videoWidth;
+    webcam.height = canvas.height = webcam.videoHeight;
+    const width = webcam.width;
+    const height = webcam.height;
     const context = canvas?.getContext('2d');
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = width;
-    tempCanvas.height = height;
     context?.clearRect(0, 0, width, height);
-    const tempCtx = tempCanvas.getContext('2d');
     if (!network.current) throw new Error('model not loaded');
     // eslint-disable-next-line max-len
     // const segment = await network.current.segmentPerson(localVideoRef.current);
     // const mask = bodyPix.toMask(segment);
     (async function drawMask() {
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = width;
+      tempCanvas.height = height;
+      const tempCtx = tempCanvas.getContext('2d');
       if (!network.current) throw new Error('model not loaded');
-      requestAnimationFrame(drawMask);
+      if (removeBackground) requestAnimationFrame(drawMask);
       // eslint-disable-next-line max-len
-      const segment = await network.current.segmentPerson(localVideoRef.current);
+      const segment = await network.current.segmentPerson(tempVideo.current);
       const mask = bodyPix.toMask(segment);
       tempCtx?.putImageData(mask, 0, 0);
-      if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
+      // if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
       if (!context) throw new Error('Unable to get canvas context');
-      context.drawImage(localVideoRef.current, 0, 0, height, width );
+      tempCtx?.drawImage(tempVideo.current, 0, 0, height, width );
+      console.log('drawing temp canvas');
       context.save();
       context.globalCompositeOperation = 'destination-out';
       context.drawImage(tempCanvas, 0, 0, width, height);

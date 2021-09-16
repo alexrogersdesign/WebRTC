@@ -69,21 +69,21 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * require meeting data.
    */
   useEffect(() => {
-    if (meeting && meeting.id && !hasJoinedMeeting && localMedia) {
+    if (meeting && meeting.id && !hasJoinedMeeting && outgoingMedia.current) {
       setConnectingPeersListener();
       setExternalUserListener();
       joinMeeting({id: meeting.id});
     }
-  }, [meeting, localMedia]);
+  }, [meeting, outgoingMedia.current]);
 
   /**
    * Listen for changes in media controls
    */
   useEffect(() => {
     console.log('peers use effect', peers.current);
-    if (localMedia) {
-      localMedia.getAudioTracks()[0].enabled = !micMuted;
-      localMedia.getVideoTracks()[0].enabled = !videoDisabled;
+    if (outgoingMedia.current) {
+      outgoingMedia.current.getAudioTracks()[0].enabled = !micMuted;
+      outgoingMedia.current.getVideoTracks()[0].enabled = !videoDisabled;
     }
   }, [micMuted, videoDisabled]);
   /**
@@ -181,6 +181,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         audio: true,
       });
       setLocalMedia(stream);
+      outgoingMedia.current = stream;
       // stores stream in ref to be used by video element
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
       tempVideo.current.srcObject = stream;
@@ -207,7 +208,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const tempVideo = useRef(document.createElement('video'));
 
   const segmentVideo = async () => {
+    // TODO update request animation frame to render when not focused
     if (!removeBackground && localVideoRef.current) {
+      outgoingMedia.current = localMedia;
       localMedia && changePeerStream(localMedia);
       return;
     };
@@ -231,7 +234,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         segmentationThreshold: 0.7, // to what confidence level background is removed
       };
       const body = await network.current?.segmentPerson(tempVideo.current, modelConfig);
-      // console.log('Body', body);
       if (!body) throw new Error('Failure at segmenting');
       const detectedPersonParts = bodyPix.toMask(body);
       bodyPix.drawMask(
@@ -242,8 +244,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
           9, // The amount of blur
           false, // If the output video should be flipped horizontally
       );
-      //   if (!localVideoRef.current) throw new Error('Local webcam missing');
-      //   localVideoRef.current.srcObject = canvasStream;
     };
     // Check if video is ready
     tempVideo.current.onloadeddata = () => processImage();
@@ -251,52 +251,10 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!canvasStream) {
       throw new Error('No canvas found after segmentation attempt');
     };
-    segmentedVideo.current = canvasStream;
     changePeerStream(canvasStream);
-    console.log('temp video', tempVideo.current.srcObject);
-    // tempVideo.current.remove();
+    outgoingMedia.current= canvasStream;
   };
 
-  const drawBackground = async () => {
-    // if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
-    const webcam = tempVideo.current;
-    // const localMediaVideo = localMedia?.getVideoTracks()[0];
-    // const width = localMediaVideo?.getSettings().width;
-    // const height = localMediaVideo?.getSettings().height;
-    // if (!width || !height) throw new Error('Unable to get video settings ');
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    webcam.width = canvas.width = webcam.videoWidth;
-    webcam.height = canvas.height = webcam.videoHeight;
-    const width = webcam.width;
-    const height = webcam.height;
-    const context = canvas?.getContext('2d');
-    context?.clearRect(0, 0, width, height);
-    if (!network.current) throw new Error('model not loaded');
-    // eslint-disable-next-line max-len
-    // const segment = await network.current.segmentPerson(localVideoRef.current);
-    // const mask = bodyPix.toMask(segment);
-    (async function drawMask() {
-      const tempCanvas = document.createElement('canvas');
-      tempCanvas.width = width;
-      tempCanvas.height = height;
-      const tempCtx = tempCanvas.getContext('2d');
-      if (!network.current) throw new Error('model not loaded');
-      if (removeBackground) requestAnimationFrame(drawMask);
-      // eslint-disable-next-line max-len
-      const segment = await network.current.segmentPerson(tempVideo.current);
-      const mask = bodyPix.toMask(segment);
-      tempCtx?.putImageData(mask, 0, 0);
-      // if (!localVideoRef.current) throw new Error('Unable to get Video Ref');
-      if (!context) throw new Error('Unable to get canvas context');
-      tempCtx?.drawImage(tempVideo.current, 0, 0, height, width );
-      console.log('drawing temp canvas');
-      context.save();
-      context.globalCompositeOperation = 'destination-out';
-      context.drawImage(tempCanvas, 0, 0, width, height);
-      context.restore;
-    })();
-  };
 
   /**
    * Starts connection with peer server and retreives user id
@@ -400,7 +358,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('set conected peer lisener');
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
-      call.answer(localMedia);
+      call.answer(outgoingMedia.current);
       console.log('call answered', call);
 
       call.on('stream', (stream) => {
@@ -438,8 +396,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         },
       };
       if (!peerConnection.current) throw new Error('Missing peer connection');
-      if (!localMedia) throw new Error('Missing webcam stream');
-      const call = peerConnection.current.call(user.id, localMedia, metadata);
+      if (!outgoingMedia.current) throw new Error('Missing webcam stream');
+      const call = peerConnection.current.call(user.id, outgoingMedia.current, metadata);
       console.log('Placing call', call);
       // when a stream is received, add it to external media
       call.on('stream', (stream: MediaStream) => {

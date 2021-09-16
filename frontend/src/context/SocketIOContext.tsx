@@ -206,15 +206,26 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
 
   const tempVideo = useRef(document.createElement('video'));
+  // a variable used to stop the segmenting animation from running
+  const segmentingStopped = useRef(false);
 
   const segmentVideo = async () => {
     // TODO update request animation frame to render when not focused
-    if (!removeBackground && localVideoRef.current) {
+    let requestID;
+    segmentingStopped.current = false;
+    /**
+     * Check if removeBackground is true.
+     * If not, cleanup process and reset outgoing treams to the original camera feed.
+     */
+    if (!removeBackground) {
       outgoingMedia.current = localMedia;
       localMedia && changePeerStream(localMedia);
+      requestID && cancelAnimationFrame(requestID);
+      segmentingStopped.current = true;
       return;
     };
     if (!network.current) network.current= await bodyPix.load();
+
 
     const webcam = tempVideo.current;
     if (!canvasRef.current) return;
@@ -227,7 +238,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
 
     if (!network.current) throw new Error('model not loaded');
     const processImage = async () => {
-      if (removeBackground) requestAnimationFrame(processImage);
+      if (!segmentingStopped.current) requestID = requestAnimationFrame(processImage);
+      console.log('remove background', removeBackground);
       if (tempVideo.current.readyState !== 4) return;
       const modelConfig= {
         internalResolution: .25, // how accurate the model is (time tradeoff)
@@ -246,7 +258,10 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       );
     };
     // Check if video is ready
-    tempVideo.current.onloadeddata = () => processImage();
+    tempVideo.current.onloadeddata = () => requestID = requestAnimationFrame(processImage);
+    // requestID = requestAnimationFrame(processImage);
+    // cancel animation
+    if (requestID) cancelAnimationFrame(requestID);
     const canvasStream = canvasRef.current?.captureStream();
     if (!canvasStream) {
       throw new Error('No canvas found after segmentation attempt');

@@ -8,7 +8,6 @@ import env from 'react-dotenv';
 import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
 import {v4 as uuidv4} from 'uuid';
-import * as bodyPix from '@tensorflow-models/body-pix';
 import * as tf from '@tensorflow/tfjs';
 tf.getBackend();
 import {
@@ -28,7 +27,7 @@ interface Props extends ChildrenProps {
 
 }
 
-// Context item to be passed to app
+//* Context item to be passed to app
 const SocketIOContext = createContext<Partial<ISocketIOContext>>({});
 let roomParam = new URLSearchParams(window.location.search).get('room');
 console.log('room param', roomParam);
@@ -152,19 +151,36 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const getNewMeeting = async () =>{
     socket.emit('NewMeeting'); ;
   };
+
+  const screenStream = useRef<MediaStream>();
+
+  useEffect(() => {
+    if (!screenStream.current) setScreenSharing(false);
+  }, [screenStream.current]);
+
   /**
    * Get audio and video stream from the browser
    * Will prompt user for permissions
    */
   const initializeMediaStream = async () => {
     try {
-      // retrieves webcam or screen share stream based on screenSharing variable
-      const stream = screenSharing?
-      await navigator.mediaDevices.getDisplayMedia():
-      await navigator.mediaDevices.getUserMedia( {
-        video: true,
-        audio: true,
-      });
+      //* retrieves webcam or screen share stream based on screenSharing variable
+      let stream;
+      if (screenSharing && screenStream) {
+        screenStream.current = stream = await navigator.mediaDevices.getDisplayMedia();
+        stream.getVideoTracks()[0].addEventListener('ended', () => setScreenSharing(false));
+      } else {
+        stream = await navigator.mediaDevices.getUserMedia( {
+          video: true,
+          audio: true,
+        });
+        screenStream.current = undefined;
+      }
+      console.log('screen streaming', screenStream.current);
+      if (!screenStream.current) {
+        setScreenSharing(false);
+      }
+
       setLocalMedia(stream);
       outgoingMedia.current = stream;
       //* stores stream in ref to be used by video element
@@ -173,6 +189,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       changePeerStream(stream);
     } catch (err) {
       console.log(err);
+      if (err instanceof DOMException) setScreenSharing(false);
     }
   };
 

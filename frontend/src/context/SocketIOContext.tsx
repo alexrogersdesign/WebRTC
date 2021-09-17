@@ -15,10 +15,11 @@ import {
   Meeting,
   IExternalMedia,
   IPeers,
-  ISocketIOContex,
+  ISocketIOContext,
   ChildrenProps,
   User,
 } from '../types';
+import {SegmentationContextProvider} from './SegmentationContext';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -28,7 +29,7 @@ interface Props extends ChildrenProps {
 }
 
 // Context item to be passed to app
-const SocketIOContext = createContext<Partial<ISocketIOContex>>({});
+const SocketIOContext = createContext<Partial<ISocketIOContext>>({});
 let roomParam = new URLSearchParams(window.location.search).get('room');
 console.log('room param', roomParam);
 if (roomParam && !validator.isUUID(roomParam)) roomParam = null;
@@ -49,17 +50,15 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const [micMuted, setMicMuted] = useState<boolean>(false);
   const [videoDisabled, setVideoDisabled] = useState<boolean>(false);
   const [screenSharing, setScreenSharing] = useState<boolean>(false);
-  const [removeBackground, setRemoveBackground] = useState<boolean>(false);
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [localMedia, setLocalMedia] = useState<MediaStream>();
   const peers = useRef<IPeers>({});
   const senders = useRef<RTCRtpSender[]>([]);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
-  const network = useRef<bodyPix.BodyPix>();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const history = useHistory();
+
 
   const outgoingMedia = useRef<MediaStream>();
 
@@ -170,7 +169,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       outgoingMedia.current = stream;
       // stores stream in ref to be used by video element
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      tempVideo.current.srcObject = stream;
+      // tempVideo.current.srcObject = stream;
       // replace streams to peers if they exist
       changePeerStream(stream);
     } catch (err) {
@@ -191,86 +190,85 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     );
   };
 
+
+  // const tempVideo = useRef(document.createElement('video'));
+  // // a variable used to stop the segmenting animation from running
+  // const segmentingStopped = useRef(false);
+  // const [segmentationReady, setSegmentationReady] = useState(false);
+  // const [removeBackground, setRemoveBackground] = useState<boolean>(false);
+  // const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // const network = useRef<bodyPix.BodyPix>();
+
+
   /**
    * Loads background replacing model
    */
-  useEffect(() => {
-    // if (!removeBackground) return;
-    const loadModel = async () => {
-      // if (!network.current) {
-      //   network.current= await bodyPix.load();
-      // }
-      segmentVideo();
-    };
-    loadModel();
-  }, [, removeBackground]);
+  // useEffect(() => {
+  //   segmentVideo();
+  //   ;
+  // }, [, removeBackground]);
 
 
-  const tempVideo = useRef(document.createElement('video'));
-  // a variable used to stop the segmenting animation from running
-  const segmentingStopped = useRef(false);
-  const [segmentationReady, setSegmentationReady] = useState(false);
+  // const segmentVideo = async () => {
+  //   // TODO update request animation frame to render when not focused
+  //   let requestID;
+  //   segmentingStopped.current = false;
+  //   /**
+  //    * Check if removeBackground is true.
+  //    * If not, cleanup process and reset outgoing treams to the original camera feed.
+  //    */
+  //   if (!removeBackground) {
+  //     outgoingMedia.current = localMedia;
+  //     localMedia && changePeerStream(localMedia);
+  //     requestID && cancelAnimationFrame(requestID);
+  //     segmentingStopped.current = true;
+  //     setSegmentationReady(false);
+  //     return;
+  //   };
+  //   if (!network.current) network.current= await bodyPix.load();
 
-  const segmentVideo = async () => {
-    // TODO update request animation frame to render when not focused
-    let requestID;
-    segmentingStopped.current = false;
-    /**
-     * Check if removeBackground is true.
-     * If not, cleanup process and reset outgoing treams to the original camera feed.
-     */
-    if (!removeBackground) {
-      outgoingMedia.current = localMedia;
-      localMedia && changePeerStream(localMedia);
-      requestID && cancelAnimationFrame(requestID);
-      segmentingStopped.current = true;
-      setSegmentationReady(false);
-      return;
-    };
-    if (!network.current) network.current= await bodyPix.load();
+  //   const webcam = tempVideo.current;
+  //   if (!canvasRef.current) return;
+  //   const canvas = canvasRef.current;
+  //   webcam.width = canvas.width = webcam.videoWidth;
+  //   webcam.height = canvas.height = webcam.videoHeight;
+  //   webcam.load();
+  //   webcam.playsInline= true;
+  //   webcam.autoplay = true;
 
-    const webcam = tempVideo.current;
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    webcam.width = canvas.width = webcam.videoWidth;
-    webcam.height = canvas.height = webcam.videoHeight;
-    webcam.load();
-    webcam.playsInline= true;
-    webcam.autoplay = true;
-
-    if (!network.current) throw new Error('model not loaded');
-    const processImage = async () => {
-      if (!segmentingStopped.current) requestID = requestAnimationFrame(processImage);
-      if (tempVideo.current.readyState !== 4) return;
-      const modelConfig= {
-        internalResolution: .25, // how accurate the model is (time tradeoff)
-        segmentationThreshold: 0.7, // to what confidence level background is removed
-      };
-      const body = await network.current?.segmentPerson(tempVideo.current, modelConfig);
-      if (!body) throw new Error('Failure at segmenting');
-      const detectedPersonParts = bodyPix.toMask(body);
-      bodyPix.drawMask(
-          canvasRef.current, // The destination
-          tempVideo.current, // The video source
-          detectedPersonParts, // Person parts detected in the video
-          1, // The opacity value of the mask
-          9, // The amount of blur
-          false, // If the output video should be flipped horizontally
-      );
-    };
-    // Check if video is ready
-    tempVideo.current.onloadeddata = () => requestID = requestAnimationFrame(processImage);
-    // requestID = requestAnimationFrame(processImage);
-    // cancel animation
-    if (requestID) cancelAnimationFrame(requestID);
-    const canvasStream = canvasRef.current?.captureStream();
-    if (!canvasStream) {
-      throw new Error('No canvas found after segmentation attempt');
-    };
-    setSegmentationReady(true);
-    changePeerStream(canvasStream);
-    outgoingMedia.current= canvasStream;
-  };
+  //   if (!network.current) throw new Error('model not loaded');
+  //   const processImage = async () => {
+  //     if (!segmentingStopped.current) requestID = requestAnimationFrame(processImage);
+  //     if (tempVideo.current.readyState !== 4) return;
+  //     const modelConfig= {
+  //       internalResolution: .25, // how accurate the model is (time tradeoff)
+  //       segmentationThreshold: 0.7, // to what confidence level background is removed
+  //     };
+  //     const body = await network.current?.segmentPerson(tempVideo.current, modelConfig);
+  //     if (!body) throw new Error('Failure at segmenting');
+  //     const detectedPersonParts = bodyPix.toMask(body);
+  //     bodyPix.drawMask(
+  //         canvasRef, // The destination
+  //         webcam, // The video source
+  //         detectedPersonParts, // Person parts detected in the video
+  //         1, // The opacity value of the mask
+  //         9, // The amount of blur
+  //         false, // If the output video should be flipped horizontally
+  //     );
+  //   };
+  //   // Check if video is ready
+  //   tempVideo.current.onloadeddata = () => requestID = requestAnimationFrame(processImage);
+  //   // requestID = requestAnimationFrame(processImage);
+  //   // cancel animation
+  //   if (requestID) cancelAnimationFrame(requestID);
+  //   const canvasStream = canvasRef.current?.captureStream();
+  //   if (!canvasStream) {
+  //     throw new Error('No canvas found after segmentation attempt');
+  //   };
+  //   setSegmentationReady(true);
+  //   changePeerStream(canvasStream);
+  //   outgoingMedia.current= canvasStream;
+  // };
 
 
   /**
@@ -461,6 +459,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
 
   return (
+
     <SocketIOContext.Provider
       value={{
         setupSocketListeners,
@@ -470,7 +469,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         peers,
         peerConnection,
         localVideoRef,
-        canvasRef,
         initializeMediaStream,
         setPeerOpenedConnectionListner,
         endConnection,
@@ -481,15 +479,24 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         setMicMuted,
         setVideoDisabled,
         setScreenSharing,
-        setRemoveBackground,
         micMuted,
         videoDisabled,
         screenSharing,
-        removeBackground,
-        segmentationReady,
+
+        // segmentationReady,
+        // removeBackground,
+        // setRemoveBackground,
+        // canvasRef,
       }}
     >
-      {children}
+      <SegmentationContextProvider
+        localMedia={localMedia}
+        outgoingMedia={outgoingMedia}
+        changePeerStream={changePeerStream}
+        // tempVideo={tempVideo}
+      >
+        {children}
+      </SegmentationContextProvider>
     </SocketIOContext.Provider>
   );
 };

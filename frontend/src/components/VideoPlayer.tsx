@@ -8,6 +8,7 @@ import {SocketIOContext} from '../context/SocketIOContext';
 import VideoAvatar from './VideoAvatar';
 import WebcamControls from './WebcamControls';
 import tree from '../util/img/tree.jpeg';
+import {SegmentationContext} from '../context/SegmentationContext';
 type Props = {
   stream?: MediaStream | undefined;
   local?: boolean,
@@ -82,15 +83,18 @@ const useStyles = makeStyles((theme: Theme) =>
 const VideoPlayer = ({local, stream, user}: Props)=> {
   const {
     localVideoRef,
+    // canvasRef,
+    // removeBackground,
+    // segmentationReady,
+  } = useContext(SocketIOContext);
+  const {
     canvasRef,
     removeBackground,
     segmentationReady,
-  } = useContext(SocketIOContext);
+  } = useContext(SegmentationContext);
   const classes = useStyles();
   const [showBackground, setShowBackground] = useState(true);
   useEffect(() => {
-    console.log('removeBackground', removeBackground);
-    console.log('segmentationReady', segmentationReady);
     if (removeBackground && segmentationReady) setShowBackground(false);
     else setShowBackground(true);
   }, [removeBackground, segmentationReady]);

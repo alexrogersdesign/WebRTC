@@ -30,7 +30,15 @@ export type User = {
    lastName?: string,
 }
 
-export interface ISocketIOContex {
+export interface ISegmentationContext {
+   segmentationReady: boolean,
+   removeBackground: boolean,
+   setRemoveBackground: React.Dispatch<React.SetStateAction<boolean>>,
+   tempVideo: React.MutableRefObject<HTMLVideoElement>,
+   canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+}
+
+export interface ISocketIOContext {
    setupSocketListeners: () => void;
    currentUserID: string,
    setCurrentUserID: (userID: string) => void,
@@ -57,5 +65,8 @@ export interface ISocketIOContex {
    screenSharing: boolean,
    removeBackground: boolean,
    segmentationReady: boolean,
+   localMedia: MediaStream | undefined,
+   outgoingMedia: React.MutableRefObject<MediaStream | undefined>,
+   changePeerStream: (stream: MediaStream) => void
 }
 

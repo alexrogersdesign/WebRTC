@@ -15,6 +15,7 @@ import VideocamOffTwoToneIcon from '@material-ui/icons/VideocamOffTwoTone';
 import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 
 import {SocketIOContext} from '../context/SocketIOContext';
+import {SegmentationContext} from '../context/SegmentationContext';
 import theme from '../theme';
 
 interface Props {
@@ -69,12 +70,17 @@ const WebcamControls = ({className}: Props) => {
     setMicMuted,
     setVideoDisabled,
     setScreenSharing,
-    setRemoveBackground,
     micMuted,
     videoDisabled,
     screenSharing,
-    removeBackground,
+    // setRemoveBackground,
+    // removeBackground,
   } = useContext(SocketIOContext);
+
+  const {
+    setRemoveBackground,
+    removeBackground,
+  } = useContext(SegmentationContext);
 
 
   const handleMuteMicrophone = (event: any) => {

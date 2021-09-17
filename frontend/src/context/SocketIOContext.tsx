@@ -35,7 +35,7 @@ console.log('room param', roomParam);
 if (roomParam && !validator.isUUID(roomParam)) roomParam = null;
 /**
  * SocketIO server instance
- * URL of deplyed server goes here
+ * URL of deployed server goes here
  */
 const connectionUrl = `http://localhost:5000?room=${roomParam}`;
 console.log('socket url', connectionUrl);
@@ -110,10 +110,10 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Sets socket connection listers
    */
   const setupSocketListeners= async () =>{
-    // Listens for meeting from socket
+    //* Listens for meeting from socket
     socket.on('NewMeeting', (meeting) => setMeeting(meeting));
     console.log('current user id before peer creation', currentUserID);
-    // requests webcam access from end user
+    //* requests webcam access from end user
     await initializeMediaStream();
 
     /**
@@ -147,7 +147,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   /**
    * Requests a new meeting id from server
    * @example calling getNewMeeting() from anywhere in the application
-   * //Will have the backend server issue a new meeting.
+   * Will have the backend server issue a new meeting.
    */
   const getNewMeeting = async () =>{
     socket.emit('NewMeeting'); ;
@@ -158,7 +158,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const initializeMediaStream = async () => {
     try {
-      // retreives webcam or screen share stream based on screenSharing variable
+      // retrieves webcam or screen share stream based on screenSharing variable
       const stream = screenSharing?
       await navigator.mediaDevices.getDisplayMedia():
       await navigator.mediaDevices.getUserMedia( {
@@ -167,10 +167,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       });
       setLocalMedia(stream);
       outgoingMedia.current = stream;
-      // stores stream in ref to be used by video element
+      //* stores stream in ref to be used by video element
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      // tempVideo.current.srcObject = stream;
-      // replace streams to peers if they exist
+      //* replace streams to peers if they exist
       changePeerStream(stream);
     } catch (err) {
       console.log(err);
@@ -190,92 +189,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     );
   };
 
-
-  // const tempVideo = useRef(document.createElement('video'));
-  // // a variable used to stop the segmenting animation from running
-  // const segmentingStopped = useRef(false);
-  // const [segmentationReady, setSegmentationReady] = useState(false);
-  // const [removeBackground, setRemoveBackground] = useState<boolean>(false);
-  // const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  // const network = useRef<bodyPix.BodyPix>();
-
-
   /**
-   * Loads background replacing model
-   */
-  // useEffect(() => {
-  //   segmentVideo();
-  //   ;
-  // }, [, removeBackground]);
-
-
-  // const segmentVideo = async () => {
-  //   // TODO update request animation frame to render when not focused
-  //   let requestID;
-  //   segmentingStopped.current = false;
-  //   /**
-  //    * Check if removeBackground is true.
-  //    * If not, cleanup process and reset outgoing treams to the original camera feed.
-  //    */
-  //   if (!removeBackground) {
-  //     outgoingMedia.current = localMedia;
-  //     localMedia && changePeerStream(localMedia);
-  //     requestID && cancelAnimationFrame(requestID);
-  //     segmentingStopped.current = true;
-  //     setSegmentationReady(false);
-  //     return;
-  //   };
-  //   if (!network.current) network.current= await bodyPix.load();
-
-  //   const webcam = tempVideo.current;
-  //   if (!canvasRef.current) return;
-  //   const canvas = canvasRef.current;
-  //   webcam.width = canvas.width = webcam.videoWidth;
-  //   webcam.height = canvas.height = webcam.videoHeight;
-  //   webcam.load();
-  //   webcam.playsInline= true;
-  //   webcam.autoplay = true;
-
-  //   if (!network.current) throw new Error('model not loaded');
-  //   const processImage = async () => {
-  //     if (!segmentingStopped.current) requestID = requestAnimationFrame(processImage);
-  //     if (tempVideo.current.readyState !== 4) return;
-  //     const modelConfig= {
-  //       internalResolution: .25, // how accurate the model is (time tradeoff)
-  //       segmentationThreshold: 0.7, // to what confidence level background is removed
-  //     };
-  //     const body = await network.current?.segmentPerson(tempVideo.current, modelConfig);
-  //     if (!body) throw new Error('Failure at segmenting');
-  //     const detectedPersonParts = bodyPix.toMask(body);
-  //     bodyPix.drawMask(
-  //         canvasRef, // The destination
-  //         webcam, // The video source
-  //         detectedPersonParts, // Person parts detected in the video
-  //         1, // The opacity value of the mask
-  //         9, // The amount of blur
-  //         false, // If the output video should be flipped horizontally
-  //     );
-  //   };
-  //   // Check if video is ready
-  //   tempVideo.current.onloadeddata = () => requestID = requestAnimationFrame(processImage);
-  //   // requestID = requestAnimationFrame(processImage);
-  //   // cancel animation
-  //   if (requestID) cancelAnimationFrame(requestID);
-  //   const canvasStream = canvasRef.current?.captureStream();
-  //   if (!canvasStream) {
-  //     throw new Error('No canvas found after segmentation attempt');
-  //   };
-  //   setSegmentationReady(true);
-  //   changePeerStream(canvasStream);
-  //   outgoingMedia.current= canvasStream;
-  // };
-
-
-  /**
-   * Starts connection with peer server and retreives user id
+   * Starts connection with peer server and retrieves user id
    * initializes meeting and tells the backend server than its joining a meeting
    */
-  const setPeerOpenedConnectionListner = async () => {
+  const setPeerOpenedConnectionListener = async () => {
     if (!peerConnection.current) throw new Error('Peer connection missing');
     peerConnection.current.on('open', async (id:string) => {
       console.log('ID from peer', id);
@@ -344,7 +262,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
   /**
    * Adds media stream to list of streams to display
-   * @param {User} user  The peer user informatoin
+   * @param {User} user  The peer user information
    * @param {MediaStream} stream the media stream to add
    * @param {any} data? any additional data
    */
@@ -370,7 +288,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Adds peer to peer list
    */
   const setConnectingPeersListener = () => {
-    console.log('set conected peer lisener');
+    console.log('set connected peer listener');
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
       call.answer(outgoingMedia.current);
@@ -393,13 +311,13 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     });
   };
   /**
-   * Listens for new user connectected event then calls user
+   * Listens for new user connected event then calls user
    * Cleans up connection on error or if far side closes connection.
    */
   const setExternalUserListener = () => {
     console.log('set external user listener');
     socket.on('NewUserConnected', (user) => {
-      // Prevent local user from being added.
+      //* Prevent local user from being added.
       if (user.id === currentUserID) return;
       console.log('new user connection, current user id', currentUserID);
       console.log('new user connection, user ', user);
@@ -470,7 +388,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         peerConnection,
         localVideoRef,
         initializeMediaStream,
-        setPeerOpenedConnectionListner,
+        setPeerOpenedConnectionListener,
         endConnection,
         setMeeting,
         joinMeeting,
@@ -482,18 +400,12 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         micMuted,
         videoDisabled,
         screenSharing,
-
-        // segmentationReady,
-        // removeBackground,
-        // setRemoveBackground,
-        // canvasRef,
       }}
     >
       <SegmentationContextProvider
         localMedia={localMedia}
         outgoingMedia={outgoingMedia}
         changePeerStream={changePeerStream}
-        // tempVideo={tempVideo}
       >
         {children}
       </SegmentationContextProvider>

@@ -49,7 +49,7 @@ export interface ISocketIOContext {
    localVideoRef: React.RefObject<HTMLVideoElement>,
    canvasRef: React.RefObject<HTMLCanvasElement>,
    initializeMediaStream: () => void,
-   setPeerOpenedConnectionListner: () => void,
+   setPeerOpenedConnectionListener: () => void,
    connectToUser: (externalUser: string) => void,
    endConnection: () => void,
    setMeeting: (meeting: Meeting) => void,

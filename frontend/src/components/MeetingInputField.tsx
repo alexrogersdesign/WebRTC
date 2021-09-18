@@ -51,7 +51,7 @@ const MeetingInputField = ({placeholder}: Props) => {
 
 
   const handleClick = (event: any) => {
-    joinMeeting && field && joinMeeting({id: field});
+    joinMeeting && field && joinMeeting(field);
   };
 
 

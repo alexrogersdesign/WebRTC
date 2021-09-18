@@ -6,6 +6,7 @@ export interface ChildrenProps {
 
 export type Meeting = {
    id: string;
+   title: string;
  }
 
 export interface IMeetingData {
@@ -53,7 +54,7 @@ export interface ISocketIOContext {
    connectToUser: (externalUser: string) => void,
    endConnection: () => void,
    setMeeting: (meeting: Meeting) => void,
-   joinMeeting: (meeting: Meeting) => void,
+   joinMeeting: (meetingID: string) => void,
    startNewMeeting: () => void,
    leaveMeeting: () => void,
    setMicMuted: (boolean: boolean) => void,

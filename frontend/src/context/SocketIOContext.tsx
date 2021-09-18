@@ -76,7 +76,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (meeting && meeting.id && !hasJoinedMeeting && outgoingMedia.current) {
       setConnectingPeersListener();
       setExternalUserListener();
-      joinMeeting({id: meeting.id});
+      joinMeeting(meeting.id);
     }
   }, [meeting, outgoingMedia.current]);
 
@@ -226,14 +226,16 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Tells backend server that it would like to join the specified meeting
    * Pushes to reflect meeting after joining meeting and sets
    * hasJoinedMeeting to true.
-   * @param {Meeting} newMeeting the meeting to join
+   * @param {MeetingID} newMeetingID the meeting to join
    */
-  const joinMeeting = (newMeeting?:Meeting) => {
-    //* If a meeting ID is not provided, attempt to use stored variable
-    if (!newMeeting && meeting) newMeeting = meeting;
-    if (!newMeeting) throw new Error('Unable to retrieve meeting');
-    //* If new meeting is not current meeting, update current meeting.
-    if (meeting !== newMeeting) setMeeting(newMeeting);
+  const joinMeeting = (newMeetingID?:string) => {
+    //* If a meeting ID is not provided and the user has a meeting stored,
+    //* join that meeting.
+    if (!newMeetingID && meeting && meeting.id) newMeetingID = meeting.id;
+    if (!newMeetingID) throw new Error('Unable to retrieve meeting');
+    // //* If new meeting is different than stored meeting,
+    // //* update stored meeting.
+    // if (meeting?.id !== newMeetingID) setMeeting(newMeetingID);
     const currentUser = {
       id: currentUserID,
       firstName,
@@ -241,11 +243,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     };
     const meetingData = {
       user: currentUser,
-      roomID: newMeeting.id,
+      roomID: newMeetingID,
     };
-    console.log('joining meeting: ', newMeeting);
+    console.log('joining meeting: ', newMeetingID);
     console.log('joining meeting data  ', meetingData);
-    socket.emit('JoinRoom', meetingData);
+    socket.emit('JoinMeeting', meetingData);
     //* Push meeting to url paramater.
     history.push('?room='+meeting?.id);
     setHasJoinedMeeting(true);

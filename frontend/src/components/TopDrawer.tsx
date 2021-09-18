@@ -65,8 +65,8 @@ export const TopDrawer = (props: Props) => {
   const joinDialog = 'Join an existing meeting';
   const createDialog = 'Create a new meeting';
   const leaveDialog = 'Leave meeting';
-  const meetingPrimary = `Meeting ID: ${meeting?.id}`;
-  const meetingSecondary = `Meeting ID: ${meeting?.id}`;
+  const meetingPrimary = `${meeting?.title}`;
+  const meetingSecondary = `ID: ${meeting?.id}`;
   const list = () => (
     <div
       // className={clsx(classes.list, {
@@ -98,7 +98,7 @@ export const TopDrawer = (props: Props) => {
           <>
             <ListItem>
               <ListItemIcon> <ConfirmationNumberIcon /></ListItemIcon>
-              <ListItemText primary={meetingPrimary} />
+              <ListItemText primary={meetingPrimary} secondary={meetingSecondary} />
             </ListItem>
             <ListItem button onClick={leaveMeeting}>
               <ListItemIcon className={classes.red}> <NoMeetingRoomIcon /></ListItemIcon>

@@ -170,9 +170,9 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
                   id={labelId}
                   primary={name}
                 />
-                <ListItemSecondaryAction>
+                {/* <ListItemSecondaryAction>
 
-                </ListItemSecondaryAction>
+                </ListItemSecondaryAction> */}
                 <Divider variant='middle' />
               </ListItem>
             );

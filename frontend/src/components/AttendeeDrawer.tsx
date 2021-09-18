@@ -4,27 +4,24 @@ import React, {useState} from 'react';
 import clsx from 'clsx';
 import {makeStyles, Theme, createStyles, useTheme} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import AppBar from '@material-ui/core/AppBar';
 import List from '@material-ui/core/List';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import TopBar from './TopBar';
 
 
 import VideoAvatar from './VideoAvatar';
+import TopDrawer from './TopDrawer';
 import {User, Meeting} from '../types';
 
 interface Props {
@@ -39,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
+      justifyContent: 'center',
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
@@ -79,9 +77,9 @@ const useStyles = makeStyles((theme: Theme) =>
         duration: theme.transitions.duration.leavingScreen,
       }),
       overflowX: 'hidden',
-      width: theme.spacing(7) + 1,
+      width: theme.spacing(7) + 12,
       [theme.breakpoints.up('sm')]: {
-        width: theme.spacing(9) + 1,
+        width: theme.spacing(9) + 12,
       },
     },
     toolbar: {
@@ -89,12 +87,18 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'flex-end',
       padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
+      //* necessary for content to be below app bar
       ...theme.mixins.toolbar,
     },
     content: {
       flexGrow: 1,
       padding: theme.spacing(3),
+    },
+    list: {
+      // padding: theme.spacing(0),
+    },
+    listItemText: {
+      padding: theme.spacing(0, 2),
     },
   }),
 );
@@ -115,14 +119,15 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <TopBar
+      <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar style={{display: meeting? 'block': 'none'}}>
+        <Toolbar >
           <IconButton
+            style={{display: meeting? 'flex': 'none'}}
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
@@ -131,10 +136,11 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
               [classes.hide]: open,
             })}
           >
-            <MenuIcon />
+            <PeopleAltIcon style={{display: open? 'none': 'flex'}}/>
           </IconButton>
+          <TopDrawer/>
         </Toolbar>
-      </TopBar>
+      </AppBar>
       {meeting && (<Drawer
         variant="permanent"
         className={clsx(classes.drawer, {
@@ -155,7 +161,7 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
           </IconButton>
         </div>
         <Divider />
-        <List >
+        <List className={classes.list} >
           {users && users.map((user) => {
             const labelId = `checkbox-list-secondary-label-${user.id}`;
             const name = `${user.firstName} ${user.lastName}`;
@@ -167,6 +173,7 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
                   />
                 </ListItemAvatar>
                 <ListItemText
+                  className={classes.listItemText}
                   id={labelId}
                   primary={name}
                 />

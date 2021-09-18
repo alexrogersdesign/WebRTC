@@ -5,6 +5,8 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 // import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
@@ -15,7 +17,8 @@ import MailIcon from '@material-ui/icons/Mail';
 import CreateIcon from '@material-ui/icons/Create';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
-import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
+import Typography from '@material-ui/core/Typography';
+import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 
 import JoinMeetingModal from './JoinMeetingModal';
 import MeetingListDisplay from './MeetingListDisplay';
@@ -27,6 +30,15 @@ interface Props {
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      alignContent: 'flex-end',
+      width: '100%',
+      // borderWidth: 20,
+    },
     list: {
       // width: '60%',
     },
@@ -40,7 +52,9 @@ const useStyles = makeStyles((theme: Theme) =>
     red: {
       // fill: 'red',
       color: '#f44336',
-      // boxShadow: theme.shadows[2],
+    },
+    drawerButton: {
+      alignSelf: 'flex-end',
     },
   }),
 );
@@ -58,20 +72,15 @@ export const TopDrawer = (props: Props) => {
       return;
     }
     setDrawerOpen(open);
-    //  if (!open) setModalOpen(false);
   };
 
 
   const joinDialog = 'Join an existing meeting';
   const createDialog = 'Create a new meeting';
   const leaveDialog = 'Leave meeting';
-  // const meetingPrimary = `${meeting?.title}`;
-  // const meetingSecondary = `ID: ${meeting?.id}`;
+
   const list = () => (
     <div
-      // className={clsx(classes.list, {
-      //   [classes.fullList]: anchor === 'top' || anchor === 'bottom',
-      // })}
       className={classes.list}
       role="presentation"
       onClick={toggleDrawer( false)}
@@ -80,9 +89,6 @@ export const TopDrawer = (props: Props) => {
       <List>
         {!meeting && (
           <>
-            {/* <ListItem>
-              {<MeetingForm />}
-            </ListItem> */}
             <ListItem button onClick={startNewMeeting}>
               <ListItemIcon> <CreateIcon /></ListItemIcon>
               <ListItemText primary={createDialog} />
@@ -97,10 +103,6 @@ export const TopDrawer = (props: Props) => {
         {meeting && (
           <>
             <MeetingListDisplay meeting={meeting}/>
-            {/* <ListItem>
-              <ListItemIcon> <ConfirmationNumberIcon /></ListItemIcon>
-              <ListItemText primary={meetingPrimary} secondary={meetingSecondary} />
-            </ListItem> */}
             <ListItem button onClick={leaveMeeting}>
               <ListItemIcon className={classes.red}> <NoMeetingRoomIcon /></ListItemIcon>
               <ListItemText primary={leaveDialog} />
@@ -124,14 +126,19 @@ export const TopDrawer = (props: Props) => {
   ];
 
   return (
-    <div>
-      <React.Fragment >
-        <Button
+    <div className={classes.root}>
+      <React.Fragment>
+        <IconButton
+          // className={classes.drawerButton}
           onClick={toggleDrawer(true)}
-          variant="outlined"
+          // variant="outlined"
+          edge="end"
         >
-           Meeting Controls
-        </Button>
+          <ViewHeadlineIcon/>
+        </IconButton>
+        <Typography variant="h6" noWrap >
+           Menu
+        </Typography>
         <Drawer
           className={classes.drawer}
           anchor='top'

@@ -23,6 +23,7 @@ import TopBar from './TopBar';
 import VideoAvatar from './VideoAvatar';
 import TopDrawer from './TopDrawer';
 import {User, Meeting} from '../types';
+import AttendeeListItem from './AttendeeListItem';
 
 interface Props {
    users: User[]| undefined,
@@ -163,25 +164,26 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
         <Divider />
         <List className={classes.list} >
           {users && users.map((user) => {
-            const labelId = `checkbox-list-secondary-label-${user.id}`;
-            const name = `${user.firstName} ${user.lastName}`;
+            // const labelId = `checkbox-list-secondary-label-${user.id}`;
+            // const name = `${user.firstName} ${user.lastName}`;
             return (
-              <ListItem key={user.id} button>
-                <ListItemAvatar>
-                  <VideoAvatar
-                    user={user}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  className={classes.listItemText}
-                  id={labelId}
-                  primary={name}
-                />
-                {/* <ListItemSecondaryAction>
+              <AttendeeListItem key={user.id} user={user}/>
+              // <ListItem key={user.id} button>
+              //   <ListItemAvatar>
+              //     <VideoAvatar
+              //       user={user}
+              //     />
+              //   </ListItemAvatar>
+              //   <ListItemText
+              //     className={classes.listItemText}
+              //     id={labelId}
+              //     primary={name}
+              //   />
+              //   {/* <ListItemSecondaryAction>
 
-                </ListItemSecondaryAction> */}
-                <Divider variant='middle' />
-              </ListItem>
+            //   </ListItemSecondaryAction> */}
+            //   <Divider variant='middle' />
+            // </ListItem>
             );
           })}
         </List>

@@ -2,10 +2,16 @@ import React from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+// import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+import CloseIcon from '@material-ui/icons/Close';
 
 import {User} from '../types';
-import MeetingInputField from './MeetingInputField';
-
+import VideoAvatar from './VideoAvatar';
+import {IconButton} from '@material-ui/core';
 
 interface Props {
    open: boolean,
@@ -36,6 +42,19 @@ const useStyles = makeStyles((theme: Theme) =>
     item: {
       margin: theme.spacing(0, 0, 1),
     },
+    title: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      // alignContent: 'flex-start',
+      justifyContent: 'flex-start',
+      // float: 'left',
+      // justifyContent: 'space-evenly',
+      // margin: theme.spacing(0, 2, 0),
+    },
+    titleItem: {
+      padding: theme.spacing(0, 1, 0),
+    },
   }),
 );
 
@@ -50,17 +69,44 @@ const JoinMeetingModal = ({open, setOpen, user}: Props) => {
         className={classes.modal}
         open={open}
         onClose={handleClose}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
+        aria-labelledby="attendee-modal-title"
+        aria-describedby="info-about-attendee"
       >
         <div className={classes.paper}>
-          <Typography className={classes.item} variant='h5' id="join-meeting">
-            {`${user.firstName} ${user.lastName}`}
-          </Typography>
-          <MeetingInputField
-            className={classes.item}
-            placeholder='Enter Meeting Code'
-          />
+          <IconButton
+            style={{float: 'right'}}
+            onClick={() => setOpen(false)}
+          >
+            <CloseIcon/>
+          </IconButton>
+          <div className={classes.title}>
+            <VideoAvatar className={classes.titleItem} user={user}/>
+            <Typography
+              className={classes.titleItem}
+              variant='h5'
+              id="join-meeting"
+            >
+              {`${user.firstName} ${user.lastName}`}
+            </Typography>
+          </div>
+          <List>
+            <ListItem alignItems="flex-start">
+              <ListItemText
+                primary={'Name'}
+                secondary={`${user.firstName} ${user.lastName}`}
+              >
+              </ListItemText>
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+              <ListItemText
+                primary={'User ID'}
+                secondary={user.id}
+              >
+              </ListItemText>
+            </ListItem>
+            <Divider variant="inset" component="li" />
+          </List>
         </div>
       </Modal>
     </div>

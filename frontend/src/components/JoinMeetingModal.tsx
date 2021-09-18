@@ -13,22 +13,17 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
-      // position: 'absolute',
-      // width: 400,
       backgroundColor: theme.palette.background.paper,
       border: '2px solid #000',
       borderRadius: 5,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
-      // margin: 10,
-      // margin: theme.spacing(4, 8, 6),
       zIndex: 99,
     },
     modal: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      // padding: theme.spacing(4, 8, 6),
     },
     item: {
       margin: theme.spacing(0, 0, 1),

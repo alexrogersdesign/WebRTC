@@ -50,14 +50,26 @@ module.exports = function(io) {
       socket.emit('NewMeeting', createNewMeeting());
     });
 
+
     socket.on('JoinMeeting', (meetingData) => {
       const {user, roomID} = meetingData;
       joinRoom(socket, roomID);
       io.to(roomID).emit('NewUserConnected', user);
       socket.join(roomID);
       if (roomID in meetingList) meetingList[roomID].users.push(user);
-      socket.on('disconnect', () => {
+
+      //* inform attendees if a user disconnects
+      const leaveRoom = () => {
         socket.to(roomID).emit('UserDisconnected', user);
+      };
+
+      socket.on('LeaveRoom', () => {
+        leaveRoom();
+      } );
+
+      socket.on('disconnect', () => {
+        leaveRoom();
+        // socket.to(roomID).emit('UserDisconnected', user);
         // TODO: clean up room attendees.
       });
     });

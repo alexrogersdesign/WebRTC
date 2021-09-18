@@ -147,7 +147,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         peers.current[user.id].close();
       }
       enqueueSnackbar(`${user.firstName} ${user.lastName} has disconnected`);
-      removePeer(user.id);
+      // removePeer(user.id);
       removeMedia(user.id);
     });
     socket.on('error', (error) => {
@@ -270,14 +270,18 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     history.push('?room='+meeting?.id);
     setHasJoinedMeeting(true);
   };
+  useEffect(() => {
+    console.log('external media use effect', externalMedia);
+  }, [externalMedia]);
+
   /**
    * Helper function to remove a media stream from the
    * list of media streams to display
    * @param {string} id the id of the media to remove
    */
   const removeMedia = (id: string) => {
-    setExternalMedia(externalMedia
-        .filter((media:IExternalMedia) => media.user.id !== id));
+    console.log('external media', externalMedia);
+    setExternalMedia((oldState)=> oldState.filter((media:IExternalMedia) => media.user.id !== id));
   };
   /**
    * Helper function to add peer to peer list
@@ -343,10 +347,12 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         addExternalMedia(newUser, stream);
         console.log('adding stream');
       });
-      call.on('close', ()=> removeMedia(call.metadata.id));
+      call.on('close', ()=>{
+        removeMedia(call.peer);
+      });
       call.on('error', () => {
         console.log('call error: ', call.metadata.id);
-        removeMedia(call.metadata.id);
+        removeMedia(call.peer);
       });
       addPeer(call);
     });
@@ -386,15 +392,15 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         console.log('call stream', call);
         console.log('stream received', stream);
       });
-      // remove media if closed by far side
+      //* remove media if closed by far side
       call.on('close', () => {
-        removeMedia(call.metadata.id);
-        console.log('call closed');
+        removeMedia(call.peer);
+        console.log('call closed', call.metadata.id);
       });
-      // remove media on call error
+      //* remove media on call error
       call.on('error', () => {
         console.log('call error: ', call.metadata.id);
-        removeMedia(call.metadata.id);
+        removeMedia(call.peer);
       });
     });
   };
@@ -404,6 +410,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   };
   const leaveMeeting = () => {
     enqueueSnackbar(`Leaving meeting`);
+    socket?.emit('LeaveRoom');
     setMeeting(null);
     setHasJoinedMeeting(false);
     history.push('');

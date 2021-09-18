@@ -155,7 +155,7 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
         }}
       >
         <div className={classes.toolbar}>
-          <Typography variant='h5'>Attendees</Typography>
+          <Typography variant='h6'>Attendees</Typography>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>

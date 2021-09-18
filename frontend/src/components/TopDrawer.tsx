@@ -131,14 +131,13 @@ export const TopDrawer = (props: Props) => {
         <IconButton
           // className={classes.drawerButton}
           onClick={toggleDrawer(true)}
-          // variant="outlined"
           edge="end"
         >
           <ViewHeadlineIcon/>
-        </IconButton>
-        <Typography variant="h6" noWrap >
+          <Typography variant="h6" noWrap >
            Menu
-        </Typography>
+          </Typography>
+        </IconButton>
         <Drawer
           className={classes.drawer}
           anchor='top'

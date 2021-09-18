@@ -14,9 +14,9 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {SocketIOContext} from '../context/SocketIOContext';
 
 interface Props {
-   onClick?: (event:any) => void,
-   field?: string,
-   setField?: React.Dispatch<React.SetStateAction<string>>,
+  //  onClick?: (event:any) => void,
+  //  field?: string,
+  //  setField?: React.Dispatch<React.SetStateAction<string>>,
    className?: string | undefined,
    placeholder?: string,
 
@@ -55,7 +55,7 @@ const MeetingInputField = ({placeholder}: Props) => {
   };
 
 
-  // set delay for copied tooltip
+  //* set delay for copied tooltip
   useEffect(() => {
     if (copied) {
       setTimeout(()=> setCopied(false), 2000);

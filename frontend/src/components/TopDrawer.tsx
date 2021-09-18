@@ -18,7 +18,7 @@ import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
 
 import JoinMeetingModal from './JoinMeetingModal';
-
+import MeetingListDisplay from './MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
 
 interface Props {
@@ -65,8 +65,8 @@ export const TopDrawer = (props: Props) => {
   const joinDialog = 'Join an existing meeting';
   const createDialog = 'Create a new meeting';
   const leaveDialog = 'Leave meeting';
-  const meetingPrimary = `${meeting?.title}`;
-  const meetingSecondary = `ID: ${meeting?.id}`;
+  // const meetingPrimary = `${meeting?.title}`;
+  // const meetingSecondary = `ID: ${meeting?.id}`;
   const list = () => (
     <div
       // className={clsx(classes.list, {
@@ -96,10 +96,11 @@ export const TopDrawer = (props: Props) => {
         )}
         {meeting && (
           <>
-            <ListItem>
+            <MeetingListDisplay meeting={meeting}/>
+            {/* <ListItem>
               <ListItemIcon> <ConfirmationNumberIcon /></ListItemIcon>
               <ListItemText primary={meetingPrimary} secondary={meetingSecondary} />
-            </ListItem>
+            </ListItem> */}
             <ListItem button onClick={leaveMeeting}>
               <ListItemIcon className={classes.red}> <NoMeetingRoomIcon /></ListItemIcon>
               <ListItemText primary={leaveDialog} />

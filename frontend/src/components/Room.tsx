@@ -62,7 +62,7 @@ const Room = (props: Props) => {
       <AttendeeDrawer users={users} meeting={meeting}/>
       {/* <AttendeeList users={users}/> */}
       <Container className={classes.container}>
-        <MeetingForm />
+        {/* <MeetingForm /> */}
         <div className={classes.grid}>
           <VideoArray />
           <div className={classes.local}>

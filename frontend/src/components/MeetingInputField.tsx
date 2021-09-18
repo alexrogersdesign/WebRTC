@@ -17,7 +17,9 @@ interface Props {
    onClick?: (event:any) => void,
    field?: string,
    setField?: React.Dispatch<React.SetStateAction<string>>,
-   className?: string | undefined
+   className?: string | undefined,
+   placeholder?: string,
+
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -41,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-const MeetingInputField = (props: Props) => {
+const MeetingInputField = ({placeholder}: Props) => {
   const classes = useStyles();
   const {joinMeeting, meeting} = useContext(SocketIOContext);
   const [field, setField] = useState('');
@@ -73,7 +75,7 @@ const MeetingInputField = (props: Props) => {
       >
         <InputBase
           className={classes.input}
-          placeholder="Join a Meeting"
+          placeholder= {placeholder? placeholder : 'Join a Meeting'}
           inputProps={{
             'aria-label': 'Meeting ID',
             'spellCheck': 'false',

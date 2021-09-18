@@ -15,6 +15,8 @@ import MailIcon from '@material-ui/icons/Mail';
 
 
 import MeetingForm from './MeetingForm';
+import JoinMeetingModal from './JoinMeetingModal';
+
 import {SocketIOContext} from '../context/SocketIOContext';
 
 interface Props {
@@ -38,14 +40,17 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const TopDrawer = (props: Props) => {
   const classes = useStyles();
-  const [state, setState] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+
 
   const toggleDrawer = (open:boolean) => (event:any) => {
     if (event.type === 'keydown' &&
       (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
-    setState(open);
+    setDrawerOpen(open);
+    //  if (!open) setModalOpen(false);
   };
 
   const {meeting, leaveMeeting, startNewMeeting} = useContext(SocketIOContext);
@@ -69,7 +74,7 @@ export const TopDrawer = (props: Props) => {
               <ListItemIcon> <InboxIcon /></ListItemIcon>
               <ListItemText primary={'Start New Meeting'} />
             </ListItem>
-            <ListItem button >
+            <ListItem button onClick={() => setModalOpen(true)} >
               <ListItemIcon> <InboxIcon /></ListItemIcon>
               <ListItemText primary={'Join a Meeting'} />
             </ListItem>
@@ -116,10 +121,11 @@ export const TopDrawer = (props: Props) => {
         <Drawer
           className={classes.drawer}
           anchor='top'
-          open={state}
+          open={drawerOpen}
           onClose={toggleDrawer(false)}>
           {list()}
         </Drawer>
+        <JoinMeetingModal open={modalOpen} setOpen={setModalOpen}/>
       </React.Fragment>
     </div>
   );

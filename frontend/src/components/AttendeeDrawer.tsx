@@ -169,26 +169,8 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
         <Divider />
         <List className={classes.list} >
           {users && users.map((user) => {
-            // const labelId = `checkbox-list-secondary-label-${user.id}`;
-            // const name = `${user.firstName} ${user.lastName}`;
             return (
               <AttendeeListItem key={user.id} user={user}/>
-              // <ListItem key={user.id} button>
-              //   <ListItemAvatar>
-              //     <VideoAvatar
-              //       user={user}
-              //     />
-              //   </ListItemAvatar>
-              //   <ListItemText
-              //     className={classes.listItemText}
-              //     id={labelId}
-              //     primary={name}
-              //   />
-              //   {/* <ListItemSecondaryAction>
-
-            //   </ListItemSecondaryAction> */}
-            //   <Divider variant='middle' />
-            // </ListItem>
             );
           })}
         </List>

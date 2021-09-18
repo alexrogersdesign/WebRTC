@@ -7,16 +7,19 @@ import {ThemeProvider} from '@material-ui/core/styles';
 import {BrowserRouter as Router} from 'react-router-dom';
 
 import {ContextProvider} from './context/SocketIOContext.tsx';
+import NotificationProvider from './context/NotificationProvider';
 import theme from './theme';
 
 ReactDOM.render(
     <Router>
-      <ContextProvider>
-        <ThemeProvider theme={theme}>
-          <CssBaseline/>
-          <App />
-        </ThemeProvider>
-      </ContextProvider>
+      <ThemeProvider theme={theme}>
+        <NotificationProvider>
+          <ContextProvider>
+            <CssBaseline/>
+            <App />
+          </ContextProvider>
+        </NotificationProvider>
+      </ThemeProvider>
     </Router>,
     document.getElementById('root'),
 );

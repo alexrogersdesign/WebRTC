@@ -51,9 +51,24 @@ const VideoAvatar = ({user, className, disabled}: Props) => {
       <div className={classes.root}>
         {user && (
           <>
-            <Tooltip
-              title={`${user.firstName} ${user.lastName}`}
-              aria-label='User Avatar'>
+            {!disabled && (
+              <Tooltip
+                title={`${user.firstName} ${user.lastName}`}
+                aria-label='User Avatar'>
+                <Fab
+                  color='secondary'
+                  size='medium'
+                  className={classes.fab}
+                  onClick={() => setModalOpen(true)}
+                  disabled={disabled}
+                >
+                  <Avatar className={classes.purple} >
+                    {user?.firstName?.charAt(0)} {user?.lastName?.charAt(0)}
+                  </Avatar>
+                </Fab>
+              </Tooltip>
+            )}
+            {disabled && (
               <Fab
                 color='secondary'
                 size='medium'
@@ -65,7 +80,7 @@ const VideoAvatar = ({user, className, disabled}: Props) => {
                   {user?.firstName?.charAt(0)} {user?.lastName?.charAt(0)}
                 </Avatar>
               </Fab>
-            </Tooltip>
+            )}
             <AttendeeInfoModal
               open={modalOpen}
               setOpen={setModalOpen}

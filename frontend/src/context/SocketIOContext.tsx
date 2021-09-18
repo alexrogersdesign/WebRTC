@@ -8,9 +8,12 @@ import env from 'react-dotenv';
 import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
 import {v4 as uuidv4} from 'uuid';
-import * as tf from '@tensorflow/tfjs';
-//* initializes the TensorFlow backend - error workaround
-tf.getBackend();
+import {useSnackbar} from 'notistack';
+
+
+// import * as tf from '@tensorflow/tfjs';
+// * initializes the TensorFlow backend - error workaround
+// tf.getBackend();
 import {
   Meeting,
   IExternalMedia,
@@ -63,6 +66,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const peerConnection = useRef<Peer | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const history = useHistory();
+  //* enables notification
+  const {enqueueSnackbar} = useSnackbar();
+
 
   //* The stream being media stream being transmitted to peers;
   const outgoingMedia = useRef<MediaStream>();
@@ -110,12 +116,23 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     };
   }, []);
 
+  const lastReceivedMeeting = useRef<Meeting | null>(null);
+
   /**
    * Sets socket connection listers
    */
   const setupSocketListeners= async () =>{
+    const prevMeeting = lastReceivedMeeting.current;
     //* Listens for meeting from socket
-    socket.on('NewMeeting', (meeting) => setMeeting(meeting));
+    socket.on('NewMeeting', (newMeeting:Meeting) => {
+      // if (lastReceivedMeeting.current && lastReceivedMeeting.current?.id !== newMeeting.id || !lastReceivedMeeting.current) {
+      newMeeting && enqueueSnackbar(`Joining meeting ${newMeeting.title}`, {variant: 'info'});
+      // }
+      // console.log('old meeting', prevMeeting);
+      // console.log('new meeting', newMeeting);
+      lastReceivedMeeting.current = newMeeting;
+      setMeeting(newMeeting);
+    });
     console.log('current user id before peer creation', currentUserID);
     //* requests webcam access from end user
     await initializeMediaStream();
@@ -129,6 +146,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       if (user.id in peers.current) {
         peers.current[user.id].close();
       }
+      enqueueSnackbar(`${user.firstName} ${user.lastName} has disconnected`);
       removePeer(user.id);
       removeMedia(user.id);
     });
@@ -217,8 +235,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!peerConnection.current) throw new Error('Peer connection missing');
     peerConnection.current.on('open', async (id:string) => {
       console.log('ID from peer', id);
-      //* check if room param is invalid and retrieve new id.
-      if (!roomParam) await getNewMeeting();
+      // * check if room param is invalid and retrieve new id.
+      // if (!roomParam) await getNewMeeting();
     });
   };
   /**
@@ -340,6 +358,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const setExternalUserListener = () => {
     console.log('set external user listener');
     socket.on('NewUserConnected', (user) => {
+      enqueueSnackbar(`${user.firstName} ${user.lastName} has connected`);
+
       //* Prevent local user from being added.
       if (user.id === currentUserID) return;
       console.log('new user connection, current user id', currentUserID);
@@ -383,6 +403,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     setupSocketListeners();
   };
   const leaveMeeting = () => {
+    enqueueSnackbar(`Leaving meeting`);
     setMeeting(null);
     setHasJoinedMeeting(false);
     history.push('');

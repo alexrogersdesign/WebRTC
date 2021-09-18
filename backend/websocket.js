@@ -1,4 +1,4 @@
-const {v4: uuidV4} = require('uuid'); ;
+const {v4: uuidV4, validate: uuidValidate} = require('uuid'); ;
 const userList = [];
 const meetingList = {};
 
@@ -37,15 +37,8 @@ module.exports = function(io) {
     const roomID = socket.handshake.query.room;
     //* Check if a room id parameter was supplied
     //* If so, join that meeting.
-    if (roomID) {
+    if (uuidValidate(roomID)) {
       joinRoom(socket, roomID);
-      // //* If meeting exists in meeting list, send meeting.
-      // if (!(roomID in meetingList)) {
-      //   socket.emit('NewMeeting', meetingList[roomID]);
-      // //* If meeting does not exist, create a new one with that id.
-      // } else {
-      //   socket.emit('NewMeeting', createNewMeeting(roomID) );
-      // }
     }
     //* if no parameter was supplied, do not join a meeting.
 
@@ -60,8 +53,8 @@ module.exports = function(io) {
     socket.on('JoinMeeting', (meetingData) => {
       const {user, roomID} = meetingData;
       joinRoom(socket, roomID);
-      socket.join(roomID);
       io.to(roomID).emit('NewUserConnected', user);
+      socket.join(roomID);
       if (roomID in meetingList) meetingList[roomID].users.push(user);
       socket.on('disconnect', () => {
         socket.to(roomID).emit('UserDisconnected', user);

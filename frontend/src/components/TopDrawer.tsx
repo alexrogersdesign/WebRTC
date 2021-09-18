@@ -12,9 +12,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import CreateIcon from '@material-ui/icons/Create';
+import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
+import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
 
-
-import MeetingForm from './MeetingForm';
 import JoinMeetingModal from './JoinMeetingModal';
 
 import {SocketIOContext} from '../context/SocketIOContext';
@@ -35,11 +37,17 @@ const useStyles = makeStyles((theme: Theme) =>
       // width: '60% !important',
       backgroundColor: 'rgb(255,255,255,.6)',
     },
+    red: {
+      // fill: 'red',
+      color: '#f44336',
+      // boxShadow: theme.shadows[2],
+    },
   }),
 );
 
 export const TopDrawer = (props: Props) => {
   const classes = useStyles();
+  const {meeting, leaveMeeting, startNewMeeting} = useContext(SocketIOContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -53,7 +61,12 @@ export const TopDrawer = (props: Props) => {
     //  if (!open) setModalOpen(false);
   };
 
-  const {meeting, leaveMeeting, startNewMeeting} = useContext(SocketIOContext);
+
+  const joinDialog = 'Join an existing meeting';
+  const createDialog = 'Create a new meeting';
+  const leaveDialog = 'Leave meeting';
+  const meetingPrimary = `Meeting ID: ${meeting?.id}`;
+  const meetingSecondary = `Meeting ID: ${meeting?.id}`;
   const list = () => (
     <div
       // className={clsx(classes.list, {
@@ -71,12 +84,12 @@ export const TopDrawer = (props: Props) => {
               {<MeetingForm />}
             </ListItem> */}
             <ListItem button onClick={startNewMeeting}>
-              <ListItemIcon> <InboxIcon /></ListItemIcon>
-              <ListItemText primary={'Start New Meeting'} />
+              <ListItemIcon> <CreateIcon /></ListItemIcon>
+              <ListItemText primary={createDialog} />
             </ListItem>
             <ListItem button onClick={() => setModalOpen(true)} >
-              <ListItemIcon> <InboxIcon /></ListItemIcon>
-              <ListItemText primary={'Join a Meeting'} />
+              <ListItemIcon> <MeetingRoomIcon /></ListItemIcon>
+              <ListItemText primary={joinDialog} />
             </ListItem>
           </>
 
@@ -84,12 +97,12 @@ export const TopDrawer = (props: Props) => {
         {meeting && (
           <>
             <ListItem>
-              <ListItemIcon> <InboxIcon /></ListItemIcon>
-              <ListItemText primary={`Meeting ID: ${meeting.id}`} />
+              <ListItemIcon> <ConfirmationNumberIcon /></ListItemIcon>
+              <ListItemText primary={meetingPrimary} />
             </ListItem>
             <ListItem button onClick={leaveMeeting}>
-              <ListItemIcon> <InboxIcon /></ListItemIcon>
-              <ListItemText primary={'Leave Meeting'} />
+              <ListItemIcon className={classes.red}> <NoMeetingRoomIcon /></ListItemIcon>
+              <ListItemText primary={leaveDialog} />
             </ListItem>
           </>
         )}

@@ -1,23 +1,22 @@
 import React, {useContext} from 'react';
 import {AppBar,
+  AppBarProps,
   Typography,
   Toolbar,
   IconButton,
   Tooltip,
 }
   from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+// import MenuIcon from '@material-ui/icons/Menu';
 import CancelIcon from '@material-ui/icons/Cancel';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
+import {ChildrenProps} from '../types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-
-    },
     cancelIcon: {
       fill: 'red',
       color: '#f44336',
@@ -25,20 +24,22 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-interface Props {
-
+interface Props extends ChildrenProps{
+  className?: string,
+  position?: AppBarProps['position'],
 }
 
-const TopBar = (props: Props) => {
+const TopBar = ({children, className, position}: Props) => {
   const classes = useStyles();
 
   const {meeting, startNewMeeting, leaveMeeting} = useContext(SocketIOContext);
   return (
-    <AppBar className={classes.root} position="static">
+    <AppBar className={className} position={position? position: 'static'}>
       <Toolbar>
-        <IconButton edge='start' color='inherit' aria-label='menu'>
-          <MenuIcon />
-        </IconButton>
+        {/* <IconButton edge='start' color='inherit' aria-label='menu'> */}
+        {/* <MenuIcon /> */}
+        {/* </IconButton> */}
+        {children}
         { meeting && (
           <div>
             <Typography variant='h6'>
@@ -66,7 +67,7 @@ const TopBar = (props: Props) => {
             <Tooltip title='Start New Meeting'>
               <IconButton
                 edge='end'
-                aria-label='end meeting'
+                aria-label='new meeting'
                 size='medium'
                 color='inherit'
                 onClick={startNewMeeting}

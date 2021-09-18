@@ -73,7 +73,7 @@ const MeetingInputField = (props: Props) => {
       >
         <InputBase
           className={classes.input}
-          placeholder="Joing a Meeting"
+          placeholder="Join a Meeting"
           inputProps={{
             'aria-label': 'Meeting ID',
             'spellCheck': 'false',

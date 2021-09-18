@@ -10,6 +10,8 @@ import VideoArray from './VideoArray';
 import {SocketIOContext} from '../context/SocketIOContext';
 import MeetingForm from '../components/MeetingForm';
 import TopBar from './TopBar';
+import {AttendeeList} from './AttendeeList';
+import {AttendeeDrawer} from './AttendeeDrawer';
 // import WebcamComponent from './WebcamComponent';
 interface Props {
   // history: RouteComponentProps['history'];
@@ -28,17 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '2%',
     },
     grid: {
-      // width: '600px',
-      // display: 'flex',
-      // flexDirection: 'column',
-      // alignItems: 'center',
-      // alignContent: 'center',
-      // justifyContent: 'center',
       height: '50%',
       flexWrap: 'wrap',
       padding: 20,
       borderWidth: 40,
-      // padding: '0 2em 2em',
       [theme.breakpoints.down('xs')]: {
         width: '250px',
       },
@@ -57,16 +52,15 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Room = (props: Props) => {
-  const {
-    // initializeConnection,
-    // endConnection,
-    currentUserID,
-  } = useContext(SocketIOContext);
+  const {externalMedia, meeting} = useContext(SocketIOContext);
   const classes = useStyles();
+  const users = externalMedia?.map(({user, stream}) => user);
 
   return (
     <div >
-      <TopBar/>
+      {/* <TopBar/> */}
+      <AttendeeDrawer users={users} meeting={meeting}/>
+      {/* <AttendeeList users={users}/> */}
       <Container className={classes.container}>
         <MeetingForm />
         <div className={classes.grid}>

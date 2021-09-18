@@ -9,6 +9,7 @@ import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
 import {v4 as uuidv4} from 'uuid';
 import * as tf from '@tensorflow/tfjs';
+//* initializes the TensorFlow backend - error workaround
 tf.getBackend();
 import {
   Meeting,
@@ -29,13 +30,13 @@ interface Props extends ChildrenProps {
 
 //* Context item to be passed to app
 const SocketIOContext = createContext<Partial<ISocketIOContext>>({});
+//* the param extracted from the url indicating the current meeting
 let roomParam = new URLSearchParams(window.location.search).get('room');
 console.log('room param', roomParam);
 if (roomParam && !validator.isUUID(roomParam)) roomParam = null;
-/**
- * SocketIO server instance
- * URL of deployed server goes here
- */
+
+// !URL of deployed server goes here
+//* SocketIO server instance
 const connectionUrl = `http://localhost:5000?room=${roomParam}`;
 console.log('socket url', connectionUrl);
 const socket = io(connectionUrl);
@@ -45,20 +46,25 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const [currentUserID, setCurrentUserID] = useState(uuidv4());
   const [firstName, setFirstName] = useState('John');
   const [lastName, setLastName] = useState('Doe');
+  //* The current meeting being attended
   const [meeting, setMeeting] = useState<Meeting | null>(null);
+  //* Whether or not the current user has disabled their microphone
   const [micMuted, setMicMuted] = useState<boolean>(false);
+  //* Whether or not the current user has disabled their webcam
   const [videoDisabled, setVideoDisabled] = useState<boolean>(false);
+  //* Whether or not screen sharing has been enabled
   const [screenSharing, setScreenSharing] = useState<boolean>(false);
+  //* An array of MediaStreams from all current connections
   const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
   const [localMedia, setLocalMedia] = useState<MediaStream>();
+  //* a list of peer connections;
   const peers = useRef<IPeers>({});
-  const senders = useRef<RTCRtpSender[]>([]);
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const history = useHistory();
 
-
+  //* The stream being media stream being transmitted to peers;
   const outgoingMedia = useRef<MediaStream>();
 
 
@@ -86,12 +92,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   }, [micMuted, videoDisabled]);
   /**
    * Listen for changes in screen sharing
+   * If a change is detected, initialize media stream
+   * is called to handle the change.
    */
   useEffect(() => {
     initializeMediaStream();
-    // if (!screenSharing) {
-    //   navigator.mediaDevices.getDisplayMedia.
-    // }
   }, [screenSharing]);
 
   /**
@@ -177,9 +182,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         screenStream.current = undefined;
       }
       console.log('screen streaming', screenStream.current);
-      if (!screenStream.current) {
-        setScreenSharing(false);
-      }
+
 
       setLocalMedia(stream);
       outgoingMedia.current = stream;
@@ -214,7 +217,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (!peerConnection.current) throw new Error('Peer connection missing');
     peerConnection.current.on('open', async (id:string) => {
       console.log('ID from peer', id);
-      // check if room param is invalid and retrieve new id.
+      //* check if room param is invalid and retrieve new id.
       if (!roomParam) await getNewMeeting();
     });
   };
@@ -226,10 +229,10 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * @param {Meeting} newMeeting the meeting to join
    */
   const joinMeeting = (newMeeting?:Meeting) => {
-    // If a meeting ID is not provided, attempt to use stored variable
+    //* If a meeting ID is not provided, attempt to use stored variable
     if (!newMeeting && meeting) newMeeting = meeting;
     if (!newMeeting) throw new Error('Unable to retrieve meeting');
-    // If new meeting is not current meeting, update current meeting.
+    //* If new meeting is not current meeting, update current meeting.
     if (meeting !== newMeeting) setMeeting(newMeeting);
     const currentUser = {
       id: currentUserID,
@@ -243,6 +246,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('joining meeting: ', newMeeting);
     console.log('joining meeting data  ', meetingData);
     socket.emit('JoinRoom', meetingData);
+    //* Push meeting to url paramater.
     history.push('?room='+meeting?.id);
     setHasJoinedMeeting(true);
   };

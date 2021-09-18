@@ -37,7 +37,9 @@ const AttendeeListItem = ({user}: Props) => {
       <ListItem key={user.id} button onClick={() => setModalOpen(true)}>
         <ListItemAvatar>
           <VideoAvatar
-            user={user} />
+            user={user}
+            disabled
+          />
         </ListItemAvatar>
         <ListItemText
           className={classes.listItemText}

@@ -70,7 +70,7 @@ const JoinMeetingModal = ({open, setOpen, user}: Props) => {
             <CloseIcon/>
           </IconButton>
           <div className={classes.title}>
-            <VideoAvatar className={classes.titleItem} user={user}/>
+            <VideoAvatar disabled className={classes.titleItem} user={user}/>
             <Typography
               className={classes.titleItem}
               variant='h5'

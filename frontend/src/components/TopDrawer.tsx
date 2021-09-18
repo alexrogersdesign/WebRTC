@@ -1,12 +1,7 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-len */
 import React, {useState, useContext} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
-// import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
@@ -104,7 +99,9 @@ export const TopDrawer = (props: Props) => {
           <>
             <MeetingListDisplay meeting={meeting}/>
             <ListItem button onClick={leaveMeeting}>
-              <ListItemIcon className={classes.red}> <NoMeetingRoomIcon /></ListItemIcon>
+              <ListItemIcon className={classes.red}>
+                <NoMeetingRoomIcon />
+              </ListItemIcon>
               <ListItemText primary={leaveDialog} />
             </ListItem>
           </>
@@ -114,7 +111,9 @@ export const TopDrawer = (props: Props) => {
       <List>
         {items.map((text, index) => (
           <ListItem button key={index}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+            <ListItemIcon>
+              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+            </ListItemIcon>
             <ListItemText primary={text} />
           </ListItem>
         ))}

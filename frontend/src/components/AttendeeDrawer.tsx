@@ -117,6 +117,7 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const hideWhenOpen = {display: open? 'none': 'flex'};
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -137,7 +138,10 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
               [classes.hide]: open,
             })}
           >
-            <PeopleAltIcon style={{display: open? 'none': 'flex'}}/>
+            <PeopleAltIcon style={hideWhenOpen}/>
+            <Typography style={hideWhenOpen} variant="h6" >
+              Attendees
+            </Typography>
           </IconButton>
           <TopDrawer/>
         </Toolbar>

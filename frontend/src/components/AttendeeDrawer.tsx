@@ -1,13 +1,14 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-len */
 import React, {useState} from 'react';
 import clsx from 'clsx';
-import {makeStyles, Theme, createStyles, useTheme} from '@material-ui/core/styles';
+import {makeStyles,
+  Theme,
+  createStyles,
+  useTheme,
+} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 import List from '@material-ui/core/List';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
@@ -15,12 +16,8 @@ import IconButton from '@material-ui/core/IconButton';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import TopBar from './TopBar';
 
 
-import VideoAvatar from './VideoAvatar';
 import TopDrawer from './TopDrawer';
 import {User, Meeting} from '../types';
 import AttendeeListItem from './AttendeeListItem';
@@ -162,7 +159,11 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
         <div className={classes.toolbar}>
           <Typography variant='h6'>Attendees</Typography>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            {
+            theme.direction === 'rtl' ?
+             <ChevronRightIcon /> :
+             <ChevronLeftIcon />
+            }
           </IconButton>
         </div>
         <Divider />

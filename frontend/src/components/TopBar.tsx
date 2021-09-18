@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import {AppBar,
   AppBarProps,
@@ -14,6 +15,8 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
 import {ChildrenProps} from '../types';
+// import MeetingForm from './MeetingForm';
+import TopDrawer from './TopDrawer';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,7 +45,7 @@ const TopBar = ({children, className, position}: Props) => {
         {children}
         { meeting && (
           <div>
-            <Typography variant='h6'>
+            {/* <Typography variant='h6'>
           Meeting ID:
               <Typography variant='button'>   {meeting.id}</Typography>
               <Tooltip title='Leave Meeting'>
@@ -56,10 +59,10 @@ const TopBar = ({children, className, position}: Props) => {
                   <CancelIcon/>
                 </IconButton>
               </Tooltip>
-            </Typography>
+            </Typography> */}
           </div>
         )}
-        {!meeting && (
+        {/* {!meeting && (
           <div>
             <Typography variant='button' gutterBottom>
             Create a new meeting
@@ -76,7 +79,8 @@ const TopBar = ({children, className, position}: Props) => {
               </IconButton>
             </Tooltip>
           </div>
-        )}
+        )} */}
+        <TopDrawer/>
       </Toolbar>
     </AppBar>
   );

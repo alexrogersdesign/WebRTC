@@ -25,7 +25,6 @@ import TopBar from './TopBar';
 
 
 import VideoAvatar from './VideoAvatar';
-import MeetingForm from './MeetingForm';
 import {User, Meeting} from '../types';
 
 interface Props {

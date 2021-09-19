@@ -138,7 +138,7 @@ const ChatMessage = ({user, message, side}: Props) => {
       <Grid
         container
         spacing={2}
-        justify={side === 'right' ? 'flex-end' : 'flex-start'}
+        justifyContent={side === 'right' ? 'flex-end' : 'flex-start'}
       >
         {side === 'left' && (
           <Grid item>

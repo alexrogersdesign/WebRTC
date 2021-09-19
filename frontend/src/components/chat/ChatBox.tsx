@@ -10,12 +10,12 @@ import {User, Side, Message} from '../../types';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 interface Props {
-
+  ref: React.MutableRefObject<any>
 }
 const useStyles = makeStyles(({palette, spacing}) =>
   createStyles({
     paper: {
-      width: '30vw',
+      width: '35vw',
       height: '50vh',
       maxWidth: '500px',
       maxHeight: '700px',
@@ -34,7 +34,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
     },
     container: {
       // width: '100vw',
-      // height: '100vh',
+      height: '100vh',
       // display: 'flex',
       // alignItems: 'center',
       // justifyContent: 'center',
@@ -72,10 +72,10 @@ const testMessage2:Message = {
   id: '23341',
 };
 
-const ChatBox = (props: Props) => {
+const ChatBox = ({ref}: Props) => {
   const classes = useStyles();
   return (
-    <div className={classes.container}>
+    <div className={classes.container} ref={ref}>
       <Paper className={classes.paper}>
         <Box display="flex" flexDirection="column" height="100%">
           <Box p={3} height="100%" style={{overflowY: 'auto'}}>

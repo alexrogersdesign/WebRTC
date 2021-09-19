@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import clsx from 'clsx';
 import {makeStyles,
   Theme,
@@ -19,12 +19,8 @@ import IconButton from '@material-ui/core/IconButton';
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import MenuIcon from '@material-ui/icons/Menu';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import Chip from '@material-ui/core/Chip';
+import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 
 import {User, Meeting} from '../../types';
 import ChatBox from './ChatBox';
@@ -33,83 +29,73 @@ interface Props {
   //  users: User[]| undefined,
    meeting: Meeting | undefined| null,
 }
+type StyleRef = React.MutableRefObject<HTMLDivElement | undefined>
 
 const drawerWidth = 340;
 
-const offset = 70;
-const useStyles = makeStyles((theme: Theme) =>
+const offset = 90;
+const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
   createStyles({
     root: {
-      display: 'flex',
-      // justifyContent: 'center',
-      // float: 'left',
-      // left: 0,
-      // top: 20,
-      // ...theme.mixins.toolbar,
+
     },
     appBar: {
-      top: offset,
-      width: '15%',
-      // zIndex: theme.zIndex.drawer + 1,
-      // transition: theme.transitions.create(['width', 'margin'], {
-      //   easing: theme.transitions.easing.sharp,
-      //   duration: theme.transitions.duration.leavingScreen,
-      // }),
+      float: 'right',
+      // right: 0,
+      // position: 'absolute',
+      // padding: theme.spacing(1),
+      margin: theme.spacing(1),
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
     },
-    appBarShift: {
+    appBarShift: (props) => ({
       //
       display: 'none',
-      width: `calc(50% - ${drawerWidth}px)`,
+      width: `calc(50% - ${props.current?.offsetWidth}px)`,
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
       }),
-      marginRight: drawerWidth,
-    },
-    title: {
-      // flexGrow: 1,
+      marginRight: props.current?.offsetWidth,
+    }),
+    openIcon: {
+      padding: theme.spacing(1),
     },
     hide: {
       display: 'none',
     },
-    drawer: {
-      width: drawerWidth,
+    drawer: (props) => ({
+      width: props.current?.offsetWidth,
       flexShrink: 0,
-    },
-    drawerPaper: {
+    }),
+    drawerPaper: (props) =>({
       top: offset,
-      width: drawerWidth,
-      // opacity: 0.95,
+      width: props.current?.offsetWidth,
       backgroundColor: 'rgba(255,255,255,0)',
       outline: 0,
       borderWidth: 0,
-    },
+    }),
     drawerHeader: {
-      // backgroundColor: 'rgba(255,255,255,1)',
       display: 'flex',
       alignItems: 'center',
       padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
-      // ...theme.mixins.toolbar,
       justifyContent: 'flex-start',
     },
     iconButton: {
       backgroundColor: theme.palette.secondary.light,
       margin: theme.spacing(1),
     },
-    content: {
+    content: (props) => ({
       flexGrow: 1,
       padding: theme.spacing(3),
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
-      marginRight: -drawerWidth,
-    },
+      marginRight: props.current?.offsetWidth? -props.current?.offsetWidth : drawerWidth,
+    }),
     contentShift: {
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.easeOut,
@@ -122,9 +108,10 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 const ChatDrawer = ({meeting}: Props) => {
-  const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const chatBoxRef = useRef<HTMLDivElement>();
+  const classes = useStyles(chatBoxRef);
 
   const handleDrawerOpen = () => setOpen(true);
 
@@ -133,29 +120,26 @@ const ChatDrawer = ({meeting}: Props) => {
   const hideWhenOpen = {
     // display: open? 'none': 'flex'
   };
+  if (!meeting) return <></>;
   return (
     <div className={classes.root}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
+      <div
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar>
-          <IconButton
-            aria-label="open drawer"
-            edge="end"
-            onClick={handleDrawerOpen}
-            className={clsx(open && classes.hide)}
-          >
-            <ChatBubbleOutlineIcon />
-            <Typography variant="h6" noWrap className={classes.title}>
-            Chat
-            </Typography>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+        <Chip
+          className={classes.openIcon}
+          // variant='outlined'
+          aria-label="open drawer"
+          color='secondary'
+          size='medium'
+          label='Chat'
+          clickable
+          onClick={handleDrawerOpen}
+          icon={<ChatBubbleTwoToneIcon/>}
+        />
+      </div>
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
@@ -164,12 +148,10 @@ const ChatDrawer = ({meeting}: Props) => {
         <div className={classes.drawerHeader} />
       </main>
       <Drawer
-        hideBackdrop
         className={classes.drawer}
         variant="persistent"
         anchor="right"
         open={open}
-        // PaperProps={{style: {borderWidth: 0}}}
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -183,8 +165,7 @@ const ChatDrawer = ({meeting}: Props) => {
             {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
-        {/* <Divider /> */}
-        <ChatBox/>
+        <ChatBox ref={chatBoxRef}/>
       </Drawer>
     </div>
   );

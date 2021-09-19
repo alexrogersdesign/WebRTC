@@ -50,8 +50,8 @@ const useStyles = makeStyles((theme: Theme) =>
       bottom: 0,
     },
     topBar: {
-      display: 'flex',
-      flexDirection: 'column',
+      // display: 'flex',
+      // flexDirection: 'column',
     },
   }),
 );

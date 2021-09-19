@@ -43,7 +43,7 @@ const theme = createTheme({
   palette: {
     primary: {
       main: '#42a5f5',
-      light: '80d6ff',
+      light: '#80d6ff',
       dark: '#0077c2',
     },
     secondary: {
@@ -62,7 +62,7 @@ const theme = createTheme({
     },
     disabled: {
       main: '#f44336',
-      light: 'ff7961',
+      light: '#ff7961',
       dark: 'ba000d',
     },
     error: {

@@ -90,6 +90,7 @@ export interface ISocketIOContext {
    segmentationReady: boolean,
    localMedia: MediaStream | undefined,
    outgoingMedia: React.MutableRefObject<MediaStream | undefined>,
-   changePeerStream: (stream: MediaStream) => void
+   changePeerStream: (stream: MediaStream) => void,
+   videoReady: boolean,
 }
 

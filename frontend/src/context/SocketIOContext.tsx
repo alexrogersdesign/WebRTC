@@ -69,6 +69,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   //* enables notification
   const {enqueueSnackbar} = useSnackbar();
 
+  //* indicate that the video is ready to be rendered
+  const [videoReady, setVideoReady] = useState<boolean>(false);
+
 
   //* The stream being media stream being transmitted to peers;
   const outgoingMedia = useRef<MediaStream>();
@@ -201,13 +204,13 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       }
       console.log('screen streaming', screenStream.current);
 
-
       setLocalMedia(stream);
       outgoingMedia.current = stream;
       //* stores stream in ref to be used by video element
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
       //* replace streams to peers if they exist
       changePeerStream(stream);
+      setVideoReady(true);
     } catch (err) {
       console.log(err);
       if (err instanceof DOMException) setScreenSharing(false);
@@ -451,6 +454,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         micMuted,
         videoDisabled,
         screenSharing,
+        videoReady,
       }}
     >
       <SegmentationContextProvider

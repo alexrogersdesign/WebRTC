@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Room = (props: Props) => {
   const classes = useStyles();
-  const {externalMedia, meeting} = useContext(SocketIOContext);
+  const {externalMedia, meeting, videoReady} = useContext(SocketIOContext);
   const {currentTheme, setTheme} = useContext(CustomThemeContext);
   const users = externalMedia?.map(({user, stream}) => user);
 
@@ -79,7 +79,7 @@ const Room = (props: Props) => {
           <VideoArray />
           <div className={classes.local}>
             {/* <Typography>{currentUserID && currentUserID}</Typography> */}
-            {meeting && (<VideoPlayer local/>)}
+            {meeting && videoReady && (<VideoPlayer local/>)}
           </div>
         </div>
       </Container>

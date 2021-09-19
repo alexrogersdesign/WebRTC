@@ -10,7 +10,7 @@ import {User, Side, Message} from '../../types';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 interface Props {
-  ref: React.MutableRefObject<any>
+  innerRef: React.MutableRefObject<any>
 }
 const useStyles = makeStyles(({palette, spacing}) =>
   createStyles({
@@ -72,10 +72,10 @@ const testMessage2:Message = {
   id: '23341',
 };
 
-const ChatBox = ({ref}: Props) => {
+const ChatBox = ({innerRef}: Props) => {
   const classes = useStyles();
   return (
-    <div className={classes.container} ref={ref}>
+    <div className={classes.container} ref={innerRef}>
       <Paper className={classes.paper}>
         <Box display="flex" flexDirection="column" height="100%">
           <Box p={3} height="100%" style={{overflowY: 'auto'}}>

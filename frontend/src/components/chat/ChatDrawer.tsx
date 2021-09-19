@@ -165,7 +165,7 @@ const ChatDrawer = ({meeting}: Props) => {
             {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
-        <ChatBox ref={chatBoxRef}/>
+        <ChatBox innerRef={chatBoxRef}/>
       </Drawer>
     </div>
   );

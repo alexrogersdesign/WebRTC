@@ -114,6 +114,9 @@ const SegmentationContextProvider: React.FC<Props> = ({
     setSegmentationReady(true);
     //* Change outgoing media to segmented stream
     changePeerStream(canvasStream);
+    const audioTrack = outgoingMedia.current?.getAudioTracks()[0];
+    // const newVideo = canvasStream.getVideoTracks()[0];
+    audioTrack && canvasStream.addTrack(audioTrack);
     outgoingMedia.current= canvasStream;
   };
 

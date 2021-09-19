@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Peer, {MediaConnection} from 'peerjs';
 
 export interface ChildrenProps {
@@ -37,6 +38,25 @@ export interface ISegmentationContext {
    setRemoveBackground: React.Dispatch<React.SetStateAction<boolean>>,
    tempVideo: React.MutableRefObject<HTMLVideoElement>,
    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+}
+
+// export enum Side {
+//    left = 'left',
+//    right = 'right',
+//   }
+export type Side = 'left' | 'right'
+export enum MessageType {
+   image = 'image'
+}
+
+export type Message = {
+   timeStamp: Date,
+   user: User,
+   id: string,
+   contents: string,
+   type?: MessageType,
+   alt?: string,
+   side?: Side
 }
 
 export interface ISocketIOContext {

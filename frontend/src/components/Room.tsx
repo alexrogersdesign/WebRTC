@@ -12,6 +12,7 @@ import MeetingForm from '../components/MeetingForm';
 import TopBar from './TopBar';
 import {AttendeeList} from './AttendeeList';
 import {AttendeeDrawer} from './AttendeeDrawer';
+import ChatBox from './chat/ChatBox';
 // import WebcamComponent from './WebcamComponent';
 interface Props {
   // history: RouteComponentProps['history'];
@@ -62,13 +63,13 @@ const Room = (props: Props) => {
       <AttendeeDrawer users={users} meeting={meeting}/>
       {/* <AttendeeList users={users}/> */}
       <Container className={classes.container}>
+        <ChatBox/>
         {/* <MeetingForm /> */}
         <div className={classes.grid}>
           <VideoArray />
           <div className={classes.local}>
             {/* <Typography>{currentUserID && currentUserID}</Typography> */}
             <VideoPlayer local/>
-            {/* <WebcamComponent/> */}
           </div>
         </div>
       </Container>

@@ -15,8 +15,8 @@ interface Props {
 const useStyles = makeStyles(({palette, spacing}) =>
   createStyles({
     paper: {
-      width: '80vw',
-      height: '80vh',
+      width: '30vw',
+      height: '50vh',
       maxWidth: '500px',
       maxHeight: '700px',
       display: 'flex',
@@ -53,13 +53,23 @@ const testUser:User = {
   firstName: 'John',
   lastName: 'Doe',
 };
+const testUser2:User = {
+  id: '23342',
+  firstName: 'Sally',
+  lastName: 'Ride',
+};
 
 const testMessage:Message = {
   timeStamp: new Date(),
   user: testUser,
   contents: 'Test Message',
   id: '23341',
-
+};
+const testMessage2:Message = {
+  timeStamp: new Date(),
+  user: testUser,
+  contents: 'Test Message',
+  id: '23341',
 };
 
 const ChatBox = (props: Props) => {
@@ -70,6 +80,7 @@ const ChatBox = (props: Props) => {
         <Box display="flex" flexDirection="column" height="100%">
           <Box p={3} height="100%" style={{overflowY: 'auto'}}>
             <ChatMessage user={testUser} side='right' message={testMessage}/>
+            <ChatMessage user={testUser2} side='left' message={testMessage2}/>
           </Box>
           <ChatInput />
         </Box>

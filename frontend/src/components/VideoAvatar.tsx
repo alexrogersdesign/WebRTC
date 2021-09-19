@@ -11,11 +11,12 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       'display': 'flex',
       '& > *': {
-        margin: theme.spacing(1),
+        // margin: theme.spacing(1),
       },
     },
     fab: {
-      margin: 2,
+      flexShrink: 0,
+      // margin: 2,
       opacity: .9,
       zindex: 99,
     },

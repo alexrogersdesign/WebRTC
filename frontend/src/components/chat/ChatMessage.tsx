@@ -33,6 +33,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
     },
     msgBox: {
       'display': 'flex',
+      'flexDirection': 'column',
       'alignItems': 'center',
       'marginBottom': 4,
       '&:hover $iconBtn': {
@@ -161,7 +162,7 @@ const ChatMessage = ({user, message, side}: Props) => {
               {typeof message.contents === 'object' && message.type === 'image' && (
                 <img className={classes.image} alt={message.contents.alt} {...message.contents.image} />
               )}
-              <IconButton className={classes.iconBtn}>
+              {/* <IconButton className={classes.iconBtn}>
                 <TagFaces />
               </IconButton>
               <IconButton className={classes.iconBtn}>
@@ -169,7 +170,7 @@ const ChatMessage = ({user, message, side}: Props) => {
               </IconButton>
               <IconButton className={classes.iconBtn}>
                 <MoreHoriz />
-              </IconButton>
+              </IconButton> */}
             </div>
           </div>
         </Grid>

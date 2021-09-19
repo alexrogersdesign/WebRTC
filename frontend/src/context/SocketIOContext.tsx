@@ -342,6 +342,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       call.answer(outgoingMedia.current);
       console.log('call answered', call);
 
+      addPeer(call);
       call.on('stream', (stream) => {
         const newUser: User = {
           id: call.peer,
@@ -357,7 +358,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         console.log('call error: ', call.metadata.id);
         removeMedia(call.peer);
       });
-      addPeer(call);
     });
   };
   /**
@@ -461,6 +461,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         localMedia={localMedia}
         outgoingMedia={outgoingMedia}
         changePeerStream={changePeerStream}
+        videoDisabled={videoDisabled}
       >
         {children}
       </SegmentationContextProvider>

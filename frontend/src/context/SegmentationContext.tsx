@@ -9,6 +9,7 @@ interface Props extends ChildrenProps {
   localMedia: MediaStream | undefined,
   outgoingMedia: React.MutableRefObject<MediaStream | undefined>,
   changePeerStream: (stream: MediaStream) => void,
+  videoDisabled: Boolean
 }
 
 const SegmentationContext = createContext<Partial<ISegmentationContext>>({});
@@ -17,6 +18,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
   localMedia,
   changePeerStream,
   outgoingMedia,
+  videoDisabled,
   children,
 }) => {
   //* Used to indicate when segmenting animation should stop
@@ -36,6 +38,21 @@ const SegmentationContextProvider: React.FC<Props> = ({
   useEffect(() => {
     if (localMedia) tempVideo.current.srcObject = localMedia;
   }, [localMedia]);
+
+  useEffect(() => {
+    if (videoDisabled) {
+      segmentingStopped.current = true;
+      const ctx = canvasRef.current?.getContext('2d');
+      if (!canvasRef.current) return;
+      if (!ctx) return;
+      ctx.fillStyle = 'black';
+      ctx.fillRect(0, 0, canvasRef.current?.width, canvasRef.current?.height);
+      // setRemoveBackground(false);
+    }
+    if (!videoDisabled && removeBackground) {
+      processBackground();
+    };
+  }, [videoDisabled]);
 
   //* Loads background replacing model
   useEffect(() => {

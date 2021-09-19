@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 // import {RouteComponentProps, useHistory} from 'react-router-dom';
 import {Grid, Container, Typography} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
@@ -8,13 +8,9 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import VideoPlayer from './VideoPlayer';
 import VideoArray from './VideoArray';
 import {SocketIOContext} from '../context/SocketIOContext';
-import MeetingForm from '../components/MeetingForm';
-import TopBar from './TopBar';
-import {AttendeeList} from './AttendeeList';
 import {AttendeeDrawer} from './AttendeeDrawer';
-import ChatBox from './chat/ChatBox';
 import ChatDrawer from './chat/ChatDrawer';
-// import WebcamComponent from './WebcamComponent';
+import {CustomThemeContext} from '../context/CustomThemeProvider';
 interface Props {
   // history: RouteComponentProps['history'];
   // location: RouteComponentProps['location'];
@@ -57,9 +53,16 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Room = (props: Props) => {
-  const {externalMedia, meeting} = useContext(SocketIOContext);
   const classes = useStyles();
+  const {externalMedia, meeting} = useContext(SocketIOContext);
+  const {currentTheme, setTheme} = useContext(CustomThemeContext);
   const users = externalMedia?.map(({user, stream}) => user);
+
+  useEffect(() => {
+    if (!meeting) setTheme && setTheme('dark');
+    if (meeting) setTheme && setTheme('normal');
+    console.log('Current Theme', currentTheme);
+  }, [meeting]);
 
   return (
     <div >
@@ -76,7 +79,7 @@ const Room = (props: Props) => {
           <VideoArray />
           <div className={classes.local}>
             {/* <Typography>{currentUserID && currentUserID}</Typography> */}
-            <VideoPlayer local/>
+            {meeting && (<VideoPlayer local/>)}
           </div>
         </div>
       </Container>

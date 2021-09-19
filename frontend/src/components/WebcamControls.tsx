@@ -16,7 +16,7 @@ import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 
 import {SocketIOContext} from '../context/SocketIOContext';
 import {SegmentationContext} from '../context/SegmentationContext';
-import theme from '../theme';
+import theme from '../util/theme/active';
 
 interface Props {
    onClick?: (event:any) => void,

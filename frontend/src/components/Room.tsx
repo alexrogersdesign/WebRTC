@@ -13,6 +13,7 @@ import TopBar from './TopBar';
 import {AttendeeList} from './AttendeeList';
 import {AttendeeDrawer} from './AttendeeDrawer';
 import ChatBox from './chat/ChatBox';
+import ChatDrawer from './chat/ChatDrawer';
 // import WebcamComponent from './WebcamComponent';
 interface Props {
   // history: RouteComponentProps['history'];
@@ -47,7 +48,10 @@ const useStyles = makeStyles((theme: Theme) =>
       float: 'right',
       right: 0,
       bottom: 0,
-
+    },
+    topBar: {
+      // display: 'flex',
+      // flexDirection: 'column',
     },
   }),
 );
@@ -60,10 +64,13 @@ const Room = (props: Props) => {
   return (
     <div >
       {/* <TopBar/> */}
-      <AttendeeDrawer users={users} meeting={meeting}/>
+      <div className={classes.topBar}>
+        <AttendeeDrawer users={users} meeting={meeting}/>
+        <ChatDrawer meeting={meeting}/>
+      </div>
       {/* <AttendeeList users={users}/> */}
       <Container className={classes.container}>
-        <ChatBox/>
+        {/* <ChatBox/> */}
         {/* <MeetingForm /> */}
         <div className={classes.grid}>
           <VideoArray />

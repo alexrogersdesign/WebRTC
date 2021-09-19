@@ -3,15 +3,48 @@ import React from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 
 import {User, Side, Message} from '../../types';
 
 import ChatMessage from './ChatMessage';
+import ChatInput from './ChatInput';
 interface Props {
 
 }
 const useStyles = makeStyles(({palette, spacing}) =>
   createStyles({
+    paper: {
+      width: '80vw',
+      height: '80vh',
+      maxWidth: '500px',
+      maxHeight: '700px',
+      display: 'flex',
+      alignItems: 'center',
+      flexDirection: 'column',
+      position: 'relative',
+    },
+    paper2: {
+      width: '80vw',
+      maxWidth: '500px',
+      display: 'flex',
+      alignItems: 'center',
+      flexDirection: 'column',
+      position: 'relative',
+    },
+    container: {
+      // width: '100vw',
+      // height: '100vh',
+      // display: 'flex',
+      // alignItems: 'center',
+      // justifyContent: 'center',
+    },
+    messagesBody: {
+      width: 'calc( 100% - 20px )',
+      margin: 10,
+      overflowY: 'scroll',
+      height: 'calc( 100% - 80px )',
+    },
   }),
 );
 
@@ -30,10 +63,17 @@ const testMessage:Message = {
 };
 
 const ChatBox = (props: Props) => {
-  const styles = useStyles();
+  const classes = useStyles();
   return (
-    <div>
-      <ChatMessage user={testUser} side ={'right'} messages={[testMessage]}/>
+    <div className={classes.container}>
+      <Paper className={classes.paper}>
+        <Box display="flex" flexDirection="column" height="100%">
+          <Box p={3} height="100%" style={{overflowY: 'auto'}}>
+            <ChatMessage user={testUser} side='right' message={testMessage}/>
+          </Box>
+          <ChatInput />
+        </Box>
+      </Paper>
     </div>
   );
 };

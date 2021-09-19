@@ -111,26 +111,29 @@ const useStyles = makeStyles(({palette, spacing}) =>
 
 interface Props {
   user: User,
-  messages: Message[],
+  message: Message,
   side: Side,
 }
 
 
-const ChatMessage = ({user, messages, side}: Props) => {
+const ChatMessage = ({user, message, side}: Props) => {
   const classes = useStyles();
-  const attachClass = (index: number) => {
-    if (index === 0) {
-      return classes[`${side}First`];
-    }
-    if (index === messages.length - 1) {
-      return classes[`${side}Last`];
-    }
-    return '';
+  // const attachClass = (index: number) => {
+  //   if (index === 0) {
+  //     return classes[`${side}First`];
+  //   }
+  //   if (index === messages.length - 1) {
+  //     return classes[`${side}Last`];
+  //   }
+  //   return '';
+  // };
+  const attachClass = () => {
+    return classes[`${side}First`];
   };
 
   return (
     <Box p={'16px 30px 12px 10px'}>
-      <Typography className={classes.date}>{messages[0].timeStamp.toLocaleTimeString()}</Typography>
+      <Typography className={classes.date}>{message.timeStamp.toLocaleTimeString()}</Typography>
       <Grid
         container
         spacing={2}
@@ -142,40 +145,33 @@ const ChatMessage = ({user, messages, side}: Props) => {
           </Grid>
         )}
         <Grid item xs>
-          {messages.map((msg, i) => {
-            return (
-            // eslint-disable-next-line react/no-array-index-key
-              <div
-                key={msg.id || i}
-                className={cx(classes.row, classes[`${side}Row`])}
-                // className={classes[`${side}Row`]}
-                // className={side === 'left'? classes.left : classes.rightRow }
-              >
-                <div className={cx(classes.msgBox, classes[`${side}MsgBox`])}>
-                  {typeof msg === 'string' && (
-                    <Typography
-                      align={'left'}
-                      className={cx(classes.msg, classes[side], attachClass(i))}
-                    >
-                      {msg}
-                    </Typography>
-                  )}
-                  {typeof msg === 'object' && msg.type === 'image' && (
-                    <img className={classes.image} alt={msg.alt} {...msg} />
-                  )}
-                  <IconButton className={classes.iconBtn}>
-                    <TagFaces />
-                  </IconButton>
-                  <IconButton className={classes.iconBtn}>
-                    <Reply />
-                  </IconButton>
-                  <IconButton className={classes.iconBtn}>
-                    <MoreHoriz />
-                  </IconButton>
-                </div>
-              </div>
-            );
-          })}
+          <div
+            className={cx(classes.row, classes[`${side}Row`])}
+          >
+            <div className={cx(classes.msgBox, classes[`${side}MsgBox`])}>
+              {typeof message.contents === 'string' && (
+                <Typography
+                  align={'left'}
+                  // className={cx(classes.msg, classes[side], attachClass(i))}
+                  className={cx(classes.msg, classes[side], attachClass())}
+                >
+                  {message.contents}
+                </Typography>
+              )}
+              {typeof message.contents === 'object' && message.type === 'image' && (
+                <img className={classes.image} alt={message.contents.alt} {...message.contents.image} />
+              )}
+              <IconButton className={classes.iconBtn}>
+                <TagFaces />
+              </IconButton>
+              <IconButton className={classes.iconBtn}>
+                <Reply />
+              </IconButton>
+              <IconButton className={classes.iconBtn}>
+                <MoreHoriz />
+              </IconButton>
+            </div>
+          </div>
         </Grid>
       </Grid>
     </Box>

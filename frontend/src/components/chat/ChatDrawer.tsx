@@ -9,23 +9,22 @@ import {makeStyles,
 import Drawer from '@material-ui/core/Drawer';
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
+import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
+import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 
-import TopDrawer from './TopDrawer';
-import ChatDrawer from './chat/ChatDrawer';
-import {User, Meeting} from '../types';
-import AttendeeListItem from './AttendeeListItem';
+import {User, Meeting} from '../../types';
+import ChatBox from './ChatBox';
 
 interface Props {
-   users: User[]| undefined,
+  //  users: User[]| undefined,
    meeting: Meeting | undefined| null,
 }
 
@@ -36,9 +35,15 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-      justifyContent: 'center',
+      // justifyContent: 'center',
+      // float: 'left',
+      // left: 0,
+      // top: 20,
+      // ...theme.mixins.toolbar,
     },
     appBar: {
+      top: 70,
+      width: '30%',
       zIndex: theme.zIndex.drawer + 1,
       transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
@@ -104,7 +109,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
-export const AttendeeDrawer = ({users, meeting}: Props) => {
+const ChatDrawer = ({meeting}: Props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -121,7 +126,7 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
-        position="fixed"
+        // position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: open,
         })}
@@ -132,20 +137,19 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
             // color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
-            edge="start"
+            edge="end"
             className={clsx(classes.menuButton, {
               [classes.hide]: open,
             })}
           >
-            <PeopleAltIcon style={hideWhenOpen}/>
+            <ChatBubbleOutlineIcon style={hideWhenOpen}/>
             <Typography style={hideWhenOpen} variant="h6" >
-              Attendees
+              Meeting Chat
             </Typography>
           </IconButton>
-          <TopDrawer/>
-          {/* <ChatDrawer meeting={meeting}/> */}
         </Toolbar>
       </AppBar>
+      <Toolbar/>
       {meeting && (<Drawer
         variant="permanent"
         className={clsx(classes.drawer, {
@@ -171,11 +175,11 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
         </div>
         <Divider />
         <List className={classes.list} >
-          {users && users.map((user) => {
+          {/* {users && users.map((user) => {
             return (
-              <AttendeeListItem key={user.id} user={user}/>
+              <ChatBox key={user.id} user={user}/>
             );
-          })}
+          })} */}
         </List>
       </Drawer>)}
       <main className={classes.content}>
@@ -185,3 +189,6 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
     </div>
   );
 };
+
+export default ChatDrawer
+;

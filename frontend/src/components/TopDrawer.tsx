@@ -129,7 +129,9 @@ export const TopDrawer = (props: Props) => {
       <React.Fragment>
         <IconButton
           // className={classes.drawerButton}
+          // color="inherit"
           onClick={toggleDrawer(true)}
+          aria-label="open drawer"
           edge="end"
         >
           <ViewHeadlineIcon/>

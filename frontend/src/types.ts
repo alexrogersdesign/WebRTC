@@ -45,15 +45,17 @@ export interface ISegmentationContext {
 //    right = 'right',
 //   }
 export type Side = 'left' | 'right'
-export enum MessageType {
-   image = 'image'
+export type MessageType = 'image' | 'text'
+export interface MessageImage {
+   image: MediaImage,
+   alt: string,
 }
 
 export type Message = {
    timeStamp: Date,
    user: User,
    id: string,
-   contents: string,
+   contents: string | MessageImage,
    type?: MessageType,
    alt?: string,
    side?: Side

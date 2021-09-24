@@ -128,9 +128,11 @@ const SegmentationContextProvider: React.FC<Props> = ({
     if (!canvasStream) {
       throw new Error('Could not capture stream after segmentation attempt');
     };
+    // TODO Fix bug where local video audio is enabled when segmentation occurs.
     setSegmentationReady(true);
     //* Change outgoing media to segmented stream
     changePeerStream(canvasStream);
+    //* Get audio track from webcam and inject it into canvas feed
     const audioTrack = outgoingMedia.current?.getAudioTracks()[0];
     // const newVideo = canvasStream.getVideoTracks()[0];
     audioTrack && canvasStream.addTrack(audioTrack);

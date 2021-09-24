@@ -46,18 +46,17 @@ const SegmentationContextProvider: React.FC<Props> = ({
       if (!canvasRef.current) return;
       if (!ctx) return;
       ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, canvasRef.current?.width, canvasRef.current?.height);
+      ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
       // setRemoveBackground(false);
     }
     if (!videoDisabled && removeBackground) {
-      processBackground();
-    };
+      processBackground().then(() => setSegmentationReady(true));
+    }
   }, [videoDisabled]);
 
   //* Loads background replacing model
   useEffect(() => {
-    processBackground();
-    ;
+    processBackground().then(() => setSegmentationReady(true));
   }, [removeBackground]);
   /**
    * Holds the logic for processing the background image of a webcam feed
@@ -65,7 +64,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
    * If !removeBackground, the outgoing streams are set to the unaltered webcam
    * stream. Else the background is removed via segmentation and the altered
    * webcam stream is sent outgoing to peers
-   * @return {void} void
+   * @return {Promise} Promise
    */
   const processBackground = async () => {
     // TODO update request animation frame to render when not focused
@@ -81,7 +80,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
       segmentingStopped.current = true;
       setSegmentationReady(false);
       return;
-    };
+    }
     if (!network.current) network.current= await bodyPix.load();
 
     const webcam = tempVideo.current;
@@ -127,16 +126,19 @@ const SegmentationContextProvider: React.FC<Props> = ({
     const canvasStream = canvasRef.current?.captureStream();
     if (!canvasStream) {
       throw new Error('Could not capture stream after segmentation attempt');
-    };
+    }
     // TODO Fix bug where local video audio is enabled when segmentation occurs.
-    setSegmentationReady(true);
     //* Change outgoing media to segmented stream
-    changePeerStream(canvasStream);
     //* Get audio track from webcam and inject it into canvas feed
-    const audioTrack = outgoingMedia.current?.getAudioTracks()[0];
     // const newVideo = canvasStream.getVideoTracks()[0];
+    // setSegmentationReady(true);
+    const audioTrack = outgoingMedia.current?.getAudioTracks()[0];
     audioTrack && canvasStream.addTrack(audioTrack);
+    changePeerStream(canvasStream);
     outgoingMedia.current= canvasStream;
+    //* temp bandaid to fix bug
+    // TODO remove
+    canvasStream.getAudioTracks()[0].enabled = false;
   };
 
   return (

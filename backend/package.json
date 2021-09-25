@@ -27,6 +27,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "^4.17.1",
+    "express-jwt": "^6.1.0",
     "http-errors": "~1.6.3",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.12",

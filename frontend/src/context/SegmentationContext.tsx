@@ -3,7 +3,7 @@ import * as bodyPix from '@tensorflow-models/body-pix';
 import * as tf from '@tensorflow/tfjs';
 tf.getBackend();
 
-import {ISegmentationContext, ChildrenProps} from '../types';
+import {ISegmentationContext, ChildrenProps} from '../shared/types';
 
 interface Props extends ChildrenProps {
   localMedia: MediaStream | undefined,

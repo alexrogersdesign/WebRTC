@@ -5,7 +5,9 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
-import {User, Side, Message} from '../../types';
+import {Side, Message} from '../../shared/types';
+import User from '../../shared/classes/User';
+
 
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
@@ -48,16 +50,9 @@ const useStyles = makeStyles(({palette, spacing}) =>
   }),
 );
 
-const testUser:User = {
-  id: '23341',
-  firstName: 'John',
-  lastName: 'Doe',
-};
-const testUser2:User = {
-  id: '23342',
-  firstName: 'Sally',
-  lastName: 'Ride',
-};
+const testUser = new User('23341', 'Jack', 'Harvey');
+const testUser2 = new User('23342', 'Sally', 'Ride');
+
 
 const testMessage:Message = {
   timeStamp: new Date(),

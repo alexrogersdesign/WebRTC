@@ -8,7 +8,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import CloseIcon from '@material-ui/icons/Close';
 
-import {User} from '../types';
+
+import User from '../shared/classes/User';
+
 import VideoAvatar from './VideoAvatar';
 import {IconButton} from '@material-ui/core';
 

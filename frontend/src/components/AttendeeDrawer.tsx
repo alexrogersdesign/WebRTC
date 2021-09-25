@@ -21,8 +21,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import TopDrawer from './TopDrawer';
 import ChatDrawer from './chat/ChatDrawer';
-import {User, Meeting} from '../types';
+
 import AttendeeListItem from './AttendeeListItem';
+import User from '../shared/classes/User';
+import Meeting from '../shared/classes/Meeting';
 
 interface Props {
    users: User[]| undefined,

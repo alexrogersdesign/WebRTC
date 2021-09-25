@@ -3,7 +3,9 @@ import {makeStyles, createStyles, Theme} from '@material-ui/core/styles';
 import {deepOrange, deepPurple} from '@material-ui/core/colors';
 import {Tooltip, Avatar, Fab} from '@material-ui/core';
 
-import {User} from '../types';
+
+import User from '../shared/classes/User';
+
 import AttendeeInfoModal from './AttendeeInfoModal';
 
 const useStyles = makeStyles((theme: Theme) =>

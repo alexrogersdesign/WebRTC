@@ -22,7 +22,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Chip from '@material-ui/core/Chip';
 import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 
-import {User, Meeting} from '../../types';
+// import {User, Meeting} from '../../shared/types';
+import User from '../../shared/classes/User';
+import Meeting from '../../shared/classes/Meeting';
+
 import ChatBox from './ChatBox';
 
 interface Props {

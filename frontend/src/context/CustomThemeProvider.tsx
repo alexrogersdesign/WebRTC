@@ -2,7 +2,7 @@ import React, {useState, createContext} from 'react';
 import {ThemeProvider} from '@material-ui/core/styles';
 import getTheme, {ThemeOption, themes} from '../util/theme/getTheme';
 
-import {ChildrenProps} from '../types';
+import {ChildrenProps} from '../shared/types';
 
 interface Props extends ChildrenProps {
 

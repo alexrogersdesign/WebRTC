@@ -1,15 +1,19 @@
-const {v4: uuidV4, validate: uuidValidate} = require('uuid'); ;
+/* jshint esversion: 6 */
+
+const {v4: uuidV4, validate: uuidValidate} = require('uuid');
+const Meeting = require('../frontend/src/shared/classes/Meeting');
 const userList = [];
 const meetingList = {};
 
 module.exports = function(io) {
   const createNewMeeting = (id) => {
-    // TODO add meeting functionality
-    const newMeeting = {
-      id: id? id : uuidV4(),
-      title: 'Test Meeting Title',
-      users: [],
-    };
+    // TODO add additional meeting functionality
+    // const newMeeting = {
+    //   id: id? id : uuidV4(),
+    //   title: 'Test Meeting Title',
+    //   users: [],
+    // };
+    const newMeeting = new Meeting(uuidV4(), 'Test Meeting Title');
     meetingList[newMeeting.id]= newMeeting;
     return newMeeting;
   };
@@ -39,8 +43,8 @@ module.exports = function(io) {
     //* If so, join that meeting.
     if (uuidValidate(roomID)) {
       joinRoom(socket, roomID);
+      //* if no parameter was supplied, do not join a meeting.
     }
-    //* if no parameter was supplied, do not join a meeting.
 
     /**
      * Listens for a the user to request a new meeting id.
@@ -50,18 +54,23 @@ module.exports = function(io) {
       socket.emit('NewMeeting', createNewMeeting());
     });
 
-
     socket.on('JoinMeeting', (meetingData) => {
       const {user, roomID} = meetingData;
       joinRoom(socket, roomID);
       io.to(roomID).emit('NewUserConnected', user);
       socket.join(roomID);
-      if (roomID in meetingList) meetingList[roomID].users.push(user);
+      if (roomID in meetingList) {
+        meetingList[roomID].users.push(user);
+      }
 
       //* inform attendees if a user disconnects
       const leaveRoom = () => {
         socket.to(roomID).emit('UserDisconnected', user);
       };
+
+      socket.on('SendMessage', (message) => {
+        io.to(roomID).emit('ReceiveMessage', message);
+      });
 
       socket.on('LeaveRoom', () => {
         leaveRoom();

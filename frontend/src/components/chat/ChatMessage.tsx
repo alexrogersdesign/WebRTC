@@ -13,8 +13,8 @@ import Reply from '@material-ui/icons/Reply';
 import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import Box from '@material-ui/core/Box';
 
-
-import {Side, Message, User} from '../../types';
+import User from '../../shared/classes/User';
+import {Side, Message} from '../../shared/types';
 import VideoAvatar from '../VideoAvatar';
 
 const size = 30;

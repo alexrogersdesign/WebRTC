@@ -14,7 +14,7 @@ import FiberNewIcon from '@material-ui/icons/FiberNew';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
-import {ChildrenProps} from '../types';
+import {ChildrenProps} from '../shared/types';
 // import MeetingForm from './MeetingForm';
 import TopDrawer from './TopDrawer';
 

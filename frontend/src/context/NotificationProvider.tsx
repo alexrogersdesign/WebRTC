@@ -2,7 +2,7 @@
 import React from 'react';
 import {SnackbarProvider} from 'notistack';
 
-import {ChildrenProps} from '../types';
+import {ChildrenProps} from '../shared/types';
 
 interface Props extends ChildrenProps {
 

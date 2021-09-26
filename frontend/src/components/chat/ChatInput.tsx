@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {Box, InputBase, IconButton} from '@material-ui/core';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -12,6 +12,7 @@ import TagFaces from '@material-ui/icons/TagFaces';
 import AttachFileIcon from '@material-ui/icons/AttachFile';
 import SendIcon from '@material-ui/icons/Send';
 
+import {ChatContext} from '../../context/ChatContext';
 
 interface Props {
    concise?: boolean;
@@ -35,7 +36,8 @@ const useStyles = makeStyles(({palette, spacing}) =>
 
 const ChatInput = (props: Props) => {
   const classes = useStyles();
-
+  const {sendMessage} = useContext(ChatContext);
+  const [field, setField] = useState('');
   return (
     <Box display="flex" minHeight={70} alignItems="center" px={2}>
       <IconButton edge="start" color="inherit">
@@ -54,7 +56,11 @@ const ChatInput = (props: Props) => {
         }
       />
 
-      <IconButton edge="end" color="inherit">
+      <IconButton
+        edge="end"
+        color="inherit"
+        onClick={()=>sendMessage()}
+      >
         <SendIcon />
       </IconButton>
     </Box>

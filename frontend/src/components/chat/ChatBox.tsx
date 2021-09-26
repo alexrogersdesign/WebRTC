@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, {useContext} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 
 import {Side, Message} from '../../shared/types';
 import User from '../../shared/classes/User';
+import {ChatContext} from '../../context/ChatContext';
 
 
 import ChatMessage from './ChatMessage';
@@ -52,8 +53,6 @@ const useStyles = makeStyles(({palette, spacing}) =>
 
 const testUser = new User('23341', 'Jack', 'Harvey');
 const testUser2 = new User('23342', 'Sally', 'Ride');
-
-
 const testMessage:Message = {
   timeStamp: new Date(),
   user: testUser,
@@ -69,6 +68,7 @@ const testMessage2:Message = {
 
 const ChatBox = ({innerRef}: Props) => {
   const classes = useStyles();
+  const {messageList} = useContext(ChatContext);
   return (
     <div className={classes.container} ref={innerRef}>
       <Paper className={classes.paper}>
@@ -76,6 +76,11 @@ const ChatBox = ({innerRef}: Props) => {
           <Box p={3} height="100%" style={{overflowY: 'auto'}}>
             <ChatMessage user={testUser} side='right' message={testMessage}/>
             <ChatMessage user={testUser2} side='left' message={testMessage2}/>
+            { messageList?.forEach((message) => {
+              return (
+                <ChatMessage user={testUser} message={message} side={'left'}/>
+              );
+            }) }
           </Box>
           <ChatInput />
         </Box>

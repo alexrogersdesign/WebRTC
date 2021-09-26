@@ -13,30 +13,36 @@ interface Props extends ChildrenProps {
     socket: Socket<DefaultEventsMap, DefaultEventsMap>
 }
 
-const ContextProvider : React.FC<Props> = ({socket}) => {
+const ChatContextProvider : React.FC<Props> = ({socket, children}) => {
   const {enqueueSnackbar} = useSnackbar();
   //* The array of messages in the chat
   const [messageList, setMessageList] = useState<Message[]>([]);
+
+  useEffect(() => {
+    return () => {
+      setMessageListener();
+    };
+  }, []);
 
   /**
      * Listens for new user message event then...
      */
   const setMessageListener = () => {
-    socket.on('NewMessage', (message:Message) => {
+    socket.on('ReceivedMessage', (message:Message) => {
       setMessageList((prevState) => [...prevState]);
       enqueueSnackbar(`New message from ${message.user}`);
     });
   };
   const sendMessage = (message:Message) =>{
-
+    socket.emit('SendMessage', message);
   };
 
   return (
-    <div>
-
-    </div>
+    <ChatContext.Provider value={{messageList, sendMessage}}>
+      {children}
+    </ChatContext.Provider>
   );
 };
 
 
-export {ContextProvider, ChatContext};
+export {ChatContextProvider, ChatContext};

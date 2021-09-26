@@ -1,7 +1,9 @@
 /* jshint esversion: 6 */
 
-const {v4: uuidV4, validate: uuidValidate} = require('uuid');
-const Meeting = require('../frontend/src/shared/classes/Meeting');
+// const {v4: uuidV4, validate: uuidValidate} = require('uuid');
+import {v4 as uuidV4, validate as uuidValidate} from 'uuid';
+// const Meeting = require('../frontend/src/shared/classes/Meeting');
+import Meeting from '../frontend/src/shared/classes/Meeting.tsx';
 const userList = [];
 const meetingList = {};
 
@@ -69,20 +71,18 @@ module.exports = function(io) {
       };
 
       socket.on('SendMessage', (message) => {
-        io.to(roomID).emit('ReceiveMessage', message);
+        io.to(roomID).emit('ReceivedMessage', message);
       });
 
       socket.on('LeaveRoom', () => {
         leaveRoom();
-      } );
+      });
 
       socket.on('disconnect', () => {
         leaveRoom();
-        // socket.to(roomID).emit('UserDisconnected', user);
         // TODO: clean up room attendees.
       });
     });
-    // socket.on('LeaveRoom', ())
   });
 };
 

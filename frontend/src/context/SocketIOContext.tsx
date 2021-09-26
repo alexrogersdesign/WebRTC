@@ -10,16 +10,16 @@ import validator from 'validator';
 import {v4 as uuidv4} from 'uuid';
 import {useSnackbar} from 'notistack';
 
-
-// import * as tf from '@tensorflow/tfjs';
-// * initializes the TensorFlow backend - error workaround
-// tf.getBackend();
 import {
   IExternalMedia,
   IPeers,
   ISocketIOContext,
-  ChildrenProps, ICallMetadata,
+  ChildrenProps,
+  ICallMetadata,
 } from '../shared/types';
+
+import {ChatContextProvider} from './ChatContext';
+
 
 import User from '../shared/classes/User';
 import {SegmentationContextProvider} from './SegmentationContext';
@@ -52,7 +52,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   // const [lastName, setLastName] = useState('Doe');
   const [currentUser, setCurrentUser] = useState(new User(uuidv4(), 'Jon', 'Doe'));
   //* The current meeting being attended
-  const [meeting, setMeeting] = useState<Meeting | null>(null);
+  const [meeting, setMeeting] = useState<Meeting | null>(new Meeting('1', 'test'));
+  // const [meeting, setMeeting] = useState<Meeting | null>(null);
   //* Whether or not the current user has disabled their microphone
   const [micMuted, setMicMuted] = useState<boolean>(false);
   //* Whether or not the current user has disabled their webcam
@@ -474,7 +475,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         changePeerStream={changePeerStream}
         videoDisabled={videoDisabled}
       >
-        {children}
+        <ChatContextProvider socket={socket}>
+          {children}
+        </ChatContextProvider>
       </SegmentationContextProvider>
     </SocketIOContext.Provider>
   );

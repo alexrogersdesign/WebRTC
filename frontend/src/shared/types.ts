@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
 import Peer, {MediaConnection} from 'peerjs';
+import User from './classes/User';
+import Meeting from './classes/Meeting';
 
 export interface ChildrenProps {
    children?: JSX.Element;
 }
 
-export type Meeting = {
-   id: string;
-   title: string;
- }
+// export type Meeting = {
+//    id: string;
+//    title: string;
+//  }
 
 export interface IMeetingData {
    userID: string,
@@ -26,11 +28,11 @@ export interface IPeers {
    [key: string]: MediaConnection
  }
 
-export type User = {
-   id: string,
-   firstName?: string,
-   lastName?: string,
-}
+// export type User = {
+//    id: string,
+//    firstName?: string,
+//    lastName?: string,
+// }
 
 export interface ISegmentationContext {
    segmentationReady: boolean,
@@ -39,11 +41,11 @@ export interface ISegmentationContext {
    tempVideo: React.MutableRefObject<HTMLVideoElement>,
    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
 }
+export interface IChatContext {
+   messageList: Message[],
+   sendMessage: (message: Message) => void
+}
 
-// export enum Side {
-//    left = 'left',
-//    right = 'right',
-//   }
 export type Side = 'left' | 'right'
 export type MessageType = 'image' | 'text'
 export interface MessageImage {
@@ -60,11 +62,13 @@ export type Message = {
    alt?: string,
    side?: Side
 }
+export interface ICallMetadata {
+   user: User
+}
 
 export interface ISocketIOContext {
-   setupSocketListeners: () => void;
-   currentUserID: string,
-   setCurrentUserID: (userID: string) => void,
+   setupSocketListeners: () => void,
+   currentUser: User,
    meeting: Meeting | null,
    externalMedia: IExternalMedia[],
    peers: React.MutableRefObject<IPeers | null>,

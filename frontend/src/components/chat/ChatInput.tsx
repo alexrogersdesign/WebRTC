@@ -13,6 +13,7 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 import SendIcon from '@material-ui/icons/Send';
 
 import {ChatContext} from '../../context/ChatContext';
+import {Message} from '../../shared/types';
 
 interface Props {
    concise?: boolean;
@@ -38,6 +39,11 @@ const ChatInput = (props: Props) => {
   const classes = useStyles();
   const {sendMessage} = useContext(ChatContext);
   const [field, setField] = useState('');
+  const handleSend = () => {
+    const message: Message = {
+
+    };
+  };
   return (
     <Box display="flex" minHeight={70} alignItems="center" px={2}>
       <IconButton edge="start" color="inherit">
@@ -45,6 +51,8 @@ const ChatInput = (props: Props) => {
       </IconButton>
 
       <InputBase
+        value={field}
+        onChange={(e)=> setField(e.target.value)}
         className={classes.input}
         placeholder={'Type a message...'}
         startAdornment={
@@ -59,7 +67,7 @@ const ChatInput = (props: Props) => {
       <IconButton
         edge="end"
         color="inherit"
-        onClick={()=>sendMessage()}
+        onClick={()=>sendMessage(field)}
       >
         <SendIcon />
       </IconButton>

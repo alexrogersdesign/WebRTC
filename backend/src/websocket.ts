@@ -2,25 +2,33 @@
 
 // const {v4: uuidV4, validate: uuidValidate} = require('uuid');
 import {v4 as uuidV4, validate as uuidValidate} from 'uuid';
-// const Meeting = require('../frontend/src/shared/classes/Meeting');
-import Meeting from '../frontend/src/shared/classes/Meeting.tsx';
-const userList = [];
-const meetingList = {};
+// const Meeting = require('../frontend/src/shared/classes/Meeting.tsx');
+// @ts-ignore
+import Meeting from '../../frontend/src/shared/classes/Meeting.js';
+import {Server, Socket} from "socket.io";
+import {DefaultEventsMap} from "socket.io/dist/typed-events";
 
-module.exports = function(io) {
-  const createNewMeeting = (id) => {
+export interface IMeetingList {
+  [key: string]: Meeting
+}
+
+const userList = [];
+const meetingList: IMeetingList = {};
+
+const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
+  const createNewMeeting = (id?:string) => {
     // TODO add additional meeting functionality
     // const newMeeting = {
     //   id: id? id : uuidV4(),
     //   title: 'Test Meeting Title',
     //   users: [],
     // };
-    const newMeeting = new Meeting(uuidV4(), 'Test Meeting Title');
-    meetingList[newMeeting.id]= newMeeting;
+    const newMeeting = new Meeting(id? id: uuidV4(), 'Test Meeting Title');
+    meetingList[newMeeting.id as string]= newMeeting;
     return newMeeting;
   };
 
-  const joinRoom = (socket, roomID) => {
+  const joinRoom = (socket: Socket<DefaultEventsMap, DefaultEventsMap>, roomID:string) => {
     //* If meeting exists in meeting list, send meeting.
     if (!(roomID in meetingList)) {
       socket.emit('NewMeeting', meetingList[roomID]);
@@ -43,7 +51,7 @@ module.exports = function(io) {
     const roomID = socket.handshake.query.room;
     //* Check if a room id parameter was supplied
     //* If so, join that meeting.
-    if (uuidValidate(roomID)) {
+    if (roomID && !Array.isArray(roomID) && uuidValidate(roomID)) {
       joinRoom(socket, roomID);
       //* if no parameter was supplied, do not join a meeting.
     }
@@ -62,7 +70,7 @@ module.exports = function(io) {
       io.to(roomID).emit('NewUserConnected', user);
       socket.join(roomID);
       if (roomID in meetingList) {
-        meetingList[roomID].users.push(user);
+        meetingList[roomID].addAttendee(user);
       }
 
       //* inform attendees if a user disconnects
@@ -86,3 +94,4 @@ module.exports = function(io) {
   });
 };
 
+export default websocket;

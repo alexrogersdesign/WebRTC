@@ -1,32 +1,50 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
+// const exports = {}
+let exports = {};
 
-const debug = require('debug')('WebRTC:server');
-const http = require('http');
+class ESMExportsError extends ReferenceError {
+  get name() { return 'ReferenceError' } // instanceof problem with runInNewContext
+  get tsError() { return true }
+}
+if (typeof exports === 'undefined') { throw new ESMExportsError('exports is not defined') }
+Object.defineProperty(exports, "__esModule", { value: true })
 
-const app = require('./app');
+// const debug = require('debug')('WebRTC:server');
+import debugFactory from 'debug';
+const debug = debugFactory('WebRTC:server');
+
+// const http = require('http');
+import* as http from 'http';
+
+// const app = require('./app');
+import app from './app.js';
 
 const server = http.createServer(app);
 
 /**
  * Setup cors to allow all origins with GET, POST requests
  */
-const io = require('socket.io')(server, {
+import {Server as IoFactory} from 'socket.io';
+const io = new IoFactory(server, {
   cors: {
     origin: '*',
     methods: ['GET', 'POST'],
   },
 });
 
+// bring in websocket configuration
+// require('./websocket')(io);
 
 // bring in websocket configuration
-require('./websocket')(io);
+import websocket from './websocket.js';
+websocket(io);
 
 /**
  * Normalize a port into a number, string, or false.
  * @param {number} val The port to normalize.
  * @return {number} the normalized port or false if failure.
  */
-function normalizePort(val) {
+function normalizePort(val:string) {
   const port = parseInt(val, 10);
 
   if (Number.isNaN(port)) {
@@ -61,7 +79,7 @@ server.on('listening', onListening);
  * Event listener for HTTP server "error" event.
  * @param {object} error an error to process.
  */
-function onError(error) {
+function onError(error:NodeJS.ErrnoException) {
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -92,6 +110,6 @@ function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ?
      `pipe ${addr}` :
-     `port ${addr.port}`;
+     `port ${addr?.port}`;
   debug(`Listening on ${bind}`);
 }

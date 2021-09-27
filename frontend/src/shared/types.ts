@@ -52,16 +52,16 @@ export interface MessageImage {
    image: MediaImage,
    alt: string,
 }
-
-export type Message = {
-   timeStamp: Date,
-   user: User,
-   id: string,
-   contents: string | MessageImage,
-   type?: MessageType,
-   alt?: string,
-   side?: Side
-}
+//
+// export type Message = {
+//    timeStamp: Date,
+//    user: User,
+//    id: string,
+//    contents: string | MessageImage,
+//    type?: MessageType,
+//    alt?: string,
+//    side?: Side
+// }
 export interface ICallMetadata {
    user: User
 }

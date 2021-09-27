@@ -52,8 +52,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   // const [lastName, setLastName] = useState('Doe');
   const [currentUser, setCurrentUser] = useState(new User(uuidv4(), 'Jon', 'Doe'));
   //* The current meeting being attended
-  const [meeting, setMeeting] = useState<Meeting | null>(new Meeting('1', 'test'));
-  // const [meeting, setMeeting] = useState<Meeting | null>(null);
+  // const [meeting, setMeeting] = useState<Meeting | null>(new Meeting('1', 'test'));
+  const [meeting, setMeeting] = useState<Meeting | null>(null);
   //* Whether or not the current user has disabled their microphone
   const [micMuted, setMicMuted] = useState<boolean>(false);
   //* Whether or not the current user has disabled their webcam

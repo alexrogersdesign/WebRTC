@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@chatscope/use-chat": "^1.0.5",
     "@fontsource/roboto": "^4.5.0",

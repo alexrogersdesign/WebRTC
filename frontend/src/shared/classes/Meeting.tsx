@@ -1,5 +1,5 @@
-import User from './User';
-
+/* eslint-disable */
+import User from './User.js';
 /**
  * The meeting class representing the information about an existing meeting.
  */
@@ -22,7 +22,7 @@ export default class Meeting {
 
     /**
    * Adds a user to the attendee list
-   * @param {User} user the user to add
+   * @param {User} user the user to add≤
    */
     addAttendee(user:User) {
       const found = this._attendees.indexOf(user);

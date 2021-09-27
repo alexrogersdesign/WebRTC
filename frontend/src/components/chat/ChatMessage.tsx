@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
-import React, {Component} from 'react';
+import React, {Component, useContext} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import cx from 'clsx';
@@ -16,6 +16,7 @@ import Box from '@material-ui/core/Box';
 import User from '../../shared/classes/User';
 import Message from '../../shared/classes/Message';
 import VideoAvatar from '../VideoAvatar';
+import {SocketIOContext} from '../../context/SocketIOContext';
 
 const size = 30;
 const useStyles = makeStyles(({palette, spacing}) =>
@@ -32,9 +33,12 @@ const useStyles = makeStyles(({palette, spacing}) =>
       marginRight: 'auto',
     },
     msgBox: {
+      // 'width': '100%',
+      'paddingTop': '2%',
+      'paddingLeft': '5%',
       'display': 'flex',
       'flexDirection': 'column',
-      'alignItems': 'center',
+      'alignItems': 'right',
       'marginBottom': 4,
       '&:hover $iconBtn': {
         opacity: 1,
@@ -48,10 +52,11 @@ const useStyles = makeStyles(({palette, spacing}) =>
       flexDirection: 'row-reverse',
     },
     msg: {
-      maxWidth: '70%',
+      // maxWidth: '100%',
+      // minWidth: '60%',
       padding: spacing(1, 2),
       borderRadius: 4,
-      display: 'inline-block',
+      // display: 'inline-block',
       wordBreak: 'break-word',
       fontFamily:
         // eslint-disable-next-line max-len
@@ -98,6 +103,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
       maxHeight: 120,
     },
     date: {
+      width: '100%',
       fontWeight: 500,
       color: 'rgba(0,0,0,0.4)',
       margin: '12px 0',
@@ -107,33 +113,28 @@ const useStyles = makeStyles(({palette, spacing}) =>
     row: {
 
     },
+    box: {
+      flexGrow: 2,
+      justifyContent: 'flex-start',
+    },
   }),
 );
 
 interface Props {
-  user: User,
   message: Message,
 }
 
 
-const ChatMessage = ({user, message}: Props) => {
+const ChatMessage = ( {message}: Props) => {
   const classes = useStyles();
-  // const attachClass = (index: number) => {
-  //   if (index === 0) {
-  //     return classes[`${side}First`];
-  //   }
-  //   if (index === messages.length - 1) {
-  //     return classes[`${side}Last`];
-  //   }
-  //   return '';
-  // };
+  const {currentUser} = useContext(SocketIOContext);
   const attachClass = () => {
     return classes[`${message.side}First`];
   };
-  const {side} = message;
+  const side = message.user.id === currentUser?.id ? 'right': 'left';
 
   return (
-    <Box p={'16px 30px 12px 10px'}>
+    <Box className={classes.box} p={'16px 80px 12px 10px'}>
       <Typography className={classes.date}>{message.timeStamp.toLocaleTimeString()}</Typography>
       <Grid
         container
@@ -142,10 +143,10 @@ const ChatMessage = ({user, message}: Props) => {
       >
         {side === 'left' && (
           <Grid item>
-            <VideoAvatar user={user} className={cx(classes.avatar)} />
+            <VideoAvatar user={message.user} className={cx(classes.avatar)} />
           </Grid>
         )}
-        <Grid item xs>
+        <Grid item xs >
           <div
             className={cx(classes.row, classes[`${side}Row`])}
           >

@@ -27,10 +27,8 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true
-
   },
   "include": [
-    "src/**/*.ts", "src/**/*.tsx"
-  ],
-  "exclude": ["node_modules", "**/*.js", "/src/shared/classes/*"]
+    "src"
+  ]
 }

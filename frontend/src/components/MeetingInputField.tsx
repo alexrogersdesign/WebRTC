@@ -14,9 +14,6 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {SocketIOContext} from '../context/SocketIOContext';
 
 interface Props {
-  //  onClick?: (event:any) => void,
-  //  field?: string,
-  //  setField?: React.Dispatch<React.SetStateAction<string>>,
    className?: string | undefined,
    placeholder?: string,
 
@@ -63,9 +60,6 @@ const MeetingInputField = ({placeholder}: Props) => {
   }, [copied]);
   return (
     <Paper component="form" className={classes.root} elevation={3}>
-      {/* <IconButton className={classes.iconButton} aria-label="menu">
-        <MenuIcon />
-      </IconButton> */}
       <ToolTip
         title='Meeting Copied!'
         disableHoverListener={true}

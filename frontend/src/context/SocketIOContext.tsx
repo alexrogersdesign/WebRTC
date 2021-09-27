@@ -131,6 +131,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     //* Listens for meeting from socket
     socket.on('NewMeeting', (receivedMeeting:IReceivedMeeting) => {
       const newMeeting = parseMeeting(receivedMeeting);
+      if (!newMeeting) return;
       newMeeting && enqueueSnackbar(`Joining meeting ${newMeeting.title}`, {variant: 'info'});
       setMeeting(newMeeting);
     });
@@ -336,11 +337,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
 
       addPeer(call);
       call.on('stream', (stream) => {
-        // const newUser: User = {
-        //   id: call.peer,
-        //   ...call.metadata,
-        // };
-        const newUser = call.metadata.user;
+        const newUser = parseUser(call.metadata.user);
+        // const newUser = call.metadata.user;
         addExternalMedia(newUser, stream);
       });
       call.on('close', ()=>{

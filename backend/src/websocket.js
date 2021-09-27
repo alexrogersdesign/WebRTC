@@ -9,11 +9,6 @@ const meetingList = {};
 const websocket = (io) => {
     const createNewMeeting = (id) => {
         // TODO add additional meeting functionality
-        // const newMeeting = {
-        //   id: id? id : uuidV4(),
-        //   title: 'Test Meeting Title',
-        //   users: [],
-        // };
         const newMeeting = new Meeting(id ? id : uuidV4(), 'Test Meeting Title');
         meetingList[newMeeting.id] = newMeeting;
         console.log('new meeting ---------', newMeeting.id);

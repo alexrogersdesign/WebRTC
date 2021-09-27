@@ -18,11 +18,6 @@ const meetingList: IMeetingList = {};
 const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
   const createNewMeeting = (id?:string) => {
     // TODO add additional meeting functionality
-    // const newMeeting = {
-    //   id: id? id : uuidV4(),
-    //   title: 'Test Meeting Title',
-    //   users: [],
-    // };
     const newMeeting = new Meeting(id? id: uuidV4(), 'Test Meeting Title');
     meetingList[newMeeting.id as string]= newMeeting;
     console.log('new meeting ---------',newMeeting.id)

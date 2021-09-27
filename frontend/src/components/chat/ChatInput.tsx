@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext, useState} from 'react';
+import React, {KeyboardEventHandler, useContext, useState} from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
 import {Box, InputBase, IconButton} from '@material-ui/core';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -40,10 +40,17 @@ const ChatInput = () => {
   const [field, setField] = useState('');
   const handleSend = () => {
     if (!currentUser) throw new Error('No user found');
+    if (!field.length) return;
     const message = new Message(currentUser, field);
     sendMessage && sendMessage(message);
     setField('');
   };
+  const handleKeypress =
+      (event: React.KeyboardEvent) => {
+        if (event?.code === 'Enter' || event?.code === 'NumpadEnter') {
+          handleSend();
+        }
+      };
   return (
     <Box display="flex" minHeight={70} alignItems="center" px={2}>
       <IconButton edge="start" color="inherit">
@@ -53,6 +60,7 @@ const ChatInput = () => {
       <InputBase
         value={field}
         onChange={(e)=> setField(e.target.value)}
+        onKeyPress={handleKeypress}
         className={classes.input}
         placeholder={'Type a message...'}
         startAdornment={

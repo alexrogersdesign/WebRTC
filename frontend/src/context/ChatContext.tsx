@@ -6,6 +6,7 @@ import {Socket} from 'socket.io-client';
 import {ChildrenProps, IChatContext} from '../shared/types';
 import Message from '../shared/classes/Message';
 import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
+import {IReceivedMessage, parseMessage} from '../util/theme/socketParser';
 
 const ChatContext = createContext<Partial<IChatContext>>({});
 
@@ -20,17 +21,17 @@ const ChatContextProvider : React.FC<Props> = ({socket, children}) => {
   const [messageList, setMessageList] = useState<Message[]>([]);
 
   useEffect(() => {
-    return () => {
-      setMessageListener();
-    };
-  }, []);
+    setMessageListener();
+  }, [socket]);
 
   /**
      * Listens for new user message event then...
      */
   const setMessageListener = () => {
-    socket.on('ReceivedMessage', (message:Message) => {
-      setMessageList((prevState) => [...prevState]);
+    socket.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
+      console.log('ReceivedMessage', receivedMessage);
+      const message = parseMessage(receivedMessage);
+      setMessageList((prevState) => [...prevState, message]);
       enqueueSnackbar(`New message from ${message.user}`);
     });
   };

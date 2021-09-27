@@ -4,11 +4,12 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 import Message from '../../shared/classes/Message';
 import User from '../../shared/classes/User';
 import {ChatContext} from '../../context/ChatContext';
-
 
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
@@ -43,34 +44,43 @@ const useStyles = makeStyles(({palette, spacing}) =>
       // justifyContent: 'center',
     },
     messagesBody: {
-      width: 'calc( 100% - 20px )',
+      // width: 'calc( 100% - 10px )',
+      width: 'calc( 100%)',
       margin: 10,
       overflowY: 'scroll',
       height: 'calc( 100% - 80px )',
+    },
+    list: {
+      width: '100%',
+    },
+    listItem: {
+      width: '100%',
     },
   }),
 );
 
 const testUser = new User('23341', 'Jack', 'Harvey');
-const testUser2 = new User('23342', 'Sally', 'Ride');
-const testMessage = new Message(testUser, 'test message 1');
-const testMessage2 = new Message(testUser, 'test message 2', 'right');
-
 const ChatBox = ({innerRef}: Props) => {
   const classes = useStyles();
   const {messageList} = useContext(ChatContext);
+
+  const renderMessage = () => {
+    return messageList?.map((message) => {
+      return (
+        <ListItem className={classes.listItem} key={message.id} disableGutters >
+          <ChatMessage message={message}/>
+        </ListItem>
+      );
+    });
+  };
   return (
     <div className={classes.container} ref={innerRef}>
       <Paper className={classes.paper}>
         <Box display="flex" flexDirection="column" height="100%">
           <Box p={3} height="100%" style={{overflowY: 'auto'}}>
-            <ChatMessage user={testUser} message={testMessage}/>
-            <ChatMessage user={testUser2} message={testMessage2}/>
-            { messageList?.forEach((message) => {
-              return (
-                <ChatMessage user={testUser} message={message}/>
-              );
-            }) }
+            <List className={classes.list}>
+              {messageList?.length && renderMessage()}
+            </List>
           </Box>
           <ChatInput />
         </Box>

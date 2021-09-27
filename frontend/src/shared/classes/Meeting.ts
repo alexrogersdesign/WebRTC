@@ -1,5 +1,4 @@
-/* eslint-disable */
-import User from './User.js';
+import User from './User';
 /**
  * The meeting class representing the information about an existing meeting.
  */

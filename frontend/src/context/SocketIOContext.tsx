@@ -24,6 +24,7 @@ import {ChatContextProvider} from './ChatContext';
 import User from '../shared/classes/User';
 import {SegmentationContextProvider} from './SegmentationContext';
 import Meeting from '../shared/classes/Meeting';
+import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/theme/socketParser';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -108,7 +109,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * is called to handle the change.
    */
   useEffect(() => {
-    initializeMediaStream();
+    initializeMediaStream(); ``;
   }, [screenSharing]);
 
   /**
@@ -128,15 +129,16 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Sets socket connection listeners
    */
   const setupSocketListeners= async () =>{
-    const prevMeeting = lastReceivedMeeting.current;
+    // const prevMeeting = lastReceivedMeeting.current;
     //* Listens for meeting from socket
-    socket.on('NewMeeting', (newMeeting:Meeting) => {
+    socket.on('NewMeeting', (receivedMeeting:IReceivedMeeting) => {
+      const newMeeting = parseMeeting(receivedMeeting);
       // if (lastReceivedMeeting.current && lastReceivedMeeting.current?.id !== newMeeting.id || !lastReceivedMeeting.current) {
       newMeeting && enqueueSnackbar(`Joining meeting ${newMeeting.title}`, {variant: 'info'});
       // }
       // console.log('old meeting', prevMeeting);
-      // console.log('new meeting', newMeeting);
       lastReceivedMeeting.current = newMeeting;
+      console.log('new meeting', newMeeting);
       setMeeting(newMeeting);
     });
     console.log('current user id before peer creation', currentUser.id);
@@ -147,7 +149,8 @@ const ContextProvider: React.FC<Props> = ({children}) => {
      * Disconnects from peer WebRTC stream,
      * removes information from peer list and removes media stream.
      */
-    socket.on('UserDisconnected', (user: User) => {
+    socket.on('UserDisconnected', (receivedUser: IReceivedUser) => {
+      const user = parseUser(receivedUser);
       console.log('user disconnected', user.id );
       if (user.id in peers.current) {
         peers.current[user.id].close();
@@ -372,7 +375,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const setExternalUserListener = () => {
     console.log('set external user listener');
-    socket.on('NewUserConnected', (user: User) => {
+    socket.on('NewUserConnected', (recievedUser: IReceivedUser) => {
+      // parse received json object into User
+      const user = parseUser(recievedUser);
       enqueueSnackbar(`${user} has connected`);
 
       //* Prevent local user from being added.
@@ -456,7 +461,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         initializeMediaStream,
         setPeerOpenedConnectionListener,
         endConnection,
-        setMeeting,
         joinMeeting,
         startNewMeeting,
         leaveMeeting,

@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --exec \"node --loader ts-node/esm src/index.ts\"",
-    "debug": "DEBUG=* nodemon src/index.ts",
+    "debug": "DEBUG=* nodemon --exec \"node --loader ts-node/esm src/index.ts\"",
     "peer": "peerjs --port 5001"
   },
   "repository": {

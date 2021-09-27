@@ -3,7 +3,8 @@ import React, {createContext, useEffect, useState, useRef} from 'react';
 import {useSnackbar} from 'notistack';
 import {Socket} from 'socket.io-client';
 
-import {ChildrenProps, IChatContext, Message} from '../shared/types';
+import {ChildrenProps, IChatContext} from '../shared/types';
+import Message from '../shared/classes/Message';
 import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
 
 const ChatContext = createContext<Partial<IChatContext>>({});

@@ -14,7 +14,7 @@ import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import Box from '@material-ui/core/Box';
 
 import User from '../../shared/classes/User';
-import {Side, Message} from '../../shared/types';
+import Message from '../../shared/classes/Message';
 import VideoAvatar from '../VideoAvatar';
 
 const size = 30;
@@ -113,11 +113,10 @@ const useStyles = makeStyles(({palette, spacing}) =>
 interface Props {
   user: User,
   message: Message,
-  side: Side,
 }
 
 
-const ChatMessage = ({user, message, side}: Props) => {
+const ChatMessage = ({user, message}: Props) => {
   const classes = useStyles();
   // const attachClass = (index: number) => {
   //   if (index === 0) {
@@ -129,8 +128,9 @@ const ChatMessage = ({user, message, side}: Props) => {
   //   return '';
   // };
   const attachClass = () => {
-    return classes[`${side}First`];
+    return classes[`${message.side}First`];
   };
+  const {side} = message;
 
   return (
     <Box p={'16px 30px 12px 10px'}>

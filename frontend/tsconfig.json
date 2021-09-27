@@ -11,6 +11,7 @@
       "./node_modules/@types/w3c-image-capture"
     ],
     "allowJs": true,
+    "checkJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -29,6 +30,7 @@
 
   },
   "include": [
-    "src"
-  ]
+    "src/**/*.ts", "src/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "**/*.js", "/src/shared/classes/*"]
 }

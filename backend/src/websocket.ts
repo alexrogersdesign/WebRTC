@@ -2,7 +2,7 @@
 
 // const {v4: uuidV4, validate: uuidValidate} = require('uuid');
 import {v4 as uuidV4, validate as uuidValidate} from 'uuid';
-// const Meeting = require('../frontend/src/shared/classes/Meeting.tsx');
+// const Meeting = require('../frontend/src/shared/classes/Meeting.ts');
 // @ts-ignore
 import Meeting from '../../frontend/src/shared/classes/Meeting.js';
 import {Server, Socket} from "socket.io";
@@ -25,6 +25,7 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
     // };
     const newMeeting = new Meeting(id? id: uuidV4(), 'Test Meeting Title');
     meetingList[newMeeting.id as string]= newMeeting;
+    console.log('new meeting ---------',newMeeting.id)
     return newMeeting;
   };
 

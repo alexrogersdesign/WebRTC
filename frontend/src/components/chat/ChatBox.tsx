@@ -5,7 +5,7 @@ import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 
-import {Side, Message} from '../../shared/types';
+import Message from '../../shared/classes/Message';
 import User from '../../shared/classes/User';
 import {ChatContext} from '../../context/ChatContext';
 
@@ -53,18 +53,8 @@ const useStyles = makeStyles(({palette, spacing}) =>
 
 const testUser = new User('23341', 'Jack', 'Harvey');
 const testUser2 = new User('23342', 'Sally', 'Ride');
-const testMessage:Message = {
-  timeStamp: new Date(),
-  user: testUser,
-  contents: 'Test Message',
-  id: '23341',
-};
-const testMessage2:Message = {
-  timeStamp: new Date(),
-  user: testUser,
-  contents: 'Test Message',
-  id: '23341',
-};
+const testMessage = new Message(testUser, 'test message 1');
+const testMessage2 = new Message(testUser, 'test message 2', 'right');
 
 const ChatBox = ({innerRef}: Props) => {
   const classes = useStyles();
@@ -74,11 +64,11 @@ const ChatBox = ({innerRef}: Props) => {
       <Paper className={classes.paper}>
         <Box display="flex" flexDirection="column" height="100%">
           <Box p={3} height="100%" style={{overflowY: 'auto'}}>
-            <ChatMessage user={testUser} side='right' message={testMessage}/>
-            <ChatMessage user={testUser2} side='left' message={testMessage2}/>
+            <ChatMessage user={testUser} message={testMessage}/>
+            <ChatMessage user={testUser2} message={testMessage2}/>
             { messageList?.forEach((message) => {
               return (
-                <ChatMessage user={testUser} message={message} side={'left'}/>
+                <ChatMessage user={testUser} message={message}/>
               );
             }) }
           </Box>

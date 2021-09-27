@@ -2,6 +2,7 @@
 import Peer, {MediaConnection} from 'peerjs';
 import User from './classes/User';
 import Meeting from './classes/Meeting';
+import Message from './classes/Message';
 
 export interface ChildrenProps {
    children?: JSX.Element;
@@ -46,12 +47,7 @@ export interface IChatContext {
    sendMessage: (message: Message) => void
 }
 
-export type Side = 'left' | 'right'
-export type MessageType = 'image' | 'text'
-export interface MessageImage {
-   image: MediaImage,
-   alt: string,
-}
+
 //
 // export type Message = {
 //    timeStamp: Date,
@@ -79,7 +75,6 @@ export interface ISocketIOContext {
    setPeerOpenedConnectionListener: () => void,
    connectToUser: (externalUser: string) => void,
    endConnection: () => void,
-   setMeeting: (meeting: Meeting) => void,
    joinMeeting: (meetingID: string) => void,
    startNewMeeting: () => void,
    leaveMeeting: () => void,

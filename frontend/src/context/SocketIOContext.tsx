@@ -97,7 +97,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Listen for changes in media controls
    */
   useEffect(() => {
-    console.log('peers use effect', peers.current);
     if (outgoingMedia.current) {
       outgoingMedia.current.getAudioTracks()[0].enabled = !micMuted;
       outgoingMedia.current.getVideoTracks()[0].enabled = !videoDisabled;
@@ -129,16 +128,10 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Sets socket connection listeners
    */
   const setupSocketListeners= async () =>{
-    // const prevMeeting = lastReceivedMeeting.current;
     //* Listens for meeting from socket
     socket.on('NewMeeting', (receivedMeeting:IReceivedMeeting) => {
       const newMeeting = parseMeeting(receivedMeeting);
-      // if (lastReceivedMeeting.current && lastReceivedMeeting.current?.id !== newMeeting.id || !lastReceivedMeeting.current) {
       newMeeting && enqueueSnackbar(`Joining meeting ${newMeeting.title}`, {variant: 'info'});
-      // }
-      // console.log('old meeting', prevMeeting);
-      lastReceivedMeeting.current = newMeeting;
-      console.log('new meeting', newMeeting);
       setMeeting(newMeeting);
     });
     console.log('current user id before peer creation', currentUser.id);
@@ -272,16 +265,11 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       user: currentUser,
       roomID: newMeetingID,
     };
-    console.log('joining meeting: ', newMeetingID);
-    console.log('joining meeting data  ', meetingData);
     socket.emit('JoinMeeting', meetingData);
     //* Push meeting to url parameter.
     history.push('?room='+meeting?.id);
     setHasJoinedMeeting(true);
   };
-  useEffect(() => {
-    console.log('external media use effect', externalMedia);
-  }, [externalMedia]);
 
   /**
    * Helper function to remove a media stream from the
@@ -289,7 +277,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * @param {string} id the id of the media to remove
    */
   const removeMedia = (id: string) => {
-    console.log('external media', externalMedia);
     setExternalMedia((oldState)=> oldState.filter((media:IExternalMedia) => media.user.id !== id));
   };
   /**
@@ -300,7 +287,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('New peer added', call);
 
     peers.current[call.peer] = call;
-    console.log('peers after add', peers.current);
   };
   /**
    * Helper function to remove a peer from the peer list
@@ -343,7 +329,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Adds peer to peer list
    */
   const setConnectingPeersListener = () => {
-    console.log('set connected peer listener');
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
       call.answer(outgoingMedia.current);
@@ -357,7 +342,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         // };
         const newUser = call.metadata.user;
         addExternalMedia(newUser, stream);
-        console.log('adding stream');
       });
       call.on('close', ()=>{
         removeMedia(call.peer);
@@ -374,7 +358,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Cleans up connection on error or if far side closes connection.
    */
   const setExternalUserListener = () => {
-    console.log('set external user listener');
     socket.on('NewUserConnected', (recievedUser: IReceivedUser) => {
       // parse received json object into User
       const user = parseUser(recievedUser);
@@ -382,8 +365,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
 
       //* Prevent local user from being added.
       if (user.id === currentUser.id) return;
-      console.log('new user connection, current user id', currentUser.id);
-      console.log('new user connection, user ', user);
       const metadata : ICallMetadata = {
         user: currentUser,
       };
@@ -410,7 +391,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         //   id: call.peer,
         // };
         addExternalMedia(user, stream, callOption);
-        console.log('call stream', call);
         console.log('stream received', stream);
       });
       //* remove media if closed by far side

@@ -5,10 +5,10 @@ import {Grid, Container, Typography} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 
-import VideoPlayer from './VideoPlayer';
-import VideoArray from './VideoArray';
+import VideoPlayer from './video/VideoPlayer';
+import VideoArray from './video/VideoArray';
 import {SocketIOContext} from '../context/SocketIOContext';
-import {AttendeeDrawer} from './AttendeeDrawer';
+import {AttendeeDrawer} from './attendee/AttendeeDrawer';
 import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
 interface Props {

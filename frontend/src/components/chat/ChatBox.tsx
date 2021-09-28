@@ -7,8 +7,6 @@ import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
-import Message from '../../shared/classes/Message';
-import User from '../../shared/classes/User';
 import {ChatContext} from '../../context/ChatContext';
 
 import ChatMessage from './ChatMessage';
@@ -59,7 +57,6 @@ const useStyles = makeStyles(({palette, spacing}) =>
   }),
 );
 
-const testUser = new User('23341', 'Jack', 'Harvey');
 const ChatBox = ({innerRef}: Props) => {
   const classes = useStyles();
   const {messageList} = useContext(ChatContext);
@@ -79,7 +76,7 @@ const ChatBox = ({innerRef}: Props) => {
         <Box display="flex" flexDirection="column" height="100%">
           <Box p={3} height="100%" style={{overflowY: 'auto'}}>
             <List className={classes.list}>
-              {messageList?.length && renderMessage()}
+              {messageList && messageList?.length > 0 && renderMessage()}
             </List>
           </Box>
           <ChatInput />

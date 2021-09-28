@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
-import {SocketIOContext} from '../context/SocketIOContext';
+import {SocketIOContext} from '../../context/SocketIOContext';
 import {Grid} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 

@@ -75,7 +75,7 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
       };
 
       socket.on('SendMessage', (message) => {
-        io.to(roomID).emit('ReceivedMessage', message);
+        socket.broadcast.to(roomID).emit('ReceivedMessage', message);
       });
 
       socket.on('LeaveRoom', () => {

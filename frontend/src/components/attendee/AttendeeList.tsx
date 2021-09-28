@@ -9,8 +9,8 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 
-import VideoAvatar from './VideoAvatar';
-import User from '../shared/classes/User';
+import VideoAvatar from '../video/VideoAvatar';
+import User from '../../shared/classes/User';
 
 
 interface Props {

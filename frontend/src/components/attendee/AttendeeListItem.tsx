@@ -7,9 +7,9 @@ import {
 } from '@material-ui/core';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
-import User from '../shared/classes/User';
+import User from '../../shared/classes/User';
 
-import VideoAvatar from './VideoAvatar';
+import VideoAvatar from '../video/VideoAvatar';
 import AttendeeInfoModal from './AttendeeInfoModal';
 
 interface Props {

@@ -14,9 +14,9 @@ import VideocamTwoToneIcon from '@material-ui/icons/VideocamTwoTone';
 import VideocamOffTwoToneIcon from '@material-ui/icons/VideocamOffTwoTone';
 import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 
-import {SocketIOContext} from '../context/SocketIOContext';
-import {SegmentationContext} from '../context/SegmentationContext';
-import theme from '../util/theme/active';
+import {SocketIOContext} from '../../context/SocketIOContext';
+import {SegmentationContext} from '../../context/SegmentationContext';
+import theme from '../../util/theme/active';
 
 interface Props {
    onClick?: (event:any) => void,

@@ -9,9 +9,9 @@ import Divider from '@material-ui/core/Divider';
 import CloseIcon from '@material-ui/icons/Close';
 
 
-import User from '../shared/classes/User';
+import User from '../../shared/classes/User';
 
-import VideoAvatar from './VideoAvatar';
+import VideoAvatar from '../video/VideoAvatar';
 import {IconButton} from '@material-ui/core';
 
 interface Props {

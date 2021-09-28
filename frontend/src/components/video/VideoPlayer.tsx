@@ -4,12 +4,12 @@ import {Paper} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import User from '../shared/classes/User';
-import {SocketIOContext} from '../context/SocketIOContext';
+import User from '../../shared/classes/User';
+import {SocketIOContext} from '../../context/SocketIOContext';
 import VideoAvatar from './VideoAvatar';
 import WebcamControls from './WebcamControls';
-import tree from '../util/img/tree.jpeg';
-import {SegmentationContext} from '../context/SegmentationContext';
+import tree from '../../util/img/tree.jpeg';
+import {SegmentationContext} from '../../context/SegmentationContext';
 type Props = {
   stream?: MediaStream | undefined;
   local?: boolean,

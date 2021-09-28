@@ -15,7 +15,7 @@ import Box from '@material-ui/core/Box';
 
 import User from '../../shared/classes/User';
 import Message from '../../shared/classes/Message';
-import VideoAvatar from '../VideoAvatar';
+import VideoAvatar from '../video/VideoAvatar';
 import {SocketIOContext} from '../../context/SocketIOContext';
 
 const size = 30;

@@ -1,6 +1,7 @@
 /* eslint-disable require-jsdoc */
+import {ObjectId} from 'mongodb';
+
 import User from './User';
-import {v4 as uuidV4} from 'uuid';
 
 export type Side = 'left' | 'right'
 export type MessageType = 'image' | 'text'
@@ -13,9 +14,10 @@ export interface MessageImage {
  * The class representing a chat message
  */
 export default class Message {
+   _id: ObjectId;
   private _timeStamp: Date;
+  private _meetingId: ObjectId;
   private _user: User;
-  private _id: string;
   private _contents: string | MessageImage;
   private _type?: MessageType;
   private _alt?: string;
@@ -23,19 +25,23 @@ export default class Message {
 
   /**
    * Constructor
+   * @param {ObjectId} meetingId
    * @param {User} user
    * @param {String} contents
    * @param {Side} side
    * @param {String} alt
    */
-  constructor(user: User,
+  constructor(
+      meetingId: ObjectId,
+      user: User,
       contents: string | MessageImage,
       side: Side = 'left',
       alt: string = `message from ${user}`,
   ) {
-    this._timeStamp = new Date();
+    this._meetingId = meetingId;
+    this._id = new ObjectId();
+    this._timeStamp = this._id.getTimestamp();
     this._user = user;
-    this._id = uuidV4();
     this._contents = contents;
     this._type = typeof contents === 'string'? 'text': 'image';
     this._alt = alt;
@@ -58,12 +64,20 @@ export default class Message {
     this._user = value;
   }
 
-  get id(): string {
+  get id(): ObjectId {
     return this._id;
   }
 
-  set id(value: string) {
+  set id(value: ObjectId) {
     this._id = value;
+  }
+
+  get meetingId(): ObjectId {
+    return this._meetingId;
+  }
+
+  set meetingId(value: ObjectId) {
+    this._meetingId = value;
   }
 
   get contents(): string | MessageImage {

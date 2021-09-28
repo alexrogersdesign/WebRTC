@@ -1,25 +1,24 @@
+import {ObjectId} from 'mongodb';
 
 
 /**
  * A user class
  */
 export default class User {
-    private _id: string;
+     _id: ObjectId;
     private _firstName?: string;
     private _lastName?: string;
     private _fullName?: string;
 
     /**
-     * @param {string} id User ID
      * @param {_firstName} firstName First name
      * @param {_lastName} lastName Last name
      */
     constructor(
-        id: string,
         firstName: string,
         lastName: string,
     ) {
-      this._id = id;
+      this._id = new ObjectId();
       this._firstName = firstName;
       this._lastName = lastName;
       this.updateFullName();
@@ -59,7 +58,7 @@ export default class User {
     /**
      * returns ID
      */
-    get id(): string {
+    get id(): ObjectId {
       return this._id;
     }
     /**
@@ -79,7 +78,7 @@ export default class User {
    * sets id
    * @param {String} value the new id
    */
-    set id(value: string) {
+    set id(value: ObjectId) {
       this._id = value;
     }
     /**

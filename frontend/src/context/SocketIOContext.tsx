@@ -24,7 +24,7 @@ import {ChatContextProvider} from './ChatContext';
 import User from '../shared/classes/User';
 import {SegmentationContextProvider} from './SegmentationContext';
 import Meeting from '../shared/classes/Meeting';
-import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/theme/socketParser';
+import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/classParser';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -51,7 +51,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   // const [currentUserID, setCurrentUserID] = useState(uuidv4());
   // const [firstName, setFirstName] = useState('John');
   // const [lastName, setLastName] = useState('Doe');
-  const [currentUser, setCurrentUser] = useState(new User(uuidv4(), 'Jon', 'Doe'));
+  const [currentUser, setCurrentUser] = useState(new User( 'Jon', 'Doe'));
   //* The current meeting being attended
   // const [meeting, setMeeting] = useState<Meeting | null>(new Meeting('1', 'test'));
   const [meeting, setMeeting] = useState<Meeting | null>(null);
@@ -89,7 +89,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (meeting && meeting.id && !hasJoinedMeeting && outgoingMedia.current) {
       setConnectingPeersListener();
       setExternalUserListener();
-      joinMeeting(meeting.id);
+      joinMeeting(meeting.id.toString());
     }
   }, [meeting, outgoingMedia.current]);
 
@@ -146,12 +146,12 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     socket.on('UserDisconnected', (receivedUser: IReceivedUser) => {
       const user = parseUser(receivedUser);
       console.log('user disconnected', user.id );
-      if (user.id in peers.current) {
-        peers.current[user.id].close();
+      if (user.id.toString() in peers.current) {
+        peers.current[user.id.toString()].close();
       }
       enqueueSnackbar(`${user.firstName} ${user.lastName} has disconnected`);
       // removePeer(user.id);
-      removeMedia(user.id);
+      removeMedia(user.id.toString());
     });
     socket.on('error', (error) => {
       console.log('Socket Responded With Error: ', error);
@@ -162,7 +162,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Initializes connection to peer server
    */
   const initPeerServerConnection = () => {
-    peerConnection.current = new Peer(currentUser.id, {
+    peerConnection.current = new Peer(currentUser.id.toString(), {
       host: '/',
       port: 5001,
       debug: 2,
@@ -252,7 +252,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const joinMeeting = (newMeetingID?:string) => {
     //* If a meeting ID is not provided and the user has a meeting stored,
     //* join that meeting.
-    if (!newMeetingID && meeting && meeting.id) newMeetingID = meeting.id;
+    if (!newMeetingID && meeting && meeting.id) newMeetingID = meeting.id.toString();
     if (!newMeetingID) throw new Error('Unable to retrieve meeting');
     // //* If new meeting is different than stored meeting,
     // //* update stored meeting.
@@ -278,7 +278,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * @param {string} id the id of the media to remove
    */
   const removeMedia = (id: string) => {
-    setExternalMedia((oldState)=> oldState.filter((media:IExternalMedia) => media.user.id !== id));
+    setExternalMedia((oldState)=> oldState.filter((media:IExternalMedia) => media.user.id.toString() !== id));
   };
   /**
    * Helper function to add peer to peer list
@@ -378,7 +378,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       // };
       if (!peerConnection.current) throw new Error('Missing peer connection');
       if (!outgoingMedia.current) throw new Error('Missing webcam stream');
-      const call = peerConnection.current.call(user.id, outgoingMedia.current, callOption);
+      const call = peerConnection.current.call(user.id.toString(), outgoingMedia.current, callOption);
       console.log('Placing call', call);
       // when a stream is received, add it to external media
       call.on('stream', (stream: MediaStream) => {

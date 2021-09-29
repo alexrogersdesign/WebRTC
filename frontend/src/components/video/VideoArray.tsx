@@ -53,7 +53,7 @@ const VideoArray = (props: Props) => {
   const classes = useStyles();
   const videoList = () => externalMedia?.map(({user, stream}) => {
     return (
-      <div key={user.id} className={classes.item}>
+      <div key={user.id.toString()} className={classes.item}>
         <VideoPlayer stream={stream} user={user}/>
       </div>);
   });

@@ -37,7 +37,7 @@ export const AttendeeList = ({users}: Props) => {
           const labelId = `checkbox-list-secondary-label-${user.id}`;
           const name = `${user.firstName} ${user.lastName}`;
           return (
-            <ListItem key={user.id} button>
+            <ListItem key={user.id.toString()} button>
               <ListItemAvatar>
                 <VideoAvatar
                   user={user}

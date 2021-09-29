@@ -1,16 +1,13 @@
 /* jshint esversion: 6 */
-// const {v4: uuidV4, validate: uuidValidate} = require('uuid');
 import { v4 as uuidV4, validate as uuidValidate } from 'uuid';
-// const Meeting = require('../frontend/src/shared/classes/Meeting.ts');
-// @ts-ignore
 import Meeting from '../../frontend/src/shared/classes/Meeting.js';
 const userList = [];
 const meetingList = {};
 const websocket = (io) => {
     const createNewMeeting = (id) => {
         // TODO add additional meeting functionality
-        const newMeeting = new Meeting(id ? id : uuidV4(), 'Test Meeting Title');
-        meetingList[newMeeting.id] = newMeeting;
+        const newMeeting = new Meeting('Test Meeting Title');
+        meetingList[newMeeting.id.toString()] = newMeeting;
         console.log('new meeting ---------', newMeeting.id);
         return newMeeting;
     };
@@ -61,7 +58,7 @@ const websocket = (io) => {
                 socket.to(roomID).emit('UserDisconnected', user);
             };
             socket.on('SendMessage', (message) => {
-                io.to(roomID).emit('ReceivedMessage', message);
+                socket.broadcast.to(roomID).emit('ReceivedMessage', message);
             });
             socket.on('LeaveRoom', () => {
                 leaveRoom();

@@ -64,7 +64,11 @@ const ChatBox = ({innerRef}: Props) => {
   const renderMessage = () => {
     return messageList?.map((message) => {
       return (
-        <ListItem className={classes.listItem} key={message.id} disableGutters >
+        <ListItem
+          className={classes.listItem}
+          key={message.id.toString()}
+          disableGutters
+        >
           <ChatMessage message={message}/>
         </ListItem>
       );

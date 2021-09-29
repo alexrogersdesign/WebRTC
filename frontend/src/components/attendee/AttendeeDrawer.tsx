@@ -175,7 +175,7 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
         <List className={classes.list} >
           {users && users.map((user) => {
             return (
-              <AttendeeListItem key={user.id} user={user}/>
+              <AttendeeListItem key={user.id.toString()} user={user}/>
             );
           })}
         </List>

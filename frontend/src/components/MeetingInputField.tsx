@@ -79,7 +79,10 @@ const MeetingInputField = ({placeholder}: Props) => {
         />
       </ToolTip>
       {meeting &&(
-        <CopyToClipboard text={meeting.id} onCopy={()=> setCopied(true)}>
+        <CopyToClipboard
+          text={meeting.id.toString()}
+          onCopy={()=> setCopied(true)}
+        >
           <ToolTip title="Copy Current Meeting">
             <IconButton
               className={classes.iconButton}

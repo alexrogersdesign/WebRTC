@@ -36,7 +36,9 @@
     <script id="react-dotenv" src="./env.js"></script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+  <script>  if (!crossOriginIsolated) SharedArrayBuffer = ArrayBuffer;</script>
+
+  <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
       This HTML file is a template.

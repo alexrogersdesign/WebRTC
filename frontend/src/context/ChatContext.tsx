@@ -6,7 +6,7 @@ import {Socket} from 'socket.io-client';
 import {ChildrenProps, IChatContext} from '../shared/types';
 import Message from '../shared/classes/Message';
 import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
-import {IReceivedMessage, parseMessage} from '../util/theme/socketParser';
+import {IReceivedMessage, parseMessage} from '../util/classParser';
 
 const ChatContext = createContext<Partial<IChatContext>>({});
 

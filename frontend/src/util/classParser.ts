@@ -1,11 +1,11 @@
 import {ObjectId} from 'mongodb';
 
-import Meeting from '../shared/classes/Meeting';
+import Meeting from '../shared/classes/Meeting.js';
 import Message,
 {MessageImage,
   MessageType,
-  Side} from '../shared/classes/Message';
-import User from '../shared/classes/User';
+  Side} from '../shared/classes/Message.js';
+import User from '../shared/classes/User.js';
 
 export interface IReceivedMeeting {
     _id : string | ObjectId,
@@ -18,6 +18,7 @@ export interface IReceivedUser {
     _lastName: string,
 }
 export interface IReceivedMessage {
+    _meetingId: ObjectId| string,
      _timeStamp: Date,
      _user: IReceivedUser,
      _id: string | ObjectId,
@@ -58,7 +59,9 @@ export const parseMeeting = (input:IReceivedMeeting): Meeting | undefined => {
 };
 
 export const parseMessage = (input:IReceivedMessage) : Message => {
-  const newMessage = new Message(parseUser(input._user), input._contents );
+  const meetingId = parseId(input._meetingId);
+  const userId = parseUser(input._user);
+  const newMessage = new Message(meetingId, userId, input._contents );
   newMessage.id = parseId(input._id);
   if (input['_timeStamp']) newMessage.timeStamp = new Date(input._timeStamp);
   if (input['_alt']) newMessage.alt = input._alt;

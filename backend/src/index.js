@@ -1,20 +1,8 @@
 // #!/usr/bin/env node
-// const exports = {}
 let exports = {};
-class ESMExportsError extends ReferenceError {
-    get name() { return 'ReferenceError'; } // instanceof problem with runInNewContext
-    get tsError() { return true; }
-}
-if (typeof exports === 'undefined') {
-    throw new ESMExportsError('exports is not defined');
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-// const debug = require('debug')('WebRTC:server');
 import debugFactory from 'debug';
 const debug = debugFactory('WebRTC:server');
-// const http = require('http');
 import * as http from 'http';
-// const app = require('./app');
 import app from './app.js';
 const server = http.createServer(app);
 /**
@@ -27,8 +15,8 @@ const io = new IoFactory(server, {
         methods: ['GET', 'POST'],
     },
 });
-// bring in websocket configuration
-// require('./websocket')(io);
+import database from './database/database.js';
+database();
 // bring in websocket configuration
 import websocket from './websocket.js';
 websocket(io);
@@ -78,11 +66,9 @@ function onError(error) {
         case 'EACCES':
             console.error(`${bind} requires elevated privileges`);
             process.exit(1);
-            break;
         case 'EADDRINUSE':
             console.error(`${bind} is already in use`);
             process.exit(1);
-            break;
         default:
             throw error;
     }

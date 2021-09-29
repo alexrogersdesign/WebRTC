@@ -35,7 +35,11 @@ const AttendeeListItem = ({user}: Props) => {
   const classes = useStyles();
   return (
     <>
-      <ListItem key={user.id} button onClick={() => setModalOpen(true)}>
+      <ListItem
+        key={user.id.toString()}
+        button
+        onClick={() => setModalOpen(true)}
+      >
         <ListItemAvatar>
           <VideoAvatar
             user={user}

@@ -50,7 +50,10 @@ const MeetingListDisplay = ({meeting}: Props) => {
       style={{backgroundColor: 'transparent', cursor: 'default'}}
       disableRipple={true}
     >
-      <CopyToClipboard text={meeting.id} onCopy={()=> setCopied(true)}>
+      <CopyToClipboard
+        text={meeting.id.toString()}
+        onCopy={()=> setCopied(true)}
+      >
         <ToolTip title='Copy Current Meeting ID' placement="top">
           <ListItemIcon>
             <IconButton
@@ -64,7 +67,10 @@ const MeetingListDisplay = ({meeting}: Props) => {
       </CopyToClipboard>
       <ListItemText primary={meetingPrimary} secondary={meetingSecondary} />
       <ListItemSecondaryAction className={classes.secondary}>
-        <CopyToClipboard text={meeting.id} onCopy={()=> setCopied(true)}>
+        <CopyToClipboard
+          text={meeting.id.toString()}
+          onCopy={()=> setCopied(true)}
+        >
           <ToolTip title="Copy Current Meeting ID">
             <IconButton
             //   className={classes.iconButton}

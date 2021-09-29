@@ -22,7 +22,7 @@ const io = new IoFactory(server, {
   },
 });
 
-import database from './database/database'
+import database from './database/database.js'
 database();
 
 // bring in websocket configuration

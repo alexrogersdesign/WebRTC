@@ -36,12 +36,13 @@ const useStyles = makeStyles(() =>
 const ChatInput = () => {
   const classes = useStyles();
   const {sendMessage} = useContext(ChatContext);
-  const {currentUser} = useContext(SocketIOContext);
+  const {currentUser, meeting} = useContext(SocketIOContext);
   const [field, setField] = useState('');
   const handleSend = () => {
     if (!currentUser) throw new Error('No user found');
     if (!field.length) return;
-    const message = new Message(currentUser, field);
+    if (!meeting) throw new Error('Message sent outside of meeing');
+    const message = new Message(meeting.id, currentUser, field);
     sendMessage && sendMessage(message);
     setField('');
   };

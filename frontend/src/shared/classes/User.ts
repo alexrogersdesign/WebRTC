@@ -1,6 +1,5 @@
 import {ObjectId} from 'mongodb';
 
-
 /**
  * A user class
  */

@@ -3,9 +3,9 @@ import { ObjectId } from "mongodb";
 import bcrypt from 'bcrypt';
 
 import User from "../../../frontend/src/shared/classes/User";
-import {UserModel} from "../database/models";
+import {UserModel} from "../database/models.js";
 
-export const usersRouter = express.Router();
+const usersRouter = express.Router();
 
 usersRouter.get("/", async (_req: Request, res: Response) => {
     try {
@@ -113,3 +113,4 @@ usersRouter.delete("/:id", async (req: Request, res: Response) => {
         res.status(400).send();
     }
 });
+export default usersRouter

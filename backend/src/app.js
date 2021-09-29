@@ -3,7 +3,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
 import createError from 'http-errors';
-import usersRouter from './routes/usersRouter.js';
+import usersRouter from './routes/users.router.js';
 const app = express();
 app.use(cors());
 app.use(morgan('dev'));
@@ -11,8 +11,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 class HttpException extends Error {
-    status;
-    message;
     constructor(status, message) {
         super(message);
         this.status = status;

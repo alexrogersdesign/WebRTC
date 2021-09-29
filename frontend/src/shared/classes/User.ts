@@ -8,18 +8,23 @@ export default class User {
     private _firstName?: string;
     private _lastName?: string;
     private _fullName?: string;
+    private _email?: string;
 
     /**
      * @param {_firstName} firstName First name
      * @param {_lastName} lastName Last name
+     * @param {_email} email email address
+     *
      */
     constructor(
         firstName: string,
         lastName: string,
+        email: string,
     ) {
       this._id = new ObjectId();
       this._firstName = firstName;
       this._lastName = lastName;
+      this._email = email;
       this.updateFullName();
     }
 
@@ -71,6 +76,19 @@ export default class User {
      */
     get lastName(): string {
       return this._lastName? this._lastName: '';
+    }
+    /**
+     * returns email
+     */
+    get email(): string {
+      return this._email? this._email : '';
+    }
+    /**
+     * sets email
+     * @param {string} input email address
+     */
+    set email(input: string) {
+      this._email = input;
     }
 
     /**

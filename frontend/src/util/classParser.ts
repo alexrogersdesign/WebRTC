@@ -3,45 +3,56 @@ import {ObjectId} from 'mongodb';
 import Meeting from '../shared/classes/Meeting.js';
 import Message,
 {MessageImage,
-  MessageType,
-  Side} from '../shared/classes/Message.js';
+  MessageType} from '../shared/classes/Message.js';
 import User from '../shared/classes/User.js';
-import {RequireAtLeastOne} from '../shared/types';
+// import {RequireAtLeastOne} from '../shared/types';
 
-export interface IReceivedMeeting {
+export interface _BaseIReceivedMeeting {
     _id : string | ObjectId,
     _title: string,
     _attendees?: IReceivedUser[];
 }
+export interface BaseIReceivedMeeting {
+    id : string | ObjectId,
+    title: string,
+    attendees?: IReceivedUser[];
+}
+export type IReceivedMeeting = BaseIReceivedMeeting & _BaseIReceivedMeeting
 
- interface _BaseIReceivedUser {
+ type _BaseIReceivedUser = {
     _id : string | ObjectId,
     _firstName: string,
     _lastName: string,
+    _email: string
+
 }
- interface BaseIReceivedUser {
+ type BaseIReceivedUser = {
     id : string | ObjectId,
     firstName: string,
     lastName: string,
+    email: string
 }
-export type IReceivedUser = _BaseIReceivedUser | BaseIReceivedUser
+export type IReceivedUser = _BaseIReceivedUser & BaseIReceivedUser
 
-
-// eslint-disable-next-line no-unused-vars
-// type UserId = RequireAtLeastOne<IReceivedUser, '_id' | 'id'>;
-// type UserFirstName = RequireAtLeastOne<IReceivedUser, '_firstName' | 'firstName'>;
-// type userLastName = RequireAtLeastOne<IReceivedUser, '_lastName' | 'lastName'>;
-
-export interface IReceivedMessage {
+export interface BaseIReceivedMessage {
+     meetingId: ObjectId| string,
+     timeStamp: Date,
+     user: IReceivedUser,
+     id: string | ObjectId,
+     contents: string | MessageImage,
+     type?: MessageType,
+     alt?: string,
+}
+export interface _BaseIReceivedMessage {
     _meetingId: ObjectId| string,
-     _timeStamp: Date,
-     _user: IReceivedUser,
-     _id: string | ObjectId,
-     _contents: string | MessageImage,
-     _type?: MessageType,
-     _alt?: string,
-     _side?: Side,
+    _timeStamp: Date,
+    _user: IReceivedUser,
+    _id: string | ObjectId,
+    _contents: string | MessageImage,
+    _type?: MessageType,
+    _alt?: string,
 }
+export type IReceivedMessage = BaseIReceivedMessage & _BaseIReceivedMessage
 
 const parseId = (input: string | ObjectId):ObjectId => {
   if (input instanceof ObjectId) {
@@ -51,13 +62,12 @@ const parseId = (input: string | ObjectId):ObjectId => {
   }
 };
 export const parseUser = (input: IReceivedUser): User => {
-  const newId = input.id? input.id: input._id
-  const newFirstName = input.firstName? input.firstname: input._firstName
-  const newLastName = input.lastName? input.lastName : input._lastname
-
-
-  const newUser = new User( newId: input._id, newLastName);
-  newUser.id = parseId(newId;
+  const newId = input.id? input.id: input._id;
+  const newFirstName = input.firstName? input.firstName: input._firstName;
+  const newLastName = input.lastName? input.lastName : input._lastName;
+  const newEmail = input.email? input.email : input._email;
+  const newUser = new User(newFirstName, newLastName, newEmail);
+  newUser.id = parseId(newId);
   return newUser;
 };
 
@@ -68,8 +78,10 @@ const parseAttendees = (input:IReceivedUser[]| undefined): User[] | null => {
 
 export const parseMeeting = (input:IReceivedMeeting): Meeting | undefined => {
   if (!input) return;
-  const newMeeting = new Meeting(input._title);
-  newMeeting.id = parseId(input._id);
+  const newTitle = input.title? input.title : input._title;
+  const newId = input.id? input.id : input._id;
+  const newMeeting = new Meeting(newTitle);
+  newMeeting.id = parseId(newId);
   let attendees;
 
   if (input['_attendees']) {
@@ -80,14 +92,18 @@ export const parseMeeting = (input:IReceivedMeeting): Meeting | undefined => {
 };
 
 export const parseMessage = (input:IReceivedMessage) : Message => {
-  const meetingId = parseId(input._meetingId);
-  const userId = parseUser(input._user);
-  const newMessage = new Message(meetingId, userId, input._contents );
-  newMessage.id = parseId(input._id);
-  if (input['_timeStamp']) newMessage.timeStamp = new Date(input._timeStamp);
-  if (input['_alt']) newMessage.alt = input._alt;
-  if (input['_type']) newMessage.type = input._type;
-  if (input['_side']) newMessage.side = input._side;
+  const newId = parseId(input.id? input.id : input._id);
+  const newContents = input.contents? input.contents : input._contents;
+  const newMeetingId = parseId(input.meetingId?
+     input.meetingId :
+     input._meetingId);
+  const newUser= parseUser(input.user? input.user : input._user);
+  const newMessage = new Message(newMeetingId, newUser, newContents );
+  const newAlt = input.alt? input.alt : input._alt;
+  const newType = input.type? input.type : input._type;
+  newMessage.id = newId;
+  if (newAlt) newMessage.alt = newAlt;
+  if (newType) newMessage.type = newType;
   return newMessage;
 };
 

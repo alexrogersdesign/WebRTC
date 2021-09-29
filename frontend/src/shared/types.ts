@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import React from 'react';
 import Peer, {MediaConnection} from 'peerjs';
 import User from './classes/User';
 import Meeting from './classes/Meeting';

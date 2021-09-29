@@ -6,17 +6,32 @@ import Message,
   MessageType,
   Side} from '../shared/classes/Message.js';
 import User from '../shared/classes/User.js';
+import {RequireAtLeastOne} from '../shared/types';
 
 export interface IReceivedMeeting {
     _id : string | ObjectId,
     _title: string,
     _attendees?: IReceivedUser[];
 }
-export interface IReceivedUser {
+
+ interface _BaseIReceivedUser {
     _id : string | ObjectId,
     _firstName: string,
     _lastName: string,
 }
+ interface BaseIReceivedUser {
+    id : string | ObjectId,
+    firstName: string,
+    lastName: string,
+}
+export type IReceivedUser = _BaseIReceivedUser | BaseIReceivedUser
+
+
+// eslint-disable-next-line no-unused-vars
+// type UserId = RequireAtLeastOne<IReceivedUser, '_id' | 'id'>;
+// type UserFirstName = RequireAtLeastOne<IReceivedUser, '_firstName' | 'firstName'>;
+// type userLastName = RequireAtLeastOne<IReceivedUser, '_lastName' | 'lastName'>;
+
 export interface IReceivedMessage {
     _meetingId: ObjectId| string,
      _timeStamp: Date,
@@ -27,6 +42,7 @@ export interface IReceivedMessage {
      _alt?: string,
      _side?: Side,
 }
+
 const parseId = (input: string | ObjectId):ObjectId => {
   if (input instanceof ObjectId) {
     return input;
@@ -35,8 +51,13 @@ const parseId = (input: string | ObjectId):ObjectId => {
   }
 };
 export const parseUser = (input: IReceivedUser): User => {
-  const newUser = new User( input._firstName, input._lastName);
-  newUser.id = parseId(input._id);
+  const newId = input.id? input.id: input._id
+  const newFirstName = input.firstName? input.firstname: input._firstName
+  const newLastName = input.lastName? input.lastName : input._lastname
+
+
+  const newUser = new User( newId: input._id, newLastName);
+  newUser.id = parseId(newId;
   return newUser;
 };
 

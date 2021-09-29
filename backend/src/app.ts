@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import createError from 'http-errors';
 import {Request, Response} from "express";
-import usersRouter from './routes/usersRouter.js';
+import usersRouter from './routes/users.router.js';
 
 
 

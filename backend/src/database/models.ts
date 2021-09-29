@@ -6,28 +6,31 @@ import Message from "../../../frontend/src/shared/classes/Message.js";
 import {parseMeeting, parseMessage, parseUser} from '../../../frontend/src/util/classParser.js'
 
 interface IUser extends User {
-    passwordHash: string
+    passwordHash: string,
+    // _firstName: string,
+    // _lastName: string,
 }
 
 const userSchema = new Schema<IUser>({
-    // _id: {
-    //     type: Schema.Types.ObjectId
-    // },
-    // firstName:{
-    //     type: String,
-    //     required: true,
-    // },
-    // lastName:{
-    //     type: String,
-    // },
+    _id: {
+        type: Schema.Types.ObjectId
+    },
+    firstName:{
+        type: String,
+        // required: true,
+    },
+    lastName:{
+        type: String,
+    },
     passwordHash: String,
 })
-userSchema.loadClass(User);
+// userSchema.loadClass(User);
 userSchema.set('toObject', {
     transform: function (doc: Document, ret):User {
         delete ret.passwordHash;
-        const newuser = parseUser(ret)
-        return newuser.id = ret._id
+        const newUser = parseUser(ret)
+        newUser.id = ret._id
+        return newUser
       }
 })
 export const UserModel = model<IUser>('User', userSchema);

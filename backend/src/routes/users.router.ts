@@ -42,9 +42,10 @@ usersRouter.post("/", async (req: Request, res: Response) => {
     try {
         // const newUser = req.body as User;
         // const result = await UserModel.insertOne(newUser);
-        const {firstName, lastName, password} = req.body;
+        const {id, firstName, lastName, password} = req.body;
         const passwordHash = await bcrypt.hash(password, 10)
         const newUser = new UserModel ({
+            _id: id,
             firstName,
             lastName,
             passwordHash

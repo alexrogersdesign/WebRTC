@@ -48,12 +48,8 @@ const socket = io(connectionUrl);
 
 
 const ContextProvider: React.FC<Props> = ({children}) => {
-  // const [currentUserID, setCurrentUserID] = useState(uuidv4());
-  // const [firstName, setFirstName] = useState('John');
-  // const [lastName, setLastName] = useState('Doe');
-  const [currentUser, setCurrentUser] = useState(new User( 'Jon', 'Doe'));
+  const [currentUser, setCurrentUser] = useState(new User( 'Jon', 'Doe', 'jon@doe.com'));
   //* The current meeting being attended
-  // const [meeting, setMeeting] = useState<Meeting | null>(new Meeting('1', 'test'));
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   //* Whether or not the current user has disabled their microphone
   const [micMuted, setMicMuted] = useState<boolean>(false);
@@ -356,9 +352,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Cleans up connection on error or if far side closes connection.
    */
   const setExternalUserListener = () => {
-    socket.on('NewUserConnected', (recievedUser: IReceivedUser) => {
+    socket.on('NewUserConnected', (receivedUser: IReceivedUser) => {
       // parse received json object into User
-      const user = parseUser(recievedUser);
+      const user = parseUser(receivedUser);
       enqueueSnackbar(`${user} has connected`);
 
       //* Prevent local user from being added.

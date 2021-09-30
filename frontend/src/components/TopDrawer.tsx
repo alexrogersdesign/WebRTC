@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 
 import JoinMeetingModal from './JoinMeetingModal';
-import MeetingListDisplay from './MeetingListDisplay';
+import MeetingListDisplay from './meeting/MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
 
 interface Props {

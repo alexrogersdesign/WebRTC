@@ -11,7 +11,7 @@ import ToolTip from '@material-ui/core/Tooltip';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 
-import {SocketIOContext} from '../context/SocketIOContext';
+import {SocketIOContext} from '../../context/SocketIOContext';
 
 interface Props {
    className?: string | undefined,

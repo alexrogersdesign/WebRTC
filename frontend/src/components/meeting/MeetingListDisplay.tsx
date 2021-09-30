@@ -12,7 +12,7 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ToolTip from '@material-ui/core/Tooltip';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import Meeting from '../shared/classes/Meeting';
+import Meeting from '../../shared/classes/Meeting';
 interface Props {
    meeting:Meeting
 }

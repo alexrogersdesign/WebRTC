@@ -3,8 +3,10 @@ import { ObjectId } from "mongodb";
 
 import Message from "../../../frontend/src/shared/classes/Message";
 import {MessageModel} from "../database/models.js";
+import {authRestricted} from "../util/middleware/authMiddleware.js";
 
 const messagesRouter = express.Router();
+messagesRouter.use(authRestricted);
 
 messagesRouter.get("/", async (_req: Request, res: Response) => {
     try {

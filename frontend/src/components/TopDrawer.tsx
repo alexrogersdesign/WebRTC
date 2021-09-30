@@ -68,11 +68,48 @@ export const TopDrawer = (props: Props) => {
     }
     setDrawerOpen(open);
   };
-
-
   const joinDialog = 'Join an existing meeting';
   const createDialog = 'Create a new meeting';
   const leaveDialog = 'Leave meeting';
+  /**
+     * The components to render when no meeting is joined
+     * @return {React.jsx} The React components
+     */
+  const renderWhenNoMeeting = () => {
+    if (!meeting) {
+      return (
+        <>
+          <ListItem button onClick={startNewMeeting}>
+            <ListItemIcon> <CreateIcon /></ListItemIcon>
+            <ListItemText primary={createDialog} />
+          </ListItem>
+          <ListItem button onClick={() => setModalOpen(true)} >
+            <ListItemIcon> <MeetingRoomIcon /></ListItemIcon>
+            <ListItemText primary={joinDialog} />
+          </ListItem>
+        </>
+      );
+    }
+  };
+    /**
+     * The components to render when a meeting is joined
+     * @return {React.jsx} The React components
+     */
+  const renderWhenMeeting = () => {
+    if (meeting) {
+      return (
+        <>
+          <MeetingListDisplay meeting={meeting}/>
+          <ListItem button onClick={leaveMeeting}>
+            <ListItemIcon className={classes.red}>
+              <NoMeetingRoomIcon />
+            </ListItemIcon>
+            <ListItemText primary={leaveDialog} />
+          </ListItem>
+        </>
+      );
+    }
+  };
 
   const list = () => (
     <div
@@ -82,30 +119,8 @@ export const TopDrawer = (props: Props) => {
       onKeyDown={toggleDrawer( false)}
     >
       <List>
-        {!meeting && (
-          <>
-            <ListItem button onClick={startNewMeeting}>
-              <ListItemIcon> <CreateIcon /></ListItemIcon>
-              <ListItemText primary={createDialog} />
-            </ListItem>
-            <ListItem button onClick={() => setModalOpen(true)} >
-              <ListItemIcon> <MeetingRoomIcon /></ListItemIcon>
-              <ListItemText primary={joinDialog} />
-            </ListItem>
-          </>
-
-        )}
-        {meeting && (
-          <>
-            <MeetingListDisplay meeting={meeting}/>
-            <ListItem button onClick={leaveMeeting}>
-              <ListItemIcon className={classes.red}>
-                <NoMeetingRoomIcon />
-              </ListItemIcon>
-              <ListItemText primary={leaveDialog} />
-            </ListItem>
-          </>
-        )}
+        {renderWhenNoMeeting()}
+        {renderWhenMeeting()}
       </List>
       <Divider />
       <List>

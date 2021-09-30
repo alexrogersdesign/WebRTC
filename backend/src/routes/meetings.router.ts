@@ -3,9 +3,10 @@ import { ObjectId } from "mongodb";
 
 import Meeting from "../../../frontend/src/shared/classes/Meeting";
 import {MeetingModel} from "../database/models.js";
+import {authRestricted} from "../util/middleware/authMiddleware.js";
 
 const meetingsRouter = express.Router();
-
+meetingsRouter.use(authRestricted);
 meetingsRouter.get("/", async (_req: Request, res: Response) => {
     try {
         const meetings = (await MeetingModel.find({}));

@@ -1,0 +1,37 @@
+DELETE http://localhost:5000/users/61544c2481fb95ee7303713a
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJpZCI6IjYxNTQ0YzI0ODFmYjk1ZWU3MzAzNzEzYSIsImlhdCI6MTYzMzAwNzY1Mn0.ws5e1eohTySXqGYdpqBikkn-d68CwdIFK5U9xh8UAD4
+
+Accept: application/json
+
+###
+POST http://localhost:5000/users
+Content-Type: application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJpZCI6IjYxNTQ0YzI0ODFmYjk1ZWU3MzAzNzEzYSIsImlhdCI6MTYzMzAwNzY1Mn0.ws5e1eohTySXqGYdpqBikkn-d68CwdIFK5U9xh8UAD4
+
+{
+  "id": "61544c2481fb95ee7303713a",
+  "firstName": "John",
+  "lastName": "Doe",
+  "password": "test",
+  "email": "test@test.com"
+}
+
+###
+POST http://localhost:5000/login
+Content-Type: application/json
+
+
+{
+  "password": "test",
+  "email": "test@test.com"
+}
+
+###
+GET http://localhost:5000/users/
+Accept: application/json
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJpZCI6IjYxNTQ0YzI0ODFmYjk1ZWU3MzAzNzEzYSIsImlhdCI6MTYzMzAwNzY1Mn0.ws5e1eohTySXqGYdpqBikkn-d68CwdIFK5U9xh8UAD4
+
+
+###
+
+

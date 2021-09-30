@@ -1,0 +1,19 @@
+DELETE http://localhost:5000/meetings/615516217b93b89e4d062761
+Accept: application/json
+
+###
+POST http://localhost:5000/meetings
+Content-Type: application/json
+
+{
+  "id": "615516217b93b89e4d062761",
+  "title": "this is a test"
+}
+
+###
+GET http://localhost:5000/meetings/
+Accept: application/json
+
+###
+
+

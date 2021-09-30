@@ -40,15 +40,14 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
 
 usersRouter.post("/", async (req: Request, res: Response) => {
     try {
-        // const newUser = req.body as User;
-        // const result = await UserModel.insertOne(newUser);
-        const {id, firstName, lastName, password} = req.body;
+        const {id, firstName, lastName, password, email} = req.body;
         const passwordHash = await bcrypt.hash(password, 10)
         const newUser = new UserModel ({
             _id: id,
             firstName,
             lastName,
-            passwordHash
+            passwordHash,
+            email
         })
         const result = await newUser.save();
         result
@@ -68,12 +67,13 @@ usersRouter.put("/:id", async (req: Request, res: Response) => {
 
     try {
         const query = { _id: new ObjectId(id) };
-        const {firstName, lastName, password} = req.body;
+        const {firstName, lastName, password, email} = req.body;
         const passwordHash = await bcrypt.hash(password, 10)
         const updatedUser = {
             firstName,
             lastName,
             passwordHash,
+            email,
             ...query
         }
         const result = await UserModel.updateOne(query, { $set: updatedUser });

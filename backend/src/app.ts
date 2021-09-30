@@ -6,6 +6,8 @@ import cors from 'cors';
 import createError from 'http-errors';
 import {Request, Response} from "express";
 import usersRouter from './routes/users.router.js';
+import meetingsRouter from "./routes/meetings.router.js";
+import messagesRouter from "./routes/messages.router.js";
 
 
 
@@ -28,6 +30,8 @@ class HttpException extends Error {
 }
 
 app.use('/users', usersRouter)
+app.use('/meetings', meetingsRouter)
+app.use('/messages', messagesRouter)
 app.get('/', (req, res) => {
   res.send('test');
 });

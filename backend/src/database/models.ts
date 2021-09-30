@@ -23,6 +23,10 @@ const userSchema = new Schema<IUser>({
         type: String,
     },
     passwordHash: String,
+    email:{
+        type: String,
+        required: true,
+    }
 })
 // userSchema.loadClass(User);
 userSchema.set('toObject', {
@@ -39,19 +43,19 @@ const meetingSchema = new Schema<Meeting>({
     _id: {
         type: Schema.Types.ObjectId
     },
-    // title: {
-    //     type: String,
-    //     required: true,
-    //     minLength: 3,
-    // },
-    // attendees: [
-    //     {
-    //         type: Schema.Types.ObjectId,
-    //         ref: 'User'
-    //     }
-    // ],
+    title: {
+        type: String,
+        required: true,
+        minLength: 3,
+    },
+    attendees: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        }
+    ],
 })
-meetingSchema.loadClass(Meeting);
+// meetingSchema.loadClass(Meeting);
 meetingSchema.set('toObject', {
     transform: function (doc: Document, ret) {
         parseMeeting(ret)
@@ -60,31 +64,31 @@ meetingSchema.set('toObject', {
 export const MeetingModel = model<Meeting>('Meeting', meetingSchema);
 
 const messageSchema = new Schema<Message>({
-    // _id: {
-    //     type: Schema.Types.ObjectId
-    // },
-    // user: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'User'
-    // },
-    // meetingId: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Meeting'
-    // },
-    // // TODO update content types
-    // contents: {
-    //     type: String,
-    //     required: true,
-    //     minlength: 1,
-    // },
-    // type: {
-    //     type: String
-    // },
-    // alt: {
-    //     type: String
-    // },
+    _id: {
+        type: Schema.Types.ObjectId
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    meetingId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Meeting'
+    },
+    // TODO update content types
+    contents: {
+        type: String,
+        required: true,
+        minlength: 1,
+    },
+    type: {
+        type: String
+    },
+    alt: {
+        type: String
+    },
 })
-messageSchema.loadClass(Message)
+// messageSchema.loadClass(Message)
 messageSchema.set('toObject', {
     transform: function (doc: Document, ret) {
         parseMessage(ret)

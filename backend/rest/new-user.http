@@ -9,7 +9,8 @@ Content-Type: application/json
   "id": "61544c2481fb95ee7303713a",
   "firstName": "John",
   "lastName": "Doe",
-  "password": "test"
+  "password": "test",
+  "email": "test@test.com"
 }
 
 ###

@@ -1,0 +1,21 @@
+DELETE http://localhost:5000/messages/615516217b93b89e4d062761
+Accept: application/json
+
+###
+POST http://localhost:5000/messages
+Content-Type: application/json
+
+{
+  "id": "61551879d19badad18225e95",
+  "user": "6154485c2b120021034be9b7",
+  "meeting": "615516217b93b89e4d062761",
+  "contents": "This is a test meeting"
+}
+
+###
+GET http://localhost:5000/messages/
+Accept: application/json
+
+###
+
+

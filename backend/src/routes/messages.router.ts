@@ -1,33 +1,33 @@
 import express, { Request, Response } from "express";
 import { ObjectId } from "mongodb";
-import Message from "../../../frontend/src/shared/classes/Meeting";
-import { MessageModel} from "../database/models";
 
+import Message from "../../../frontend/src/shared/classes/Message";
+import {MessageModel} from "../database/models.js";
 
-export const messagesRouter = express.Router();
-messagesRouter.use(express.json());
-
+const messagesRouter = express.Router();
 
 messagesRouter.get("/", async (_req: Request, res: Response) => {
     try {
-       const messages = (await MessageModel.find({}));
-       messages.map(message => message.toObject() as unknown as Message)
+        const messages = (await MessageModel.find({}).populate('User','Meeting'));
+        messages.map(message => message.toObject() as unknown as Message)
 
         res.status(200).send(messages);
     } catch (error) {
         if (error instanceof Error) {
             res.status(500).send(error.message);
         } else {
-            res.status(500).send('Unknown Error Occured');
+            res.status(500).send('Unknown Error Occurred');
         }
     }
 });
 
 messagesRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
+
     try {
+
         const query = { _id: new ObjectId(id) };
-        const message = (await MessageModel.findOne(query)) as unknown as Message;
+        const message = (await MessageModel.findOne(query)?.populate('User','Meeting')) as Message;
 
         if (message) {
             res.status(200).send(message);
@@ -39,8 +39,12 @@ messagesRouter.get("/:id", async (req: Request, res: Response) => {
 
 messagesRouter.post("/", async (req: Request, res: Response) => {
     try {
+        const {id, user, meeting, contents} = req.body;
         const newMessage = new MessageModel ({
-            ...req.body
+            _id: id,
+            user,
+            meeting,
+            contents
         })
         const result = await newMessage.save();
         result
@@ -60,12 +64,11 @@ messagesRouter.put("/:id", async (req: Request, res: Response) => {
 
     try {
         const query = { _id: new ObjectId(id) };
+        const {title} = req.body;
         const updatedMessage = {
-            ...req.body,
-            ...query
+            title
         }
         const result = await MessageModel.updateOne(query, { $set: updatedMessage });
-
         result
             ? res.status(200).send(`Successfully updated message with id ${id}`)
             : res.status(304).send(`Message with id: ${id} not updated`);
@@ -102,3 +105,4 @@ messagesRouter.delete("/:id", async (req: Request, res: Response) => {
         res.status(400).send();
     }
 });
+export default messagesRouter

@@ -36,6 +36,6 @@ loginRouter.post('/', async (request, response) => {
     }
     response
         .status(200)
-        .send({token, email: foundUser.email, name: foundUser.fullName})
+        .send({token, email: foundUser.email})
 })
 export default loginRouter

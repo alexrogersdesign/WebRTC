@@ -15,7 +15,7 @@ import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
 import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 
-import JoinMeetingModal from './JoinMeetingModal';
+import JoinMeetingModal from './meeting/JoinMeetingModal';
 import MeetingListDisplay from './meeting/MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
 

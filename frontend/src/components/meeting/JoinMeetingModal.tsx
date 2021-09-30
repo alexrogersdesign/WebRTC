@@ -3,7 +3,7 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
 
-import MeetingInputField from './meeting/MeetingInputField';
+import MeetingInputField from './MeetingInputField';
 
 interface Props {
    open: boolean,

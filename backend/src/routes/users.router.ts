@@ -26,10 +26,8 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        
         const query = { _id: new ObjectId(id) };
         const user = (await UserModel.findOne(query)) as User;
-
         if (user) {
             res.status(200).send(user);
         }
@@ -93,7 +91,6 @@ usersRouter.put("/:id", async (req: Request, res: Response) => {
 
 usersRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
         const query = { _id: new ObjectId(id) };
         const result = await UserModel.deleteOne(query);

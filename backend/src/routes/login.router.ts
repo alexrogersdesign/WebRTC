@@ -8,6 +8,8 @@ const secretKey = process.env.SECRET_KEY
 
 import {UserModel} from "../database/models.js";
 import {authNonRestricted} from "../util/middleware/authMiddleware.js";
+import {ObjectId} from "mongodb";
+import User from "../../../frontend/src/shared/classes/User.js";
 
 const loginRouter = express.Router();
 loginRouter.use(authNonRestricted)
@@ -36,6 +38,6 @@ loginRouter.post('/', async (request, response) => {
     }
     response
         .status(200)
-        .send({token, email: foundUser.email})
+        .send({token, user: foundUser.toObject()})
 })
 export default loginRouter

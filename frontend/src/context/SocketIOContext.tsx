@@ -25,6 +25,7 @@ import User from '../shared/classes/User';
 import {SegmentationContextProvider} from './SegmentationContext';
 import Meeting from '../shared/classes/Meeting';
 import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/classParser';
+import {RestContextProvider} from './RestContext.js';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -454,7 +455,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         videoDisabled={videoDisabled}
       >
         <ChatContextProvider socket={socket}>
-          {children}
+          <RestContextProvider>
+            {children}
+          </RestContextProvider>
         </ChatContextProvider>
       </SegmentationContextProvider>
     </SocketIOContext.Provider>

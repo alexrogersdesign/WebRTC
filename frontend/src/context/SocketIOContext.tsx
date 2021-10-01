@@ -100,15 +100,16 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   }, [screenSharing]);
 
   /**
-   * Calls startup functions on first load.
+   * Listens for currentUser to be set before initializing WebRTC and Socket connections
    */
   useEffect(() => {
+    if (!currentUser) return;
     initPeerServerConnection();
     setupSocketListeners();
     return () => {
       endConnection();
     };
-  }, []);
+  }, [currentUser]);
 
   /**
    * Sets socket connection listeners

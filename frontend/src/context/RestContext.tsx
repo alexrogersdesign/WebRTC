@@ -10,6 +10,7 @@ import axios from 'axios';
 
 import {ChildrenProps} from '../shared/types';
 import User from '../shared/classes/User.js';
+import {parseUser} from '../util/classParser';
 
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
@@ -64,7 +65,7 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       if (localStorageItem) {
         const {token, user} = JSON.parse(localStorageItem);
         setToken(token);
-        setCurrentUser(user);
+        setCurrentUser(parseUser(user));
       }
     };
   }, []);
@@ -81,14 +82,13 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
           return;
         });
     if (!response) return;
-    console.log('response', response);
     const {user, token} = response.data;
     setToken(token);
     window.localStorage.setItem('loggedUser', JSON.stringify(response.data));
-    console.log('returned user', user);
-    setCurrentUser(user);
-    enqueueSnackbar(`Welcome ${user.fullName}`, snackbarSuccessOptions);
-    return user;
+    const parsedUser = parseUser(user);
+    setCurrentUser(parsedUser);
+    enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
+    return parsedUser;
   };
 
   const logout = () => {

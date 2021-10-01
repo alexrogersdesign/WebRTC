@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useState, useContext} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -153,8 +154,8 @@ export const TopDrawer = (props: Props) => {
       onKeyDown={toggleDrawer( false)}
     >
       <List>
-        {!meeting && loggedIn && renderWhenNoMeeting()}
-        {meeting && loggedIn && renderWhenMeeting()}
+        {(!meeting && loggedIn) && renderWhenNoMeeting()}
+        {(meeting && loggedIn) && renderWhenMeeting()}
         {!loggedIn && renderWhenNotLogged()}
       </List>
       <Divider />

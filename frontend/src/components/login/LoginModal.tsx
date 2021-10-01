@@ -82,8 +82,9 @@ const LoginModal = ({open, setOpen}: Props) => {
     // },
     onSubmit: (values, {setSubmitting}) => {
       setTimeout(async () => {
-        login && await login(values);
-        console.log('Logging in', values);
+        if (!login) return;
+        const result = await login(values);
+        if (result) setOpen(false);
         setSubmitting(false);
       }, 500);
     },

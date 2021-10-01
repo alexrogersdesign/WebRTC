@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import {useSnackbar} from 'notistack';
+import {OptionsObject, useSnackbar} from 'notistack';
 import axios from 'axios';
 
 
@@ -12,7 +12,7 @@ import {ChildrenProps} from '../shared/types';
 import User from '../shared/classes/User.js';
 
 export interface IRestContext {
-  login: (credentials: ILoginCredentials) => Promise<void>,
+  login: (credentials: ILoginCredentials) => Promise<User| undefined>,
   logout: () => void,
   loggedIn: string | null,
 }
@@ -33,6 +33,23 @@ export type LoginData = {
   user: User
 }
 
+const snackbarSuccessOptions: OptionsObject = {
+  variant: 'success',
+  autoHideDuration: 2000,
+  anchorOrigin: {
+    vertical: 'bottom',
+    horizontal: 'center',
+  },
+};
+const snackbarWarnOptions :OptionsObject = {
+  variant: 'warning',
+  autoHideDuration: 2000,
+  anchorOrigin: {
+    vertical: 'top',
+    horizontal: 'center',
+  },
+};
+
 
 const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
   const {enqueueSnackbar} = useSnackbar();
@@ -52,13 +69,26 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
     };
   }, []);
 
-  const login = async (credentials: ILoginCredentials) => {
-    const {data} = await axios.post('http://localhost:5000/login', credentials);
-    const {user, token} = data;
+  // eslint-disable-next-line max-len
+  const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
+    const failedLoginMessage = 'Invalid Username or Password';
+    const response = await axios.post('http://localhost:5000/login', credentials)
+        .catch((error) => {
+          console.log('request error', error);
+          if (error.response.status === 401) {
+            enqueueSnackbar(failedLoginMessage, snackbarWarnOptions);
+          }
+          return;
+        });
+    if (!response) return;
+    console.log('response', response);
+    const {user, token} = response.data;
     setToken(token);
-    window.localStorage.setItem('loggedUser', JSON.stringify(data));
+    window.localStorage.setItem('loggedUser', JSON.stringify(response.data));
+    console.log('returned user', user);
     setCurrentUser(user);
-    enqueueSnackbar(`Welcome ${user.fullName}`);
+    enqueueSnackbar(`Welcome ${user.fullName}`, snackbarSuccessOptions);
+    return user;
   };
 
   const logout = () => {

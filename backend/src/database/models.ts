@@ -28,6 +28,12 @@ const userSchema = new Schema<IUser>({
         required: true,
     }
 })
+const transformUser = (doc: Document, ret: any):User => {
+    delete ret.passwordHash;
+    const newUser = parseUser(ret)
+    newUser.id = ret._id
+    return newUser
+}
 // userSchema.loadClass(User);
 userSchema.set('toObject', {
     transform: function (doc: Document, ret):User {
@@ -37,6 +43,12 @@ userSchema.set('toObject', {
         return newUser
       }
 })
+userSchema.options.toObject.transform = function (doc: Document, ret):User {
+    delete ret.passwordHash;
+    const newUser = parseUser(ret)
+    newUser.id = ret._id
+    return newUser
+}
 export const UserModel = model<IUser>('User', userSchema);
 
 const meetingSchema = new Schema<Meeting>({

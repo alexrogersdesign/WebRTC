@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable no-unused-vars */
+import React, {useContext, useEffect} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
@@ -6,6 +7,8 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
+import {RestContext} from '../../context/RestContext';
+import {SocketIOContext} from '../../context/SocketIOContext';
 
 
 interface Props {
@@ -20,7 +23,7 @@ const validationSchema = yup.object({
       .defined('Email is required'),
   password: yup
       .string()
-      .min(8, 'Password should be of minimum 8 characters length')
+      .min(2, 'Password should be of minimum 8 characters length')
       .defined('Password is required'),
 });
 
@@ -63,19 +66,34 @@ const useStyles = makeStyles((theme: Theme) =>
 
 );
 
-const LoginForm = ({open, setOpen}: Props) => {
+const LoginModal = ({open, setOpen}: Props) => {
+  const {login, loggedIn} = useContext(RestContext);
+  const {currentUser} = useContext(SocketIOContext);
   const classes = useStyles();
   const handleClose = () => setOpen(false);
   const formik = useFormik({
     initialValues: {
-      email: 'foobar@example.com',
-      password: 'foobar',
+      email: 'test@test.com',
+      password: 'test',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    // onSubmit: async (values) => {
+    //   login && await login(values);
+    // },
+    onSubmit: (values, {setSubmitting}) => {
+      setTimeout(async () => {
+        login && await login(values);
+        console.log('Logging in', values);
+        setSubmitting(false);
+      }, 500);
     },
   });
+  useEffect(() => {
+    return () => {
+      if (currentUser) setOpen(false);
+    };
+  }, [currentUser]);
+
   return (
     <div>
       <Modal
@@ -83,14 +101,15 @@ const LoginForm = ({open, setOpen}: Props) => {
         open={open}
         onClose={handleClose}
         aria-labelledby="attendee-modal-title"
-        aria-describedby="info-about-attendee"
+        aria-describedby="form-to-login"
       >
         <div className={classes.paper}>
           <Typography
             className={classes.titleItem}
             variant='h5'
-            id="join-meeting"
+            id="Login"
           >
+              Login
           </Typography>
           <form onSubmit={formik.handleSubmit}>
             <TextField
@@ -99,6 +118,7 @@ const LoginForm = ({open, setOpen}: Props) => {
               name="email"
               label="Email"
               value={formik.values.email}
+              onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               error={formik.touched.email && Boolean(formik.errors.email)}
               helperText={formik.touched.email && formik.errors.email}
@@ -110,12 +130,13 @@ const LoginForm = ({open, setOpen}: Props) => {
               label="Password"
               type="password"
               value={formik.values.password}
+              onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
             />
             <Button color="primary" variant="contained" fullWidth type="submit">
-                    Submit
+                    Login
             </Button>
           </form>
         </div>
@@ -124,4 +145,4 @@ const LoginForm = ({open, setOpen}: Props) => {
   );
 };
 
-export default LoginForm;
+export default LoginModal;

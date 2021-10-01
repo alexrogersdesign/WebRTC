@@ -1,22 +1,13 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, {createContext, useEffect, useState, useRef} from 'react';
+import React, {createContext, useEffect, useRef, useState} from 'react';
 import {useHistory} from 'react-router-dom';
-import PropTypes from 'prop-types';
 import {io} from 'socket.io-client';
-import env from 'react-dotenv';
 import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
-import {v4 as uuidv4} from 'uuid';
 import {useSnackbar} from 'notistack';
 
-import {
-  IExternalMedia,
-  IPeers,
-  ISocketIOContext,
-  ChildrenProps,
-  ICallMetadata,
-} from '../shared/types';
+import {ChildrenProps, ICallMetadata, IExternalMedia, IPeers, ISocketIOContext} from '../shared/types';
 
 import {ChatContextProvider} from './ChatContext';
 
@@ -25,7 +16,7 @@ import User from '../shared/classes/User';
 import {SegmentationContextProvider} from './SegmentationContext';
 import Meeting from '../shared/classes/Meeting';
 import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/classParser';
-import {RestContextProvider} from './RestContext.js';
+import {RestContextProvider} from './RestContext';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -49,7 +40,7 @@ const socket = io(connectionUrl);
 
 
 const ContextProvider: React.FC<Props> = ({children}) => {
-  const [currentUser, setCurrentUser] = useState(new User( 'Jon', 'Doe', 'jon@doe.com'));
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   //* The current meeting being attended
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   //* Whether or not the current user has disabled their microphone
@@ -119,8 +110,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     };
   }, []);
 
-  const lastReceivedMeeting = useRef<Meeting | null>(null);
-
   /**
    * Sets socket connection listeners
    */
@@ -132,6 +121,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       newMeeting && enqueueSnackbar(`Joining meeting ${newMeeting.title}`, {variant: 'info'});
       setMeeting(newMeeting);
     });
+    if (!currentUser) return;
     console.log('current user id before peer creation', currentUser.id);
     //* requests webcam access from end user
     await initializeMediaStream();
@@ -159,6 +149,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * Initializes connection to peer server
    */
   const initPeerServerConnection = () => {
+    if (!currentUser) return;
     peerConnection.current = new Peer(currentUser.id.toString(), {
       host: '/',
       port: 5001,
@@ -251,14 +242,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     //* join that meeting.
     if (!newMeetingID && meeting && meeting.id) newMeetingID = meeting.id.toString();
     if (!newMeetingID) throw new Error('Unable to retrieve meeting');
-    // //* If new meeting is different than stored meeting,
-    // //* update stored meeting.
-    // if (meeting?.id !== newMeetingID) setMeeting(newMeetingID);
-    // const currentUser = {
-    //   id: currentUserID,
-    //   firstName,
-    //   lastName,
-    // };
     const meetingData = {
       user: currentUser,
       roomID: newMeetingID,
@@ -283,7 +266,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const addPeer = (call:MediaConnection) => {
     console.log('New peer added', call);
-
     peers.current[call.peer] = call;
   };
   /**
@@ -294,10 +276,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     // TODO figure if this needs to be implemented
     console.log('removing peers', id);
     delete peers.current[id];
-    // const newPeers = {...peers};
-    // delete newPeers[id];
-    // // setPeers(newPeers);
-    // peers = newPeers;
   };
   /**
    * Adds media stream to list of streams to display
@@ -308,6 +286,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const addExternalMedia = (
       user: User, stream:MediaStream, data?: Peer.CallOption,
   ) => {
+    if (!currentUser) return;
     // Prevent local user from being added to the list.
     if (user.id === currentUser.id) return;
     const newMediaItem = {
@@ -357,7 +336,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       // parse received json object into User
       const user = parseUser(receivedUser);
       enqueueSnackbar(`${user} has connected`);
-
+      if (!currentUser) return;
       //* Prevent local user from being added.
       if (user.id === currentUser.id) return;
       const metadata : ICallMetadata = {
@@ -366,13 +345,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       const callOption: Peer.CallOption = {
         metadata,
       };
-      // const metadata: Peer.CallOption = {
-      //   metadata: {
-      //     currentUserID,
-      //     firstName,
-      //     lastName,
-      //   },
-      // };
       if (!peerConnection.current) throw new Error('Missing peer connection');
       if (!outgoingMedia.current) throw new Error('Missing webcam stream');
       const call = peerConnection.current.call(user.id.toString(), outgoingMedia.current, callOption);
@@ -455,7 +427,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         videoDisabled={videoDisabled}
       >
         <ChatContextProvider socket={socket}>
-          <RestContextProvider>
+          <RestContextProvider setCurrentUser={setCurrentUser}>
             {children}
           </RestContextProvider>
         </ChatContextProvider>

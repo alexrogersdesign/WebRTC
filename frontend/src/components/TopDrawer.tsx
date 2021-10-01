@@ -14,10 +14,13 @@ import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
 import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import JoinMeetingModal from './meeting/JoinMeetingModal';
+import LoginModal from './login/LoginModal';
 import MeetingListDisplay from './meeting/MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
+import {RestContext} from '../context/RestContext';
 
 interface Props {
 
@@ -57,8 +60,10 @@ const useStyles = makeStyles((theme: Theme) =>
 export const TopDrawer = (props: Props) => {
   const classes = useStyles();
   const {meeting, leaveMeeting, startNewMeeting} = useContext(SocketIOContext);
+  const {loggedIn, logout} = useContext(RestContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [joinMeetingModalOpen, setJoinMeetingModal] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
 
   const toggleDrawer = (open:boolean) => (event:any) => {
@@ -68,14 +73,14 @@ export const TopDrawer = (props: Props) => {
     }
     setDrawerOpen(open);
   };
-  const joinDialog = 'Join an existing meeting';
-  const createDialog = 'Create a new meeting';
-  const leaveDialog = 'Leave meeting';
+
   /**
      * The components to render when no meeting is joined
      * @return {React.jsx} The React components
      */
   const renderWhenNoMeeting = () => {
+    const joinDialog = 'Join an existing meeting';
+    const createDialog = 'Create a new meeting';
     if (!meeting) {
       return (
         <>
@@ -83,19 +88,35 @@ export const TopDrawer = (props: Props) => {
             <ListItemIcon> <CreateIcon /></ListItemIcon>
             <ListItemText primary={createDialog} />
           </ListItem>
-          <ListItem button onClick={() => setModalOpen(true)} >
+          <ListItem button onClick={() => setJoinMeetingModal(true)} >
             <ListItemIcon> <MeetingRoomIcon /></ListItemIcon>
             <ListItemText primary={joinDialog} />
           </ListItem>
+          {logoutButton()}
         </>
       );
     }
   };
-    /**
+  const logoutButton = () => {
+    const logoutDialog = 'Logout';
+    return (
+      <>
+        <ListItem button onClick={logout}>
+          <ListItemIcon className={classes.red}>
+            <ExitToAppIcon />
+          </ListItemIcon>
+          <ListItemText primary={logoutDialog} />
+        </ListItem>
+        {logoutButton}
+      </>
+    );
+  };
+  /**
      * The components to render when a meeting is joined
      * @return {React.jsx} The React components
      */
   const renderWhenMeeting = () => {
+    const leaveDialog = 'Leave meeting';
     if (meeting) {
       return (
         <>
@@ -110,6 +131,19 @@ export const TopDrawer = (props: Props) => {
       );
     }
   };
+  /**
+     * The components to render when not logged in
+     * @return {React.jsx} The React components
+     */
+  const renderWhenNotLogged = () => {
+    const loginDialog = 'Login';
+    return (<>
+      <ListItem button onClick={() => setLoginModalOpen(true)} >
+        <ListItemIcon> <ExitToAppIcon /></ListItemIcon>
+        <ListItemText primary={loginDialog} />
+      </ListItem>
+    </>);
+  };
 
   const list = () => (
     <div
@@ -119,8 +153,9 @@ export const TopDrawer = (props: Props) => {
       onKeyDown={toggleDrawer( false)}
     >
       <List>
-        {renderWhenNoMeeting()}
-        {renderWhenMeeting()}
+        {!meeting && loggedIn && renderWhenNoMeeting()}
+        {meeting && loggedIn && renderWhenMeeting()}
+        {!loggedIn && renderWhenNotLogged()}
       </List>
       <Divider />
       <List>
@@ -161,7 +196,12 @@ export const TopDrawer = (props: Props) => {
           onClose={toggleDrawer(false)}>
           {list()}
         </Drawer>
-        <JoinMeetingModal open={modalOpen} setOpen={setModalOpen}/>
+        <JoinMeetingModal
+          open={joinMeetingModalOpen}
+          setOpen={setJoinMeetingModal}
+        />
+        <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen}/>
+
       </React.Fragment>
     </div>
   );

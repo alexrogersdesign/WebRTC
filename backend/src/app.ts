@@ -12,8 +12,13 @@ import errorMiddleware from "./util/middleware/errorMiddleware.js";
 import {authErrorHandler} from "./util/middleware/authMiddleware.js";
 
 const app = express();
+const allowedOrigins = ['http://localhost:3000'];
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
 
-app.use(cors());
+
+app.use(cors(options));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));

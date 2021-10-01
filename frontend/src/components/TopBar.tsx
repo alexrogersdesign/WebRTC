@@ -15,7 +15,6 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
 import {SocketIOContext} from '../context/SocketIOContext';
 import {ChildrenProps} from '../shared/types';
-// import MeetingForm from './MeetingForm';
 import TopDrawer from './TopDrawer';
 
 const useStyles = makeStyles((theme: Theme) =>

@@ -30,12 +30,6 @@ export interface IPeers {
    [key: string]: MediaConnection
  }
 
-// export type User = {
-//    id: string,
-//    firstName?: string,
-//    lastName?: string,
-// }
-
 export interface ISegmentationContext {
    segmentationReady: boolean,
    removeBackground: boolean,
@@ -79,7 +73,7 @@ export interface ICallMetadata {
 
 export interface ISocketIOContext {
    setupSocketListeners: () => void,
-   currentUser: User,
+   currentUser: User| null,
    meeting: Meeting | null,
    externalMedia: IExternalMedia[],
    peers: React.MutableRefObject<IPeers | null>,

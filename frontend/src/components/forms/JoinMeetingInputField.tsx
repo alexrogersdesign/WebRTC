@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-const MeetingInputField = ({placeholder}: Props) => {
+const JoinMeetingInputField = ({placeholder}: Props) => {
   const classes = useStyles();
   const {joinMeeting, meeting} = useContext(SocketIOContext);
   const [field, setField] = useState('');
@@ -107,4 +107,4 @@ const MeetingInputField = ({placeholder}: Props) => {
   );
 };
 
-export default MeetingInputField;
+export default JoinMeetingInputField;

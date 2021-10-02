@@ -23,9 +23,9 @@ import {SocketIOContext} from '../context/SocketIOContext';
 import {RestContext} from '../context/RestContext';
 import ModalWrapper from './common/ModalWrapper';
 import LoginForm from './forms/LoginForm';
-import MeetingInputField from './forms/MeetingInputField';
 import JoinMeetingForm from './forms/JoinMeetingForm';
 import NewUserForm from './forms/NewUserForm';
+import NewMeetingForm from './forms/NewMeetingForm';
 
 interface Props {
 
@@ -69,6 +69,7 @@ export const TopDrawer = (props: Props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [joinMeetingModalOpen, setJoinMeetingModal] = useState(false);
   const [createAccountModalOpen, setCreateAccountModalOpen] = useState(false);
+  const [createMeetingModalOpen, setCreateMeetingModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
 
@@ -90,7 +91,11 @@ export const TopDrawer = (props: Props) => {
     if (!meeting) {
       return (
         <>
-          <ListItem button onClick={startNewMeeting}>
+          {/* <ListItem button onClick={startNewMeeting}>*/}
+          {/*  <ListItemIcon> <CreateIcon /></ListItemIcon>*/}
+          {/*  <ListItemText primary={createDialog} />*/}
+          {/* </ListItem>*/}
+          <ListItem button onClick={() => setCreateMeetingModalOpen(true)}>
             <ListItemIcon> <CreateIcon /></ListItemIcon>
             <ListItemText primary={createDialog} />
           </ListItem>
@@ -220,6 +225,11 @@ export const TopDrawer = (props: Props) => {
           open={createAccountModalOpen}
           setOpen={setCreateAccountModalOpen}
           Component={NewUserForm}
+        />
+        <ModalWrapper
+          open={createMeetingModalOpen}
+          setOpen={setCreateMeetingModalOpen}
+          Component={NewMeetingForm}
         />
 
         {/* <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen}/>*/}

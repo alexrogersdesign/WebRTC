@@ -1,25 +1,27 @@
 // eslint-disable-next-line no-unused-vars
 import React, {
   createContext,
-  useEffect,
+  useEffect, useRef,
   useState,
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios from 'axios';
 
-
 import {ChildrenProps} from '../shared/types';
 import User from '../shared/classes/User.js';
-import {parseUser} from '../util/classParser';
+import {parseMeeting, parseUser} from '../util/classParser';
 import {ObjectId} from 'mongodb';
+import Meeting from '../shared/classes/Meeting';
+
+// const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
   logout: () => void,
   loggedIn: string | null,
-  createUser: (newUser: INewUser) => Promise<User| undefined>
+  createUser: (newUser: INewUser) => Promise<User| undefined>,
+  createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
 }
-// const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
 const RestContext = createContext<Partial<IRestContext>>({});
 
@@ -31,11 +33,14 @@ export interface ILoginCredentials {
   email: string,
   password: string
 }
-export interface INewUser{
+export interface INewUser {
   email: string,
   password: string,
   firstName: string,
   lastName: string,
+}
+export interface INewMeeting {
+  title: string,
 }
 
 const snackbarSuccessOptions: OptionsObject = {
@@ -59,6 +64,7 @@ const snackbarWarnOptions :OptionsObject = {
 const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
   const {enqueueSnackbar} = useSnackbar();
   const [token, setToken] = useState(null);
+  const axiosConfig = useRef({headers: {Authorization: ''}});
 
   /**
    * Check if currently logged in on first load
@@ -73,6 +79,13 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       }
     };
   }, []);
+  /**
+   * Updates the axios config parameters when token updates
+   */
+  useEffect(() => {
+    axiosConfig.current.headers.Authorization = `bearer ${token}`;
+  }, [token]);
+
 
   // eslint-disable-next-line max-len
   const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
@@ -119,6 +132,31 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
         snackbarSuccessOptions);
     return parsedUser;
   };
+  // eslint-disable-next-line max-len
+  const createMeeting = async (newMeeting: INewMeeting):Promise<Meeting | undefined> => {
+    const newId = new ObjectId();
+    const meetingToSubmit = {
+      ...newMeeting,
+      id: newId,
+    };
+    console.log('meeting tp submit', meetingToSubmit);
+    const response = await axios.post('http://localhost:5000/meetings', meetingToSubmit, axiosConfig.current)
+        .catch((error) => {
+          console.log('request error', error);
+          if (error.response.status === 401) {
+            enqueueSnackbar('Unable to create meeting', snackbarWarnOptions);
+          }
+          return;
+        });
+    if (!response) return;
+    console.log('response', response);
+    const meeting = response.data;
+    const parsedMeeting = parseMeeting(meeting);
+    enqueueSnackbar(
+        `Meeting titled \"${parsedMeeting?.title}\" was created`,
+        snackbarSuccessOptions);
+    return parsedMeeting;
+  };
 
   const logout = () => {
     setToken(null);
@@ -127,7 +165,9 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
   };
 
   return (
-    <RestContext.Provider value={{login, logout, loggedIn: token, createUser}}>
+    <RestContext.Provider
+      value={{login, logout, loggedIn: token, createUser, createMeeting}}
+    >
       {children}
     </RestContext.Provider>
   );

@@ -2,7 +2,7 @@ import React, {forwardRef} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import MeetingInputField from './MeetingInputField';
+import JoinMeetingInputField from './JoinMeetingInputField';
 import PropTypes from 'prop-types';
 
 interface Props {
@@ -38,7 +38,7 @@ const JoinMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
         <Typography className={classes.item} variant='h5' id="join-meeting">
                         Join Meeting
         </Typography>
-        <MeetingInputField
+        <JoinMeetingInputField
           className={classes.item}
           placeholder='Enter Meeting Code'
         />

@@ -11,11 +11,13 @@ import axios from 'axios';
 import {ChildrenProps} from '../shared/types';
 import User from '../shared/classes/User.js';
 import {parseUser} from '../util/classParser';
+import {ObjectId} from 'mongodb';
 
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
   logout: () => void,
   loggedIn: string | null,
+  createUser: (newUser: INewUser) => Promise<User| undefined>
 }
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
@@ -29,9 +31,11 @@ export interface ILoginCredentials {
   email: string,
   password: string
 }
-export type LoginData = {
-  token: string,
-  user: User
+export interface INewUser{
+  email: string,
+  password: string,
+  firstName: string,
+  lastName: string,
 }
 
 const snackbarSuccessOptions: OptionsObject = {
@@ -91,15 +95,38 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
     return parsedUser;
   };
 
+  const createUser = async (newUser: INewUser):Promise<User | undefined> => {
+    const newId = new ObjectId();
+    const userToSubmit = {
+      ...newUser,
+      id: newId,
+    };
+    const response = await axios.post('http://localhost:5000/users', userToSubmit)
+        .catch((error) => {
+          console.log('request error', error);
+          if (error.response.status === 401) {
+            enqueueSnackbar('Unable to create user', snackbarWarnOptions);
+          }
+          return;
+        });
+    if (!response) return;
+    const {user} = response.data;
+    setToken(token);
+    const parsedUser = parseUser(user);
+    enqueueSnackbar(
+        `Account for ${parsedUser.email} created`,
+        snackbarSuccessOptions);
+    return parsedUser;
+  };
+
   const logout = () => {
     setToken(null);
     setCurrentUser(null);
     window.localStorage.removeItem('loggedUser');
   };
 
-
   return (
-    <RestContext.Provider value={{login, logout, loggedIn: token}}>
+    <RestContext.Provider value={{login, logout, loggedIn: token, createUser}}>
       {children}
     </RestContext.Provider>
   );

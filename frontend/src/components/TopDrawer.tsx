@@ -16,6 +16,7 @@ import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
 import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import FiberNewIcon from '@material-ui/icons/FiberNew';
 
 import MeetingListDisplay from './meeting/MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
@@ -24,6 +25,7 @@ import ModalWrapper from './common/ModalWrapper';
 import LoginForm from './forms/LoginForm';
 import MeetingInputField from './forms/MeetingInputField';
 import JoinMeetingForm from './forms/JoinMeetingForm';
+import NewUserForm from './forms/NewUserForm';
 
 interface Props {
 
@@ -66,6 +68,7 @@ export const TopDrawer = (props: Props) => {
   const {loggedIn, logout} = useContext(RestContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [joinMeetingModalOpen, setJoinMeetingModal] = useState(false);
+  const [createAccountModalOpen, setCreateAccountModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
 
@@ -139,10 +142,15 @@ export const TopDrawer = (props: Props) => {
      */
   const RenderWhenNotLogged = () => {
     const loginDialog = 'Login';
+    const createAccountDialog = 'Create Account';
     return (<>
       <ListItem button onClick={() => setLoginModalOpen(true)} >
         <ListItemIcon> <ExitToAppIcon /></ListItemIcon>
         <ListItemText primary={loginDialog} />
+      </ListItem>
+      <ListItem button onClick={() => setCreateAccountModalOpen(true)} >
+        <ListItemIcon> <FiberNewIcon /></ListItemIcon>
+        <ListItemText primary={createAccountDialog} />
       </ListItem>
     </>);
   };
@@ -207,6 +215,11 @@ export const TopDrawer = (props: Props) => {
           open={loginModalOpen}
           setOpen={setLoginModalOpen}
           Component={LoginForm}
+        />
+        <ModalWrapper
+          open={createAccountModalOpen}
+          setOpen={setCreateAccountModalOpen}
+          Component={NewUserForm}
         />
 
         {/* <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen}/>*/}

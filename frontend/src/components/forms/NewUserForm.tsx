@@ -22,20 +22,20 @@ const validationSchema = yup.object({
       .defined('Email is required'),
   password: yup
       .string()
-      // .min(2, 'Password should be of minimum 8 characters length')
+      .min(4, 'Password should be of minimum 8 characters length')
+      .defined('Password is required'),
+  firstName: yup
+      .string()
+      .min(2, 'Password should be of minimum 8 characters length')
+      .defined('Password is required'),
+  lastName: yup
+      .string()
+      .min(2, 'Password should be of minimum 8 characters length')
       .defined('Password is required'),
 });
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    listItem: {
-      display: 'flex',
-      // alignItems: 'flex-start',
-    },
-    secondary: {
-      // padding: theme.spacing(0, 70, 0),
-      alignSelf: 'flex-start',
-    },
     paper: {
       backgroundColor: theme.palette.background.paper,
       border: '2px solid #000',
@@ -43,14 +43,10 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
       zIndex: 99,
-    },
-    modal: {
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    item: {
-      margin: theme.spacing(0, 0, 1),
+      flexDirection: 'column',
+      width: '50%',
+      // margin: theme.spacing(2),
     },
     title: {
       display: 'flex',
@@ -61,25 +57,29 @@ const useStyles = makeStyles((theme: Theme) =>
     titleItem: {
       padding: theme.spacing(0, 1, 0),
     },
+    formItem: {
+      margin: theme.spacing(1, 1, 2),
+    },
   }),
-
 );
 
-const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
+const NewUserForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const {setOpen} = props;
-  const {login} = useContext(RestContext);
+  const {createUser} = useContext(RestContext);
   const classes = useStyles();
   const formik = useFormik({
     initialValues: {
       email: 'test@test.com',
       password: 'test',
+      firstName: 'Jane',
+      lastName: 'Smith',
     },
     validationSchema: validationSchema,
 
     onSubmit: (values, {setSubmitting}) => {
       setTimeout(async () => {
-        if (!login) return;
-        login(values).then( (result) => {
+        if (!createUser) return;
+        createUser(values).then( (result) => {
           if (result) setOpen(false);
           setSubmitting(false);
         });
@@ -97,7 +97,33 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       {/* </Typography>*/}
       <form onSubmit={formik.handleSubmit}>
         <TextField
+          className={classes.formItem}
+          variant="outlined"
+          id="firstName"
+          name="firstName"
+          label="First Name"
+          value={formik.values.firstName}
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+          error={formik.touched.firstName && Boolean(formik.errors.firstName)}
+          helperText={formik.touched.firstName && formik.errors.firstName}
+        />
+        <TextField
+          className={classes.formItem}
+          variant="outlined"
+          id="lastName"
+          name="lastName"
+          label="Last Name"
+          value={formik.values.lastName}
+          onBlur={formik.handleBlur}
+          onChange={formik.handleChange}
+          error={formik.touched.lastName && Boolean(formik.errors.lastName)}
+          helperText={formik.touched.lastName && formik.errors.lastName}
+        />
+        <TextField
+          className={classes.formItem}
           fullWidth
+          variant="outlined"
           id="email"
           name="email"
           label="Email"
@@ -106,9 +132,12 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
           onChange={formik.handleChange}
           error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
+
         />
         <TextField
+          className={classes.formItem}
           fullWidth
+          variant="outlined"
           id="password"
           name="password"
           label="Password"
@@ -119,16 +148,22 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
           error={formik.touched.password && Boolean(formik.errors.password)}
           helperText={formik.touched.password && formik.errors.password}
         />
-        <Button color="primary" variant="contained" fullWidth type="submit">
-                    Login
+        <Button
+          className={classes.formItem}
+          color="primary"
+          variant="contained"
+          fullWidth
+          type="submit"
+        >
+                    Submit
         </Button>
       </form>
     </div>
   );
 });
 
-LoginForm.propTypes = {
+NewUserForm.propTypes = {
   setOpen: PropTypes.func.isRequired,
 };
 
-export default LoginForm;
+export default NewUserForm;

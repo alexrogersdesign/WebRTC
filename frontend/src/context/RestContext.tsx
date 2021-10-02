@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 
 import {ChildrenProps} from '../shared/types';
 import User from '../shared/classes/User.js';
@@ -86,18 +86,21 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
     axiosConfig.current.headers.Authorization = `bearer ${token}`;
   }, [token]);
 
+  const handleError = (error:AxiosError, message:string) => {
+    console.log('request error', error);
+    if (error?.response?.status === 401) {
+      enqueueSnackbar(message, snackbarWarnOptions);
+    }
+    return;
+  };
+
 
   // eslint-disable-next-line max-len
   const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
     const failedLoginMessage = 'Invalid Username or Password';
     const response = await axios.post('http://localhost:5000/login', credentials)
-        .catch((error) => {
-          console.log('request error', error);
-          if (error.response.status === 401) {
-            enqueueSnackbar(failedLoginMessage, snackbarWarnOptions);
-          }
-          return;
-        });
+        .catch((error) => handleError(error, failedLoginMessage));
+
     if (!response) return;
     const {user, token} = response.data;
     setToken(token);
@@ -114,17 +117,10 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       ...newUser,
       id: newId,
     };
-    console.log('user tp submit', userToSubmit);
     const response = await axios.post('http://localhost:5000/users', userToSubmit)
-        .catch((error) => {
-          console.log('request error', error);
-          if (error.response.status === 401) {
-            enqueueSnackbar('Unable to create user', snackbarWarnOptions);
-          }
-          return;
-        });
+        .catch((error) => handleError(error, 'Unable to create user'));
+
     if (!response) return;
-    console.log('response', response);
     const user = response.data;
     const parsedUser = parseUser(user);
     enqueueSnackbar(
@@ -139,17 +135,9 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       ...newMeeting,
       id: newId,
     };
-    console.log('meeting tp submit', meetingToSubmit);
     const response = await axios.post('http://localhost:5000/meetings', meetingToSubmit, axiosConfig.current)
-        .catch((error) => {
-          console.log('request error', error);
-          if (error.response.status === 401) {
-            enqueueSnackbar('Unable to create meeting', snackbarWarnOptions);
-          }
-          return;
-        });
+        .catch((error) => handleError(error, 'Unable to create meeting'));
     if (!response) return;
-    console.log('response', response);
     const meeting = response.data;
     const parsedMeeting = parseMeeting(meeting);
     enqueueSnackbar(

@@ -54,11 +54,18 @@ const useStyles = makeStyles((theme: Theme) =>
     titleItem: {
       padding: theme.spacing(0, 1, 0),
     },
+    dialogContent: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   }),
 
 );
 
 const ModalWrapper = ({open, setOpen, Component}: Props) => {
+  // TODO investigate double rendering
   const classes = useStyles();
   const handleClose = () => setOpen(false);
   return (
@@ -71,7 +78,7 @@ const ModalWrapper = ({open, setOpen, Component}: Props) => {
         aria-describedby="form-to-login"
       >
         <Fade in={open} timeout={{enter: 750, exit: 250}}>
-          <DialogContent>
+          <DialogContent className={classes.dialogContent}>
             <Component setOpen={setOpen} open={open}/>
           </DialogContent>
         </Fade>

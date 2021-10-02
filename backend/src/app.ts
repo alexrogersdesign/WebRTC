@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use('/users', usersRouter)
 app.use('/meetings', meetingsRouter)
 app.use('/messages', messagesRouter)
-app.use('/forms', loginRouter)
+app.use('/login', loginRouter)
 app.get('/', (req, res) => {
   res.send('test');
 });

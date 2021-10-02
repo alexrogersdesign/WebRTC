@@ -17,13 +17,13 @@ import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
-import JoinMeetingModal from './meeting/JoinMeetingModal';
 import MeetingListDisplay from './meeting/MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
 import {RestContext} from '../context/RestContext';
 import ModalWrapper from './common/ModalWrapper';
 import LoginForm from './forms/LoginForm';
-import MeetingInputField from './meeting/MeetingInputField';
+import MeetingInputField from './forms/MeetingInputField';
+import JoinMeetingForm from './forms/JoinMeetingForm';
 
 interface Props {
 
@@ -110,7 +110,6 @@ export const TopDrawer = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={logoutDialog} />
         </ListItem>
-        {LogoutButton}
       </>
     );
   };
@@ -199,12 +198,8 @@ export const TopDrawer = (props: Props) => {
           onClose={toggleDrawer(false)}>
           {list()}
         </Drawer>
-        <JoinMeetingModal
-          open={joinMeetingModalOpen}
-          setOpen={setJoinMeetingModal}
-        />
         <ModalWrapper
-          Component={MeetingInputField}
+          Component={JoinMeetingForm}
           open={joinMeetingModalOpen}
           setOpen={setJoinMeetingModal}
         />

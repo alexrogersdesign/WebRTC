@@ -27,7 +27,7 @@ const validationSchema = yup.object({
       .defined('Email is required'),
   password: yup
       .string()
-      .min(2, 'Password should be of minimum 8 characters length')
+      // .min(2, 'Password should be of minimum 8 characters length')
       .defined('Password is required'),
 });
 
@@ -73,7 +73,6 @@ const useStyles = makeStyles((theme: Theme) =>
 const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const {setOpen} = props;
   const {login} = useContext(RestContext);
-  const {currentUser} = useContext(SocketIOContext);
   const classes = useStyles();
   // const handleClose = () => setOpen(false);
   const formik = useFormik({
@@ -95,13 +94,13 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   });
   return (
     <div className={classes.paper} ref={ref}>
-      <Typography
-        className={classes.titleItem}
-        variant='h5'
-        id="Login"
-      >
-              Login
-      </Typography>
+      {/* <Typography*/}
+      {/*  className={classes.titleItem}*/}
+      {/*  variant='h5'*/}
+      {/*  id="Login"*/}
+      {/* >*/}
+      {/*        Login*/}
+      {/* </Typography>*/}
       <form onSubmit={formik.handleSubmit}>
         <TextField
           fullWidth

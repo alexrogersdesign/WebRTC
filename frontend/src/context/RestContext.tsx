@@ -101,6 +101,7 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       ...newUser,
       id: newId,
     };
+    console.log('user tp submit', userToSubmit);
     const response = await axios.post('http://localhost:5000/users', userToSubmit)
         .catch((error) => {
           console.log('request error', error);
@@ -110,8 +111,8 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
           return;
         });
     if (!response) return;
-    const {user} = response.data;
-    setToken(token);
+    console.log('response', response);
+    const user = response.data;
     const parsedUser = parseUser(user);
     enqueueSnackbar(
         `Account for ${parsedUser.email} created`,

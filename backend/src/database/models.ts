@@ -32,14 +32,10 @@ const userSchema = new Schema<IUser>({
 // userSchema.loadClass(User);
 userSchema.set('toObject', {
     transform: function (doc: Document, ret):User {
-        console.log('transform fired')
+        ret.id = ret._id
         delete ret.passwordHash;
-        const newUser = parseUser(ret)
-        console.log('transformed user', newUser)
-        const testUser = new User('test','test','test')
-        console.log('test user', testUser)
-        newUser.id = ret._id
-        return newUser
+        delete ret._id;
+        return ret
       }
 })
 // userSchema.options.toObject.transform = function (doc: Document, ret):User {

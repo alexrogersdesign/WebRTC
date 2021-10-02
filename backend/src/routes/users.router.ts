@@ -49,7 +49,7 @@ usersRouter.post("/", async (req: Request, res: Response) => {
         })
         const result = await newUser.save();
         result
-            ? res.status(201).json(result)
+            ? res.status(201).json(result.toObject())
             : res.status(500).send("Failed to create a new user.");
     } catch (error) {
         console.error(error);
@@ -75,7 +75,6 @@ usersRouter.put("/:id", async (req: Request, res: Response) => {
             ...query
         }
         const result = await UserModel.updateOne(query, { $set: updatedUser });
-
         result
             ? res.status(200).send(`Successfully updated user with id ${id}`)
             : res.status(304).send(`User with id: ${id} not updated`);

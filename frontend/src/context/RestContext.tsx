@@ -62,16 +62,18 @@ const snackbarWarnOptions :OptionsObject = {
 
 
 const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
+  // TODO store token more securely
   const {enqueueSnackbar} = useSnackbar();
   const [token, setToken] = useState(null);
   const axiosConfig = useRef({headers: {Authorization: ''}});
 
   /**
-   * Check if currently logged in on first load
+   * Check if currently logged in on first load.
+   * If local storage contains a login token
    */
   useEffect(() => {
     return () => {
-      const localStorageItem = window.localStorage.getItem('loggedUser');
+      const localStorageItem = window.localStorage.getItem('token');
       if (localStorageItem) {
         const {token, user} = JSON.parse(localStorageItem);
         setToken(token);
@@ -95,22 +97,38 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
   };
 
 
+  /**
+   * Communicates with the backend to login user
+   * @param {ILoginCredentials} credentials and object containing the email
+   * and password to login with.
+   * Receives a token on successful login and stores it to react state
+   * and local storage to be used throughout the application;
+   * return {Promise<User | undefined>} A promise resolving to the
+   * a user object reflecting the new logged in user or undefined
+   * if the login was not successful.
+   */
   // eslint-disable-next-line max-len
   const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
     const failedLoginMessage = 'Invalid Username or Password';
     const response = await axios.post('http://localhost:5000/login', credentials)
         .catch((error) => handleError(error, failedLoginMessage));
-
     if (!response) return;
     const {user, token} = response.data;
     setToken(token);
-    window.localStorage.setItem('loggedUser', JSON.stringify(response.data));
+    window.localStorage.setItem('token', JSON.stringify(response.data));
     const parsedUser = parseUser(user);
     setCurrentUser(parsedUser);
     enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
     return parsedUser;
   };
-
+  /**
+   * Communicates with the backend to create a new user.
+   * @param {INewUser} newUser An object containing the information required
+   * to create a new user.
+   * return {Promise<User | undefined>} A promise resolving to the
+   * a user object reflecting the new created user or undefined
+   * if the creation was not successful.
+   */
   const createUser = async (newUser: INewUser):Promise<User | undefined> => {
     const newId = new ObjectId();
     const userToSubmit = {
@@ -119,7 +137,6 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
     };
     const response = await axios.post('http://localhost:5000/users', userToSubmit)
         .catch((error) => handleError(error, 'Unable to create user'));
-
     if (!response) return;
     const user = response.data;
     const parsedUser = parseUser(user);
@@ -128,6 +145,15 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
         snackbarSuccessOptions);
     return parsedUser;
   };
+
+  /**
+   * Communicates with the backend to create a new meeting.
+   * @param {INewMeeting} newMeeting An object containing the information
+   * required to create a new meeting.
+   * return {Promise<Meeting | undefined>} A promise resolving to the
+   * a meeting object reflecting the new created meeting or undefined
+   * if the creation was not successful.
+   */
   // eslint-disable-next-line max-len
   const createMeeting = async (newMeeting: INewMeeting):Promise<Meeting | undefined> => {
     const newId = new ObjectId();
@@ -145,11 +171,15 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
         snackbarSuccessOptions);
     return parsedMeeting;
   };
-
+  /**
+   * Logs the user out
+   * Removes the stored token from react state and from local storage.
+   * Sets the current user to null.
+   */
   const logout = () => {
     setToken(null);
     setCurrentUser(null);
-    window.localStorage.removeItem('loggedUser');
+    window.localStorage.removeItem('token');
   };
 
   return (

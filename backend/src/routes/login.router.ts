@@ -16,7 +16,6 @@ loginRouter.use(authNonRestricted)
 
 loginRouter.post('/', async (request, response) => {
     const {email, password} = request.body
-
     const foundUser = await UserModel.findOne({email: email})
     const passwordMatch = foundUser && await bcrypt.compare(password, foundUser.passwordHash)
 
@@ -30,13 +29,13 @@ loginRouter.post('/', async (request, response) => {
         id: foundUser._id,
     }
     const token = secretKey? jwt.sign(tokenInfo, secretKey): null
-    // const token = request.token;
     if (!token) {
         return response.status(500).json({
             error: 'unable to generate token'
         })
     }
     response
+        .cookie('token', token, {httpOnly: true})
         .status(200)
         .send({token, user: foundUser.toObject()})
 })

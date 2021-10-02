@@ -18,10 +18,12 @@ import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import JoinMeetingModal from './meeting/JoinMeetingModal';
-import LoginModal from './login/LoginModal';
 import MeetingListDisplay from './meeting/MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
 import {RestContext} from '../context/RestContext';
+import ModalWrapper from './common/ModalWrapper';
+import LoginForm from './forms/LoginForm';
+import MeetingInputField from './meeting/MeetingInputField';
 
 interface Props {
 
@@ -79,7 +81,7 @@ export const TopDrawer = (props: Props) => {
      * The components to render when no meeting is joined
      * @return {React.jsx} The React components
      */
-  const renderWhenNoMeeting = () => {
+  const RenderWhenNoMeeting = () => {
     const joinDialog = 'Join an existing meeting';
     const createDialog = 'Create a new meeting';
     if (!meeting) {
@@ -93,12 +95,12 @@ export const TopDrawer = (props: Props) => {
             <ListItemIcon> <MeetingRoomIcon /></ListItemIcon>
             <ListItemText primary={joinDialog} />
           </ListItem>
-          {logoutButton()}
+          <LogoutButton/>
         </>
       );
-    }
+    } else return <></>;
   };
-  const logoutButton = () => {
+  const LogoutButton = () => {
     const logoutDialog = 'Logout';
     return (
       <>
@@ -108,7 +110,7 @@ export const TopDrawer = (props: Props) => {
           </ListItemIcon>
           <ListItemText primary={logoutDialog} />
         </ListItem>
-        {logoutButton}
+        {LogoutButton}
       </>
     );
   };
@@ -116,7 +118,7 @@ export const TopDrawer = (props: Props) => {
      * The components to render when a meeting is joined
      * @return {React.jsx} The React components
      */
-  const renderWhenMeeting = () => {
+  const RenderWhenMeeting = () => {
     const leaveDialog = 'Leave meeting';
     if (meeting) {
       return (
@@ -130,13 +132,13 @@ export const TopDrawer = (props: Props) => {
           </ListItem>
         </>
       );
-    }
+    } else return <></>;
   };
   /**
      * The components to render when not logged in
      * @return {React.jsx} The React components
      */
-  const renderWhenNotLogged = () => {
+  const RenderWhenNotLogged = () => {
     const loginDialog = 'Login';
     return (<>
       <ListItem button onClick={() => setLoginModalOpen(true)} >
@@ -154,9 +156,9 @@ export const TopDrawer = (props: Props) => {
       onKeyDown={toggleDrawer( false)}
     >
       <List>
-        {(!meeting && loggedIn) && renderWhenNoMeeting()}
-        {(meeting && loggedIn) && renderWhenMeeting()}
-        {!loggedIn && renderWhenNotLogged()}
+        {(!meeting && loggedIn) && <RenderWhenNoMeeting/>}
+        {(meeting && loggedIn) && <RenderWhenMeeting/>}
+        {!loggedIn && <RenderWhenNotLogged/>}
       </List>
       <Divider />
       <List>
@@ -201,7 +203,18 @@ export const TopDrawer = (props: Props) => {
           open={joinMeetingModalOpen}
           setOpen={setJoinMeetingModal}
         />
-        <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen}/>
+        <ModalWrapper
+          Component={MeetingInputField}
+          open={joinMeetingModalOpen}
+          setOpen={setJoinMeetingModal}
+        />
+        <ModalWrapper
+          open={loginModalOpen}
+          setOpen={setLoginModalOpen}
+          Component={LoginForm}
+        />
+
+        {/* <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen}/>*/}
 
       </React.Fragment>
     </div>

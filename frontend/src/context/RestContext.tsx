@@ -17,7 +17,7 @@ export interface IRestContext {
   logout: () => void,
   loggedIn: string | null,
 }
-// const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/login';
+// const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
 const RestContext = createContext<Partial<IRestContext>>({});
 

@@ -14,6 +14,13 @@ export const authRestricted = expressJwt({
 export const authNonRestricted = expressJwt({
     secret, algorithms: ['HS256'], requestProperty: 'token', credentialsRequired: false
 })
+export const authRefresh = expressJwt({
+    secret,
+    algorithms: ['HS256'],
+    requestProperty: 'refreshToken',
+    credentialsRequired: false,
+    getToken: req => req.cookies.refreshToken
+})
 
 export const authErrorHandler = (err: ErrorRequestHandler, req:Request, res:Response) => {
     if (err.name === 'UnauthorizedError') {
@@ -22,11 +29,3 @@ export const authErrorHandler = (err: ErrorRequestHandler, req:Request, res:Resp
     }
 }
 
-
-// const tokenExtractor = (request, response, next) => {
-//     const authorization = request.get('authorization')
-//     if (authorization && authorization.toLowerCase().startsWith('bearer')) {
-//         request.token = authorization.substring(7)
-//     }
-//     next()
-// }

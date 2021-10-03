@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 
-import {RestContext} from '../../context/RestContext';
+import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
 import {Typography} from '@material-ui/core';
 

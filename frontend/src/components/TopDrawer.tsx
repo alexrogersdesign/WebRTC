@@ -20,7 +20,7 @@ import FiberNewIcon from '@material-ui/icons/FiberNew';
 
 import MeetingListDisplay from './meeting/MeetingListDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
-import {RestContext} from '../context/RestContext';
+import {RestContext} from '../context/rest/RestContext';
 import ModalWrapper from './common/ModalWrapper';
 import LoginForm from './forms/LoginForm';
 import JoinMeetingForm from './forms/JoinMeetingForm';

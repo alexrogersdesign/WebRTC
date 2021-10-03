@@ -16,7 +16,7 @@ import User from '../shared/classes/User';
 import {SegmentationContextProvider} from './SegmentationContext';
 import Meeting from '../shared/classes/Meeting';
 import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/classParser';
-import {RestContextProvider} from './RestContext';
+import {RestContextProvider} from './rest/RestContext';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -191,7 +191,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         });
         screenStream.current = undefined;
       }
-      console.log('screen streaming', screenStream.current);
 
       setLocalMedia(stream);
       outgoingMedia.current = stream;

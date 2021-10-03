@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@chatscope/use-chat": "^1.0.5",
     "@fontsource/roboto": "^4.5.0",
@@ -90,6 +91,7 @@
     "@types/w3c-image-capture": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",
+    "axios-debug-log": "^0.8.4",
     "eslint": "^7.32.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.25.1"

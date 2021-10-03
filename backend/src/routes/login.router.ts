@@ -5,8 +5,10 @@ import * as dotenv from "dotenv";
 dotenv.config();
 const secretKey = process.env.SECRET_KEY
 const refreshSecretKey = process.env.SECRET_KEY_REFRESH
-const tokenLife = parseInt(process.env.TOKEN_LIFE)
-const refreshTokenLife = parseInt(process.env.REFRESH_TOKEN_LIFE)
+const envTokenLife= process.env.TOKEN_LIFE
+const envRefreshTokenLife= process.env.REFRESH_TOKEN_LIFE
+const tokenLife = typeof envTokenLife === 'string'? parseInt(envTokenLife): envRefreshTokenLife
+const refreshTokenLife = typeof envRefreshTokenLife === 'string'? parseInt(envRefreshTokenLife): envRefreshTokenLife
 
 import {UserModel} from "../database/models.js";
 import {authNonRestricted, authRefresh} from "../util/middleware/authMiddleware.js";
@@ -40,7 +42,6 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
     if (!refreshSecretKey ) throw new Error('missing refresh token secret key')
     //* Sign the token
     const token = jwt.sign(tokenInfo, secretKey, {expiresIn:tokenLife})
-    console.log('tokenlife', tokenLife)
     //* Sign the refresh token
     const refreshToken =jwt.sign(tokenInfo, refreshSecretKey, {expiresIn:refreshTokenLife})
     if (!token) {
@@ -54,13 +55,15 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
         refreshToken,
         user: foundUser.toObject()
     }
+    tokenList[refreshToken] = response
     res
         .cookie('refreshToken', refreshToken, {httpOnly:true})
         .status(200).send(response)
 })
 
-loginRouter.post('/refresh', authRefresh, async (req,res) => {
-    const {email, refreshToken} = req.body
+loginRouter.post('/refresh', async (req,res) => {
+    const {email} = req.body
+    const {refreshToken} = req.cookies
     const foundUser = await UserModel.findOne({email: email})
     if((!refreshToken) || !(refreshToken in tokenList) || !foundUser) {
         return res.status(401).json({

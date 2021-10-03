@@ -427,7 +427,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
         videoDisabled={videoDisabled}
       >
         <ChatContextProvider socket={socket}>
-          <RestContextProvider setCurrentUser={setCurrentUser}>
+          <RestContextProvider setCurrentUser={setCurrentUser} currentUser={currentUser}>
             {children}
           </RestContextProvider>
         </ChatContextProvider>

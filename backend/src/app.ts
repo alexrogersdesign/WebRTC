@@ -18,13 +18,11 @@ const options: cors.CorsOptions = {
 };
 
 
+app.use(cookieParser());
 app.use(cors(options));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
-
-app.use(cookieParser());
 
 
 app.use('/users', usersRouter)
@@ -38,13 +36,12 @@ app.get('/', (req, res) => {
 
 
 // catch 404 and forward to error handler
-app.use((_req, res, next) => {
-  next(createError(404));
-});
+// app.use((_req, res, next) => {
+//   next(createError(404));
+// });
 
 
 // error handler
-app.use(authErrorHandler)
 app.use(errorMiddleware)
 
 export default app;

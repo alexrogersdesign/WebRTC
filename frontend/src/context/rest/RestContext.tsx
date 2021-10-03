@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import axiosRetry from 'axios-retry';
+import jwtDecode from 'jwt-decode';
 
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
@@ -29,7 +29,13 @@ export interface IRestContext {
 const RestContext = createContext<Partial<IRestContext>>({});
 
 interface Props extends ChildrenProps {
-  setCurrentUser: (user:User | null) => void
+  setCurrentUser: (user:User | null) => void,
+  currentUser: User | null,
+}
+
+export type DecodedToken = {
+  email: string,
+  id: string
 }
 
 export interface ILoginCredentials {
@@ -68,7 +74,11 @@ const snackbarWarnOptions :OptionsObject = {
   },
 };
 
-const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
+const RestContextProvider : React.FC<Props> = ({
+  setCurrentUser,
+  currentUser,
+  children,
+}) => {
   // TODO store token more securely
   const {enqueueSnackbar} = useSnackbar();
   const [token, setToken] = useState<InMemoryToken | null>(null);
@@ -77,10 +87,11 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
   // eslint-disable-next-line max-len
   const axiosConfig = useRef<AxiosRequestConfig>({headers: {Authorization: ''}});
   const api = useRef(axios.create({
-    baseURL: 'http://localhost:5000/',
+    baseURL: '/',
     headers: {
       'Content-Type': 'application/json',
     },
+    validateStatus: (status) => status < 400,
   }));
 
   /**
@@ -106,7 +117,6 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
   }, [token]);
 
   const handleError = (error:AxiosError, message:string) => {
-    console.log('request error', error);
     if (error?.response?.status === 401) {
       enqueueSnackbar(message, snackbarWarnOptions);
     }
@@ -149,20 +159,33 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
     },
     async (err) => {
       const originalConfig = err.config;
+      if (process.env.NODE_ENV === 'development') {
+        console.log(err.response.data.message, err.toJSON());
+      }
       if (originalConfig.url !== '/login' && err.response) {
-        // Access Token was expired
+        //* Access Token was expired
         if (err.response.status === 401 && !originalConfig._retry) {
           originalConfig._retry = true;
-          // isRetrying.current = true;
           try {
-            console.log('resending');
-            const response = await axios.post('/login/refresh');
+            //* Retrieve email from token
+            const authHeader = originalConfig.headers.Authorization;
+            const tokenToDecode = authHeader.split(' ')[1];
+            const {email} = jwtDecode<DecodedToken>(tokenToDecode);
+            // eslint-disable-next-line max-len
+            const response = await api.current.post('/login/refresh', {email} );
             const {token} = response.data;
             setToken(token);
-            console.log('refresh token', token);
+            originalConfig.headers.Authorization= `Bearer ${token}`;
+            console.log('new token', token);
             return api.current(originalConfig);
-            // axios(originalConfig);
           } catch (_error) {
+            console.log(_error);
+            if (_error instanceof Error) {
+              handleError(
+                  (_error as AxiosError),
+                  'Error when retrying request',
+              );
+            }
             return Promise.reject(_error);
           }
         }
@@ -171,15 +194,6 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
     });
   };
   useEffect(() => {
-    // const requestInterceptor = api.current.interceptors.request
-    //     .use((config) => {
-    //       addToken(config);
-    //     }, (err) => Promise.reject(err));
-    // const responseInterceptor =
-    // api.current.interceptors.response.use((res) => {
-    //   return res;
-    // }, (err) => retryOnFailure(err));
-    // axiosRetry(api.current, {retries: 3});
     const requestInterceptor = setRequestInterceptor();
     const responseInterceptor = setResponseInterceptor();
     return () => {
@@ -253,12 +267,15 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       ...newMeeting,
       id: newId,
     };
-    console.log('axios config', axiosConfig.current);
     const response = await api.current
-        .post('http://localhost:5000/meetings', meetingToSubmit, axiosConfig.current)
+        .post('meetings', meetingToSubmit, axiosConfig.current)
         .catch((error) => {
           handleError(error, 'Unable to create meeting');
         });
+    // .catch((error) => {
+    //   handleError(error, 'Unable to create meeting');
+    // });
+
     if (!response) return;
     const meeting = response.data;
     const parsedMeeting = parseMeeting(meeting);

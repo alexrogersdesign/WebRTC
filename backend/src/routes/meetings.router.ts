@@ -3,10 +3,13 @@ import { ObjectId } from "mongodb";
 
 import Meeting from "../../../frontend/src/shared/classes/Meeting";
 import {MeetingModel} from "../database/models.js";
-import {authRestricted} from "../util/middleware/authMiddleware.js";
+import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
+import app from "../app";
 
 const meetingsRouter = express.Router();
 meetingsRouter.use(authRestricted);
+//* handle errors from token validation
+meetingsRouter.use(authErrorHandler)
 meetingsRouter.get("/", async (_req: Request, res: Response) => {
     try {
         const meetings = (await MeetingModel.find({}));

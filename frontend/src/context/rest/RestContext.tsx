@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-// eslint-disable-next-line no-unused-vars
 import React, {
   createContext,
   useEffect, useRef,
@@ -7,6 +6,7 @@ import React, {
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
+import axiosRetry from 'axios-retry';
 
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
@@ -14,7 +14,6 @@ import {parseMeeting, parseUser} from '../../util/classParser';
 import {ObjectId} from 'mongodb';
 import Meeting from '../../shared/classes/Meeting';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
-// import TokenService from './token.service';
 // import instance from './rest.service';
 
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
@@ -129,15 +128,6 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       };
     };
   }, []);
-  // const addToken = (config: AxiosRequestConfig) => {
-  //   console.info('Starting Request', JSON.stringify(config, null, 2));
-  //   if (token) {
-  //     // config.headers['Authorization'] = 'Bearer ' + token.token;
-  //     config.headers['x-access-token'] = token;
-  //     // for Node.js Express back-end
-  //   }
-  //   return config;
-  // };
   const setRequestInterceptor = () => {
     return api.current.interceptors.request.use((config) => {
       console.info('Starting Request', JSON.stringify(config, null, 2));
@@ -152,29 +142,7 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
       return Promise.reject(error);
     });
   };
-  // const retryOnFailure = async (err:any) => {
-  //   const originalConfig = err.config;
-  //   if (originalConfig.url !== '/login' && err.response) {
-  //     // Access Token was expired
-  //     if (err.response.status === 401 && !originalConfig._retry) {
-  //       originalConfig._retry = true;
-  //       try {
-  //         console.log('resending');
-  //         const response = await api.current.post('/login/refresh', {
-  //         });
-  //         //
-  //         const {token} = response.data;
-  //         setToken(token);
-  //         console.log('refresh token', token);
-  //         // TokenService.updateLocalAccessToken(accessToken);
-  //         return api.current(originalConfig);
-  //       } catch (_error) {
-  //         return Promise.reject(_error);
-  //       }
-  //     }
-  //   }
-  //   return Promise.reject(err);
-  // };
+  // const isRetrying = useRef(false);
   const setResponseInterceptor = () => {
     return api.current.interceptors.response.use((res) => {
       return res;
@@ -185,16 +153,15 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
         // Access Token was expired
         if (err.response.status === 401 && !originalConfig._retry) {
           originalConfig._retry = true;
+          // isRetrying.current = true;
           try {
             console.log('resending');
-            const response = await api.current.post('/login/refresh', {
-            });
-            //
+            const response = await axios.post('/login/refresh');
             const {token} = response.data;
             setToken(token);
             console.log('refresh token', token);
-            // TokenService.updateLocalAccessToken(accessToken);
             return api.current(originalConfig);
+            // axios(originalConfig);
           } catch (_error) {
             return Promise.reject(_error);
           }
@@ -212,6 +179,7 @@ const RestContextProvider : React.FC<Props> = ({setCurrentUser, children}) => {
     // api.current.interceptors.response.use((res) => {
     //   return res;
     // }, (err) => retryOnFailure(err));
+    // axiosRetry(api.current, {retries: 3});
     const requestInterceptor = setRequestInterceptor();
     const responseInterceptor = setResponseInterceptor();
     return () => {

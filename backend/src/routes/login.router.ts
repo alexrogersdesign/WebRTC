@@ -5,8 +5,8 @@ import * as dotenv from "dotenv";
 dotenv.config();
 const secretKey = process.env.SECRET_KEY
 const refreshSecretKey = process.env.SECRET_KEY_REFRESH
-const tokenLife = process.env.TOKEN_LIFE
-const refreshTokenLife = process.env.REFRESH_TOKEN_LIFE
+const tokenLife = parseInt(process.env.TOKEN_LIFE)
+const refreshTokenLife = parseInt(process.env.REFRESH_TOKEN_LIFE)
 
 import {UserModel} from "../database/models.js";
 import {authNonRestricted, authRefresh} from "../util/middleware/authMiddleware.js";

@@ -113,7 +113,6 @@ const RestContextProvider : React.FC<Props> = ({
    */
   useEffect(() => {
     axiosConfig.current.headers.Authorization = `Bearer ${token}`;
-    axiosConfig.current.headers['x-access-token'] = token;
   }, [token]);
 
   const handleError = (error:AxiosError, message:string) => {
@@ -141,11 +140,6 @@ const RestContextProvider : React.FC<Props> = ({
   const setRequestInterceptor = () => {
     return api.current.interceptors.request.use((config) => {
       console.info('Starting Request', JSON.stringify(config, null, 2));
-      if (token) {
-        // config.headers['Authorization'] = 'Bearer ' + token.token;
-        config.headers['x-access-token'] = token;
-        // for Node.js Express back-end
-      }
       return config;
     },
     (error) => {

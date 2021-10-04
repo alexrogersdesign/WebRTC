@@ -4,7 +4,6 @@ import * as dotenv from "dotenv";
 import HttpException from "../HttpException";
 dotenv.config();
 
-
 const secretKey = process.env.SECRET_KEY
 const refreshKey = process.env.SECRET_KEY_REFRESH
 if (!secretKey) throw new Error('Secret key not found')

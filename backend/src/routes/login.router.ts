@@ -10,6 +10,7 @@ const envRefreshTokenLife= process.env.REFRESH_TOKEN_LIFE
 const tokenLife = typeof envTokenLife === 'string'? parseInt(envTokenLife): envRefreshTokenLife
 const refreshTokenLife = typeof envRefreshTokenLife === 'string'? parseInt(envRefreshTokenLife): envRefreshTokenLife
 
+import jwtDecode from "jwt-decode";
 import {UserModel} from "../database/models.js";
 import {authNonRestricted, authRefresh} from "../util/middleware/authMiddleware.js";
 type TokenItem = {
@@ -20,10 +21,12 @@ type TokenItem = {
 type TokenList = {
     [key :string]: TokenItem
 }
-
+export type DecodedToken = {
+    email: string,
+    id: string
+}
 const tokenList: TokenList = {}
 const loginRouter = express.Router();
-// loginRouter.use(authNonRestricted)
 
 loginRouter.post('/', authNonRestricted, async (req, res) => {
     const {email, password} = req.body
@@ -62,8 +65,9 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
 })
 
 loginRouter.post('/refresh', async (req,res) => {
-    const {email} = req.body
     const {refreshToken} = req.cookies
+    //* Decode token to retrieve email information.
+    const {email} = jwtDecode<DecodedToken>(refreshToken);
     const foundUser = await UserModel.findOne({email: email})
     if((!refreshToken) || !(refreshToken in tokenList) || !foundUser) {
         return res.status(401).json({
@@ -77,7 +81,7 @@ loginRouter.post('/refresh', async (req,res) => {
         if (!secretKey) throw new Error('missing token or refresh token key')
         //* Sign new token.
         const token = jwt.sign(tokenInfo, secretKey, { expiresIn: tokenLife})
-        const response = {token}
+        const response = {token, user:foundUser}
         //* Update token in list.
         tokenList[refreshToken].token = token
         res

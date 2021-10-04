@@ -6,24 +6,29 @@ import React, {
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
+import {ObjectId} from 'mongodb';
 import jwtDecode from 'jwt-decode';
 
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
-import {parseMeeting, parseUser} from '../../util/classParser';
-import {ObjectId} from 'mongodb';
+import {IReceivedMeeting, parseMeeting, parseUser} from '../../util/classParser';
+import {
+  api, refreshToken,
+  setRequestInterceptor,
+  setResponseInterceptor,
+} from './api.service';
 import Meeting from '../../shared/classes/Meeting';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
-// import instance from './rest.service';
 
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
   logout: () => void,
-  loggedIn: InMemoryToken | null,
+  loggedIn: boolean,
   createUser: (newUser: INewUser) => Promise<User| undefined>,
   createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
+  meetingList: Meeting[]
 }
 
 const RestContext = createContext<Partial<IRestContext>>({});
@@ -32,12 +37,6 @@ interface Props extends ChildrenProps {
   setCurrentUser: (user:User | null) => void,
   currentUser: User | null,
 }
-
-export type DecodedToken = {
-  email: string,
-  id: string
-}
-
 export interface ILoginCredentials {
   email: string,
   password: string
@@ -52,7 +51,7 @@ export interface INewMeeting {
   title: string,
 }
 
-type InMemoryToken = {
+export type InMemoryToken = {
   token: string,
   expiration: string
 }
@@ -79,21 +78,32 @@ const RestContextProvider : React.FC<Props> = ({
   currentUser,
   children,
 }) => {
-  // TODO store token more securely
+  // TODO check for cookie on refresh (persist login)
+  // TODO logout across tabs (local storage logout key)
   const {enqueueSnackbar} = useSnackbar();
-  const [token, setToken] = useState<InMemoryToken | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   // eslint-disable-next-line no-unused-vars
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
   // eslint-disable-next-line max-len
   const axiosConfig = useRef<AxiosRequestConfig>({headers: {Authorization: ''}});
-  const api = useRef(axios.create({
-    baseURL: '/',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    validateStatus: (status) => status < 400,
-  }));
+  const updateTokenExternally = (token:string, user:User) => {
+    setToken(token);
+    setCurrentUser(user);
+  };
 
+  useEffect(() => {
+    const checkIfLogged = async () => {
+      const {token, user} = await refreshToken();
+      if (!token) return console.log('Not logged in');
+      setToken(token);
+      setCurrentUser(user);
+      setLoggedIn(true);
+      console.log('logged in');
+    };
+    checkIfLogged();
+  }, []);
   /**
    * Check if currently logged in on first load.
    * If local storage contains a login token
@@ -110,9 +120,11 @@ const RestContextProvider : React.FC<Props> = ({
   }, []);
   /**
    * Updates the axios config parameters when token updates
+   * Sets Logged to true
    */
   useEffect(() => {
     axiosConfig.current.headers.Authorization = `Bearer ${token}`;
+    if (token) setLoggedIn(true);
   }, [token]);
 
   const handleError = (error:AxiosError, message:string) => {
@@ -137,62 +149,16 @@ const RestContextProvider : React.FC<Props> = ({
       };
     };
   }, []);
-  const setRequestInterceptor = () => {
-    return api.current.interceptors.request.use((config) => {
-      console.info('Starting Request', JSON.stringify(config, null, 2));
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    });
-  };
-  // const isRetrying = useRef(false);
-  const setResponseInterceptor = () => {
-    return api.current.interceptors.response.use((res) => {
-      return res;
-    },
-    async (err) => {
-      const originalConfig = err.config;
-      if (process.env.NODE_ENV === 'development') {
-        console.log(err.response.data.message, err.toJSON());
-      }
-      if (originalConfig.url !== '/login' && err.response) {
-        //* Access Token was expired
-        if (err.response.status === 401 && !originalConfig._retry) {
-          originalConfig._retry = true;
-          try {
-            //* Retrieve email from token
-            const authHeader = originalConfig.headers.Authorization;
-            const tokenToDecode = authHeader.split(' ')[1];
-            const {email} = jwtDecode<DecodedToken>(tokenToDecode);
-            // eslint-disable-next-line max-len
-            const response = await api.current.post('/login/refresh', {email} );
-            const {token} = response.data;
-            setToken(token);
-            originalConfig.headers.Authorization= `Bearer ${token}`;
-            console.log('new token', token);
-            return api.current(originalConfig);
-          } catch (_error) {
-            console.log(_error);
-            if (_error instanceof Error) {
-              handleError(
-                  (_error as AxiosError),
-                  'Error when retrying request',
-              );
-            }
-            return Promise.reject(_error);
-          }
-        }
-      }
-      return Promise.reject(err);
-    });
-  };
+
   useEffect(() => {
     const requestInterceptor = setRequestInterceptor();
-    const responseInterceptor = setResponseInterceptor();
+    const responseInterceptor = setResponseInterceptor(
+        updateTokenExternally,
+        handleError,
+    );
     return () => {
-      api.current.interceptors.request.eject(requestInterceptor);
-      api.current.interceptors.request.eject(responseInterceptor);
+      api.interceptors.request.eject(requestInterceptor);
+      api.interceptors.request.eject(responseInterceptor);
     };
   }, []);
 
@@ -209,7 +175,7 @@ const RestContextProvider : React.FC<Props> = ({
   // eslint-disable-next-line max-len
   const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
     const failedLoginMessage = 'Invalid Username or Password';
-    const response = await api.current.post('/login', credentials)
+    const response = await api.post('/login', credentials)
         .catch((error) => handleError(error, failedLoginMessage));
     if (!response) return;
     const {user, token} = response.data;
@@ -235,7 +201,7 @@ const RestContextProvider : React.FC<Props> = ({
       ...newUser,
       id: newId,
     };
-    const response = await api.current.post('users', userToSubmit)
+    const response = await api.post('users', userToSubmit)
         .catch((error) => handleError(error, 'Unable to create user'));
     if (!response) return;
     const user = response.data;
@@ -261,15 +227,11 @@ const RestContextProvider : React.FC<Props> = ({
       ...newMeeting,
       id: newId,
     };
-    const response = await api.current
+    const response = await api
         .post('meetings', meetingToSubmit, axiosConfig.current)
         .catch((error) => {
           handleError(error, 'Unable to create meeting');
         });
-    // .catch((error) => {
-    //   handleError(error, 'Unable to create meeting');
-    // });
-
     if (!response) return;
     const meeting = response.data;
     const parsedMeeting = parseMeeting(meeting);
@@ -289,10 +251,24 @@ const RestContextProvider : React.FC<Props> = ({
     window.localStorage.removeItem('token');
     setLogoutStorage(Date.now());
   };
+  /**
+   * Populate meetings on refresh
+   */
+  useEffect(() => {
+    getMeetings();
+  }, []);
+
+  const getMeetings = async () => {
+    const response = await api.get('meetings');
+    const meetings: Meeting[] = response.data.map(
+        (meeting:IReceivedMeeting) => parseMeeting(meeting),
+    );
+    setMeetingList(meetings);
+  };
 
   return (
     <RestContext.Provider
-      value={{login, logout, loggedIn: token, createUser, createMeeting}}
+      value={{login, logout, loggedIn, createUser, createMeeting, meetingList}}
     >
       {children}
     </RestContext.Provider>

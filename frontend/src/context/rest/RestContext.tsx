@@ -7,13 +7,16 @@ import React, {
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import {ObjectId} from 'mongodb';
-import jwtDecode from 'jwt-decode';
-
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
-import {IReceivedMeeting, parseMeeting, parseUser} from '../../util/classParser';
 import {
-  api, refreshToken,
+  IReceivedMeeting,
+  parseMeeting,
+  parseUser,
+} from '../../util/classParser';
+import {
+  api,
+  refreshToken,
   setRequestInterceptor,
   setResponseInterceptor,
 } from './api.service';
@@ -93,31 +96,26 @@ const RestContextProvider : React.FC<Props> = ({
     setCurrentUser(user);
   };
 
+
+  /**
+   * Check if currently logged in on first load.
+   */
   useEffect(() => {
+    // TODO not working
     const checkIfLogged = async () => {
-      const {token, user} = await refreshToken();
-      if (!token) return console.log('Not logged in');
-      setToken(token);
-      setCurrentUser(user);
-      setLoggedIn(true);
-      console.log('logged in');
+      try {
+        const {token, user} = await refreshToken();
+        setToken(token);
+        setCurrentUser(user);
+        setLoggedIn(true);
+        console.log('logged in');
+      } catch (err) {
+        console.log('Not logged in');
+      }
     };
     checkIfLogged();
   }, []);
-  /**
-   * Check if currently logged in on first load.
-   * If local storage contains a login token
-   */
-  useEffect(() => {
-    return () => {
-      const localStorageItem = window.localStorage.getItem('token');
-      if (localStorageItem) {
-        const {token, user} = JSON.parse(localStorageItem);
-        setToken(token);
-        setCurrentUser(parseUser(user));
-      }
-    };
-  }, []);
+
   /**
    * Updates the axios config parameters when token updates
    * Sets Logged to true
@@ -125,6 +123,7 @@ const RestContextProvider : React.FC<Props> = ({
   useEffect(() => {
     axiosConfig.current.headers.Authorization = `Bearer ${token}`;
     if (token) setLoggedIn(true);
+    else setLoggedIn(false);
   }, [token]);
 
   const handleError = (error:AxiosError, message:string) => {
@@ -149,7 +148,9 @@ const RestContextProvider : React.FC<Props> = ({
       };
     };
   }, []);
-
+  /**
+   * Set interceptors on first load.
+   */
   useEffect(() => {
     const requestInterceptor = setRequestInterceptor();
     const responseInterceptor = setResponseInterceptor(
@@ -180,7 +181,6 @@ const RestContextProvider : React.FC<Props> = ({
     if (!response) return;
     const {user, token} = response.data;
     setToken(token);
-    console.log('refresh token', token);
     window.localStorage.setItem('token', JSON.stringify(response.data));
     const parsedUser = parseUser(user);
     setCurrentUser(parsedUser);
@@ -248,18 +248,18 @@ const RestContextProvider : React.FC<Props> = ({
   const logout = () => {
     setToken(null);
     setCurrentUser(null);
-    window.localStorage.removeItem('token');
     setLogoutStorage(Date.now());
   };
   /**
    * Populate meetings on refresh
    */
   useEffect(() => {
+    if (!token) return;
     getMeetings();
-  }, []);
+  }, [token]);
 
   const getMeetings = async () => {
-    const response = await api.get('meetings');
+    const response = await api.get('meetings', axiosConfig.current);
     const meetings: Meeting[] = response.data.map(
         (meeting:IReceivedMeeting) => parseMeeting(meeting),
     );

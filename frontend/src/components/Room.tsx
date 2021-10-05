@@ -11,6 +11,7 @@ import {SocketIOContext} from '../context/SocketIOContext';
 import {AttendeeDrawer} from './attendee/AttendeeDrawer';
 import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
+import MeetingList from './meeting/MeetingList';
 interface Props {
   // history: RouteComponentProps['history'];
   // location: RouteComponentProps['location'];
@@ -66,19 +67,15 @@ const Room = (props: Props) => {
 
   return (
     <div >
-      {/* <TopBar/> */}
       <div className={classes.topBar}>
         <AttendeeDrawer users={users} meeting={meeting}/>
         <ChatDrawer meeting={meeting}/>
+        {!meeting && <MeetingList/>}
       </div>
-      {/* <AttendeeList users={users}/> */}
       <Container className={classes.container}>
-        {/* <ChatBox/> */}
-        {/* <MeetingForm /> */}
         <div className={classes.grid}>
           <VideoArray />
           <div className={classes.local}>
-            {/* <Typography>{currentUserID && currentUserID}</Typography> */}
             {meeting && videoReady && (<VideoPlayer local/>)}
           </div>
         </div>

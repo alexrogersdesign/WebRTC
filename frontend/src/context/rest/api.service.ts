@@ -36,6 +36,7 @@ type refreshResponse = {
 const refreshToken = async ():Promise<refreshResponse> => {
   const response = await axios.post('/login/refresh');
   const {token, receivedUser: receivedUser} = response.data;
+  if (!token || !receivedUser) throw new Error('Could not refresh token');
   const user = parseUser(receivedUser);
   return {token, user};
 };
@@ -43,7 +44,7 @@ const refreshToken = async ():Promise<refreshResponse> => {
 // eslint-disable-next-line valid-jsdoc
 /**
  * Sets axios response interceptor which intercepts failed requests and
- * attempts to retry them. If request fails due to lack of authorizaation.
+ * attempts to retry them. If request fails due to lack of authorization.
  * Refreshing the token is attempted.
  * @param {(string) => void} updateTokenExternally a function
  * to send the updated token to.
@@ -70,7 +71,6 @@ const setResponseInterceptor = (
         originalConfig._retry = true;
         try {
           const {token, user} = await refreshToken();
-          if (!token) throw new Error('No token returned');
           updateTokenExternally(token, user);
           originalConfig.headers.Authorization= `Bearer ${token}`;
           console.log('new token', token);

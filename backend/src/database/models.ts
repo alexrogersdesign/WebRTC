@@ -65,9 +65,12 @@ const meetingSchema = new Schema<Meeting>({
 // meetingSchema.loadClass(Meeting);
 meetingSchema.set('toObject', {
     transform: function (doc: Document, ret) {
-        parseMeeting(ret)
+        ret.id = ret._id
+        delete ret._id;
+        return ret
       }
 })
+
 export const MeetingModel = model<Meeting>('Meeting', meetingSchema);
 
 const messageSchema = new Schema<Message>({
@@ -98,7 +101,9 @@ const messageSchema = new Schema<Message>({
 // messageSchema.loadClass(Message)
 messageSchema.set('toObject', {
     transform: function (doc: Document, ret) {
-        parseMessage(ret)
+        ret.id = ret._id
+        delete ret._id;
+        return ret
       }
 })
 export const MessageModel = model<Message>('Message', messageSchema)

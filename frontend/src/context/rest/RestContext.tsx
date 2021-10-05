@@ -7,6 +7,7 @@ import React, {
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import ObjectID from 'bson-objectid';
+import PropTypes from 'prop-types';
 
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
@@ -33,6 +34,7 @@ export interface IRestContext {
   createUser: (newUser: INewUser) => Promise<User| undefined>,
   createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
   meetingList: Meeting[]
+  findMeeting: (id:string) => Promise<Meeting | undefined>
 }
 
 const RestContext = createContext<Partial<IRestContext>>({});
@@ -60,30 +62,11 @@ export type InMemoryToken = {
   expiration: string
 }
 
-const snackbarSuccessOptions: OptionsObject = {
-  variant: 'success',
-  autoHideDuration: 2000,
-  anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'center',
-  },
-};
-const snackbarWarnOptions :OptionsObject = {
-  variant: 'warning',
-  autoHideDuration: 2000,
-  anchorOrigin: {
-    vertical: 'top',
-    horizontal: 'center',
-  },
-};
-
-const RestContextProvider : React.FC<Props> = ({
-  setCurrentUser,
-  currentUser,
-  children,
-}) => {
+// eslint-disable-next-line max-len
+const RestContextProvider = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   // TODO check for cookie on refresh (persist login)
   // TODO logout across tabs (local storage logout key)
+  const {setCurrentUser, currentUser, children} = props;
   const {enqueueSnackbar} = useSnackbar();
   const [token, setToken] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -266,15 +249,53 @@ const RestContextProvider : React.FC<Props> = ({
     );
     setMeetingList(meetings);
   };
+  const findMeeting = async (id:string) => {
+    const response = await api.get(`meetings/${id}`, axiosConfig.current);
+    return parseMeeting(response.data);
+  };
 
   return (
-    <RestContext.Provider
-      value={{login, logout, loggedIn, createUser, createMeeting, meetingList}}
-    >
-      {children}
-    </RestContext.Provider>
+    <div ref={ref}>
+      <RestContext.Provider
+        value={{
+          login,
+          logout,
+          loggedIn,
+          createUser,
+          createMeeting,
+          meetingList,
+          findMeeting,
+        }}
+      >
+        {children}
+      </RestContext.Provider>
+    </div>
   );
+});
+const snackbarSuccessOptions: OptionsObject = {
+  variant: 'success',
+  autoHideDuration: 2000,
+  anchorOrigin: {
+    vertical: 'bottom',
+    horizontal: 'center',
+  },
+};
+
+const snackbarWarnOptions :OptionsObject = {
+  variant: 'warning',
+  autoHideDuration: 2000,
+  anchorOrigin: {
+    vertical: 'top',
+    horizontal: 'center',
+  },
 };
 
 
 export {RestContextProvider, RestContext};
+RestContextProvider.propTypes = {
+  setCurrentUser: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.prototype,
+  children: PropTypes.any,
+
+
+};

@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import ObjectID from 'bson-objectid';
 
 import Meeting from "../../../frontend/src/shared/classes/Meeting";
 import {MeetingModel} from "../database/models.js";
@@ -30,7 +30,7 @@ meetingsRouter.get("/:id", async (req: Request, res: Response) => {
 
     try {
 
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const meeting = (await MeetingModel.findOne(query)) as Meeting;
 
         if (meeting) {
@@ -65,7 +65,7 @@ meetingsRouter.put("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const {title} = req.body;
         const updatedMeeting = {
             title
@@ -88,7 +88,7 @@ meetingsRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const result = await MeetingModel.deleteOne(query);
 
         if (result && result.deletedCount) {

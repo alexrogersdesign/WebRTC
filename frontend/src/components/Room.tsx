@@ -12,6 +12,7 @@ import {AttendeeDrawer} from './attendee/AttendeeDrawer';
 import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
+import {RestContext} from '../context/rest/RestContext';
 interface Props {
   // history: RouteComponentProps['history'];
   // location: RouteComponentProps['location'];
@@ -57,6 +58,7 @@ const Room = (props: Props) => {
   const classes = useStyles();
   const {externalMedia, meeting, videoReady} = useContext(SocketIOContext);
   const {currentTheme, setTheme} = useContext(CustomThemeContext);
+  const {loggedIn} = useContext(RestContext);
   const users = externalMedia?.map(({user, stream}) => user);
 
   useEffect(() => {
@@ -70,9 +72,9 @@ const Room = (props: Props) => {
       <div className={classes.topBar}>
         <AttendeeDrawer users={users} meeting={meeting}/>
         <ChatDrawer meeting={meeting}/>
-        {!meeting && <MeetingList/>}
       </div>
       <Container className={classes.container}>
+        {!meeting && loggedIn && <MeetingList/>}
         <div className={classes.grid}>
           <VideoArray />
           <div className={classes.local}>

@@ -40,16 +40,6 @@ const MeetingItem = ({meeting}: Props) => {
       style={{backgroundColor: 'transparent', cursor: 'default'}}
       disableRipple={true}
     >
-      <ToolTip title='Copy Current Meeting ID' placement="top">
-        <ListItemIcon>
-          <IconButton
-            //   className={classes.iconButton}
-            edge='start'
-            aria-label='copy to clipboard'>
-            <ConfirmationNumberIcon />
-          </IconButton>
-        </ListItemIcon>
-      </ToolTip>
       <ListItemText primary={meetingPrimary} secondary={meetingSecondary} />
     </ListItem>
   );

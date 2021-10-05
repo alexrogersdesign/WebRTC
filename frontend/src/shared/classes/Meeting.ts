@@ -1,11 +1,11 @@
-import {ObjectId} from 'mongodb';
+import ObjectID from 'bson-objectid';
 
 import User from './User';
 /**
  * The meeting class representing the information about an existing meeting.
  */
 export default class Meeting {
-    _id: ObjectId;
+    _id: ObjectID;
     private _title: string;
     private _attendees: User[];
 
@@ -15,7 +15,7 @@ export default class Meeting {
    * @param {User[]} users optional list of users
    */
     constructor(title: string, users?: User[]) {
-      this._id = new ObjectId;
+      this._id = new ObjectID;
       this._title = title;
       this._attendees = users? users: [];
     }
@@ -39,7 +39,7 @@ export default class Meeting {
     /**
    * returns the meeting id
    */
-    get id(): ObjectId {
+    get id(): ObjectID {
       return this._id;
     }
 
@@ -47,7 +47,7 @@ export default class Meeting {
    * sets the meeting id
    * @param {String} value the new meeting id
    */
-    set id(value: ObjectId) {
+    set id(value: ObjectID) {
       this._id = value;
     }
 

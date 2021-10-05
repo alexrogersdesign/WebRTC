@@ -1,4 +1,4 @@
-import {ObjectId} from 'mongodb';
+import ObjectID from 'bson-objectid';
 
 import Meeting from '../shared/classes/Meeting.js';
 import Message,
@@ -8,26 +8,26 @@ import User from '../shared/classes/User.js';
 // import {RequireAtLeastOne} from '../shared/types';
 
 export interface _BaseIReceivedMeeting {
-    _id : string | ObjectId,
+    _id : string | ObjectID,
     _title: string,
     _attendees?: IReceivedUser[];
 }
 export interface BaseIReceivedMeeting {
-    id : string | ObjectId,
+    id : string | ObjectID,
     title: string,
     attendees?: IReceivedUser[];
 }
 export type IReceivedMeeting = BaseIReceivedMeeting & _BaseIReceivedMeeting
 
  type _BaseIReceivedUser = {
-    _id : string | ObjectId,
+    _id : string | ObjectID,
     _firstName: string,
     _lastName: string,
     _email: string
 
 }
  type BaseIReceivedUser = {
-    id : string | ObjectId,
+    id : string | ObjectID,
     firstName: string,
     lastName: string,
     email: string
@@ -35,30 +35,30 @@ export type IReceivedMeeting = BaseIReceivedMeeting & _BaseIReceivedMeeting
 export type IReceivedUser = _BaseIReceivedUser & BaseIReceivedUser
 
 export interface BaseIReceivedMessage {
-     meetingId: ObjectId| string,
+     meetingId: ObjectID| string,
      timeStamp: Date,
      user: IReceivedUser,
-     id: string | ObjectId,
+     id: string | ObjectID,
      contents: string | MessageImage,
      type?: MessageType,
      alt?: string,
 }
 export interface _BaseIReceivedMessage {
-    _meetingId: ObjectId| string,
+    _meetingId: ObjectID| string,
     _timeStamp: Date,
     _user: IReceivedUser,
-    _id: string | ObjectId,
+    _id: string | ObjectID,
     _contents: string | MessageImage,
     _type?: MessageType,
     _alt?: string,
 }
 export type IReceivedMessage = BaseIReceivedMessage & _BaseIReceivedMessage
 
-const parseId = (input: string | ObjectId):ObjectId => {
-  if (input instanceof ObjectId) {
+const parseId = (input: string | ObjectID):ObjectID => {
+  if (input instanceof ObjectID) {
     return input;
   } else {
-    return new ObjectId(input);
+    return new ObjectID(input);
   }
 };
 export const parseUser = (input: IReceivedUser): User => {

@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import ObjectID from 'bson-objectid';
 
 import Message from "../../../frontend/src/shared/classes/Message";
 import {MessageModel} from "../database/models.js";
@@ -28,7 +28,7 @@ messagesRouter.get("/:id", async (req: Request, res: Response) => {
 
     try {
 
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const message = (await MessageModel.findOne(query)?.populate('User','Meeting')) as Message;
 
         if (message) {
@@ -65,7 +65,7 @@ messagesRouter.put("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const {title} = req.body;
         const updatedMessage = {
             title
@@ -88,7 +88,7 @@ messagesRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const result = await MessageModel.deleteOne(query);
 
         if (result && result.deletedCount) {

@@ -1,5 +1,5 @@
 /* eslint-disable require-jsdoc */
-import {ObjectId} from 'mongodb';
+import ObjectID from 'bson-objectid';
 
 import User from './User';
 
@@ -14,9 +14,9 @@ export interface MessageImage {
  * The class representing a chat message
  */
 export default class Message {
-   _id: ObjectId;
+   _id: ObjectID;
   private _timeStamp: Date;
-  private _meetingId: ObjectId;
+  private _meetingId: ObjectID;
   private _user: User;
   private _contents: string | MessageImage;
   private _type?: MessageType;
@@ -25,22 +25,22 @@ export default class Message {
 
   /**
    * Constructor
-   * @param {ObjectId} meetingId
+   * @param {ObjectID} meetingId
    * @param {User} user
    * @param {String} contents
    * @param {Side} side
    * @param {String} alt
    */
   constructor(
-      meetingId: ObjectId,
+      meetingId: ObjectID,
       user: User,
       contents: string | MessageImage,
       side: Side = 'left',
       alt: string = `message from ${user}`,
   ) {
     this._meetingId = meetingId;
-    this._id = new ObjectId();
-    this._timeStamp = this._id.getTimestamp();
+    this._id = new ObjectID();
+    this._timeStamp = new Date(this._id.getTimestamp());
     this._user = user;
     this._contents = contents;
     this._type = typeof contents === 'string'? 'text': 'image';
@@ -64,19 +64,19 @@ export default class Message {
     this._user = value;
   }
 
-  get id(): ObjectId {
+  get id(): ObjectID {
     return this._id;
   }
 
-  set id(value: ObjectId) {
+  set id(value: ObjectID) {
     this._id = value;
   }
 
-  get meetingId(): ObjectId {
+  get meetingId(): ObjectID {
     return this._meetingId;
   }
 
-  set meetingId(value: ObjectId) {
+  set meetingId(value: ObjectID) {
     this._meetingId = value;
   }
 

@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
-import { ObjectId } from "mongodb";
+import ObjectID from 'bson-objectid';
+
 import bcrypt from 'bcrypt';
 
 import User from "../../../frontend/src/shared/classes/User";
@@ -26,7 +27,7 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const user = (await UserModel.findOne(query)) as User;
         if (user) {
             res.status(200).send(user);
@@ -64,7 +65,7 @@ usersRouter.put("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const {firstName, lastName, password, email} = req.body;
         const passwordHash = await bcrypt.hash(password, 10)
         const updatedUser = {
@@ -91,7 +92,7 @@ usersRouter.put("/:id", async (req: Request, res: Response) => {
 usersRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
     try {
-        const query = { _id: new ObjectId(id) };
+        const query = { _id: new ObjectID(id) };
         const result = await UserModel.deleteOne(query);
 
         if (result && result.deletedCount) {

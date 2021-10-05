@@ -6,7 +6,8 @@ import React, {
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
-import {ObjectId} from 'mongodb';
+import ObjectID from 'bson-objectid';
+
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
 import {
@@ -196,7 +197,7 @@ const RestContextProvider : React.FC<Props> = ({
    * if the creation was not successful.
    */
   const createUser = async (newUser: INewUser):Promise<User | undefined> => {
-    const newId = new ObjectId();
+    const newId = new ObjectID();
     const userToSubmit = {
       ...newUser,
       id: newId,
@@ -222,7 +223,7 @@ const RestContextProvider : React.FC<Props> = ({
    */
   // eslint-disable-next-line max-len
   const createMeeting = async (newMeeting: INewMeeting):Promise<Meeting | undefined> => {
-    const newId = new ObjectId();
+    const newId = new ObjectID();
     const meetingToSubmit = {
       ...newMeeting,
       id: newId,

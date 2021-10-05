@@ -1,10 +1,10 @@
-import {ObjectId} from 'mongodb';
+import ObjectID from 'bson-objectid';
 
 /**
  * A user class
  */
 export default class User {
-     _id: ObjectId;
+     _id: ObjectID;
     private _firstName?: string;
     private _lastName?: string;
     private _fullName?: string;
@@ -21,7 +21,7 @@ export default class User {
         lastName: string,
         email: string,
     ) {
-      this._id = new ObjectId();
+      this._id = new ObjectID();
       this._firstName = firstName;
       this._lastName = lastName;
       this._email = email;
@@ -62,7 +62,7 @@ export default class User {
     /**
      * returns ID
      */
-    get id(): ObjectId {
+    get id(): ObjectID {
       return this._id;
     }
     /**
@@ -95,7 +95,7 @@ export default class User {
    * sets id
    * @param {String} value the new id
    */
-    set id(value: ObjectId) {
+    set id(value: ObjectID) {
       this._id = value;
     }
     /**

@@ -6,6 +6,7 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 // import {IExternalMedia} from '../types';
 import VideoPlayer from './VideoPlayer';
+import {MediaControlContext} from '../../context/MediaControlContext';
 
 interface Props {
    classes?: {
@@ -49,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 const VideoArray = (props: Props) => {
-  const {externalMedia} = useContext(SocketIOContext);
+  const {externalMedia} = useContext(MediaControlContext);
   const classes = useStyles();
   const videoList = () => externalMedia?.map(({user, stream}) => {
     return (

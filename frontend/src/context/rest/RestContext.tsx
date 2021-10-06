@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, {
-  createContext,
+  createContext, useContext,
   useEffect, useRef,
   useState,
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 import ObjectID from 'bson-objectid';
-import PropTypes from 'prop-types';
 
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
@@ -24,6 +23,7 @@ import {
 } from './api.service';
 import Meeting from '../../shared/classes/Meeting';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
+import {SocketIOContext} from '../SocketIOContext';
 
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
@@ -36,12 +36,10 @@ export interface IRestContext {
   meetingList: Meeting[]
 }
 
-const RestContext = createContext<Partial<IRestContext>>({});
+const RestContext = createContext<IRestContext>(undefined!);
 
-interface Props extends ChildrenProps {
-  setCurrentUser: (user:User | null) => void,
-  currentUser: User | null,
-}
+interface Props extends ChildrenProps{};
+
 export interface ILoginCredentials {
   email: string,
   password: string
@@ -56,16 +54,11 @@ export interface INewMeeting {
   title: string,
 }
 
-export type InMemoryToken = {
-  token: string,
-  expiration: string
-}
-
 // eslint-disable-next-line max-len
-const RestContextProvider = (props: Props) => {
+const RestContextProvider = ({children}: Props) => {
   // TODO check for cookie on refresh (persist login)
   // TODO logout across tabs (local storage logout key)
-  const {setCurrentUser, currentUser, children} = props;
+  const {setCurrentUser, currentUser} = useContext(SocketIOContext);
   const {enqueueSnackbar} = useSnackbar();
   const [token, setToken] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);

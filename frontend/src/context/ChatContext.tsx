@@ -1,21 +1,19 @@
 // eslint-disable-next-line no-unused-vars
-import React, {createContext, useEffect, useState, useRef} from 'react';
+import React, {createContext, useEffect, useState, useContext} from 'react';
 import {useSnackbar} from 'notistack';
-import {Socket} from 'socket.io-client';
 
 import {ChildrenProps, IChatContext} from '../shared/types';
 import Message from '../shared/classes/Message';
-import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
 import {IReceivedMessage, parseMessage} from '../util/classParser';
+import {SocketIOContext} from './SocketIOContext';
 
 const ChatContext = createContext<Partial<IChatContext>>({});
 
 
-interface Props extends ChildrenProps {
-    socket: Socket<DefaultEventsMap, DefaultEventsMap>
-}
+interface Props extends ChildrenProps {}
 
-const ChatContextProvider : React.FC<Props> = ({socket, children}) => {
+const ChatContextProvider : React.FC<Props> = ({children}) => {
+  const {socket} = useContext(SocketIOContext);
   const {enqueueSnackbar} = useSnackbar();
   //* The array of messages in the chat
   const [messageList, setMessageList] = useState<Message[]>([]);

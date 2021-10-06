@@ -13,6 +13,7 @@ import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
 import {RestContext} from '../context/rest/RestContext';
+import {MediaControlContext} from '../context/MediaControlContext';
 interface Props {
   // history: RouteComponentProps['history'];
   // location: RouteComponentProps['location'];
@@ -56,7 +57,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Room = (props: Props) => {
   const classes = useStyles();
-  const {externalMedia, meeting, videoReady} = useContext(SocketIOContext);
+  const {meeting} = useContext(SocketIOContext);
+  const {externalMedia, videoReady} = useContext(MediaControlContext);
   const {currentTheme, setTheme} = useContext(CustomThemeContext);
   const {loggedIn} = useContext(RestContext);
   const users = externalMedia?.map(({user, stream}) => user);

@@ -1,23 +1,29 @@
-/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, {createContext, useEffect, useRef, useState} from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {useHistory} from 'react-router-dom';
-import {io} from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
 import {useSnackbar} from 'notistack';
 
-import {ChildrenProps, ICallMetadata, IExternalMedia, IPeers, ISocketIOContext} from '../shared/types';
-
-import {ChatContextProvider} from './ChatContext';
-
+import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
 
 import User from '../shared/classes/User';
-import {SegmentationContextProvider} from './SegmentationContext';
 import Meeting from '../shared/classes/Meeting';
-import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/classParser';
-import {RestContextProvider} from './rest/RestContext';
+import {
+  IReceivedMeeting,
+  IReceivedUser,
+  parseMeeting,
+  parseUser} from '../util/classParser';
 import {findMeeting} from './rest/api.service';
+import {MediaControlContext} from './MediaControlContext';
+import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -27,7 +33,7 @@ interface Props extends ChildrenProps {
 }
 
 //* Context item to be passed to app
-const SocketIOContext = createContext<Partial<ISocketIOContext>>({});
+const SocketIOContext = createContext<ISocketIOContext>(undefined!);
 //* the param extracted from the url indicating the current meeting
 let roomParam = new URLSearchParams(window.location.search).get('room');
 console.log('room param', roomParam);
@@ -40,67 +46,40 @@ console.log('socket url', connectionUrl);
 const socket = io(connectionUrl);
 
 
-const ContextProvider: React.FC<Props> = ({children}) => {
+const SocketIOContextProvider: React.FC<Props> = ({children}) => {
+  const {
+    initializeMediaStream,
+    outgoingMedia,
+    removeMedia,
+    addExternalMedia,
+    clearExternalMedia,
+  } = useContext(MediaControlContext);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   //* The current meeting being attended
   const [meeting, setMeeting] = useState<Meeting | null>(null);
-  //* Whether or not the current user has disabled their microphone
-  const [micMuted, setMicMuted] = useState<boolean>(false);
-  //* Whether or not the current user has disabled their webcam
-  const [videoDisabled, setVideoDisabled] = useState<boolean>(false);
-  //* Whether or not screen sharing has been enabled
-  const [screenSharing, setScreenSharing] = useState<boolean>(false);
-  //* An array of MediaStreams from all current connections
-  const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
-
-  const [localMedia, setLocalMedia] = useState<MediaStream>();
   //* a list of peer connections;
   const peers = useRef<IPeers>({});
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
-  const localVideoRef = useRef<HTMLVideoElement>(null);
   const history = useHistory();
   //* enables notification
   const {enqueueSnackbar} = useSnackbar();
   //* indicate that the video is ready to be rendered
-  const [videoReady, setVideoReady] = useState<boolean>(false);
-
-
-  //* The stream being media stream being transmitted to peers;
-  const outgoingMedia = useRef<MediaStream>();
-
 
   /**
    * Waits for a meeting to exist before initiating functions that
    * require meeting data.
    */
   useEffect(() => {
-    if (meeting && meeting.id && !hasJoinedMeeting && outgoingMedia.current) {
+    if (meeting && meeting.id && !hasJoinedMeeting && outgoingMedia?.current) {
       setConnectingPeersListener();
       setExternalUserListener();
     }
-  }, [meeting, outgoingMedia.current]);
+  }, [meeting, outgoingMedia?.current]);
 
   /**
-   * Listen for changes in media controls
-   */
-  useEffect(() => {
-    if (outgoingMedia.current) {
-      outgoingMedia.current.getAudioTracks()[0].enabled = !micMuted;
-      outgoingMedia.current.getVideoTracks()[0].enabled = !videoDisabled;
-    }
-  }, [micMuted, videoDisabled]);
-  /**
-   * Listen for changes in screen sharing
-   * If a change is detected, initialize media stream
-   * is called to handle the change.
-   */
-  useEffect(() => {
-    initializeMediaStream(); ``;
-  }, [screenSharing]);
-
-  /**
-   * Listens for currentUser to be set before initializing WebRTC and Socket connections
+   * Listens for currentUser to be set before
+   * initializing WebRTC and Socket connections
    */
   useEffect(() => {
     if (!currentUser) return;
@@ -116,16 +95,25 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    */
   const setupSocketListeners= async () =>{
     //* Listens for meeting from socket
+    // TODO allow media stream to be null
     socket.on('NewMeeting', (receivedMeeting:IReceivedMeeting) => {
       const newMeeting = parseMeeting(receivedMeeting);
       if (!newMeeting) return;
-      newMeeting && enqueueSnackbar(`Joining meeting ${newMeeting.title}`, {variant: 'info'});
+      newMeeting && enqueueSnackbar(
+          `Joining meeting ${newMeeting.title}`,
+          {variant: 'info'},
+      );
       setMeeting(newMeeting);
     });
     if (!currentUser) return;
     console.log('current user id before peer creation', currentUser.id);
     //* requests webcam access from end user
-    await initializeMediaStream();
+    if (!initializeMediaStream) {
+      throw new Error('initializeMediaStream function missing');
+    }
+    const stream = await initializeMediaStream();
+    if (!stream) throw new Error('Video Stream not received');
+    changePeerStream(stream);
 
     /**
      * Disconnects from peer WebRTC stream,
@@ -139,7 +127,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       }
       enqueueSnackbar(`${user.firstName} ${user.lastName} has disconnected`);
       // removePeer(user.id);
-      removeMedia(user.id.toString());
+      removeMedia && removeMedia(user.id.toString());
     });
     socket.on('error', (error) => {
       console.log('Socket Responded With Error: ', error);
@@ -167,43 +155,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     socket.emit('NewMeeting');
   };
 
-  const screenStream = useRef<MediaStream>();
-
-  useEffect(() => {
-    if (!screenStream.current) setScreenSharing(false);
-  }, [screenStream.current]);
-
-  /**
-   * Get audio and video stream from the browser
-   * Will prompt user for permissions
-   */
-  const initializeMediaStream = async () => {
-    try {
-      //* retrieves webcam or screen share stream based on screenSharing variable
-      let stream;
-      if (screenSharing && screenStream) {
-        screenStream.current = stream = await navigator.mediaDevices.getDisplayMedia();
-        stream.getVideoTracks()[0].addEventListener('ended', () => setScreenSharing(false));
-      } else {
-        stream = await navigator.mediaDevices.getUserMedia( {
-          video: true,
-          audio: true,
-        });
-        screenStream.current = undefined;
-      }
-
-      setLocalMedia(stream);
-      outgoingMedia.current = stream;
-      //* stores stream in ref to be used by video element
-      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      //* replace streams to peers if they exist
-      changePeerStream(stream);
-      setVideoReady(true);
-    } catch (err) {
-      console.log(err);
-      if (err instanceof DOMException) setScreenSharing(false);
-    }
-  };
 
   /**
    * Changes the media stream being sent to peers.
@@ -240,7 +191,9 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const joinMeeting = async (newMeetingID?:string) => {
     //* If a meeting ID is not provided and the user has a meeting stored,
     //* join that meeting.
-    if (!newMeetingID && meeting && meeting.id) newMeetingID = meeting.id.toString();
+    if (!newMeetingID && meeting && meeting.id) {
+      newMeetingID = meeting.id.toString();
+    }
     if (!newMeetingID) throw new Error('Unable to retrieve meeting ID');
     const foundMeeting = await findMeeting(newMeetingID);
     if (!foundMeeting) throw new Error('Unable to find meeting');
@@ -255,14 +208,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     setHasJoinedMeeting(true);
   };
 
-  /**
-   * Helper function to remove a media stream from the
-   * list of media streams to display
-   * @param {string} id the id of the media to remove
-   */
-  const removeMedia = (id: string) => {
-    setExternalMedia((oldState)=> oldState.filter((media:IExternalMedia) => media.user.id.toString() !== id));
-  };
+
   /**
    * Helper function to add peer to peer list
    * @param {Peer} call the call information to be added to the peer list
@@ -280,28 +226,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     console.log('removing peers', id);
     delete peers.current[id];
   };
-  /**
-   * Adds media stream to list of streams to display
-   * @param {User} user  The peer user information
-   * @param {MediaStream} stream the media stream to add
-   * @param {any} data? any additional data
-   */
-  const addExternalMedia = (
-      user: User, stream:MediaStream, data?: Peer.CallOption,
-  ) => {
-    if (!currentUser) return;
-    // Prevent local user from being added to the list.
-    if (user.id === currentUser.id) return;
-    const newMediaItem = {
-      user, stream, data: data? data: undefined,
-    };
 
-    setExternalMedia((oldState) => {
-      // Prevent duplicates from being added
-      if (oldState.find((media) => media.user.id === user.id)) return oldState;
-      return [...oldState, newMediaItem];
-    });
-  };
   /**
    * Listen for a call from connecting peers
    * An incoming call is answered and the current user media (local webcam feed)
@@ -311,14 +236,13 @@ const ContextProvider: React.FC<Props> = ({children}) => {
   const setConnectingPeersListener = () => {
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
-      call.answer(outgoingMedia.current);
+      call.answer(outgoingMedia?.current);
       console.log('call answered', call);
 
       addPeer(call);
       call.on('stream', (stream) => {
         const newUser = parseUser(call.metadata.user);
-        // const newUser = call.metadata.user;
-        addExternalMedia(newUser, stream);
+        addExternalMedia && addExternalMedia(newUser, stream);
       });
       call.on('close', ()=>{
         removeMedia(call.peer);
@@ -350,16 +274,15 @@ const ContextProvider: React.FC<Props> = ({children}) => {
       };
       if (!peerConnection.current) throw new Error('Missing peer connection');
       if (!outgoingMedia.current) throw new Error('Missing webcam stream');
-      const call = peerConnection.current.call(user.id.toString(), outgoingMedia.current, callOption);
+      const call = peerConnection
+          .current
+          .call(user.id.toString(), outgoingMedia.current, callOption);
       console.log('Placing call', call);
       // when a stream is received, add it to external media
       call.on('stream', (stream: MediaStream) => {
         // TODO retrieve metadata from callee.
-        // TODO Check if user ID needs to be updated from the one provided by websocket to call.peer
-        // const newUser:User = {
-        //   ...user,
-        //   id: call.peer,
-        // };
+        // TODO Check if user ID needs to be updated from
+        // TODO the one provided by websocket to call.peer
         addExternalMedia(user, stream, callOption);
         console.log('stream received', stream);
       });
@@ -385,7 +308,7 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     setMeeting(null);
     setHasJoinedMeeting(false);
     history.push('');
-    setExternalMedia([]);
+    clearExternalMedia();
     Object.values(peers.current).forEach((peer) => peer.close());
   };
 
@@ -401,42 +324,40 @@ const ContextProvider: React.FC<Props> = ({children}) => {
 
     <SocketIOContext.Provider
       value={{
+        socket,
+        changePeerStream,
         setupSocketListeners,
         currentUser,
+        setCurrentUser,
         meeting,
-        externalMedia,
         peers,
         peerConnection,
-        localVideoRef,
-        initializeMediaStream,
         setPeerOpenedConnectionListener,
         endConnection,
         joinMeeting,
         startNewMeeting,
         leaveMeeting,
-        setMicMuted,
-        setVideoDisabled,
-        setScreenSharing,
-        micMuted,
-        videoDisabled,
-        screenSharing,
-        videoReady,
       }}
     >
-      <SegmentationContextProvider
-        localMedia={localMedia}
-        outgoingMedia={outgoingMedia}
-        changePeerStream={changePeerStream}
-        videoDisabled={videoDisabled}
-      >
-        <ChatContextProvider socket={socket}>
-          <RestContextProvider setCurrentUser={setCurrentUser} currentUser={currentUser}>
-            {children}
-          </RestContextProvider>
-        </ChatContextProvider>
-      </SegmentationContextProvider>
+      {children}
     </SocketIOContext.Provider>
   );
 };
 
-export {ContextProvider, SocketIOContext};
+export interface ISocketIOContext {
+  socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+  setupSocketListeners: () => void,
+  currentUser: User| null,
+  setCurrentUser: (user:User | null) => void,
+  meeting: Meeting | null,
+  peers: React.MutableRefObject<IPeers | null>,
+  peerConnection: React.MutableRefObject<Peer | null>,
+  setPeerOpenedConnectionListener: () => void,
+  endConnection: () => void,
+  joinMeeting: (meetingID: string) => void,
+  startNewMeeting: () => void,
+  leaveMeeting: () => void,
+  changePeerStream: (stream: MediaStream) => void,
+}
+
+export {SocketIOContextProvider, SocketIOContext};

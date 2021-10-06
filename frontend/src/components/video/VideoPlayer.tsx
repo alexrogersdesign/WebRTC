@@ -2,23 +2,17 @@
 import React, {useContext, useState, useEffect, useMemo} from 'react';
 import {Paper} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 import User from '../../shared/classes/User';
-import {SocketIOContext} from '../../context/SocketIOContext';
 import VideoAvatar from './VideoAvatar';
 import WebcamControls from './WebcamControls';
-import tree from '../../util/img/tree.jpeg';
 import {SegmentationContext} from '../../context/SegmentationContext';
+import {MediaControlContext} from '../../context/MediaControlContext';
 type Props = {
   stream?: MediaStream | undefined;
   local?: boolean,
   user?: User
 }
-// interface VideoDims {
-//   videoHeight: number | undefined,
-//   videoWidth: number | undefined
-// }
 
 const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
   createStyles({
@@ -87,17 +81,13 @@ const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
 );
 
 const VideoPlayer = ({local, stream, user}: Props)=> {
-  const {localVideoRef} = useContext(SocketIOContext);
+  const {localVideoRef} = useContext(MediaControlContext);
   const {
     canvasRef,
     removeBackground,
     segmentationReady,
   } = useContext(SegmentationContext);
   const [videoLoading, setVideoLoading] = useState(true);
-  // const videoDims = {
-  //   videoHeight: localVideoRef?.current?.height,
-  //   videoWidth: localVideoRef?.current?.width,
-  // };
   const classes = useStyles(videoLoading);
   const [showBackground, setShowBackground] = useState(true);
   useEffect(() => {

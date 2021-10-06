@@ -1,26 +1,31 @@
-import React, {useEffect, useState, useRef, createContext} from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  createContext,
+  useContext,
+} from 'react';
 import * as bodyPix from '@tensorflow-models/body-pix';
 import * as tf from '@tensorflow/tfjs';
 tf.getBackend();
 
 import {ISegmentationContext, ChildrenProps} from '../shared/types';
+import {MediaControlContext} from './MediaControlContext';
+import {SocketIOContext} from './SocketIOContext';
 
-interface Props extends ChildrenProps {
-  localMedia: MediaStream | undefined,
-  outgoingMedia: React.MutableRefObject<MediaStream | undefined>,
-  changePeerStream: (stream: MediaStream) => void,
-  videoDisabled: Boolean
-}
+interface Props extends ChildrenProps {}
 
-const SegmentationContext = createContext<Partial<ISegmentationContext>>({});
+const SegmentationContext = createContext<ISegmentationContext>(undefined!);
 
 const SegmentationContextProvider: React.FC<Props> = ({
-  localMedia,
-  changePeerStream,
-  outgoingMedia,
-  videoDisabled,
   children,
 }) => {
+  const {
+    localMedia,
+    outgoingMedia,
+    videoDisabled,
+  } = useContext(MediaControlContext);
+  const {changePeerStream} = useContext(SocketIOContext);
   //* Used to indicate when segmenting animation should stop
   const segmentingStopped = useRef(false);
   //* Tells component that segmentation is ready to be displayed
@@ -71,7 +76,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
     let requestID;
     segmentingStopped.current = false;
     //* Check if removeBackground is true.
-    //* If not, cleanup process and reset outgoing steams
+    //* If not, cleanup process and reset outgoing streams
     //* to the original camera feed.
     if (!removeBackground) {
       outgoingMedia.current = localMedia;
@@ -136,8 +141,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
     audioTrack && canvasStream.addTrack(audioTrack);
     changePeerStream(canvasStream);
     outgoingMedia.current= canvasStream;
-    //* temp bandaid to fix bug
-    // TODO remove
+    // TODO remove muted canvas stream - temp bandaid to fix bug
     canvasStream.getAudioTracks()[0].enabled = false;
   };
 

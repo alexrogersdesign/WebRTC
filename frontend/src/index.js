@@ -3,24 +3,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import CssBaseline from '@material-ui/core/CssBaseline';
-// import {ThemeProvider} from '@material-ui/core/styles';
-import CustomThemeProvider from './context/CustomThemeProvider';
 import {BrowserRouter as Router} from 'react-router-dom';
 
-import {ContextProvider} from './context/SocketIOContext.tsx';
-import NotificationProvider from './context/NotificationProvider';
-// import theme from './util/theme/theme';
+import AppContext from "./context/AppContext";
 
 ReactDOM.render(
     <Router>
-      <CustomThemeProvider>
-        <NotificationProvider>
-          <ContextProvider>
+      <AppContext>
             <CssBaseline/>
             <App />
-          </ContextProvider>
-        </NotificationProvider>
-      </CustomThemeProvider>
+      </AppContext>
     </Router>,
     document.getElementById('root'),
 );

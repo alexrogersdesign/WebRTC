@@ -4,18 +4,16 @@ import getTheme, {ThemeOption, themes} from '../util/theme/getTheme';
 
 import {ChildrenProps} from '../shared/types';
 
-interface Props extends ChildrenProps {
-
-}
+interface Props extends ChildrenProps {}
 interface ICustomThemeContext {
   setTheme: (option:ThemeOption) => void,
   currentTheme: ThemeOption
 }
 
 // eslint-disable-next-line max-len
-export const CustomThemeContext = createContext<Partial<ICustomThemeContext>>({});
+export const CustomThemeContext = createContext<ICustomThemeContext>(undefined!);
 
-const CustomThemeProvider = ({children}: Props) => {
+const CustomThemeProvider = ({children}: Props) :JSX.Element=> {
   // Read current theme from localStorage or maybe from an api
   let currentTheme = localStorage.getItem('appTheme');
   const isThemeOption = (item:string): item is ThemeOption => {
@@ -24,11 +22,11 @@ const CustomThemeProvider = ({children}: Props) => {
   if ( !currentTheme || currentTheme && !isThemeOption(currentTheme)) {
     currentTheme = 'normal';
   }
-
-  const [themeName, _setThemeName] = useState(currentTheme);
+  // eslint-disable-next-line max-len
+  const [themeName, _setThemeName] = useState<ThemeOption>(currentTheme as ThemeOption);
 
   //* Retrieve the theme object by theme name
-  if (!isThemeOption(themeName)) return;
+  if (!isThemeOption(themeName)) _setThemeName('normal');
   const theme = getTheme(themeName);
 
   //* Wrap _setThemeName to store new theme names in localStorage
@@ -44,7 +42,9 @@ const CustomThemeProvider = ({children}: Props) => {
 
   return (
     <CustomThemeContext.Provider value={contextValue}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <ThemeProvider theme={theme}>
+        {children}
+      </ThemeProvider>
     </CustomThemeContext.Provider>
   );
 };

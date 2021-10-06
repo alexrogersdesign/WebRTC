@@ -8,7 +8,7 @@ import Box from '@material-ui/core/Box';
 import Room from './components/Room';
 /**
  * App
- * @return {React.Component}
+ * @return {JSX.Element}
  */
 export default function App() {
   return (

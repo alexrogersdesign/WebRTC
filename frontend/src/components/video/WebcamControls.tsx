@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useContext} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
@@ -17,6 +17,7 @@ import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import {SegmentationContext} from '../../context/SegmentationContext';
 import theme from '../../util/theme/active';
+import {MediaControlContext} from '../../context/MediaControlContext';
 
 interface Props {
    onClick?: (event:any) => void,
@@ -73,9 +74,7 @@ const WebcamControls = ({className}: Props) => {
     micMuted,
     videoDisabled,
     screenSharing,
-    // setRemoveBackground,
-    // removeBackground,
-  } = useContext(SocketIOContext);
+  } = useContext(MediaControlContext);
 
   const {
     setRemoveBackground,

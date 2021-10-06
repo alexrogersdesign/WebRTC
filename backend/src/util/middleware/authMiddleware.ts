@@ -28,7 +28,7 @@ export const authErrorHandler = (err: HttpException, req:Request, res:Response, 
     if (err.name === 'UnauthorizedError') {
         // res.status(401).send('invalid token...');
         res.status(err.status).send({message:err.message});
-        console.log(err.message)
+        console.log(`${err.message}, Method: ${req.method} URL: ${req.originalUrl}`)
         return
     }
     next()

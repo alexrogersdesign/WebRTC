@@ -1,6 +1,8 @@
-import axios, {AxiosError} from 'axios';
+import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 import User from '../../shared/classes/User';
-import {parseUser} from '../../util/classParser';
+import {IReceivedUser, parseMeeting, parseUser} from '../../util/classParser';
+import {ILoginCredentials} from './RestContext';
+import Meeting from '../../shared/classes/Meeting';
 
 /**
  * An axios instance to make the http calls to the backend server
@@ -12,15 +14,23 @@ const api = axios.create({
   },
   validateStatus: (status) => status < 400,
 });
+
+const axiosConfig: AxiosRequestConfig = {headers: {Authorization: ''}};
+
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * Sets interceptor
  * //TODO update functionality
  * @return {}
  */
-const setRequestInterceptor = () => {
+const setRequestInterceptor = (token: string | null) => {
   return api.interceptors.request.use((config) => {
     // console.info('Starting Request', JSON.stringify(config, null, 2));
+    // config.headers.Authorization = `Bearer ${token}`;
+    if (token) config.headers['x-access-token'] = token;
+    console.log(token);
+
     return config;
   },
   (error) => {
@@ -35,8 +45,9 @@ type refreshResponse = {
 
 const refreshToken = async ():Promise<refreshResponse> => {
   const response = await axios.post('/login/refresh');
-  const {token, receivedUser: receivedUser} = response.data;
-  if (!token || !receivedUser) throw new Error('Could not refresh token');
+  const {token, user: receivedUser} = response.data;
+  if (!token) throw new Error('No token received on refresh');
+  if (!receivedUser) throw new Error('No user data received on refresh');
   const user = parseUser(receivedUser);
   return {token, user};
 };
@@ -73,7 +84,7 @@ const setResponseInterceptor = (
           const {token, user} = await refreshToken();
           updateTokenExternally(token, user);
           originalConfig.headers.Authorization= `Bearer ${token}`;
-          console.log('new token', token);
+          // console.log('new token', token);
           return api(originalConfig);
         } catch (_error) {
           console.log(_error);
@@ -90,5 +101,29 @@ const setResponseInterceptor = (
     return Promise.reject(err);
   });
 };
+export type LoginResponse = {
+  user: IReceivedUser,
+  token: string
+}
 
-export {api, refreshToken, setResponseInterceptor, setRequestInterceptor};
+// eslint-disable-next-line max-len
+const loginRequest = async (credentials: ILoginCredentials):Promise<LoginResponse> => {
+  const response = await api.post('/login', credentials);
+  // .catch((error) => handleError(error, failedLoginMessage));
+  if (!response) throw new Error('No response from server');
+  return response.data;
+};
+
+const findMeeting = async (id:string) : Promise<Meeting | undefined> => {
+  const response = await api.get(`meetings/${id}`, axiosConfig);
+  return parseMeeting(response.data);
+};
+
+export {
+  api,
+  refreshToken,
+  setResponseInterceptor,
+  setRequestInterceptor,
+  findMeeting,
+  loginRequest,
+};

@@ -17,6 +17,7 @@ import {SegmentationContextProvider} from './SegmentationContext';
 import Meeting from '../shared/classes/Meeting';
 import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from '../util/classParser';
 import {RestContextProvider} from './rest/RestContext';
+import {findMeeting} from './rest/api.service';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -77,7 +78,6 @@ const ContextProvider: React.FC<Props> = ({children}) => {
     if (meeting && meeting.id && !hasJoinedMeeting && outgoingMedia.current) {
       setConnectingPeersListener();
       setExternalUserListener();
-      joinMeeting(meeting.id.toString());
     }
   }, [meeting, outgoingMedia.current]);
 
@@ -237,11 +237,14 @@ const ContextProvider: React.FC<Props> = ({children}) => {
    * hasJoinedMeeting to true.
    * @param {string} newMeetingID the meeting to join
    */
-  const joinMeeting = (newMeetingID?:string) => {
+  const joinMeeting = async (newMeetingID?:string) => {
     //* If a meeting ID is not provided and the user has a meeting stored,
     //* join that meeting.
     if (!newMeetingID && meeting && meeting.id) newMeetingID = meeting.id.toString();
-    if (!newMeetingID) throw new Error('Unable to retrieve meeting');
+    if (!newMeetingID) throw new Error('Unable to retrieve meeting ID');
+    const foundMeeting = await findMeeting(newMeetingID);
+    if (!foundMeeting) throw new Error('Unable to find meeting');
+    setMeeting(meeting);
     const meetingData = {
       user: currentUser,
       roomID: newMeetingID,

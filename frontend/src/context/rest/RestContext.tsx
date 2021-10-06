@@ -17,7 +17,7 @@ import {
   parseUser,
 } from '../../util/classParser';
 import {
-  api,
+  api, loginRequest,
   refreshToken,
   setRequestInterceptor,
   setResponseInterceptor,
@@ -34,7 +34,6 @@ export interface IRestContext {
   createUser: (newUser: INewUser) => Promise<User| undefined>,
   createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
   meetingList: Meeting[]
-  findMeeting: (id:string) => Promise<Meeting | undefined>
 }
 
 const RestContext = createContext<Partial<IRestContext>>({});
@@ -63,7 +62,7 @@ export type InMemoryToken = {
 }
 
 // eslint-disable-next-line max-len
-const RestContextProvider = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
+const RestContextProvider = (props: Props) => {
   // TODO check for cookie on refresh (persist login)
   // TODO logout across tabs (local storage logout key)
   const {setCurrentUser, currentUser, children} = props;
@@ -110,7 +109,7 @@ const RestContextProvider = React.forwardRef<HTMLDivElement, Props>((props, ref)
     else setLoggedIn(false);
   }, [token]);
 
-  const handleError = (error:AxiosError, message:string) => {
+  const handleError = (error:any, message:string) => {
     if (error?.response?.status === 401) {
       enqueueSnackbar(message, snackbarWarnOptions);
     }
@@ -136,7 +135,7 @@ const RestContextProvider = React.forwardRef<HTMLDivElement, Props>((props, ref)
    * Set interceptors on first load.
    */
   useEffect(() => {
-    const requestInterceptor = setRequestInterceptor();
+    const requestInterceptor = setRequestInterceptor(token);
     const responseInterceptor = setResponseInterceptor(
         updateTokenExternally,
         handleError,
@@ -160,16 +159,18 @@ const RestContextProvider = React.forwardRef<HTMLDivElement, Props>((props, ref)
   // eslint-disable-next-line max-len
   const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
     const failedLoginMessage = 'Invalid Username or Password';
-    const response = await api.post('/login', credentials)
-        .catch((error) => handleError(error, failedLoginMessage));
-    if (!response) return;
-    const {user, token} = response.data;
-    setToken(token);
-    window.localStorage.setItem('token', JSON.stringify(response.data));
-    const parsedUser = parseUser(user);
-    setCurrentUser(parsedUser);
-    enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
-    return parsedUser;
+    try {
+      const response = await loginRequest(credentials);
+      // if (!response) handleError(response, failedLoginMessage);
+      const {token: receivedToken, user} = response;
+      setToken(receivedToken);
+      const parsedUser = parseUser(user);
+      setCurrentUser(parsedUser);
+      enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
+      return parsedUser;
+    } catch (error) {
+      handleError(error, failedLoginMessage);
+    }
   };
   /**
    * Communicates with the backend to create a new user.
@@ -212,7 +213,7 @@ const RestContextProvider = React.forwardRef<HTMLDivElement, Props>((props, ref)
       id: newId,
     };
     const response = await api
-        .post('meetings', meetingToSubmit, axiosConfig.current)
+        .post('meetings', meetingToSubmit)
         .catch((error) => {
           handleError(error, 'Unable to create meeting');
         });
@@ -243,35 +244,28 @@ const RestContextProvider = React.forwardRef<HTMLDivElement, Props>((props, ref)
   }, [token]);
 
   const getMeetings = async () => {
-    const response = await api.get('meetings', axiosConfig.current);
+    const response = await api.get('meetings');
     const meetings: Meeting[] = response.data.map(
         (meeting:IReceivedMeeting) => parseMeeting(meeting),
     );
     setMeetingList(meetings);
   };
-  const findMeeting = async (id:string) => {
-    const response = await api.get(`meetings/${id}`, axiosConfig.current);
-    return parseMeeting(response.data);
-  };
 
   return (
-    <div ref={ref}>
-      <RestContext.Provider
-        value={{
-          login,
-          logout,
-          loggedIn,
-          createUser,
-          createMeeting,
-          meetingList,
-          findMeeting,
-        }}
-      >
-        {children}
-      </RestContext.Provider>
-    </div>
+    <RestContext.Provider
+      value={{
+        login,
+        logout,
+        loggedIn,
+        createUser,
+        createMeeting,
+        meetingList,
+      }}
+    >
+      {children}
+    </RestContext.Provider>
   );
-});
+};
 const snackbarSuccessOptions: OptionsObject = {
   variant: 'success',
   autoHideDuration: 2000,
@@ -292,10 +286,3 @@ const snackbarWarnOptions :OptionsObject = {
 
 
 export {RestContextProvider, RestContext};
-RestContextProvider.propTypes = {
-  setCurrentUser: PropTypes.func.isRequired,
-  currentUser: PropTypes.object.prototype,
-  children: PropTypes.any,
-
-
-};

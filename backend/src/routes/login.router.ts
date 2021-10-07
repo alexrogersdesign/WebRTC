@@ -12,7 +12,7 @@ const refreshTokenLife = typeof envRefreshTokenLife === 'string'? parseInt(envRe
 
 import jwtDecode from "jwt-decode";
 import {UserModel} from "../database/models.js";
-import {authNonRestricted, authRefresh} from "../util/middleware/authMiddleware.js";
+import {authErrorHandler, authNonRestricted, authRefresh} from "../util/middleware/authMiddleware.js";
 type TokenItem = {
     status: string,
     token: string,
@@ -27,6 +27,7 @@ export type DecodedToken = {
 }
 const tokenList: TokenList = {}
 const loginRouter = express.Router();
+loginRouter.use(authErrorHandler)
 
 loginRouter.post('/', authNonRestricted, async (req, res) => {
     const {email, password} = req.body
@@ -91,8 +92,8 @@ loginRouter.post('/refresh', async (req,res) => {
 
 loginRouter.get('/logout', (req, res )=> {
     res
-        .cookie('refreshToken', 'none', {
-            expires: new Date(Date.now()+ 5 * 1000),
+        .cookie('refreshToken', '', {
+            expires: new Date(0),
             httpOnly:true,
         })
         .status(200).send('User Logged Out')

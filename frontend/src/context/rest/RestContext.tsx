@@ -1,40 +1,31 @@
 /* eslint-disable no-unused-vars */
 import React, {
-  createContext, useContext,
-  useEffect, useRef,
+  createContext,
+  useEffect,
+  useRef,
   useState,
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
-import {AxiosError, AxiosRequestConfig} from 'axios';
+import {AxiosRequestConfig} from 'axios';
 import ObjectID from 'bson-objectid';
 
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
 import {
-  IReceivedMeeting,
   parseMeeting,
   parseUser,
 } from '../../util/classParser';
-import {
-  api, loginRequest, logoutRequest,
-  refreshToken,
-  setRequestInterceptor,
-  setResponseInterceptor,
-} from './api.service';
+// import {
+//   api, loginRequest, logoutRequest,
+//   refreshToken,
+//   setRequestInterceptor,
+//   setResponseInterceptor,
+// } from './api.service';
 import Meeting from '../../shared/classes/Meeting';
-import {SocketIOContext} from '../SocketIOContext';
 import useLocalStorage from 'react-use-localstorage';
+import {useRestApi} from './useRestApi';
 
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
-
-export interface IRestContext {
-  login: (credentials: ILoginCredentials) => Promise<User| undefined>,
-  logout: () => void,
-  loggedIn: boolean,
-  createUser: (newUser: INewUser) => Promise<User| undefined>,
-  createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
-  meetingList: Meeting[]
-}
 
 const RestContext = createContext<IRestContext>(undefined!);
 
@@ -57,25 +48,42 @@ export interface INewMeeting {
 const RestContextProvider = ({children}: Props) => {
   // TODO check for cookie on refresh (persist login)
   // TODO logout across tabs (local storage logout key)
-  const {setCurrentUser} = useContext(SocketIOContext);
   const {enqueueSnackbar} = useSnackbar();
-  const [token, setToken] = useState<string | null>(null);
+  // const [token, setToken] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
   const axiosConfig = useRef<AxiosRequestConfig>(
       {headers: {Authorization: ''}},
   );
-  const updateTokenExternally = (token:string, user:User) => {
-    setToken(token);
-    setCurrentUser(user);
+  const handleError = (error:any, message?: string) => {
+    message = message || 'An error has occurred';
+    if (error?.response?.status === 401) {
+      enqueueSnackbar(message, snackbarWarnOptions);
+    }
+    if (error?.response?.status >= 500) {
+      console.log(error.message);
+    }
+    console.log(error.message);
+    return;
   };
+  const {
+    api,
+    token,
+    setToken,
+    currentUser,
+    setCurrentUser,
+    loginRequest,
+    logoutRequest,
+    refreshToken,
+    findMeetingRequest,
+    getAllMeetingsRequest,
+  } = useRestApi(null, handleError);
 
   /**
    * Check if currently logged in on first load.
    */
   useEffect(() => {
-    // TODO not working
     const checkIfLogged = async () => {
       try {
         // Check if localstorage indicating a logout value is populated
@@ -96,11 +104,11 @@ const RestContextProvider = ({children}: Props) => {
   /**
    * Check if currently logged in on first load.
    */
-  useEffect(() => {
-    // TODO not working
-    if (!isNaN(Date.parse(logoutStorage))) logout();
-    console.log('logout storage parse', !isNaN(Date.parse(logoutStorage)));
-  }, [logoutStorage]);
+  // useEffect(() => {
+  //   // TODO not working s
+  //   if (!isNaN(Date.parse(logoutStorage)) || !logoutStorage) logout();
+  //   console.log('logout storage parse', !isNaN(Date.parse(logoutStorage)));
+  // }, [logoutStorage]);
 
 
   /**
@@ -113,12 +121,6 @@ const RestContextProvider = ({children}: Props) => {
     else setLoggedIn(false);
   }, [token]);
 
-  const handleError = (error:any, message:string) => {
-    if (error?.response?.status === 401) {
-      enqueueSnackbar(message, snackbarWarnOptions);
-    }
-    return;
-  };
   /**
    * Listens for logout variable to be set in localstorage
    * Allows for logout across multiple tabs.
@@ -133,20 +135,6 @@ const RestContextProvider = ({children}: Props) => {
       return () => {
         window.removeEventListener('storage', syncLogout);
       };
-    };
-  }, []);
-  /**
-   * Set interceptors on first load.
-   */
-  useEffect(() => {
-    const requestInterceptor = setRequestInterceptor(token);
-    const responseInterceptor = setResponseInterceptor(
-        updateTokenExternally,
-        handleError,
-    );
-    return () => {
-      api.interceptors.request.eject(requestInterceptor);
-      api.interceptors.request.eject(responseInterceptor);
     };
   }, []);
 
@@ -172,6 +160,7 @@ const RestContextProvider = ({children}: Props) => {
       setCurrentUser(parsedUser);
       enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
       setLogoutStorage('');
+      getMeetings();
       return parsedUser;
     } catch (error) {
       handleError(error, failedLoginMessage);
@@ -246,20 +235,22 @@ const RestContextProvider = ({children}: Props) => {
       console.log(e);
     }
   };
-  /**
-   * Populate meetings on refresh
-   */
-  useEffect(() => {
-    if (!token) return;
-    getMeetings();
-  }, [token]);
+  // /**
+  //  * Populate meetings on refresh
+  //  */
+  // useEffect(() => {
+  //   if (!token) return;
+  //   getMeetings();
+  // }, [token]);
 
   const getMeetings = async () => {
-    const response = await api.get('meetings');
-    const meetings: Meeting[] = response.data.map(
-        (meeting:IReceivedMeeting) => parseMeeting(meeting),
-    );
-    setMeetingList(meetings);
+    try {
+      const response = await getAllMeetingsRequest();
+      setMeetingList(response);
+    } catch (e) {
+      console.log(e);
+      // handleError(e, 'Error When Retrieving Meetings');
+    }
   };
 
   return (
@@ -267,9 +258,12 @@ const RestContextProvider = ({children}: Props) => {
       value={{
         login,
         logout,
+        currentUser,
+        setCurrentUser,
         loggedIn,
         createUser,
         createMeeting,
+        findMeeting: findMeetingRequest,
         meetingList,
       }}
     >
@@ -294,6 +288,18 @@ const snackbarWarnOptions :OptionsObject = {
     horizontal: 'center',
   },
 };
+
+export interface IRestContext {
+  login: (credentials: ILoginCredentials) => Promise<User| undefined>,
+  logout: () => void,
+  loggedIn: boolean,
+  createUser: (newUser: INewUser) => Promise<User| undefined>,
+  createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
+  meetingList: Meeting[]
+  currentUser: User| null,
+  setCurrentUser: (user:User | null) => void,
+  findMeeting: (id:string) => Promise<Meeting | undefined>
+}
 
 
 export {RestContextProvider, RestContext};

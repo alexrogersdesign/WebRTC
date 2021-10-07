@@ -31,6 +31,18 @@ export const authErrorHandler = (err: HttpException, req:Request, res:Response, 
         console.log(`${err.message}, Method: ${req.method} URL: ${req.originalUrl}`)
         return
     }
+    if (err.name === 'UnauthorizedError: jwt malformed') {
+        // res.status(401).send('invalid token...');
+        res.status(err.status).send({message:err.message});
+        console.log(`${err.message}, Method: ${req.method} URL: ${req.originalUrl}`)
+        return
+    }
+    if (err.name === 'InvalidTokenError') {
+        console.log(`${err.message}, Token: ${req.cookies.refreshToken} `)
+        res.status(err.status).send({message:err.message});
+    return
+    }
+    else console.log(err)
     next()
 }
 

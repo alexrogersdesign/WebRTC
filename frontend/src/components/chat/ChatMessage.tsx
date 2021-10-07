@@ -17,6 +17,7 @@ import User from '../../shared/classes/User';
 import Message from '../../shared/classes/Message';
 import VideoAvatar from '../video/VideoAvatar';
 import {SocketIOContext} from '../../context/SocketIOContext';
+import {RestContext} from '../../context/rest/RestContext';
 
 const size = 30;
 const useStyles = makeStyles(({palette, spacing}) =>
@@ -127,7 +128,7 @@ interface Props {
 
 const ChatMessage = ( {message}: Props) => {
   const classes = useStyles();
-  const {currentUser} = useContext(SocketIOContext);
+  const {currentUser} = useContext(RestContext);
   const attachClass = () => {
     return classes[`${message.side}First`];
   };

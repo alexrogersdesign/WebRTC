@@ -15,6 +15,7 @@ import SendIcon from '@material-ui/icons/Send';
 import {ChatContext} from '../../context/ChatContext';
 import Message from '../../shared/classes/Message';
 import {SocketIOContext} from '../../context/SocketIOContext';
+import {RestContext} from '../../context/rest/RestContext';
 
 
 const useStyles = makeStyles(() =>
@@ -36,7 +37,8 @@ const useStyles = makeStyles(() =>
 const ChatInput = () => {
   const classes = useStyles();
   const {sendMessage} = useContext(ChatContext);
-  const {currentUser, meeting} = useContext(SocketIOContext);
+  const {currentUser} = useContext(RestContext);
+  const {meeting} = useContext(SocketIOContext);
   const [field, setField] = useState('');
   const handleSend = () => {
     if (!currentUser) throw new Error('No user found');

@@ -9,7 +9,6 @@ import meetingsRouter from "./routes/meetings.router.js";
 import messagesRouter from "./routes/messages.router.js";
 import loginRouter from "./routes/login.router.js";
 import errorMiddleware from "./util/middleware/errorMiddleware.js";
-import {authErrorHandler} from "./util/middleware/authMiddleware.js";
 import errorHandler from 'errorhandler'
 
 const app = express();
@@ -43,7 +42,7 @@ app.get('/', (req, res) => {
 
 
 // error handler
-// app.use(errorMiddleware)
-app.use(errorHandler())
+app.use(errorMiddleware)
+// app.use(errorHandler())
 
 export default app;

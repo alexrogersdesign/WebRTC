@@ -21,9 +21,10 @@ import {
   IReceivedUser,
   parseMeeting,
   parseUser} from '../util/classParser';
-import {findMeeting} from './rest/api.service';
+import {useRestApi} from './rest/useRestApi';
 import {MediaControlContext} from './MediaControlContext';
 import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
+import {RestContext} from './rest/RestContext';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -54,7 +55,8 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     addExternalMedia,
     clearExternalMedia,
   } = useContext(MediaControlContext);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const {currentUser, findMeeting} = useContext(RestContext);
+  // const [currentUser, setCurrentUser] = useState<User | null>(null);
   //* The current meeting being attended
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   //* a list of peer connections;
@@ -327,8 +329,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
         socket,
         changePeerStream,
         setupSocketListeners,
-        currentUser,
-        setCurrentUser,
         meeting,
         peers,
         peerConnection,
@@ -347,8 +347,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
 export interface ISocketIOContext {
   socket: Socket<DefaultEventsMap, DefaultEventsMap>,
   setupSocketListeners: () => void,
-  currentUser: User| null,
-  setCurrentUser: (user:User | null) => void,
   meeting: Meeting | null,
   peers: React.MutableRefObject<IPeers | null>,
   peerConnection: React.MutableRefObject<Peer | null>,

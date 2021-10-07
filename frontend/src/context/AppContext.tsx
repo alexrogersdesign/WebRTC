@@ -15,17 +15,17 @@ const AppContext = ({children}: Props) => {
     <>
       <CustomThemeProvider>
         <NotificationProvider>
-          <MediaControlContextProvider>
-            <SocketIOContextProvider>
-              <SegmentationContextProvider>
-                <ChatContextProvider>
-                  <RestContextProvider>
+          <RestContextProvider>
+            <MediaControlContextProvider>
+              <SocketIOContextProvider>
+                <SegmentationContextProvider>
+                  <ChatContextProvider>
                     {children}
-                  </RestContextProvider>
-                </ChatContextProvider>
-              </SegmentationContextProvider>
-            </SocketIOContextProvider>
-          </MediaControlContextProvider>
+                  </ChatContextProvider>
+                </SegmentationContextProvider>
+              </SocketIOContextProvider>
+            </MediaControlContextProvider>
+          </RestContextProvider>
         </NotificationProvider>
       </CustomThemeProvider>
     </>

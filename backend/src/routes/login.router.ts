@@ -88,4 +88,13 @@ loginRouter.post('/refresh', async (req,res) => {
             .cookie('refreshToken', refreshToken, {httpOnly:true})
             .status(200).send(response)
 })
+
+loginRouter.get('/logout', (req, res )=> {
+    res
+        .cookie('refreshToken', 'none', {
+            expires: new Date(Date.now()+ 5 * 1000),
+            httpOnly:true,
+        })
+        .status(200).send('User Logged Out')
+})
 export default loginRouter

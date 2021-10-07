@@ -5,7 +5,7 @@ import React, {
   useState,
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
-import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
+import {AxiosError, AxiosRequestConfig} from 'axios';
 import ObjectID from 'bson-objectid';
 
 import {ChildrenProps} from '../../shared/types';
@@ -16,14 +16,14 @@ import {
   parseUser,
 } from '../../util/classParser';
 import {
-  api, loginRequest,
+  api, loginRequest, logoutRequest,
   refreshToken,
   setRequestInterceptor,
   setResponseInterceptor,
 } from './api.service';
 import Meeting from '../../shared/classes/Meeting';
-import {useLocalStorage} from '../../hooks/useLocalStorage';
 import {SocketIOContext} from '../SocketIOContext';
+import useLocalStorage from 'react-use-localstorage';
 
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
@@ -38,7 +38,7 @@ export interface IRestContext {
 
 const RestContext = createContext<IRestContext>(undefined!);
 
-interface Props extends ChildrenProps{};
+interface Props extends ChildrenProps{}
 
 export interface ILoginCredentials {
   email: string,
@@ -54,24 +54,22 @@ export interface INewMeeting {
   title: string,
 }
 
-// eslint-disable-next-line max-len
 const RestContextProvider = ({children}: Props) => {
   // TODO check for cookie on refresh (persist login)
   // TODO logout across tabs (local storage logout key)
-  const {setCurrentUser, currentUser} = useContext(SocketIOContext);
+  const {setCurrentUser} = useContext(SocketIOContext);
   const {enqueueSnackbar} = useSnackbar();
   const [token, setToken] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
-  // eslint-disable-next-line no-unused-vars
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
-  // eslint-disable-next-line max-len
-  const axiosConfig = useRef<AxiosRequestConfig>({headers: {Authorization: ''}});
+  const axiosConfig = useRef<AxiosRequestConfig>(
+      {headers: {Authorization: ''}},
+  );
   const updateTokenExternally = (token:string, user:User) => {
     setToken(token);
     setCurrentUser(user);
   };
-
 
   /**
    * Check if currently logged in on first load.
@@ -80,6 +78,9 @@ const RestContextProvider = ({children}: Props) => {
     // TODO not working
     const checkIfLogged = async () => {
       try {
+        // Check if localstorage indicating a logout value is populated
+        // if an empty string is found, the user has not set the value
+        if (logoutStorage !== '') return;
         const {token, user} = await refreshToken();
         setToken(token);
         setCurrentUser(user);
@@ -91,6 +92,16 @@ const RestContextProvider = ({children}: Props) => {
     };
     checkIfLogged();
   }, []);
+
+  /**
+   * Check if currently logged in on first load.
+   */
+  useEffect(() => {
+    // TODO not working
+    if (!isNaN(Date.parse(logoutStorage))) logout();
+    console.log('logout storage parse', !isNaN(Date.parse(logoutStorage)));
+  }, [logoutStorage]);
+
 
   /**
    * Updates the axios config parameters when token updates
@@ -160,6 +171,7 @@ const RestContextProvider = ({children}: Props) => {
       const parsedUser = parseUser(user);
       setCurrentUser(parsedUser);
       enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
+      setLogoutStorage('');
       return parsedUser;
     } catch (error) {
       handleError(error, failedLoginMessage);
@@ -226,7 +238,13 @@ const RestContextProvider = ({children}: Props) => {
   const logout = () => {
     setToken(null);
     setCurrentUser(null);
-    setLogoutStorage(Date.now());
+    setLogoutStorage(Date.now().toString());
+    try {
+      logoutRequest();
+    } catch (e) {
+      handleError(e, 'Error when logging out');
+      console.log(e);
+    }
   };
   /**
    * Populate meetings on refresh

@@ -10,6 +10,7 @@ import messagesRouter from "./routes/messages.router.js";
 import loginRouter from "./routes/login.router.js";
 import errorMiddleware from "./util/middleware/errorMiddleware.js";
 import {authErrorHandler} from "./util/middleware/authMiddleware.js";
+import errorHandler from 'errorhandler'
 
 const app = express();
 const allowedOrigins = ['http://localhost:3000'];
@@ -42,6 +43,7 @@ app.get('/', (req, res) => {
 
 
 // error handler
-app.use(errorMiddleware)
+// app.use(errorMiddleware)
+app.use(errorHandler())
 
 export default app;

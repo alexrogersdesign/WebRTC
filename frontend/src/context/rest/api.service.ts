@@ -84,7 +84,6 @@ const setResponseInterceptor = (
           const {token, user} = await refreshToken();
           updateTokenExternally(token, user);
           originalConfig.headers.Authorization= `Bearer ${token}`;
-          // console.log('new token', token);
           return api(originalConfig);
         } catch (_error) {
           console.log(_error);
@@ -114,6 +113,10 @@ const loginRequest = async (credentials: ILoginCredentials):Promise<LoginRespons
   return response.data;
 };
 
+const logoutRequest = async () => {
+  await api.get('login/logout');
+};
+
 const findMeeting = async (id:string) : Promise<Meeting | undefined> => {
   const response = await api.get(`meetings/${id}`, axiosConfig);
   return parseMeeting(response.data);
@@ -126,4 +129,5 @@ export {
   setRequestInterceptor,
   findMeeting,
   loginRequest,
+  logoutRequest,
 };

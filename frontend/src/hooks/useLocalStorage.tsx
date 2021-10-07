@@ -1,22 +1,31 @@
 import {useState, useEffect} from 'react';
 
-const getStorageValue = (key:string, defaultValue:string) => {
-  // getting stored value
-  const saved = localStorage.getItem(key);
-  let foundItem;
-  if (saved) foundItem = JSON.parse(saved);
-  return foundItem || defaultValue;
-};
+const useLocalStorage = (key: string) => {
+  // initialize the value from localStorage
+  const [currentValue, setCurrentValue] = useState<string | null>(() =>
+    localStorage.getItem(key),
+  );
 
-export const useLocalStorage = (key:string, defaultValue:string) => {
-  const [value, setValue] = useState(() => {
-    return getStorageValue(key, defaultValue);
+  // on every render, re-subscribe to the storage event
+  useEffect(() => {
+    const handler = (e: StorageEvent) => {
+      if (e.storageArea === localStorage && e.key === key) {
+        setCurrentValue(e.newValue);
+      }
+    };
+    window.addEventListener('storage', handler);
+    return () => {
+      window.removeEventListener('storage', handler);
+    };
   });
 
+  // update localStorage when the currentValue changes via setCurrentValue
   useEffect(() => {
-    // storing input name
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value]);
+    currentValue && localStorage.setItem(key, currentValue);
+  }, [key, currentValue]);
 
-  return [value, setValue];
+  // use as const to tell TypeScript this is a tuple
+  return [currentValue, setCurrentValue] as const;
 };
+
+export {useLocalStorage};

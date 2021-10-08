@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React, {createContext, useEffect, useRef, useState} from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState} from 'react';
 import {CallOption} from 'peerjs';
 
 import {ChildrenProps, IExternalMedia} from '../shared/types';
 
-import {ChatContextProvider} from './ChatContext';
-
 import User from '../shared/classes/User';
-import {SegmentationContextProvider} from './SegmentationContext';
-import {RestContextProvider} from './rest/RestContext';
-import {SocketIOContextProvider} from './SocketIOContext';
+import {RestContext} from './rest/RestContext';
 
 
 interface Props extends ChildrenProps {}
@@ -34,6 +35,7 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
 
   //* The stream being media stream being transmitted to peers;
   const outgoingMedia = useRef<MediaStream>();
+  const {currentUser} = useContext(RestContext);
 
   /**
      * Listen for changes in media controls
@@ -116,9 +118,9 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
       user: User, stream:MediaStream, data?: CallOption,
   ) => {
     // TODO check if duplicate users/ or the current user is added to the list.
-    // if (!currentUser) return;
-    // // Prevent local user from being added to the list.
-    // if (user.id === currentUser.id) return;
+    if (!currentUser) return;
+    // Prevent local user from being added to the list.
+    if (user.id === currentUser.id) return;
     const newMediaItem = {
       user, stream, data: data? data: undefined,
     };

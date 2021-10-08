@@ -27,12 +27,9 @@ meetingsRouter.get("/", async (_req: Request, res: Response) => {
 
 meetingsRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
-
         const query = { _id: new ObjectID(id) };
         const meeting = (await MeetingModel.findOne(query)) as Meeting;
-
         if (meeting) {
             res.status(200).send(meeting);
         }

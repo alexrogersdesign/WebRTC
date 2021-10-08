@@ -15,12 +15,6 @@ import {
   parseMeeting,
   parseUser,
 } from '../../util/classParser';
-// import {
-//   api, loginRequest, logoutRequest,
-//   refreshToken,
-//   setRequestInterceptor,
-//   setResponseInterceptor,
-// } from './api.service';
 import Meeting from '../../shared/classes/Meeting';
 import useLocalStorage from 'react-use-localstorage';
 import {useRestApi} from './useRestApi';
@@ -49,7 +43,6 @@ const RestContextProvider = ({children}: Props) => {
   // TODO check for cookie on refresh (persist login)
   // TODO logout across tabs (local storage logout key)
   const {enqueueSnackbar} = useSnackbar();
-  // const [token, setToken] = useState<string | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
@@ -89,11 +82,10 @@ const RestContextProvider = ({children}: Props) => {
         // Check if localstorage indicating a logout value is populated
         // if an empty string is found, the user has not set the value
         if (logoutStorage !== '') return;
-        const {token, user} = await refreshToken();
-        setToken(token);
+        const {newToken, user} = await refreshToken();
+        setToken(newToken);
         setCurrentUser(user);
         setLoggedIn(true);
-        console.log('logged in');
       } catch (err) {
         console.log('Not logged in');
       }
@@ -101,15 +93,15 @@ const RestContextProvider = ({children}: Props) => {
     checkIfLogged();
   }, []);
 
-  /**
-   * Check if currently logged in on first load.
-   */
+  // /**
+  //  * Check if currently logged in on first load.
+  //  */
   // useEffect(() => {
-  //   // TODO not working s
+  //   // TODO not working
   //   if (!isNaN(Date.parse(logoutStorage)) || !logoutStorage) logout();
   //   console.log('logout storage parse', !isNaN(Date.parse(logoutStorage)));
   // }, [logoutStorage]);
-
+  //
 
   /**
    * Updates the axios config parameters when token updates
@@ -153,14 +145,12 @@ const RestContextProvider = ({children}: Props) => {
     const failedLoginMessage = 'Invalid Username or Password';
     try {
       const response = await loginRequest(credentials);
-      // if (!response) handleError(response, failedLoginMessage);
       const {token: receivedToken, user} = response;
       setToken(receivedToken);
       const parsedUser = parseUser(user);
       setCurrentUser(parsedUser);
       enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
       setLogoutStorage('');
-      getMeetings();
       return parsedUser;
     } catch (error) {
       handleError(error, failedLoginMessage);
@@ -235,13 +225,13 @@ const RestContextProvider = ({children}: Props) => {
       console.log(e);
     }
   };
-  // /**
-  //  * Populate meetings on refresh
-  //  */
-  // useEffect(() => {
-  //   if (!token) return;
-  //   getMeetings();
-  // }, [token]);
+  /**
+   * Populate meetings on refresh
+   */
+  useEffect(() => {
+    if (!token) return;
+    getMeetings();
+  }, [token]);
 
   const getMeetings = async () => {
     try {

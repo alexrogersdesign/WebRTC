@@ -1,18 +1,18 @@
-import express, { Request, Response } from "express";
+import express  from "express";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import * as dotenv from "dotenv";
 dotenv.config();
 const secretKey = process.env.SECRET_KEY
 const refreshSecretKey = process.env.SECRET_KEY_REFRESH
-const envTokenLife= process.env.TOKEN_LIFE
-const envRefreshTokenLife= process.env.REFRESH_TOKEN_LIFE
+const envTokenLife= process.env.TOKEN_LIFE || '900'
+const envRefreshTokenLife= process.env.REFRESH_TOKEN_LIFE || '86400'
 const tokenLife = typeof envTokenLife === 'string'? parseInt(envTokenLife): envRefreshTokenLife
 const refreshTokenLife = typeof envRefreshTokenLife === 'string'? parseInt(envRefreshTokenLife): envRefreshTokenLife
 
 import jwtDecode from "jwt-decode";
 import {UserModel} from "../database/models.js";
-import {authErrorHandler, authNonRestricted, authRefresh} from "../util/middleware/authMiddleware.js";
+import {authErrorHandler, authNonRestricted} from "../util/middleware/authMiddleware.js";
 type TokenItem = {
     status: string,
     token: string,
@@ -26,6 +26,11 @@ export type DecodedToken = {
     id: string
 }
 const tokenList: TokenList = {}
+const refreshTokenOptions = {
+    httpOnly:true,
+    expires:new Date(Date.now() + refreshTokenLife * 1000)
+}
+
 const loginRouter = express.Router();
 loginRouter.use(authErrorHandler)
 
@@ -61,33 +66,39 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
     }
     tokenList[refreshToken] = response
     res
-        .cookie('refreshToken', refreshToken, {httpOnly:true})
+        .cookie('refreshToken', refreshToken, refreshTokenOptions)
         .status(200).send(response)
 })
 
 loginRouter.post('/refresh', async (req,res) => {
     const {refreshToken} = req.cookies
     //* Decode token to retrieve email information.
-    const {email} = jwtDecode<DecodedToken>(refreshToken);
-    const foundUser = await UserModel.findOne({email: email})
-    if((!refreshToken) || !(refreshToken in tokenList) || !foundUser) {
-        return res.status(401).json({
-            error: 'invalid username or password'
-        })
-    }
+    try {
+        const {email} = jwtDecode<DecodedToken>(refreshToken);
+        const foundUser = await UserModel.findOne({email: email})
+        if ((!refreshToken) || !(refreshToken in tokenList) || !foundUser) {
+            return res.status(401).json({
+                error: 'invalid username or password'
+            })
+        }
         const tokenInfo = {
             email: foundUser.email,
             id: foundUser._id,
         }
         if (!secretKey) throw new Error('missing token or refresh token key')
         //* Sign new token.
-        const token = jwt.sign(tokenInfo, secretKey, { expiresIn: tokenLife})
-        const response = {token, user:foundUser}
+        const token = jwt.sign(tokenInfo, secretKey, {expiresIn: tokenLife})
+        const response = {token, user: foundUser}
         //* Update token in list.
         tokenList[refreshToken].token = token
         res
-            .cookie('refreshToken', refreshToken, {httpOnly:true})
+            .cookie('refreshToken', refreshToken, {httpOnly: true})
             .status(200).send(response)
+    }
+    catch (error) {
+        console.log(error)
+        res.status(200).send('Invalid token')
+    }
 })
 
 loginRouter.get('/logout', (req, res )=> {

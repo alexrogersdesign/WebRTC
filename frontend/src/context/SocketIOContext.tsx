@@ -37,13 +37,12 @@ interface Props extends ChildrenProps {
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
 //* the param extracted from the url indicating the current meeting
 let roomParam = new URLSearchParams(window.location.search).get('room');
-console.log('room param', roomParam);
 if (roomParam && !validator.isUUID(roomParam)) roomParam = null;
 
 // !URL of deployed server goes here
 //* SocketIO server instance
 const connectionUrl = `http://localhost:5000?room=${roomParam}`;
-console.log('socket url', connectionUrl);
+// console.log('socket url', connectionUrl);
 const socket = io(connectionUrl);
 
 
@@ -108,7 +107,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
       setMeeting(newMeeting);
     });
     if (!currentUser) return;
-    console.log('current user id before peer creation', currentUser.id);
     //* requests webcam access from end user
     if (!initializeMediaStream) {
       throw new Error('initializeMediaStream function missing');

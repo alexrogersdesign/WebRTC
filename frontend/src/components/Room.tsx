@@ -66,7 +66,6 @@ const Room = (props: Props) => {
   useEffect(() => {
     if (!meeting) setTheme && setTheme('dark');
     if (meeting) setTheme && setTheme('normal');
-    console.log('Current Theme', currentTheme);
   }, [meeting]);
 
   return (

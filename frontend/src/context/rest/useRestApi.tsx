@@ -14,33 +14,31 @@ const useRestApi = (
     initialToken:string | null,
     errorHandler: (error:any, message?:string) => void,
 ) => {
+  // TODO remove unneeded header setting
   const [token, setToken] = useState<string| null>(initialToken);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   //* An axios instance to make the http calls to the backend server
   const api = axios.create({
     baseURL: '',
-    // headers: {
-    //   'Content-Type': 'application/json',
-    // },
+    headers: {
+      'Content-Type': 'application/json',
+    },
     withCredentials: true,
     // validateStatus: (status) => status < 400,
   });
 
-  // const axiosConfig: AxiosRequestConfig = {headers: {Authorization: ''}};
 
   // eslint-disable-next-line valid-jsdoc
   /**
  * Sets interceptor
- * //TODO update functionality
+ * TODO update functionality
  * @return {}
  */
   const setRequestInterceptor = () => {
     return api.interceptors.request.use((config) => {
-      console.info('Starting Request', JSON.stringify(config, null, 2));
+      // console.info('Starting Request', JSON.stringify(config, null, 2));
       config.headers.Authorization = token ? `Bearer ${token}` : '';
-
-      // config.headers['x-access-token'] = token;
-      console.log('token at request interceptor', token);
+      config.headers['x-access-token'] = token? token: '';
       return config;
     },
     (error) => {
@@ -49,18 +47,18 @@ const useRestApi = (
   };
 
 type refreshResponse = {
-  token: string,
+  newToken: string,
   user: User
 }
 
 const refreshToken = async ():Promise<refreshResponse> => {
   const response = await axios.post('/login/refresh');
-  const {token, user: receivedUser} = response.data;
-  if (!token) throw new Error('No token received on refresh');
+  const {token: newToken, user: receivedUser} = response.data;
+  if (!newToken) throw new Error('No token received on refresh');
   if (!receivedUser) throw new Error('No user data received on refresh');
   const user = parseUser(receivedUser);
-  setToken(token);
-  return {token, user};
+  setToken(newToken);
+  return {newToken, user};
 };
 
 // eslint-disable-next-line valid-jsdoc
@@ -91,11 +89,11 @@ const setResponseInterceptor = () => {
         }
         originalConfig._retry = true;
         try {
-          const {token: newToken, user} = await refreshToken();
+          const {newToken, user} = await refreshToken();
           setCurrentUser(user);
           setToken(newToken);
-          originalConfig.headers.authorization= `bearer ${newToken}`;
-          // originalConfig.headers['x-access-token']= newToken;
+          originalConfig.headers.Authorization= `Bearer ${newToken}`;
+          originalConfig.headers['x-access-token'] = newToken;
           return api(originalConfig);
         } catch (error) {
           errorHandler(error);
@@ -109,9 +107,9 @@ const setResponseInterceptor = () => {
 //* Update access header when token is updated
 useEffect(() => {
   // eslint-disable-next-line max-len
-  api.defaults.headers.common['Authorization'] = token? `bearer ${token}`: '';
-  // api.defaults.headers.common['x-access-token'] = token;
-}, [, token]);
+  api.defaults.headers.common['Authorization'] = token? `Bearer ${token}`: '';
+  api.defaults.headers.common['x-access-token'] = token? token: '';
+}, [token]);
 
 
 /**

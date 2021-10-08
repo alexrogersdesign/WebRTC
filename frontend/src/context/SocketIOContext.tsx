@@ -45,8 +45,8 @@ const connectionUrl = `http://localhost:5000?room=${roomParam}`;
 // console.log('socket url', connectionUrl);
 const socket = io(connectionUrl);
 
-
 const SocketIOContextProvider: React.FC<Props> = ({children}) => {
+  // TODO remove state that can be inferred
   const {
     initializeMediaStream,
     outgoingMedia,
@@ -55,7 +55,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     clearExternalMedia,
   } = useContext(MediaControlContext);
   const {currentUser, findMeeting} = useContext(RestContext);
-  // const [currentUser, setCurrentUser] = useState<User | null>(null);
   //* The current meeting being attended
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   //* a list of peer connections;
@@ -72,9 +71,14 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    * require meeting data.
    */
   useEffect(() => {
-    if (meeting && meeting.id && !hasJoinedMeeting && outgoingMedia?.current) {
+    const initiateStartup = async () => {
+      initPeerServerConnection();
       setConnectingPeersListener();
+      await setupSocketListeners();
       setExternalUserListener();
+    };
+    if (meeting?.id && currentUser && outgoingMedia?.current) {
+      initiateStartup();
     }
   }, [meeting, outgoingMedia?.current]);
 
@@ -82,14 +86,14 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    * Listens for currentUser to be set before
    * initializing WebRTC and Socket connections
    */
-  useEffect(() => {
-    if (!currentUser) return;
-    initPeerServerConnection();
-    setupSocketListeners();
-    return () => {
-      endConnection();
-    };
-  }, [currentUser]);
+  // useEffect(() => {
+  //   if (!meeting || !currentUser) return;
+  //   initPeerServerConnection();
+  //   setupSocketListeners();
+  //   return () => {
+  //     endConnection();
+  //   };
+  // }, [meeting]);
 
   /**
    * Sets socket connection listeners
@@ -197,14 +201,14 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     if (!newMeetingID) throw new Error('Unable to retrieve meeting ID');
     const foundMeeting = await findMeeting(newMeetingID);
     if (!foundMeeting) throw new Error('Unable to find meeting');
-    setMeeting(meeting);
+    setMeeting(foundMeeting);
     const meetingData = {
       user: currentUser,
-      roomID: newMeetingID,
+      roomID: foundMeeting.id.toString(),
     };
     socket.emit('JoinMeeting', meetingData);
     //* Push meeting to url parameter.
-    history.push('?room='+meeting?.id);
+    history.push('?room='+ foundMeeting?.id);
     setHasJoinedMeeting(true);
   };
 

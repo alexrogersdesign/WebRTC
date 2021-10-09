@@ -1,22 +1,14 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable max-len */
-import React, {Component, useContext} from 'react';
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
+// TODO add image functionality
+import React, {useContext} from 'react';
+import {makeStyles, createStyles} from '@material-ui/core/styles';
 import cx from 'clsx';
 import Grid from '@material-ui/core/Grid';
 // import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import TagFaces from '@material-ui/icons/TagFaces';
-import Reply from '@material-ui/icons/Reply';
-import MoreHoriz from '@material-ui/icons/MoreHoriz';
 import Box from '@material-ui/core/Box';
 
-import User from '../../shared/classes/User';
 import Message from '../../shared/classes/Message';
 import VideoAvatar from '../video/VideoAvatar';
-import {SocketIOContext} from '../../context/SocketIOContext';
 import {RestContext} from '../../context/rest/RestContext';
 
 const size = 30;
@@ -132,11 +124,15 @@ const ChatMessage = ( {message}: Props) => {
   const attachClass = () => {
     return classes[`${message.side}First`];
   };
-  const side = message.user.id === currentUser?.id ? 'right': 'left';
+  const side = message.user.id.toString() === currentUser?.id.toString() ?
+      'right':
+      'left';
 
   return (
     <Box className={classes.box} p={'16px 80px 12px 10px'}>
-      <Typography className={classes.date}>{message.timeStamp.toLocaleTimeString()}</Typography>
+      <Typography className={classes.date}>
+        {message.timeStamp.toLocaleTimeString()}
+      </Typography>
       <Grid
         container
         spacing={2}
@@ -161,8 +157,13 @@ const ChatMessage = ( {message}: Props) => {
                   {message.contents}
                 </Typography>
               )}
-              {typeof message.contents === 'object' && message.type === 'image' && (
-                <img className={classes.image} alt={message.contents.alt} {...message.contents.image} />
+              {typeof message.contents === 'object' &&
+                message.type === 'image' && (
+                <img
+                  className={classes.image}
+                  alt={message.contents.alt}
+                  {...message.contents.image}
+                />
               )}
               {/* <IconButton className={classes.iconBtn}>
                 <TagFaces />

@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
+// TODO add ability to attach files and emotes
 import React, {useContext} from 'react';
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import {makeStyles, createStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';

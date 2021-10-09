@@ -9,10 +9,6 @@ import {MeetingModel, UserModel} from "./database/models.js";
 import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from "../../frontend/src/util/classParser.js";
 import User from "../../frontend/src/shared/classes/User.js";
 
-export interface IMeetingList {
-  [key: string]: Meeting
-}
-
 const secretKey = process.env.SECRET_KEY
 
 const findUser = async (id: string) => {
@@ -37,7 +33,6 @@ const authHandler = async (socket: Socket): Promise<User| undefined>  => {
       //* expect decodedToken to be object not string
       if (typeof decodedToken === 'string')
         throw new Error('Token Decode Error');
-      console.log('decoded token id',decodedToken.id)
       return findUser(decodedToken.id);
     }
     catch (error) {
@@ -63,7 +58,6 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
       try {
         const newMeeting = await updateMeetingList(roomID);
         // socket.emit('NewMeeting', newMeeting);
-        console.log('Emitted meeting', newMeeting)
         socket.join(roomID);
       }
       catch (error){
@@ -76,7 +70,6 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
   */
   io.on('connection', async (socket) => {
     const newUser = await authHandler(socket)
-    console.log('new connection', newUser?.fullName)
     // console.log('user:', newUser)
     //* Send user id
     socket.emit('CurrentUserID', newUser?.id.toString());
@@ -89,11 +82,9 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
     }
     socket.on('JoinMeeting', (meetingData) => {
       const {user, roomID} = meetingData;
-      console.log('rooms: ',socket.rooms)
       if (socket.rooms.has(roomID)) return;
       io.to(roomID).emit('NewUserConnected', user);
       joinRoom(socket, roomID);
-      console.log('rooms after join: ',socket.rooms)
       // TODO add user to meeting attendees
       //* inform attendees if a user disconnects
       const leaveRoom = () => {
@@ -101,7 +92,8 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
       };
 
       socket.on('SendMessage', (message) => {
-        socket.broadcast.to(roomID).emit('ReceivedMessage', message);
+        // socket.broadcast.to(roomID).emit('ReceivedMessage', message);
+        io.in(roomID).emit('ReceivedMessage', message);
       });
 
       socket.on('LeaveRoom', () => {

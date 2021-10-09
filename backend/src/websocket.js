@@ -24,7 +24,6 @@ const authHandler = async (socket) => {
             //* expect decodedToken to be object not string
             if (typeof decodedToken === 'string')
                 throw new Error('Token Decode Error');
-            console.log('decoded token id', decodedToken.id);
             return findUser(decodedToken.id);
         }
         catch (error) {
@@ -50,7 +49,6 @@ const websocket = (io) => {
         try {
             const newMeeting = await updateMeetingList(roomID);
             // socket.emit('NewMeeting', newMeeting);
-            console.log('Emitted meeting', newMeeting);
             socket.join(roomID);
         }
         catch (error) {
@@ -62,7 +60,6 @@ const websocket = (io) => {
     */
     io.on('connection', async (socket) => {
         const newUser = await authHandler(socket);
-        console.log('new connection', newUser?.fullName);
         // console.log('user:', newUser)
         //* Send user id
         socket.emit('CurrentUserID', newUser?.id.toString());
@@ -75,19 +72,18 @@ const websocket = (io) => {
         }
         socket.on('JoinMeeting', (meetingData) => {
             const { user, roomID } = meetingData;
-            console.log('rooms: ', socket.rooms);
             if (socket.rooms.has(roomID))
                 return;
             io.to(roomID).emit('NewUserConnected', user);
             joinRoom(socket, roomID);
-            console.log('rooms after join: ', socket.rooms);
             // TODO add user to meeting attendees
             //* inform attendees if a user disconnects
             const leaveRoom = () => {
                 socket.to(roomID).emit('UserDisconnected', user);
             };
             socket.on('SendMessage', (message) => {
-                socket.broadcast.to(roomID).emit('ReceivedMessage', message);
+                // socket.broadcast.to(roomID).emit('ReceivedMessage', message);
+                io.in(roomID).emit('ReceivedMessage', message);
             });
             socket.on('LeaveRoom', () => {
                 leaveRoom();

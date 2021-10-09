@@ -76,8 +76,7 @@ const parseAttendees = (input:IReceivedUser[]| undefined): User[] | null => {
   return input.map((iUser) => parseUser(iUser));
 };
 
-export const parseMeeting = (input:IReceivedMeeting): Meeting | undefined => {
-  if (!input) return;
+export const parseMeeting = (input:IReceivedMeeting): Meeting => {
   const newTitle = input.title? input.title : input._title;
   const newId = input.id? input.id : input._id;
   const newMeeting = new Meeting(newTitle);

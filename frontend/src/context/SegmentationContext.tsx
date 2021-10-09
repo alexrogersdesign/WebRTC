@@ -25,6 +25,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
     outgoingMedia,
     videoDisabled,
   } = useContext(MediaControlContext);
+  const {meeting} = useContext(SocketIOContext);
   const {changePeerStream} = useContext(SocketIOContext);
   //* Used to indicate when segmenting animation should stop
   const segmentingStopped = useRef(false);
@@ -61,8 +62,8 @@ const SegmentationContextProvider: React.FC<Props> = ({
 
   //* Loads background replacing model
   useEffect(() => {
-    processBackground().then(() => setSegmentationReady(true));
-  }, [removeBackground]);
+    meeting && processBackground().then(() => setSegmentationReady(true));
+  }, [removeBackground, meeting]);
   /**
    * Holds the logic for processing the background image of a webcam feed
    * Called every time removeBackground is changed
@@ -159,5 +160,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
     </SegmentationContext.Provider>
   );
 };
+
+SegmentationContext.displayName = 'Segmentation Context';
 
 export {SegmentationContext, SegmentationContextProvider};

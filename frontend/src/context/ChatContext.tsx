@@ -26,7 +26,7 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
      * Listens for new user message event then...
      */
   const setMessageListener = () => {
-    socket.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
+    socket?.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
       console.log('ReceivedMessage', receivedMessage);
       const message = parseMessage(receivedMessage);
       setMessageList((prevState) => [...prevState, message]);
@@ -34,15 +34,15 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
     });
   };
   const sendMessage = (message:Message) =>{
-    socket.emit('SendMessage', message);
+    socket?.emit('SendMessage', message);
   };
-
   return (
-    <ChatContext.Provider value={{messageList, sendMessage}}>
+    <ChatContext.Provider value={{messageList, sendMessage}} >
       {children}
     </ChatContext.Provider>
   );
 };
 
+ChatContext.displayName = 'Chat Context';
 
 export {ChatContextProvider, ChatContext};

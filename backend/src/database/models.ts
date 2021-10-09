@@ -39,12 +39,7 @@ userSchema.set('toObject', {
         return ret
       }
 })
-// userSchema.options.toObject.transform = function (doc: Document, ret):User {
-//     delete ret.passwordHash;
-//     const newUser = parseUser(ret)
-//     newUser.id = ret._id
-//     return newUser
-// }
+
 export const UserModel = model<IUser>('User', userSchema);
 
 const meetingSchema = new Schema<Meeting>({

@@ -83,8 +83,8 @@ const RestContextProvider = ({children}: Props) => {
         // if an empty string is found, the user has not set the value
         if (logoutStorage !== '') return;
         const {newToken, user} = await refreshToken();
-        setToken(newToken);
-        setCurrentUser(user);
+        // setToken(newToken);
+        // setCurrentUser(user);
         setLoggedIn(true);
       } catch (err) {
         console.log('Not logged in');
@@ -248,6 +248,7 @@ const RestContextProvider = ({children}: Props) => {
       value={{
         login,
         logout,
+        refreshToken,
         currentUser,
         setCurrentUser,
         loggedIn,
@@ -255,6 +256,7 @@ const RestContextProvider = ({children}: Props) => {
         createMeeting,
         findMeeting: findMeetingRequest,
         meetingList,
+        token,
       }}
     >
       {children}
@@ -282,6 +284,7 @@ const snackbarWarnOptions :OptionsObject = {
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
   logout: () => void,
+  refreshToken: () => void,
   loggedIn: boolean,
   createUser: (newUser: INewUser) => Promise<User| undefined>,
   createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
@@ -289,7 +292,10 @@ export interface IRestContext {
   currentUser: User| null,
   setCurrentUser: (user:User | null) => void,
   findMeeting: (id:string) => Promise<Meeting | undefined>
+  token: string | null
 }
+
+RestContext.displayName = 'Rest Context';
 
 
 export {RestContextProvider, RestContext};

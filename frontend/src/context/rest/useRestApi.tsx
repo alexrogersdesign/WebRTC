@@ -58,6 +58,7 @@ const refreshToken = async ():Promise<refreshResponse> => {
   if (!receivedUser) throw new Error('No user data received on refresh');
   const user = parseUser(receivedUser);
   setToken(newToken);
+  setCurrentUser(user);
   return {newToken, user};
 };
 

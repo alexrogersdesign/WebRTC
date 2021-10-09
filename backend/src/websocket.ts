@@ -1,71 +1,100 @@
 /* jshint esversion: 6 */
 
-import {v4 as uuidV4, validate as uuidValidate} from 'uuid';
 import Meeting from '../../frontend/src/shared/classes/Meeting.js';
 import {Server, Socket} from "socket.io";
+import jwt from "jsonwebtoken";
 import {DefaultEventsMap} from "socket.io/dist/typed-events";
+
+import {MeetingModel, UserModel} from "./database/models.js";
+import {IReceivedMeeting, IReceivedUser, parseMeeting, parseUser} from "../../frontend/src/util/classParser.js";
+import User from "../../frontend/src/shared/classes/User.js";
 
 export interface IMeetingList {
   [key: string]: Meeting
 }
 
-const userList = [];
-const meetingList: IMeetingList = {};
+const secretKey = process.env.SECRET_KEY
 
+const findUser = async (id: string) => {
+  const foundUser = await UserModel.findById(id) as unknown as IReceivedUser;
+  return parseUser(foundUser);
+}
+const findMeeting = async (id: string) => {
+  const foundMeeting = await MeetingModel.findById(id) as unknown as IReceivedMeeting;
+  return parseMeeting(foundMeeting);
+}
+
+const authHandler = async (socket: Socket): Promise<User| undefined>  => {
+  //TODO test expired token refresh
+  let { token = null } = socket.handshake.auth || {};
+  if (token) {
+    try {
+      if (Array.isArray(token))
+        token = token[0];
+      if (!secretKey)
+        throw new Error('Missing token or refresh token key');
+      const decodedToken = jwt.verify(token, secretKey);
+      //* expect decodedToken to be object not string
+      if (typeof decodedToken === 'string')
+        throw new Error('Token Decode Error');
+      console.log('decoded token id',decodedToken.id)
+      return findUser(decodedToken.id);
+    }
+    catch (error) {
+      if ((error as Error).name === 'TokenExpiredError') {
+        socket.emit('ExpiredToken')
+        console.log('Expired Token', error)
+      }
+      console.log(error)
+      socket.disconnect()
+    }
+  }
+  socket.emit('error', 'Authentication Token Not Provided')
+  socket.disconnect();
+};
 const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
-  const createNewMeeting = (id?:string) => {
-    // TODO add additional meeting functionality
-    const newMeeting = new Meeting('Test Meeting Title');
-    meetingList[newMeeting.id.toString()]= newMeeting;
-    console.log('new meeting ---------',newMeeting.id)
+  const updateMeetingList = async (id:string) => {
+    // const newMeeting = new Meeting('Test Meeting Title');
+    const newMeeting = await findMeeting(id);
+    // TODO update database for meeting list
     return newMeeting;
   };
-
-  const joinRoom = (socket: Socket<DefaultEventsMap, DefaultEventsMap>, roomID:string) => {
-    //* If meeting exists in meeting list, send meeting.
-    if (!(roomID in meetingList)) {
-      socket.emit('NewMeeting', meetingList[roomID]);
-    //* If meeting does not exist, create a new one with that id.
-    } else {
-      socket.emit('NewMeeting', createNewMeeting(roomID) );
-    }
+  const joinRoom = async (socket: Socket<DefaultEventsMap, DefaultEventsMap>, roomID:string) => {
+      try {
+        const newMeeting = await updateMeetingList(roomID);
+        // socket.emit('NewMeeting', newMeeting);
+        console.log('Emitted meeting', newMeeting)
+        socket.join(roomID);
+      }
+      catch (error){
+        socket.emit('Error', error)
+      }
   };
 
   /**
   * Setup socket connection behaviors
   */
-  io.on('connection', (socket) => {
-    const newUserID = uuidV4();
-    //* Add user to user list.
-    userList.push(newUserID);
+  io.on('connection', async (socket) => {
+    const newUser = await authHandler(socket)
+    console.log('new connection', newUser?.fullName)
+    // console.log('user:', newUser)
     //* Send user id
-    socket.emit('CurrentUserID', newUserID);
+    socket.emit('CurrentUserID', newUser?.id.toString());
     //* Get room parameter from url.
     const roomID = socket.handshake.query.room;
     //* Check if a room id parameter was supplied
     //* If so, join that meeting.
-    if (roomID && !Array.isArray(roomID) && uuidValidate(roomID)) {
-      joinRoom(socket, roomID);
-      //* if no parameter was supplied, do not join a meeting.
+    if (roomID && roomID !== 'null' && !Array.isArray(roomID)) {
+      await joinRoom(socket, roomID);
     }
-
-    /**
-     * Listens for a the user to request a new meeting id.
-     * Sends ID of newly created meeting to user.
-     */
-    socket.on('NewMeeting', () => {
-      socket.emit('NewMeeting', createNewMeeting());
-    });
-
     socket.on('JoinMeeting', (meetingData) => {
       const {user, roomID} = meetingData;
-      joinRoom(socket, roomID);
+      console.log('rooms: ',socket.rooms)
+      if (socket.rooms.has(roomID)) return;
       io.to(roomID).emit('NewUserConnected', user);
-      socket.join(roomID);
-      if (roomID in meetingList) {
-        meetingList[roomID].addAttendee(user);
-      }
-
+      joinRoom(socket, roomID);
+      console.log('rooms after join: ',socket.rooms)
+      // TODO add user to meeting attendees
       //* inform attendees if a user disconnects
       const leaveRoom = () => {
         socket.to(roomID).emit('UserDisconnected', user);

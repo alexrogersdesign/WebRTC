@@ -11,6 +11,7 @@ import {ChildrenProps, IExternalMedia} from '../shared/types';
 
 import User from '../shared/classes/User';
 import {RestContext} from './rest/RestContext';
+import {SocketIOContext} from './SocketIOContext';
 
 
 interface Props extends ChildrenProps {}
@@ -120,13 +121,17 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
     // TODO check if duplicate users/ or the current user is added to the list.
     if (!currentUser) return;
     // Prevent local user from being added to the list.
-    if (user.id === currentUser.id) return;
+    if (user.id.toHexString() === currentUser.id.toHexString()) return;
+    // Guard against duplicates
     const newMediaItem = {
-      user, stream, data: data? data: undefined,
+      user, stream, data: data?? undefined,
     };
+    console.log('adding media stream from: ', user.fullName);
     setExternalMedia((oldState) => {
-      // Prevent duplicates from being added
-      if (oldState.find((media) => media.user.id === user.id)) return oldState;
+      // Guard against duplicates
+      // eslint-disable-next-line max-len
+      if (oldState.find((media) =>
+        media.user.id.toHexString() === user.id.toHexString())) return oldState;
       return [...oldState, newMediaItem];
     });
   };
@@ -174,6 +179,8 @@ export interface IMediaControlContext {
   addExternalMedia: (user:User, stream:MediaStream, data?:CallOption) => void,
   clearExternalMedia: () => void
 }
+
+MediaControlContext.displayName = 'Media Control Context';
 
 
 export {MediaControlContextProvider, MediaControlContext};

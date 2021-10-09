@@ -49,4 +49,7 @@ const CustomThemeProvider = ({children}: Props) :JSX.Element=> {
   );
 };
 
+CustomThemeContext.displayName = 'Custom Theme Context';
+
+
 export default CustomThemeProvider;

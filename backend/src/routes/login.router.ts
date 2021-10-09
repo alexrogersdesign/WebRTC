@@ -71,6 +71,7 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
 })
 
 loginRouter.post('/refresh', async (req,res) => {
+    //TODO! verify token
     const {refreshToken} = req.cookies
     //* Decode token to retrieve email information.
     try {

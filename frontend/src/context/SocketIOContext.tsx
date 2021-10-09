@@ -11,17 +11,15 @@ import {io, Socket} from 'socket.io-client';
 import Peer, {MediaConnection} from 'peerjs';
 import validator from 'validator';
 import {useSnackbar} from 'notistack';
-
+import EventEmitter from 'events';
 import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
 
-import User from '../shared/classes/User';
 import Meeting from '../shared/classes/Meeting';
 import {
   IReceivedMeeting,
   IReceivedUser,
   parseMeeting,
   parseUser} from '../util/classParser';
-import {useRestApi} from './rest/useRestApi';
 import {MediaControlContext} from './MediaControlContext';
 import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
 import {RestContext} from './rest/RestContext';
@@ -33,6 +31,11 @@ interface Props extends ChildrenProps {
 
 }
 
+const peerConnectionOptions = {
+  host: '/',
+  port: 5001,
+  debug: 2,
+};
 //* Context item to be passed to app
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
 //* the param extracted from the url indicating the current meeting
@@ -42,8 +45,9 @@ if (roomParam && !validator.isUUID(roomParam)) roomParam = null;
 // !URL of deployed server goes here
 //* SocketIO server instance
 const connectionUrl = `http://localhost:5000?room=${roomParam}`;
-// console.log('socket url', connectionUrl);
-const socket = io(connectionUrl);
+// const connectionUrl = 'http://localhost:5000';
+console.log('socket url', connectionUrl);
+// const socket = io(connectionUrl);
 
 const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   // TODO remove state that can be inferred
@@ -54,17 +58,40 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     addExternalMedia,
     clearExternalMedia,
   } = useContext(MediaControlContext);
-  const {currentUser, findMeeting} = useContext(RestContext);
+  const {
+    currentUser,
+    findMeeting,
+    token,
+    refreshToken,
+  } = useContext(RestContext);
+
   //* The current meeting being attended
   const [meeting, setMeeting] = useState<Meeting | null>(null);
   //* a list of peer connections;
   const peers = useRef<IPeers>({});
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
+  const socketListeners = useRef<string[]>([]);
+  const peerListeners = useRef<string[]>([]);
   const history = useHistory();
   //* enables notification
   const {enqueueSnackbar} = useSnackbar();
   //* indicate that the video is ready to be rendered
+
+  const [socket, setSocket] = useState<Socket>(null!);
+
+
+  useEffect(() => {
+    const handshake = {
+      auth: {token},
+    };
+    const newConnection = io(connectionUrl, token? handshake : undefined);
+    setSocket(newConnection);
+    return () => {
+      newConnection.close();
+    };
+  }, [setSocket, token]);
+
 
   /**
    * Waits for a meeting to exist before initiating functions that
@@ -72,43 +99,66 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    */
   useEffect(() => {
     const initiateStartup = async () => {
-      initPeerServerConnection();
+      // initPeerServerConnection();
       setConnectingPeersListener();
       await setupSocketListeners();
-      setExternalUserListener();
     };
-    if (meeting?.id && currentUser && outgoingMedia?.current) {
+    if (
+      meeting?.id &&
+        currentUser &&
+        outgoingMedia?.current &&
+        hasJoinedMeeting
+    ) {
       initiateStartup();
     }
-  }, [meeting, outgoingMedia?.current]);
+    return () => {
+      // endConnection();
+    };
+  }, [meeting, hasJoinedMeeting]);
 
   /**
    * Listens for currentUser to be set before
    * initializing WebRTC and Socket connections
    */
-  // useEffect(() => {
-  //   if (!meeting || !currentUser) return;
-  //   initPeerServerConnection();
-  //   setupSocketListeners();
-  //   return () => {
-  //     endConnection();
-  //   };
-  // }, [meeting]);
+  useEffect(() => {
+    if (!meeting || !currentUser) return;
+    // initPeerServerConnection();
+    setupSocketListeners();
+    return () => {
+      socketListeners.current.forEach((event) => socket.off(event));
+    };
+  }, [currentUser]);
 
   /**
    * Sets socket connection listeners
    */
   const setupSocketListeners= async () =>{
     //* Listens for meeting from socket
+    socketListeners.current = [
+      'ExpiredToken',
+      'NewMeeting',
+      'UserDisconnected',
+      'NewUserConnected'];
+    // eslint-disable-next-line max-len
+    if (socketListeners.current.some((event) => socket.hasListeners(event))) {
+      return;
+    }
+    // @ts-ignore
+    // (socket as EventEmitter).removeAllListeners();
     // TODO allow media stream to be null
+    socket.on('ExpiredToken', () => refreshToken());
     socket.on('NewMeeting', (receivedMeeting:IReceivedMeeting) => {
-      const newMeeting = parseMeeting(receivedMeeting);
-      if (!newMeeting) return;
-      newMeeting && enqueueSnackbar(
-          `Joining meeting ${newMeeting.title}`,
-          {variant: 'info'},
-      );
-      setMeeting(newMeeting);
+      try {
+        const newMeeting = parseMeeting(receivedMeeting);
+        if (!newMeeting) return;
+        newMeeting && enqueueSnackbar(
+            `Joining meeting ${newMeeting.title}`,
+            {variant: 'info'},
+        );
+        setMeeting(newMeeting);
+      } catch (error) {
+        console.log(error);
+      }
     });
     if (!currentUser) return;
     //* requests webcam access from end user
@@ -118,6 +168,50 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     const stream = await initializeMediaStream();
     if (!stream) throw new Error('Video Stream not received');
     changePeerStream(stream);
+
+    /**
+     * Listens for new user connected event then calls user
+     * Cleans up connection on error or if far side closes connection.
+     */
+    socket.on('NewUserConnected', (receivedUser: IReceivedUser) => {
+      // parse received json object into User
+      const user = parseUser(receivedUser);
+      if (!currentUser) throw new Error('current user does not exist');
+      //* Prevent local user from being added.
+      if (user.id === currentUser.id) return;
+      enqueueSnackbar(`${user} has connected`);
+      const metadata : ICallMetadata = {
+        user: currentUser,
+      };
+      const callOption: Peer.CallOption = {
+        metadata,
+      };
+      if (!peerConnection.current) throw new Error('Missing peer connection');
+      if (!outgoingMedia.current) throw new Error('Missing webcam stream');
+      const call = peerConnection
+          .current
+          .call(user.id.toString(), outgoingMedia.current, callOption);
+      console.log('Placing call', call);
+      // when a stream is received, add it to external media
+      call.on('stream', (stream: MediaStream) => {
+        // TODO retrieve metadata from callee.
+        // TODO Check if user ID needs to be updated from
+        // TODO the one provided by websocket to call.peer
+        addPeer(call);
+        addExternalMedia(user, stream, callOption);
+        console.log('stream received', stream);
+      });
+      //* remove media if closed by far side
+      call.on('close', () => {
+        removeMedia(call.peer);
+        console.log('call closed', call.metadata.id);
+      });
+      //* remove media on call error
+      call.on('error', () => {
+        console.log('call error: ', call.metadata.id);
+        removeMedia(call.peer);
+      });
+    });
 
     /**
      * Disconnects from peer WebRTC stream,
@@ -143,11 +237,20 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    */
   const initPeerServerConnection = () => {
     if (!currentUser) return;
-    peerConnection.current = new Peer(currentUser.id.toString(), {
-      host: '/',
-      port: 5001,
-      debug: 2,
-    });
+    const oldPeer = peerConnection.current;
+    if (!oldPeer || oldPeer.destroyed) {
+      try {
+        peerConnection.current = new Peer(
+            currentUser.id.toString(),
+            peerConnectionOptions,
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      oldPeer.destroy();
+      initPeerServerConnection();
+    }
   };
 
   /**
@@ -159,14 +262,13 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     socket.emit('NewMeeting');
   };
 
-
   /**
    * Changes the media stream being sent to peers.
    * @param {MediaStream} stream the stream to change to
    */
   const changePeerStream = (stream:MediaStream) => {
     Object.values(peers.current).forEach((peer) => {
-      peer.peerConnection.getSenders()
+      peer?.peerConnection?.getSenders()
           .find((sender)=> sender?.track?.kind === 'video')
           ?.replaceTrack(stream.getVideoTracks()[0]);
     },
@@ -193,6 +295,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    * @param {string} newMeetingID the meeting to join
    */
   const joinMeeting = async (newMeetingID?:string) => {
+    await initPeerServerConnection();
     //* If a meeting ID is not provided and the user has a meeting stored,
     //* join that meeting.
     if (!newMeetingID && meeting && meeting.id) {
@@ -238,15 +341,16 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    * Adds peer to peer list
    */
   const setConnectingPeersListener = () => {
+    // @ts-ignore
+    (peerConnection.current as EventEmitter).removeAllListeners();
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
       call.answer(outgoingMedia?.current);
-      console.log('call answered', call);
-
+      console.log('call received and answered', call);
       addPeer(call);
       call.on('stream', (stream) => {
         const newUser = parseUser(call.metadata.user);
-        addExternalMedia && addExternalMedia(newUser, stream);
+        addExternalMedia(newUser, stream);
       });
       call.on('close', ()=>{
         removeMedia(call.peer);
@@ -258,50 +362,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     });
   };
 
-  /**
-   * Listens for new user connected event then calls user
-   * Cleans up connection on error or if far side closes connection.
-   */
-  const setExternalUserListener = () => {
-    socket.on('NewUserConnected', (receivedUser: IReceivedUser) => {
-      // parse received json object into User
-      const user = parseUser(receivedUser);
-      enqueueSnackbar(`${user} has connected`);
-      if (!currentUser) return;
-      //* Prevent local user from being added.
-      if (user.id === currentUser.id) return;
-      const metadata : ICallMetadata = {
-        user: currentUser,
-      };
-      const callOption: Peer.CallOption = {
-        metadata,
-      };
-      if (!peerConnection.current) throw new Error('Missing peer connection');
-      if (!outgoingMedia.current) throw new Error('Missing webcam stream');
-      const call = peerConnection
-          .current
-          .call(user.id.toString(), outgoingMedia.current, callOption);
-      console.log('Placing call', call);
-      // when a stream is received, add it to external media
-      call.on('stream', (stream: MediaStream) => {
-        // TODO retrieve metadata from callee.
-        // TODO Check if user ID needs to be updated from
-        // TODO the one provided by websocket to call.peer
-        addExternalMedia(user, stream, callOption);
-        console.log('stream received', stream);
-      });
-      //* remove media if closed by far side
-      call.on('close', () => {
-        removeMedia(call.peer);
-        console.log('call closed', call.metadata.id);
-      });
-      //* remove media on call error
-      call.on('error', () => {
-        console.log('call error: ', call.metadata.id);
-        removeMedia(call.peer);
-      });
-    });
-  };
   const startNewMeeting = () => {
     getNewMeeting();
     setupSocketListeners();
@@ -314,15 +374,18 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     history.push('');
     clearExternalMedia();
     Object.values(peers.current).forEach((peer) => peer.close());
+    if (peerConnection.current) {
+      peerConnection.current.destroy();
+    };
   };
 
   /**
    * Cleans up media streams and connections
    */
   const endConnection = () => {
+    console.log('disconnecting socket');
     socket?.disconnect();
     leaveMeeting();
-    if (peerConnection.current) peerConnection.current.destroy();
   };
   return (
 
@@ -347,7 +410,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
 };
 
 export interface ISocketIOContext {
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>,
+  socket: Socket<DefaultEventsMap, DefaultEventsMap>| null,
   setupSocketListeners: () => void,
   meeting: Meeting | null,
   peers: React.MutableRefObject<IPeers | null>,
@@ -359,5 +422,7 @@ export interface ISocketIOContext {
   leaveMeeting: () => void,
   changePeerStream: (stream: MediaStream) => void,
 }
+SocketIOContext.displayName = 'SocketIO Context';
+
 
 export {SocketIOContextProvider, SocketIOContext};

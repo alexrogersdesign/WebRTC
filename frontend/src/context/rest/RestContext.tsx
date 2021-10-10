@@ -46,9 +46,7 @@ const RestContextProvider = ({children}: Props) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
-  const axiosConfig = useRef<AxiosRequestConfig>(
-      {headers: {Authorization: ''}},
-  );
+
   const handleError = (error:any, message?: string) => {
     message = message || 'An error has occurred';
     if (error?.response?.status === 401) {
@@ -69,66 +67,56 @@ const RestContextProvider = ({children}: Props) => {
     loginRequest,
     logoutRequest,
     refreshToken,
-    findMeetingRequest,
+    findMeeting,
     getAllMeetingsRequest,
   } = useRestApi(null, handleError);
+
+  const checkIfLogged = async () => {
+    try {
+      /* Check if localstorage indicating a logout value is populated
+         if an empty string is found, the user has not set the value */
+      if (logoutStorage !== '') return;
+      const {newToken, user} = await refreshToken();
+      // setToken(newToken);
+      // setCurrentUser(user);
+      setLoggedIn(true);
+    } catch (err) {
+      setLoggedIn(false);
+      console.log('Not logged in');
+    }
+  };
 
   /**
    * Check if currently logged in on first load.
    */
   useEffect(() => {
-    const checkIfLogged = async () => {
-      try {
-        // Check if localstorage indicating a logout value is populated
-        // if an empty string is found, the user has not set the value
-        if (logoutStorage !== '') return;
-        const {newToken, user} = await refreshToken();
-        // setToken(newToken);
-        // setCurrentUser(user);
-        setLoggedIn(true);
-      } catch (err) {
-        console.log('Not logged in');
-      }
-    };
     checkIfLogged();
   }, []);
 
   // /**
-  //  * Check if currently logged in on first load.
+  //  * Updates the axios config parameters when token updates
+  //  * Sets Logged to true
   //  */
   // useEffect(() => {
-  //   // TODO not working
-  //   if (!isNaN(Date.parse(logoutStorage)) || !logoutStorage) logout();
-  //   console.log('logout storage parse', !isNaN(Date.parse(logoutStorage)));
-  // }, [logoutStorage]);
-  //
+  //   if (token) setLoggedIn(true);
+  //   else setLoggedIn(false);
+  // }, [token]);
 
-  /**
-   * Updates the axios config parameters when token updates
-   * Sets Logged to true
-   */
-  useEffect(() => {
-    axiosConfig.current.headers.Authorization = `Bearer ${token}`;
-    if (token) setLoggedIn(true);
-    else setLoggedIn(false);
-  }, [token]);
-
-  /**
-   * Listens for logout variable to be set in localstorage
-   * Allows for logout across multiple tabs.
-   */
-  useEffect(() => {
-    // eslint-disable-next-line no-unused-vars
-    const syncLogout = (event:StorageEvent) => {
-      if (event.key === 'logout') {
-        setToken(null);
-      }
-      window.addEventListener('storage', syncLogout);
-      return () => {
-        window.removeEventListener('storage', syncLogout);
-      };
-    };
-  }, []);
+  // /**
+  //  * Listens for logout variable to be set in localstorage
+  //  * Allows for logout across multiple tabs.
+  //  */
+  // useEffect(() => {
+  //   const syncLogout = (event:StorageEvent) => {
+  //     if (event.key === 'logout') {
+  //       setToken(null);
+  //     }
+  //     window.addEventListener('storage', syncLogout);
+  //     return () => {
+  //       window.removeEventListener('storage', syncLogout);
+  //     };
+  //   };
+  // }, []);
 
   /**
    * Communicates with the backend to login user
@@ -151,6 +139,7 @@ const RestContextProvider = ({children}: Props) => {
       setCurrentUser(parsedUser);
       enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
       setLogoutStorage('');
+      setLoggedIn(true);
       return parsedUser;
     } catch (error) {
       handleError(error, failedLoginMessage);
@@ -218,6 +207,7 @@ const RestContextProvider = ({children}: Props) => {
     setToken(null);
     setCurrentUser(null);
     setLogoutStorage(Date.now().toString());
+    setLoggedIn(false);
     try {
       logoutRequest();
     } catch (e) {
@@ -249,12 +239,13 @@ const RestContextProvider = ({children}: Props) => {
         login,
         logout,
         refreshToken,
+        checkIfLogged,
         currentUser,
         setCurrentUser,
         loggedIn,
         createUser,
         createMeeting,
-        findMeeting: findMeetingRequest,
+        findMeeting,
         meetingList,
         token,
       }}
@@ -292,7 +283,8 @@ export interface IRestContext {
   currentUser: User| null,
   setCurrentUser: (user:User | null) => void,
   findMeeting: (id:string) => Promise<Meeting | undefined>
-  token: string | null
+  token: string | null,
+  checkIfLogged: ()=> void
 }
 
 RestContext.displayName = 'Rest Context';

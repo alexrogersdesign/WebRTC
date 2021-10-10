@@ -1,4 +1,5 @@
-import {useEffect, useState} from 'react';
+/* eslint-disable no-unused-vars */
+import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 
 import User from '../../shared/classes/User';
@@ -10,6 +11,15 @@ import {
 import {ILoginCredentials} from './RestContext';
 import Meeting from '../../shared/classes/Meeting';
 
+// const api = axios.create({
+//   baseURL: '',
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+//   withCredentials: true,
+//   // validateStatus: (status) => status < 400,
+// });
+
 const useRestApi = (
     initialToken:string | null,
     errorHandler: (error:any, message?:string) => void,
@@ -18,15 +28,15 @@ const useRestApi = (
   const [token, setToken] = useState<string| null>(initialToken);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   //* An axios instance to make the http calls to the backend server
-  const api = axios.create({
+  const instance = useRef(axios.create({
     baseURL: '',
     headers: {
       'Content-Type': 'application/json',
     },
     withCredentials: true,
     // validateStatus: (status) => status < 400,
-  });
-
+  }));
+  const api = instance.current;
 
   // eslint-disable-next-line valid-jsdoc
   /**
@@ -35,10 +45,12 @@ const useRestApi = (
  * @return {}
  */
   const setRequestInterceptor = () => {
-    return api.interceptors.request.use((config) => {
+    return api.interceptors.request.use(async (config) => {
       // console.info('Starting Request', JSON.stringify(config, null, 2));
-      config.headers.Authorization = token ? `Bearer ${token}` : '';
-      config.headers['x-access-token'] = token? token: '';
+      // config.headers.Authorization = token ? `Bearer ${token}` : '';
+      // config.headers['x-access-token'] = token? token: '';
+      // if (!token) await refreshToken();
+      // eslint-disable-next-line max-len
       return config;
     },
     (error) => {
@@ -82,18 +94,19 @@ const setResponseInterceptor = () => {
       console.log(err.response.data.message, err.toJSON());
     }
     if (originalConfig.url !== '/login' && err.response) {
+      console.log('retrying');
       //* Access Token was expired
       if (err.response.status === 401) {
         if (originalConfig._retry) {
           errorHandler(err, 'Please Login Again');
-          throw new Error('Token Refresh Failed');
+          setToken('');
+          // throw new Error('Token Refresh Failed');
         }
         originalConfig._retry = true;
         try {
-          const {newToken, user} = await refreshToken();
-          setCurrentUser(user);
-          setToken(newToken);
-          originalConfig.headers.Authorization= `Bearer ${newToken}`;
+          const {newToken} = await refreshToken();
+          console.log('new token after refresh', newToken);
+          originalConfig.headers['Authorization']= `Bearer ${newToken}`;
           originalConfig.headers['x-access-token'] = newToken;
           return api(originalConfig);
         } catch (error) {
@@ -105,11 +118,11 @@ const setResponseInterceptor = () => {
     return Promise.reject(err);
   });
 };
-//* Update access header when token is updated
+// //* Update access header when token is updated
 useEffect(() => {
-  // eslint-disable-next-line max-len
+// eslint-disable-next-line max-len
   api.defaults.headers.common['Authorization'] = token? `Bearer ${token}`: '';
-  api.defaults.headers.common['x-access-token'] = token? token: '';
+  api.defaults.headers.common['x-access-token'] = token?? '';
 }, [token]);
 
 
@@ -117,6 +130,7 @@ useEffect(() => {
    * Set interceptors on first load.
    */
 useEffect(() => {
+  console.log('reloading interceptors');
   const requestInterceptor = setRequestInterceptor();
   const responseInterceptor = setResponseInterceptor();
   return () => {
@@ -138,7 +152,7 @@ const logoutRequest = async () => {
 
 const findMeetingRequest = async (id:string) : Promise<Meeting | undefined> => {
   const response = await api.get(`/meetings/${id}`);
-  return parseMeeting(response.data);
+  return parseMeeting(response?.data);
 };
 const getAllMeetingsRequest = async () : Promise<Meeting[]> => {
   const response = await api.get('/meetings/');
@@ -154,7 +168,7 @@ return {
   setCurrentUser,
   api,
   refreshToken,
-  findMeetingRequest,
+  findMeeting: findMeetingRequest,
   loginRequest,
   logoutRequest,
   getAllMeetingsRequest,

@@ -8,7 +8,7 @@ import usersRouter from './routes/users.router.js';
 import meetingsRouter from "./routes/meetings.router.js";
 import messagesRouter from "./routes/messages.router.js";
 import loginRouter from "./routes/login.router.js";
-import errorMiddleware from "./util/middleware/errorMiddleware.js";
+// import errorMiddleware from "./util/middleware/errorMiddleware.js";
 import errorHandler from 'errorhandler'
 
 const app = express();
@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
 
 
 // error handler
-app.use(errorMiddleware)
-// app.use(errorHandler())
+// app.use(errorMiddleware)
+app.use(errorHandler)
 
 export default app;

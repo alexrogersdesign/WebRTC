@@ -9,7 +9,6 @@ import React, {
 import {useHistory} from 'react-router-dom';
 import {io, Socket} from 'socket.io-client';
 import Peer, {MediaConnection} from 'peerjs';
-import validator from 'validator';
 import {useSnackbar} from 'notistack';
 import EventEmitter from 'events';
 import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
@@ -39,8 +38,7 @@ const peerConnectionOptions = {
 //* Context item to be passed to app
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
 //* the param extracted from the url indicating the current meeting
-let roomParam = new URLSearchParams(window.location.search).get('room');
-if (roomParam && !validator.isUUID(roomParam)) roomParam = null;
+const roomParam = new URLSearchParams(window.location.search).get('room');
 
 // !URL of deployed server goes here
 //* SocketIO server instance
@@ -63,6 +61,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     findMeeting,
     token,
     refreshToken,
+    checkIfLogged,
   } = useContext(RestContext);
 
   //* The current meeting being attended
@@ -72,7 +71,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
   const socketListeners = useRef<string[]>([]);
-  const peerListeners = useRef<string[]>([]);
   const history = useHistory();
   //* enables notification
   const {enqueueSnackbar} = useSnackbar();
@@ -80,7 +78,22 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
 
   const [socket, setSocket] = useState<Socket>(null!);
 
+  // /* If a URL param for a room to join is provided, check if it is valid
+  // * and join the room*/
+  useEffect(() => {
+    const findMeetingFromUrl = async () => {
+      if (!token || !roomParam || meeting || !socket) return;
+      const foundMeeting = await findMeeting(roomParam);
+      if (foundMeeting) {
+        joinMeeting(foundMeeting.id.toString());
+      }
+    };
+    findMeetingFromUrl();
+    return () => {
+    };
+  }, [, socket]);
 
+  /* Authenticate with socket backend whenever a token changes */
   useEffect(() => {
     const handshake = {
       auth: {token},
@@ -99,7 +112,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    */
   useEffect(() => {
     const initiateStartup = async () => {
-      // initPeerServerConnection();
       setConnectingPeersListener();
       await setupSocketListeners();
     };
@@ -118,11 +130,10 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
 
   /**
    * Listens for currentUser to be set before
-   * initializing WebRTC and Socket connections
+   * initializing Socket listeners
    */
   useEffect(() => {
     if (!meeting || !currentUser) return;
-    // initPeerServerConnection();
     setupSocketListeners();
     return () => {
       socketListeners.current.forEach((event) => socket.off(event));
@@ -139,12 +150,9 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
       'NewMeeting',
       'UserDisconnected',
       'NewUserConnected'];
-    // eslint-disable-next-line max-len
     if (socketListeners.current.some((event) => socket.hasListeners(event))) {
       return;
     }
-    // @ts-ignore
-    // (socket as EventEmitter).removeAllListeners();
     // TODO allow media stream to be null
     socket.on('ExpiredToken', () => refreshToken());
     socket.on('NewMeeting', (receivedMeeting:IReceivedMeeting) => {
@@ -224,8 +232,8 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
         peers.current[user.id.toString()].close();
       }
       enqueueSnackbar(`${user.firstName} ${user.lastName} has disconnected`);
-      // removePeer(user.id);
-      removeMedia && removeMedia(user.id.toString());
+      removePeer(user.id.toString());
+      removeMedia(user.id.toString());
     });
     socket.on('error', (error) => {
       console.log('Socket Responded With Error: ', error);
@@ -283,8 +291,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     if (!peerConnection.current) throw new Error('Peer connection missing');
     peerConnection.current.on('open', async (id:string) => {
       console.log('ID from peer', id);
-      // * check if room param is invalid and retrieve new id.
-      // if (!roomParam) await getNewMeeting();
     });
   };
   /**
@@ -295,6 +301,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    * @param {string} newMeetingID the meeting to join
    */
   const joinMeeting = async (newMeetingID?:string) => {
+    console.log('join meeting called');
     await initPeerServerConnection();
     //* If a meeting ID is not provided and the user has a meeting stored,
     //* join that meeting.
@@ -341,8 +348,9 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    * Adds peer to peer list
    */
   const setConnectingPeersListener = () => {
-    // @ts-ignore
-    (peerConnection.current as EventEmitter).removeAllListeners();
+    /* Casting due to incorrect typescript definitions provided by module
+    * Peer extends EventEmitter */
+    (peerConnection.current as unknown as EventEmitter).removeAllListeners();
     if (!peerConnection.current) throw new Error('Missing peer connection');
     peerConnection.current.on('call', (call: MediaConnection) => {
       call.answer(outgoingMedia?.current);
@@ -376,7 +384,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     Object.values(peers.current).forEach((peer) => peer.close());
     if (peerConnection.current) {
       peerConnection.current.destroy();
-    };
+    }
   };
 
   /**

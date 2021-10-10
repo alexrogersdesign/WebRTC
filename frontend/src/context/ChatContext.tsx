@@ -42,10 +42,13 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
       }
     });
     socket?.on('ExistingMessages', (receivedMessages:IReceivedMessage[]) => {
+      // TODO allow for previous state to be persisted
+      //  when messages are received in bulk
       console.log('ExistingMessages', receivedMessages);
       const messages = receivedMessages.map((message) => parseMessage(message));
       console.log('parsed messages', messages);
-      setMessageList((prevState) => [...prevState, ...messages]);
+      // setMessageList((prevState) => [...prevState, ...messages]);
+      setMessageList(messages);
     });
   };
   const sendMessage = (message:Message) =>{

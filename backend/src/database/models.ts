@@ -1,9 +1,8 @@
 import  mongoose from "mongoose";
-const {Schema, model, Document} = mongoose;
+const {Schema, model} = mongoose;
 import User from "../../../frontend/src/shared/classes/User.js";
 import Meeting from "../../../frontend/src/shared/classes/Meeting.js";
 import Message from "../../../frontend/src/shared/classes/Message.js";
-import {parseMeeting, parseMessage, parseUser} from '../../../frontend/src/util/classParser.js'
 
 interface IUser extends User {
     passwordHash: string,
@@ -51,12 +50,23 @@ const meetingSchema = new Schema<Meeting>({
         required: true,
         minLength: 3,
     },
+    // attendees: {
+    //     type: [Schema.Types.ObjectId],
+    //     default: [],
+    //     ref: 'User'
+    // },
     attendees: [
         {
-            type: Schema.Types.ObjectId,
+            type: Schema.Types.Mixed,
             ref: 'User'
         }
     ],
+    // attendees: [
+    //     {
+    //         type: Schema.Types.ObjectId,
+    //         ref: 'User'
+    //     }
+    // ],
 })
 // meetingSchema.loadClass(Meeting);
 meetingSchema.set('toObject', {

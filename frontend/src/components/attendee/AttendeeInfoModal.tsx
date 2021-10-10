@@ -93,7 +93,7 @@ const JoinMeetingModal = ({open, setOpen, user}: Props) => {
             <ListItem alignItems="flex-start">
               <ListItemText
                 primary={'User ID'}
-                secondary={user.id}
+                secondary={user.id.toString()}
               >
               </ListItemText>
             </ListItem>

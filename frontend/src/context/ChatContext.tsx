@@ -34,7 +34,6 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
      */
   const setMessageListener = () => {
     socket?.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
-      console.log('ReceivedMessage', receivedMessage);
       const message = parseMessage(receivedMessage);
       setMessageList((prevState) => [...prevState, message]);
       if (message.user.id.toString() === currentUser?.id.toString()) {
@@ -44,9 +43,7 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
     socket?.on('ExistingMessages', (receivedMessages:IReceivedMessage[]) => {
       // TODO allow for previous state to be persisted
       //  when messages are received in bulk
-      console.log('ExistingMessages', receivedMessages);
       const messages = receivedMessages.map((message) => parseMessage(message));
-      console.log('parsed messages', messages);
       // setMessageList((prevState) => [...prevState, ...messages]);
       setMessageList(messages);
     });

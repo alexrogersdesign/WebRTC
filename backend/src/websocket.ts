@@ -30,8 +30,8 @@ const findMeeting = async (id: string) => {
 const findAllMessages = async (meetingId: string): Promise<Message[]>=> {
   const foundMessages = await MessageModel
       .find({meetingId: new ObjectID(meetingId)})
-      .populate('user', 'meeting') as unknown as IReceivedMessage[]
-
+      .populate('user') as unknown as IReceivedMessage[]
+  foundMessages.forEach(message => console.log('populated message', message))
   return foundMessages.map((message) => parseMessage(message));
 }
 const updateMeetingList = async (id:string) => {

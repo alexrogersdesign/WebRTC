@@ -6,6 +6,7 @@ import {ChildrenProps, IChatContext} from '../shared/types';
 import Message from '../shared/classes/Message';
 import {IReceivedMessage, parseMessage} from '../util/classParser';
 import {SocketIOContext} from './SocketIOContext';
+import {RestContext} from './rest/RestContext';
 
 const ChatContext = createContext<Partial<IChatContext>>({});
 
@@ -13,7 +14,8 @@ const ChatContext = createContext<Partial<IChatContext>>({});
 interface Props extends ChildrenProps {}
 
 const ChatContextProvider : React.FC<Props> = ({children}) => {
-  const {socket} = useContext(SocketIOContext);
+  const {socket, meeting} = useContext(SocketIOContext);
+  const {currentUser} = useContext(RestContext);
   const {enqueueSnackbar} = useSnackbar();
   //* The array of messages in the chat
   const [messageList, setMessageList] = useState<Message[]>([]);
@@ -21,6 +23,11 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
   useEffect(() => {
     setMessageListener();
   }, [socket]);
+
+  /* Reset message list when a new meeting is joined*/
+  useEffect(() => {
+    setMessageList([]);
+  }, [meeting]);
 
   /**
      * Listens for new user message event then...
@@ -30,7 +37,15 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
       console.log('ReceivedMessage', receivedMessage);
       const message = parseMessage(receivedMessage);
       setMessageList((prevState) => [...prevState, message]);
-      enqueueSnackbar(`New message from ${message.user}`);
+      if (message.user.id.toString() === currentUser?.id.toString()) {
+        enqueueSnackbar(`New message from ${message.user}`);
+      }
+    });
+    socket?.on('ExistingMessages', (receivedMessages:IReceivedMessage[]) => {
+      console.log('ExistingMessages', receivedMessages);
+      const messages = receivedMessages.map((message) => parseMessage(message));
+      console.log('parsed messages', messages);
+      setMessageList((prevState) => [...prevState, ...messages]);
     });
   };
   const sendMessage = (message:Message) =>{

@@ -116,6 +116,7 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
 
       socket.on('SendMessage', (message) => {
         io.in(roomID).emit('ReceivedMessage', message);
+        // socket.to(roomID).emit('ReceivedMessage', message);
         sendMessageToDatabase(message);
       });
 

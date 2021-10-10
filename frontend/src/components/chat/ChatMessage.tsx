@@ -119,6 +119,17 @@ interface Props {
 
 
 const ChatMessage = ( {message}: Props) => {
+  // eslint-disable-next-line max-len
+  const timeDiff = Math.floor((Date.now() - message.timeStamp.getTime()) / (60000));
+  console.log('timediff', timeDiff);
+  let timeToDisplay;
+  if (timeDiff === 0) timeToDisplay = 'now';
+  else if (timeDiff ===1) timeToDisplay = `${timeDiff} minute ago`;
+  else if (timeDiff < 60) timeToDisplay = `${timeDiff} minutes ago`;
+  else {
+    timeToDisplay = message.timeStamp
+        .toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+  }
   const classes = useStyles();
   const {currentUser} = useContext(RestContext);
   const attachClass = () => {
@@ -131,7 +142,7 @@ const ChatMessage = ( {message}: Props) => {
   return (
     <Box className={classes.box} p={'16px 80px 12px 10px'}>
       <Typography className={classes.date}>
-        {message.timeStamp.toLocaleTimeString()}
+        {timeToDisplay}
       </Typography>
       <Grid
         container

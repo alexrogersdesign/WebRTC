@@ -2,13 +2,13 @@
 import React, {createContext, useEffect, useState, useContext} from 'react';
 import {useSnackbar} from 'notistack';
 
-import {ChildrenProps, IChatContext} from '../shared/types';
+import {ChildrenProps} from '../shared/types';
 import Message from '../shared/classes/Message';
 import {IReceivedMessage, parseMessage} from '../util/classParser';
 import {SocketIOContext} from './SocketIOContext';
 import {RestContext} from './rest/RestContext';
 
-const ChatContext = createContext<Partial<IChatContext>>({});
+const ChatContext = createContext<IChatContext>(undefined!);
 
 
 interface Props extends ChildrenProps {}
@@ -36,7 +36,7 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
     socket?.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
       const message = parseMessage(receivedMessage);
       setMessageList((prevState) => [...prevState, message]);
-      if (message.user.id.toString() === currentUser?.id.toString()) {
+      if (message.user.id.toString() !== currentUser?.id.toString()) {
         enqueueSnackbar(`New message from ${message.user}`);
       }
     });
@@ -57,6 +57,12 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
     </ChatContext.Provider>
   );
 };
+
+export interface IChatContext {
+  messageList: Message[],
+  sendMessage: (message: Message) => void
+}
+
 
 ChatContext.displayName = 'Chat Context';
 

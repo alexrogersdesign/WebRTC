@@ -15,7 +15,6 @@ export interface MessageImage {
  */
 export default class Message {
    _id: ObjectID;
-  private _timeStamp: Date;
   private _meetingId: ObjectID;
   private _user: User;
   private _contents: string | MessageImage;
@@ -25,35 +24,31 @@ export default class Message {
 
   /**
    * Constructor
-   * @param {ObjectID} meetingId
-   * @param {User} user
-   * @param {String} contents
-   * @param {Side} side
-   * @param {String} alt
+   * @param {ObjectID} meetingId The ID of the meeting
+   * @param {User} user The User object who created the message
+   * @param {String} contents The contents of the meeting
+   * @param {ObjectID} id The ID of the messages
+   * @param {String} alt The alt text of the message
    */
   constructor(
       meetingId: ObjectID,
       user: User,
       contents: string | MessageImage,
-      side: Side = 'left',
+      id: ObjectID = new ObjectID(),
       alt: string = `message from ${user}`,
   ) {
     this._meetingId = meetingId;
-    this._id = new ObjectID();
-    this._timeStamp = new Date(this._id.getTimestamp());
+    this._id = id;
     this._user = user;
     this._contents = contents;
     this._type = typeof contents === 'string'? 'text': 'image';
     this._alt = alt;
-    this._side = side;
   }
 
   get timeStamp(): Date {
-    return this._timeStamp;
-  }
-
-  set timeStamp(value: Date) {
-    this._timeStamp = value;
+    /* Casting due to improper typing supplied by module,
+    * actual return from getTimestamp() is a Date Object*/
+    return this._id.getTimestamp() as unknown as Date;
   }
 
   get user(): User {

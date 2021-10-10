@@ -85,7 +85,15 @@ const JoinMeetingModal = ({open, setOpen, user}: Props) => {
             <ListItem alignItems="flex-start">
               <ListItemText
                 primary={'Name'}
-                secondary={`${user.firstName} ${user.lastName}`}
+                secondary={user.fullName}
+              >
+              </ListItemText>
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+              <ListItemText
+                primary={'Email'}
+                secondary={user.email}
               >
               </ListItemText>
             </ListItem>

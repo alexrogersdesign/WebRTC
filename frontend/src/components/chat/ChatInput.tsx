@@ -43,9 +43,9 @@ const ChatInput = () => {
   const handleSend = () => {
     if (!currentUser) throw new Error('No user found');
     if (!field.length) return;
-    if (!meeting) throw new Error('Message sent outside of meeing');
+    if (!meeting) throw new Error('Message sent outside of meeting');
     const message = new Message(meeting.id, currentUser, field);
-    sendMessage && sendMessage(message);
+    sendMessage(message);
     setField('');
   };
   const handleKeypress =
@@ -85,5 +85,6 @@ const ChatInput = () => {
     </Box>
   );
 };
+
 
 export default ChatInput;

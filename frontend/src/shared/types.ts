@@ -35,11 +35,6 @@ export interface ISegmentationContext {
    tempVideo: React.MutableRefObject<HTMLVideoElement>,
    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
 }
-export interface IChatContext {
-   messageList: Message[],
-   sendMessage: (message: Message) => void
-}
-
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
     Pick<T, Exclude<keyof T, Keys>>
     & {

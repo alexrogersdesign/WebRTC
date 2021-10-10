@@ -16,7 +16,8 @@ interface Props {
 const useStyles = makeStyles(({palette, spacing}) =>
   createStyles({
     paper: {
-      width: '35vw',
+      // width: '35vw',
+      width: '100%',
       height: '50vh',
       maxWidth: '500px',
       maxHeight: '700px',

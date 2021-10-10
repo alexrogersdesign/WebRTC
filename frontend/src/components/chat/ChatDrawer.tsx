@@ -75,7 +75,7 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     }),
     drawerPaper: (props) =>({
       top: offset,
-      width: props.current?.offsetWidth,
+      // width: props.current?.offsetWidth,
       backgroundColor: 'rgba(255,255,255,0)',
       outline: 0,
       borderWidth: 0,

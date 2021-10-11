@@ -8,6 +8,13 @@ import {RestContext} from '../../context/rest/RestContext';
 import {ListItem, Paper, Typography} from '@material-ui/core';
 import MeetingItem from './MeetingItem';
 import {SocketIOContext} from '../../context/SocketIOContext';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import ToolTip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import AlertDialog from './AlertDialog';
+import Meeting from '../../shared/classes/Meeting';
 
 interface Props {
 }
@@ -34,13 +41,23 @@ const useStyles = makeStyles((theme: Theme) =>
       // alignItems: 'flex-start',
       flexShrink: 1,
     },
+    delete: {
+      // padding: theme.spacing(0, 70, 0),
+      alignSelf: 'flex-start',
+      color: '#f44336',
+      fill: '#f44336',
+    },
   }),
 );
 
 const MeetingListDisplay = (props:Props) => {
   const classes = useStyles();
-  const {meetingList} = useContext(RestContext);
+  const {meetingList, deleteMeeting} = useContext(RestContext);
   const {joinMeeting} = useContext(SocketIOContext);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const handleDelete = (meeting:Meeting) => {
+
+  };
   return (
     <Paper className={classes.paper} elevation={3} >
       <Typography className={classes.title} variant='h4'>
@@ -48,14 +65,7 @@ const MeetingListDisplay = (props:Props) => {
       </Typography>
       <List className={classes.list}>
         {meetingList?.map((meeting) =>
-          <ListItem
-            button
-            key={meeting.id.toString()}
-            className={classes.item}
-            onClick={()=>joinMeeting && joinMeeting(meeting.id.toString())}
-          >
-            <MeetingItem meeting={meeting}/>
-          </ListItem>,
+          <MeetingItem key={meeting.id.toString()} meeting={meeting}/>,
         )}
       </List>
     </Paper>

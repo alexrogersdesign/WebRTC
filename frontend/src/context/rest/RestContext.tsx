@@ -69,6 +69,7 @@ const RestContextProvider = ({children}: Props) => {
     refreshToken,
     findMeeting,
     getAllMeetingsRequest,
+    deleteMeetingRequest,
   } = useRestApi(null, handleError);
 
   const checkIfLogged = async () => {
@@ -165,7 +166,7 @@ const RestContextProvider = ({children}: Props) => {
     const user = response.data;
     const parsedUser = parseUser(user);
     enqueueSnackbar(
-        `xAccount for ${parsedUser.email} created`,
+        `Account for ${parsedUser.email} created`,
         snackbarSuccessOptions);
     return parsedUser;
   };
@@ -229,7 +230,19 @@ const RestContextProvider = ({children}: Props) => {
       setMeetingList(response);
     } catch (e) {
       console.log(e);
-      // handleError(e, 'Error When Retrieving Meetings');
+    }
+  };
+  const deleteMeeting = async (id:string) => {
+    try {
+      await deleteMeetingRequest(id);
+      setMeetingList((oldState) => {
+        return oldState.filter((meeting) => meeting.id.toString() !== id);
+      });
+      enqueueSnackbar(`Meeting Deleted`, snackbarSuccessOptions);
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   };
 
@@ -248,6 +261,7 @@ const RestContextProvider = ({children}: Props) => {
         findMeeting,
         meetingList,
         token,
+        deleteMeeting,
       }}
     >
       {children}
@@ -284,7 +298,8 @@ export interface IRestContext {
   setCurrentUser: (user:User | null) => void,
   findMeeting: (id:string) => Promise<Meeting | undefined>
   token: string | null,
-  checkIfLogged: ()=> void
+  checkIfLogged: ()=> void,
+  deleteMeeting: (id:string) => Promise<boolean>;
 }
 
 RestContext.displayName = 'Rest Context';

@@ -37,15 +37,7 @@ const peerConnectionOptions = {
 };
 //* Context item to be passed to app
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
-//* the param extracted from the url indicating the current meeting
-const roomParam = new URLSearchParams(window.location.search).get('room');
 
-// !URL of deployed server goes here
-//* SocketIO server instance
-const connectionUrl = `http://localhost:5000?room=${roomParam}`;
-// const connectionUrl = 'http://localhost:5000';
-console.log('socket url', connectionUrl);
-// const socket = io(connectionUrl);
 
 const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   // TODO remove state that can be inferred
@@ -77,6 +69,13 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   //* indicate that the video is ready to be rendered
 
   const [socket, setSocket] = useState<Socket>(null!);
+
+  //* the param extracted from the url indicating the current meeting
+  const roomParam = new URLSearchParams(window.location.search).get('room');
+
+  // !URL of deployed server goes here
+  //* SocketIO server instance
+  const connectionUrl = `http://localhost:5000?room=${roomParam}`;
 
   // /* If a URL param for a room to join is provided, check if it is valid
   // * and join the room*/

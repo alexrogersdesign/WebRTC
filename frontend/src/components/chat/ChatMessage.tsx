@@ -27,6 +27,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
     },
     msgBox: {
       // 'width': '100%',
+      // 'height': '100%',
       'paddingTop': '2%',
       'paddingLeft': '5%',
       'display': 'flex',
@@ -45,6 +46,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
       flexDirection: 'row-reverse',
     },
     msg: {
+      minHeight: '100%',
       // maxWidth: '100%',
       // minWidth: '60%',
       padding: spacing(1, 2),

@@ -154,6 +154,13 @@ const findMeetingRequest = async (id:string) : Promise<Meeting | undefined> => {
   const response = await api.get(`/meetings/${id}`);
   return parseMeeting(response?.data);
 };
+const deleteMeetingRequest = async (id:string) => {
+  try {
+    return await api.delete(`/meetings/${id}`);
+  } catch (error) {
+    errorHandler(error);
+  }
+};
 const getAllMeetingsRequest = async () : Promise<Meeting[]> => {
   const response = await api.get('/meetings/');
   return response.data.map(
@@ -172,6 +179,7 @@ return {
   loginRequest,
   logoutRequest,
   getAllMeetingsRequest,
+  deleteMeetingRequest,
 };
 };
 export {useRestApi};

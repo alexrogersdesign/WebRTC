@@ -58,15 +58,16 @@ const useStyles = makeStyles((theme: Theme) =>
 const Room = (props: Props) => {
   const classes = useStyles();
   const {meeting} = useContext(SocketIOContext);
+  const {token} = useContext(RestContext);
   const {externalMedia, videoReady} = useContext(MediaControlContext);
   const {currentTheme, setTheme} = useContext(CustomThemeContext);
   const {loggedIn} = useContext(RestContext);
   const users = externalMedia?.map(({user, stream}) => user);
 
   useEffect(() => {
-    if (!meeting) setTheme && setTheme('dark');
-    if (meeting) setTheme && setTheme('normal');
-  }, [meeting]);
+    if (!token) setTheme && setTheme('dark');
+    if (token) setTheme && setTheme('normal');
+  }, [meeting, token]);
 
   return (
     <div >

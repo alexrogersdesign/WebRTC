@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable no-unused-vars */
+import React, {useState} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Typography from '@material-ui/core/Typography';
@@ -9,15 +10,17 @@ import Divider from '@material-ui/core/Divider';
 import CloseIcon from '@material-ui/icons/Close';
 
 
-import User from '../../shared/classes/User';
+import Meeting from '../../shared/classes/Meeting';
 
-import VideoAvatar from '../video/VideoAvatar';
 import {IconButton} from '@material-ui/core';
+import CopyButtonIcon from '../common/CopyButtonIcon';
+import Button from '@material-ui/core/Button';
 
 interface Props {
-   open: boolean,
-   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-   user: User,
+    open: boolean,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    meeting: Meeting,
+    action: () => void,
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -32,6 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     modal: {
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -47,13 +51,19 @@ const useStyles = makeStyles((theme: Theme) =>
     titleItem: {
       padding: theme.spacing(0, 1, 0),
     },
+    button: {
+      // flexDirection: 'column',
+      margin: theme.spacing(1, 0, 0),
+      // position: 'absolute',
+      // left: '100%',
+      float: 'right',
+    },
   }),
 );
 
-const AttendeeInfoModal = ({open, setOpen, user}: Props) => {
+const MeetingInfoModal = ({open, setOpen, meeting, action}: Props) => {
   const classes = useStyles();
   const handleClose = () => setOpen(false);
-
 
   return (
     <div>
@@ -62,7 +72,7 @@ const AttendeeInfoModal = ({open, setOpen, user}: Props) => {
         open={open}
         onClose={handleClose}
         aria-labelledby="attendee-modal-title"
-        aria-describedby="info-about-attendee"
+        aria-describedby="info-about-meeting"
       >
         <div className={classes.paper}>
           <IconButton
@@ -72,45 +82,44 @@ const AttendeeInfoModal = ({open, setOpen, user}: Props) => {
             <CloseIcon/>
           </IconButton>
           <div className={classes.title}>
-            <VideoAvatar disabled className={classes.titleItem} user={user}/>
             <Typography
               className={classes.titleItem}
               variant='h5'
-              id="join-meeting"
+              id="meeting-title"
             >
-              {`${user.firstName} ${user.lastName}`}
+              {`Title: ${meeting.title}`}
             </Typography>
           </div>
           <List>
             <ListItem alignItems="flex-start">
-              <ListItemText
-                primary={'Name'}
-                secondary={user.fullName}
-              >
-              </ListItemText>
             </ListItem>
             <Divider variant="inset" component="li" />
             <ListItem alignItems="flex-start">
               <ListItemText
-                primary={'Email'}
-                secondary={user.email}
+                primary={'Meeting ID'}
+                secondary={meeting.id.toString()}
               >
               </ListItemText>
-            </ListItem>
-            <Divider variant="inset" component="li" />
-            <ListItem alignItems="flex-start">
-              <ListItemText
-                primary={'User ID'}
-                secondary={user.id.toString()}
-              >
-              </ListItemText>
+              <CopyButtonIcon
+                textToCopy={meeting.id.toString()}
+                description={'Meeting ID'}
+                edge='end'
+              />
             </ListItem>
             <Divider variant="inset" component="li" />
           </List>
+          <Button
+            className={classes.button}
+            onClick={()=> action()}
+            variant="contained"
+            color="primary"
+          >
+                Join
+          </Button>
         </div>
       </Modal>
     </div>
   );
 };
 
-export default AttendeeInfoModal;
+export default MeetingInfoModal;

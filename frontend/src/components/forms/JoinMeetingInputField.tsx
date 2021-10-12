@@ -16,7 +16,6 @@ import {SocketIOContext} from '../../context/SocketIOContext';
 interface Props {
    className?: string | undefined,
    placeholder?: string,
-
 }
 
 const useStyles = makeStyles((theme: Theme) =>

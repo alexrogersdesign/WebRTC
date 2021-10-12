@@ -14,6 +14,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
+import MeetingInfoModal from './MeetingInfoModal';
+import {join} from 'lodash';
 
 interface Props {
   meeting: Meeting
@@ -46,8 +48,12 @@ const MeetingItem = ({meeting}: Props) => {
   const {deleteMeeting} = useContext(RestContext);
   const {joinMeeting} = useContext(SocketIOContext);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [joinModalOpen, setJoinModalOpen] = useState(false);
   const handleDelete = () => {
     deleteMeeting(meeting.id.toString());
+  };
+  const handleJoin = () => {
+    joinMeeting(meeting.id.toString());
   };
   const meetingPrimary = `${meeting?.title}`;
   const meetingSecondary = `ID: ${meeting?.id}`;
@@ -55,7 +61,8 @@ const MeetingItem = ({meeting}: Props) => {
     <>
       <ListItem
         alignItems='flex-start'
-        onClick={()=>joinMeeting(meeting.id.toString())}
+        // onClick={()=>joinMeeting(meeting.id.toString())}
+        onClick={()=>setJoinModalOpen(true)}
         className={classes.listItem}
         button
         // style={{backgroundColor: 'transparent', cursor: 'default'}}
@@ -83,6 +90,12 @@ const MeetingItem = ({meeting}: Props) => {
         confirmLabel={'Delete'}
         cancelLabel={'Cancel'}
         warn
+      />
+      <MeetingInfoModal
+        open={joinModalOpen}
+        setOpen={setJoinModalOpen}
+        meeting={meeting}
+        action={handleJoin}
       />
     </>
 

@@ -50,6 +50,19 @@ const meetingSchema = new Schema<Meeting>({
         required: true,
         minLength: 3,
     },
+    description: {
+        type: String,
+        required: true,
+        minLength: 3,
+    },
+    start: {
+        type: Date,
+        required: true,
+    },
+    end: {
+        type: Date,
+        required: true,
+    },
     // attendees: {
     //     type: [Schema.Types.ObjectId],
     //     default: [],

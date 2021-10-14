@@ -6,7 +6,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {RestContext} from '../../context/rest/RestContext';
 import {ListItem, Paper, Typography} from '@material-ui/core';
-import MeetingItem from './MeetingItem';
+import MeetingListItem from './MeetingListItem';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import ToolTip from '@material-ui/core/Tooltip';
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const MeetingListDisplay = (props:Props) => {
+const MeetingList = (props:Props) => {
   const classes = useStyles();
   const {meetingList, deleteMeeting} = useContext(RestContext);
   const {joinMeeting} = useContext(SocketIOContext);
@@ -65,11 +65,11 @@ const MeetingListDisplay = (props:Props) => {
       </Typography>
       <List className={classes.list}>
         {meetingList?.map((meeting) =>
-          <MeetingItem key={meeting.id.toString()} meeting={meeting}/>,
+          <MeetingListItem key={meeting.id.toString()} meeting={meeting}/>,
         )}
       </List>
     </Paper>
   );
 };
 
-export default MeetingListDisplay;
+export default MeetingList;

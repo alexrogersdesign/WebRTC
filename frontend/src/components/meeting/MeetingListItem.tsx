@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const MeetingItem = ({meeting}: Props) => {
+const MeetingListItem = ({meeting}: Props) => {
   const classes = useStyles();
   const {deleteMeeting} = useContext(RestContext);
   const {joinMeeting} = useContext(SocketIOContext);
@@ -61,7 +61,6 @@ const MeetingItem = ({meeting}: Props) => {
     <>
       <ListItem
         alignItems='flex-start'
-        // onClick={()=>joinMeeting(meeting.id.toString())}
         onClick={()=>setJoinModalOpen(true)}
         className={classes.listItem}
         button
@@ -98,8 +97,7 @@ const MeetingItem = ({meeting}: Props) => {
         action={handleJoin}
       />
     </>
-
   );
 };
 
-export default MeetingItem;
+export default MeetingListItem;

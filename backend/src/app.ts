@@ -10,6 +10,7 @@ import messagesRouter from "./routes/messages.router.js";
 import loginRouter from "./routes/login.router.js";
 // import errorMiddleware from "./util/middleware/errorMiddleware.js";
 import errorHandler from 'errorhandler'
+import bodyParser from "body-parser";
 
 const app = express();
 const allowedOrigins = ['http://localhost:3000'];

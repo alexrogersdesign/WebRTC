@@ -37,6 +37,10 @@ export interface INewUser {
 }
 export interface INewMeeting {
   title: string,
+  description: string,
+  start: Date,
+  end: Date,
+  attendees?: User[]
 }
 
 const RestContextProvider = ({children}: Props) => {
@@ -186,6 +190,7 @@ const RestContextProvider = ({children}: Props) => {
       ...newMeeting,
       id: newId,
     };
+    console.log('new meeting to submit', meetingToSubmit);
     const response = await api
         .post('meetings', meetingToSubmit)
         .catch((error) => {

@@ -4,7 +4,6 @@ import ObjectID from 'bson-objectid';
 import Meeting from "../../../frontend/src/shared/classes/Meeting";
 import {MeetingModel} from "../database/models.js";
 import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
-import app from "../app";
 
 const meetingsRouter = express.Router();
 meetingsRouter.use(authRestricted);
@@ -40,10 +39,10 @@ meetingsRouter.get("/:id", async (req: Request, res: Response) => {
 
 meetingsRouter.post("/", async (req: Request, res: Response) => {
     try {
-        const {id, title} = req.body;
+        const {id, ...rest} = req.body;
         const newMeeting = new MeetingModel ({
             _id: id,
-            title
+            ...rest
         })
         const result = await newMeeting.save();
         result

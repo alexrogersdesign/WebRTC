@@ -10,11 +10,17 @@ import User from '../shared/classes/User.js';
 export interface _BaseIReceivedMeeting {
     _id : string | ObjectID,
     _title: string,
+    _description: string,
+    _start: string,
+    _end: string,
     _attendees?: IReceivedUser[];
 }
 export interface BaseIReceivedMeeting {
     id : string | ObjectID,
     title: string,
+    description: string,
+    start: string,
+    end: string,
     attendees?: IReceivedUser[];
 }
 export type IReceivedMeeting = BaseIReceivedMeeting & _BaseIReceivedMeeting
@@ -76,11 +82,17 @@ const parseAttendees = (input:IReceivedUser[]| undefined): User[] | null => {
 
 export const parseMeeting = (input:IReceivedMeeting): Meeting => {
   const newTitle = input.title?? input._title;
-  const newId = input.id?? input._id;
-  const newMeeting = new Meeting(newTitle);
-  newMeeting.id = parseId(newId);
+  const newId = parseId(input.id?? input._id);
+  const newStart = new Date(input.start?? input._start);
+  const newEnd = new Date(input.end?? input._end);
+  const newDescription = input.description?? input._description;
+  const newMeeting = new Meeting(
+      newTitle,
+      newDescription,
+      newStart,
+      newEnd,
+      newId);
   let attendees;
-
   if (input['_attendees']) {
     attendees = parseAttendees(input._attendees);
   }

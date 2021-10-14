@@ -18,5 +18,4 @@ export default function connect () {
         .catch((error) => {
             console.log('error connection to MongoDB:', error.message)
         })
-
 }

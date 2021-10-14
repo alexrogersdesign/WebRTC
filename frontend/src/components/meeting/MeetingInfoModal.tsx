@@ -9,7 +9,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
 import CloseIcon from '@material-ui/icons/Close';
 
-
 import Meeting from '../../shared/classes/Meeting';
 
 import {IconButton} from '@material-ui/core';
@@ -27,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
       backgroundColor: theme.palette.background.paper,
+      width: '60%',
       border: '2px solid #000',
       borderRadius: 5,
       boxShadow: theme.shadows[5],
@@ -91,8 +91,8 @@ const MeetingInfoModal = ({open, setOpen, meeting, action}: Props) => {
             </Typography>
           </div>
           <List>
-            <ListItem alignItems="flex-start">
-            </ListItem>
+            {/* <ListItem alignItems="flex-start">*/}
+            {/* </ListItem>*/}
             <Divider variant="inset" component="li" />
             <ListItem alignItems="flex-start">
               <ListItemText
@@ -105,6 +105,30 @@ const MeetingInfoModal = ({open, setOpen, meeting, action}: Props) => {
                 description={'Meeting ID'}
                 edge='end'
               />
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+              <ListItemText
+                primary={'Description'}
+                secondary={meeting.description}
+              >
+              </ListItemText>
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+              <ListItemText
+                primary={'Start Time'}
+                secondary={meeting.start.toLocaleString()}
+              >
+              </ListItemText>
+            </ListItem>
+            <Divider variant="inset" component="li" />
+            <ListItem alignItems="flex-start">
+              <ListItemText
+                primary={'End Time'}
+                secondary={meeting.end.toLocaleString()}
+              >
+              </ListItemText>
             </ListItem>
             <Divider variant="inset" component="li" />
           </List>

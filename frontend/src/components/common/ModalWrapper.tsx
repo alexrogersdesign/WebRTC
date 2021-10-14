@@ -15,6 +15,9 @@ export interface ModalProps {
 interface Props extends ModalProps{
     // eslint-disable-next-line max-len
     Component: React.ForwardRefExoticComponent<ModalProps & React.RefAttributes<HTMLDivElement>>
+    // eslint-disable-next-line max-len
+    // Component: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLDivElement>>
+    componentProps?: any,
     ariaLabeledBy?: string,
     ariaDescribedBy?: string
 }
@@ -68,6 +71,7 @@ const ModalWrapper = ({
   open,
   setOpen,
   Component,
+  componentProps,
   ariaDescribedBy,
   ariaLabeledBy}: Props) => {
   // TODO investigate double rendering
@@ -90,7 +94,7 @@ const ModalWrapper = ({
       >
         <Fade in={open} timeout={{enter: 750, exit: 250}}>
           <DialogContent className={classes.dialogContent}>
-            <Component setOpen={setOpen} open={open}/>
+            <Component setOpen={setOpen} open={open} {...componentProps} />
           </DialogContent>
         </Fade>
       </Modal>

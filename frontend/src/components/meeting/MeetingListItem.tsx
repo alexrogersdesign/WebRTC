@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+/* eslint-disable-next-line new-cap */
+// eslint-disable-next-line new-cap
 import React, {useState, useEffect, useContext} from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -16,6 +18,11 @@ import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import MeetingInfoModal from './MeetingInfoModal';
 import {join} from 'lodash';
+import MeetingCardModal from './MeetingCardModal';
+import ModalWrapper from '../common/ModalWrapper';
+import MeetingCard from './MeetingCard';
+import PropTypes from 'prop-types';
+import JoinMeetingForm from '../forms/JoinMeetingForm';
 
 interface Props {
   meeting: Meeting
@@ -90,12 +97,24 @@ const MeetingListItem = ({meeting}: Props) => {
         cancelLabel={'Cancel'}
         warn
       />
-      <MeetingInfoModal
+      {/* <MeetingInfoModal*/}
+      {/*  open={joinModalOpen}*/}
+      {/*  setOpen={setJoinModalOpen}*/}
+      {/*  meeting={meeting}*/}
+      {/*  action={handleJoin}*/}
+      {/* />*/}
+      <MeetingCardModal
         open={joinModalOpen}
         setOpen={setJoinModalOpen}
         meeting={meeting}
         action={handleJoin}
       />
+      {/* <ModalWrapper*/}
+      {/*  Component={<MeetingCard meeting={meeting}/>}*/}
+      {/*  componentProps={meeting}*/}
+      {/*  open={joinModalOpen}*/}
+      {/*  setOpen={setJoinModalOpen}*/}
+      {/* />*/}
     </>
   );
 };

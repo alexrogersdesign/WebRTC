@@ -16,33 +16,6 @@ import {MeetingIcon} from '../../shared/classes/MeetingIcon';
 interface Props extends ChildrenProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
 }
-const FILE_SIZE = 100000;
-const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
-
-const validationSchema = yup.object({
-  title: yup
-      .string()
-      .min(4, 'Title should be of minimum 4 characters length')
-      .defined('Title is required'),
-  description: yup
-      .string()
-      .min(4, 'Description should be of minimum 4 characters length')
-      .defined('Description is required'),
-  start: yup
-      .date()
-      .min(new Date(), 'Start time cannot be in past')
-      .defined('Start date is required'),
-  end: yup
-      .date()
-      .min(yup.ref('start'), 'End time cannot be before start time' )
-      .defined('End date is required'),
-  // icon: yup
-  //     .mixed()
-  //     .test('fileSize', 'File size is too large', (value)=>
-  //       value.size <= FILE_SIZE)
-  //     .test('fileType', 'Unsupported File Format', (value) =>
-  //       SUPPORTED_FORMATS.includes(value.type)),
-});
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -115,6 +88,37 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+const FILE_SIZE = 100000;
+// eslint-disable-next-line max-len
+// const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+const SUPPORTED_FORMATS = [''];
+
+const validationSchema = yup.object({
+  title: yup
+      .string()
+      .min(4, 'Title should be of minimum 4 characters length')
+      .defined('Title is required'),
+  description: yup
+      .string()
+      .min(4, 'Description should be of minimum 4 characters length')
+      .defined('Description is required'),
+  start: yup
+      .date()
+      .min(new Date(), 'Start time cannot be in past')
+      .defined('Start date is required'),
+  end: yup
+      .date()
+      .min(yup.ref('start'), 'End time cannot be before start time' )
+      .defined('End date is required'),
+  icon: yup
+      .mixed()
+      .test('fileSize', 'File size is too large', (value)=>
+        value && value.size <= FILE_SIZE)
+      .test('fileType', 'Unsupported File Format', (value) =>
+        value && SUPPORTED_FORMATS.includes(value.type)),
+});
+
+
 const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const {setOpen} = props;
   const {createMeeting} = useContext(RestContext);
@@ -165,50 +169,50 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       >
               New Meeting
       </Typography>
-      <Container className={classes.imageContainer}>
-        <input
-          accept="image/*"
-          className={classes.input}
-          style={{display: 'none'}}
-          id="raised-button-file"
-          multiple
-          type='file'
-          onBlur={formik.handleBlur}
-          onChange={(event)=>{
-            if (!event?.currentTarget?.files) return;
-            formik.setFieldValue('iconImage', event?.currentTarget?.files[0]);
-          }
-          }
-        />
-        <label htmlFor="raised-button-file">
-          {!formik.values.iconImage && (
-            <Button
-              variant="text"
-              component="span"
-              className={classes.button}
-            >
-                Upload Icon
-            </Button>
-          )}
-        </label>
-        {formik.values.iconImage && (
-          <>
-            <Button
-              variant="text"
-              // component="span"
-              // className={classes.button}
-              onClick={()=> formik.setFieldValue('iconImage', undefined)}
-            >
-                  Remove
-            </Button>
-            <img
-              className={classes.imagePreview}
-              src={URL.createObjectURL(formik.values.iconImage)}
-            />
-          </>
-        )}
-      </Container>
       <form onSubmit={formik.handleSubmit}>
+        <Container className={classes.imageContainer}>
+          <input
+            accept="image/*"
+            className={classes.input}
+            style={{display: 'none'}}
+            id="raised-button-file"
+            multiple
+            type='file'
+            onBlur={formik.handleBlur}
+            onChange={(event)=>{
+              if (!event?.currentTarget?.files) return;
+              formik.setFieldValue('iconImage', event?.currentTarget?.files[0]);
+            }
+            }
+          />
+          <label htmlFor="raised-button-file">
+            {!formik.values.iconImage && (
+              <Button
+                variant="text"
+                component="span"
+                className={classes.button}
+              >
+                Upload Icon
+              </Button>
+            )}
+          </label>
+          {formik.values.iconImage && (
+            <>
+              <Button
+                variant="text"
+                // component="span"
+                // className={classes.button}
+                onClick={()=> formik.setFieldValue('iconImage', undefined)}
+              >
+                  Remove
+              </Button>
+              <img
+                className={classes.imagePreview}
+                src={URL.createObjectURL(formik.values.iconImage)}
+              />
+            </>
+          )}
+        </Container>
         <TextField
           fullWidth
           className={classes.formItem}
@@ -246,7 +250,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
             id="start"
             label="Meeting start"
             type="datetime-local"
-            // variant="outlined"
+            variant="outlined"
             // defaultValue={defaultTime}
             className={classes.dateField}
             InputLabelProps={{
@@ -264,7 +268,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
             id="end"
             label="Meeting end"
             type="datetime-local"
-            // variant="outlined"
+            variant="outlined"
             // defaultValue={defaultTime}
             className={classes.dateField}
             InputLabelProps={{

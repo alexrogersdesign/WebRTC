@@ -123,10 +123,8 @@ interface ImageBuffer {
 const parseBuffer = (input: ImageBuffer| undefined): string | undefined => {
   if (!input) return;
   const buffer = Buffer.from(input.data);
-  console.log('buffer from', buffer);
   const bufferString = buffer.toString('base64');
   const dataString = `data:${input.mimeType};base64,${bufferString}`;
-  console.log('data string', dataString);
   return dataString;
 };
 

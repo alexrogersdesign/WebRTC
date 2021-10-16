@@ -182,13 +182,6 @@ const RestContextProvider = ({children}: Props) => {
   // eslint-disable-next-line max-len
   const createMeeting = async (newMeeting: INewMeeting):Promise<Meeting | undefined> => {
     const {title, description, start, end, iconImage} = newMeeting;
-    const processImage = async () => {
-      if (!iconImage) return;
-      const iconResponse = await sendMeetingIcon(iconImage, newMeetingId);
-      // return parseMeetingIcon(iconResponse?.data);
-    };
-    // const newIcon = await processImage();
-    // console.log('icon image', iconImage);
     const newMeetingId = new ObjectID();
     const formData = new FormData();
     formData.append('id', newMeetingId.toString());
@@ -197,25 +190,6 @@ const RestContextProvider = ({children}: Props) => {
     formData.append('start', start.toString());
     formData.append('end', end.toString());
     formData.append('icon', iconImage?? '');
-    // console.log(...formData);
-    const meetingToSubmit = {
-      ...newMeeting,
-      id: newMeetingId,
-      // icon: newIcon?.image,
-      icon: iconImage,
-    };
-    // eslint-disable-next-line max-len
-    // console.log('new meeting to submit', serialize(meetingToSubmit).entries());
-    // const formData = objectToFormData(meetingToSubmit);
-    // console.log('form data', ...formData);
-    // eslint-disable-next-line guard-for-in
-    // for (const item in formData.values()) {
-    //   console.log('item', item);
-    // }
-
-    // const multipartOptions = {
-    //   headers:
-    // }
     const response = await api
         .post('meetings', formData )
         .catch((error) => {
@@ -223,7 +197,7 @@ const RestContextProvider = ({children}: Props) => {
         });
     if (!response) return;
     const parsedMeeting = parseMeeting(response.data);
-
+    setMeetingList((oldState) => [...oldState, parsedMeeting]);
     enqueueSnackbar(
         `Meeting titled \"${parsedMeeting?.title}\" was created`,
         snackbarSuccessOptions);

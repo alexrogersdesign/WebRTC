@@ -18,7 +18,7 @@ usersRouter.get("/", async (_req: Request, res: Response) => {
         if (error instanceof Error) {
             res.status(500).send(error.message);
         } else {
-            res.status(500).send('Unknown Error Occured');
+            res.status(500).send('Unknown Error Occurred');
         }
     }
 });
@@ -28,7 +28,7 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
 
     try {
         const query = { _id: new ObjectID(id) };
-        const user = (await UserModel.findOne(query)) as User;
+        const user = (await UserModel.findOne(query,{},{maxTime: 30_000})) as User;
         if (user) {
             res.status(200).send(user);
         }

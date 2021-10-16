@@ -1,10 +1,12 @@
+// global.Buffer = global.Buffer || require('buffer').Buffer;
 import ObjectID from 'bson-objectid';
-
+import {Buffer} from 'buffer';
 import Meeting from '../shared/classes/Meeting.js';
 import Message,
 {MessageImage,
   MessageType} from '../shared/classes/Message.js';
 import User from '../shared/classes/User.js';
+// import {MeetingIcon} from '../shared/classes/MeetingIcon.js';
 // import {RequireAtLeastOne} from '../shared/types';
 
 export interface _BaseIReceivedMeeting {
@@ -13,6 +15,8 @@ export interface _BaseIReceivedMeeting {
     _description: string,
     _start: string,
     _end: string,
+    // _icon?: IReceivedMeetingIcon,
+    _icon?: ImageBuffer,
     _attendees?: IReceivedUser[];
 }
 export interface BaseIReceivedMeeting {
@@ -21,6 +25,8 @@ export interface BaseIReceivedMeeting {
     description: string,
     start: string,
     end: string,
+    // icon?: IReceivedMeetingIcon,
+    icon?: ImageBuffer,
     attendees?: IReceivedUser[];
 }
 export type IReceivedMeeting = BaseIReceivedMeeting & _BaseIReceivedMeeting
@@ -80,25 +86,76 @@ const parseAttendees = (input:IReceivedUser[]| undefined): User[] | null => {
   return input.map((iUser) => parseUser(iUser));
 };
 
-export const parseMeeting = (input:IReceivedMeeting): Meeting => {
-  const newTitle = input.title?? input._title;
-  const newId = parseId(input.id?? input._id);
-  const newStart = new Date(input.start?? input._start);
-  const newEnd = new Date(input.end?? input._end);
-  const newDescription = input.description?? input._description;
-  const newMeeting = new Meeting(
-      newTitle,
-      newDescription,
-      newStart,
-      newEnd,
-      newId);
-  let attendees;
-  if (input['_attendees']) {
-    attendees = parseAttendees(input._attendees);
-  }
-  if (attendees) newMeeting.attendees = attendees;
-  return newMeeting;
+export interface BaseIReceivedImage {
+     id: ObjectID| string,
+     image: string,
+}
+export interface _BaseIReceivedImage {
+    _id: ObjectID| string,
+    _image: string,
+}
+
+export interface BaseIReceivedMeetingIcon extends BaseIReceivedImage{
+    meetingId: ObjectID| string,
+}
+export interface _BaseIReceivedMeetingIcon extends _BaseIReceivedImage{
+    _meetingId: ObjectID| string,
+}
+
+export type IReceivedMeetingIcon =
+    BaseIReceivedMeetingIcon &
+    _BaseIReceivedMeetingIcon;
+
+// export const parseMeetingIcon =
+//     (input: IReceivedMeetingIcon |undefined): MeetingIcon| undefined => {
+//       if (!input) return;
+//       const newId = parseId(input.id?? input._id);
+//       const newImage = input.image?? input._image;
+//       const newMeetingId = parseId(input.meetingId?? input._meetingId);
+//       return new MeetingIcon(newImage, newId, newMeetingId);
+//     };
+
+interface ImageBuffer {
+    data: Buffer,
+    mimeType: string
+}
+
+const parseBuffer = (input: ImageBuffer| undefined): string | undefined => {
+  if (!input) return;
+  const buffer = Buffer.from(input.data);
+  console.log('buffer from', buffer);
+  const bufferString = buffer.toString('base64');
+  const dataString = `data:${input.mimeType};base64,${bufferString}`;
+  console.log('data string', dataString);
+  return dataString;
 };
+
+export const parseMeeting =
+    (input:IReceivedMeeting, icon?: ImageBuffer): Meeting => {
+      const newTitle = input.title?? input._title;
+      const newId = parseId(input.id?? input._id);
+      const newStart = new Date(input.start?? input._start);
+      const newEnd = new Date(input.end?? input._end);
+      const newDescription = input.description?? input._description;
+      const newIcon = parseBuffer(input.icon?? input._icon);
+      // const newIcon = parseMeetingIcon(icon) ??
+      //   parseMeetingIcon(input.icon)??
+      //   parseMeetingIcon(input._icon);
+      const newMeeting = new Meeting(
+          newTitle,
+          newDescription,
+          newStart,
+          newEnd,
+          newId,
+          newIcon,
+      );
+      let attendees;
+      if (input['_attendees']) {
+        attendees = parseAttendees(input._attendees);
+      }
+      if (attendees) newMeeting.attendees = attendees;
+      return newMeeting;
+    };
 
 export const parseMessage = (input:IReceivedMessage) : Message => {
   const newId = parseId(input.id?? input._id);

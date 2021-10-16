@@ -154,7 +154,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     }
     // TODO allow media stream to be null
     socket.on('ExpiredToken', () => refreshToken());
-    socket.on('NewMeeting', (receivedMeeting:IReceivedMeeting) => {
+    socket.on('NewMeeting', async (receivedMeeting:IReceivedMeeting) => {
       try {
         const newMeeting = parseMeeting(receivedMeeting);
         if (!newMeeting) return;

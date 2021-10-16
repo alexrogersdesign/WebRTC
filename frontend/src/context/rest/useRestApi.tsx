@@ -31,7 +31,8 @@ const useRestApi = (
   const instance = useRef(axios.create({
     baseURL: '',
     headers: {
-      'Content-Type': 'application/json',
+      // 'Content-Type': 'application/json',
+      'Content-Type': 'multipart/form-data',
     },
     withCredentials: true,
     // validateStatus: (status) => status < 400,
@@ -46,6 +47,11 @@ const useRestApi = (
  */
   const setRequestInterceptor = () => {
     return api.interceptors.request.use(async (config) => {
+      if (config.url === '/login') {
+        config.headers['Content-Type'] = 'application/json';
+      } else if (config.method === 'post' || config.method === 'put') {
+        config.headers['Content-Type'] = 'multipart/form-data';
+      }
       // console.info('Starting Request', JSON.stringify(config, null, 2));
       // config.headers.Authorization = token ? `Bearer ${token}` : '';
       // config.headers['x-access-token'] = token? token: '';
@@ -107,7 +113,7 @@ const setResponseInterceptor = () => {
           const {newToken} = await refreshToken();
           console.log('new token after refresh', newToken);
           originalConfig.headers['Authorization']= `Bearer ${newToken}`;
-          originalConfig.headers['x-access-token'] = newToken;
+          // originalConfig.headers['x-access-token'] = newToken;
           return api(originalConfig);
         } catch (error) {
           errorHandler(error);
@@ -122,7 +128,7 @@ const setResponseInterceptor = () => {
 useEffect(() => {
 // eslint-disable-next-line max-len
   api.defaults.headers.common['Authorization'] = token? `Bearer ${token}`: '';
-  api.defaults.headers.common['x-access-token'] = token?? '';
+  // api.defaults.headers.common['x-access-token'] = token?? '';
 }, [token]);
 
 
@@ -130,7 +136,6 @@ useEffect(() => {
    * Set interceptors on first load.
    */
 useEffect(() => {
-  console.log('reloading interceptors');
   const requestInterceptor = setRequestInterceptor();
   const responseInterceptor = setResponseInterceptor();
   return () => {

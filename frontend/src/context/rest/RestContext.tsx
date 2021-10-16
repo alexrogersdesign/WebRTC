@@ -6,18 +6,19 @@ import React, {
   useState,
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
-import {AxiosRequestConfig} from 'axios';
 import ObjectID from 'bson-objectid';
 
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
 import {
   parseMeeting,
+  // parseMeetingIcon,
   parseUser,
 } from '../../util/classParser';
 import Meeting from '../../shared/classes/Meeting';
 import useLocalStorage from 'react-use-localstorage';
 import {useRestApi} from './useRestApi';
+import {MeetingIcon} from '../../shared/classes/MeetingIcon';
 
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
 
@@ -40,7 +41,8 @@ export interface INewMeeting {
   description: string,
   start: Date,
   end: Date,
-  attendees?: User[]
+  iconImage?: string,
+  attendees?: User[],
 }
 
 const RestContextProvider = ({children}: Props) => {
@@ -81,9 +83,7 @@ const RestContextProvider = ({children}: Props) => {
       /* Check if localstorage indicating a logout value is populated
          if an empty string is found, the user has not set the value */
       if (logoutStorage !== '') return;
-      const {newToken, user} = await refreshToken();
-      // setToken(newToken);
-      // setCurrentUser(user);
+      await refreshToken();
       setLoggedIn(true);
     } catch (err) {
       setLoggedIn(false);
@@ -106,22 +106,6 @@ const RestContextProvider = ({children}: Props) => {
   //   if (token) setLoggedIn(true);
   //   else setLoggedIn(false);
   // }, [token]);
-
-  // /**
-  //  * Listens for logout variable to be set in localstorage
-  //  * Allows for logout across multiple tabs.
-  //  */
-  // useEffect(() => {
-  //   const syncLogout = (event:StorageEvent) => {
-  //     if (event.key === 'logout') {
-  //       setToken(null);
-  //     }
-  //     window.addEventListener('storage', syncLogout);
-  //     return () => {
-  //       window.removeEventListener('storage', syncLogout);
-  //     };
-  //   };
-  // }, []);
 
   /**
    * Communicates with the backend to login user
@@ -174,6 +158,18 @@ const RestContextProvider = ({children}: Props) => {
         snackbarSuccessOptions);
     return parsedUser;
   };
+  const sendMeetingIcon = async (image: String, meetingId:ObjectID) => {
+    const icon = {
+      id: new ObjectID(),
+      image,
+      meeting: meetingId,
+    };
+    return await api
+        .post('meetings/icon', icon)
+        .catch((error) => {
+          handleError(error, 'Unable to add meeting icon');
+        });
+  };
 
   /**
    * Communicates with the backend to create a new meeting.
@@ -185,20 +181,49 @@ const RestContextProvider = ({children}: Props) => {
    */
   // eslint-disable-next-line max-len
   const createMeeting = async (newMeeting: INewMeeting):Promise<Meeting | undefined> => {
-    const newId = new ObjectID();
+    const {title, description, start, end, iconImage} = newMeeting;
+    const processImage = async () => {
+      if (!iconImage) return;
+      const iconResponse = await sendMeetingIcon(iconImage, newMeetingId);
+      // return parseMeetingIcon(iconResponse?.data);
+    };
+    // const newIcon = await processImage();
+    // console.log('icon image', iconImage);
+    const newMeetingId = new ObjectID();
+    const formData = new FormData();
+    formData.append('id', newMeetingId.toString());
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('start', start.toString());
+    formData.append('end', end.toString());
+    formData.append('icon', iconImage?? '');
+    // console.log(...formData);
     const meetingToSubmit = {
       ...newMeeting,
-      id: newId,
+      id: newMeetingId,
+      // icon: newIcon?.image,
+      icon: iconImage,
     };
-    console.log('new meeting to submit', meetingToSubmit);
+    // eslint-disable-next-line max-len
+    // console.log('new meeting to submit', serialize(meetingToSubmit).entries());
+    // const formData = objectToFormData(meetingToSubmit);
+    // console.log('form data', ...formData);
+    // eslint-disable-next-line guard-for-in
+    // for (const item in formData.values()) {
+    //   console.log('item', item);
+    // }
+
+    // const multipartOptions = {
+    //   headers:
+    // }
     const response = await api
-        .post('meetings', meetingToSubmit)
+        .post('meetings', formData )
         .catch((error) => {
           handleError(error, 'Unable to create meeting');
         });
     if (!response) return;
-    const meeting = response.data;
-    const parsedMeeting = parseMeeting(meeting);
+    const parsedMeeting = parseMeeting(response.data);
+
     enqueueSnackbar(
         `Meeting titled \"${parsedMeeting?.title}\" was created`,
         snackbarSuccessOptions);

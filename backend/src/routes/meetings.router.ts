@@ -1,9 +1,16 @@
 import express, { Request, Response } from "express";
 import ObjectID from 'bson-objectid';
+import getStream from 'get-stream'
 
 import Meeting from "../../../frontend/src/shared/classes/Meeting";
 import {MeetingModel} from "../database/models.js";
 import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
+import {
+    multerUploadGrid,
+    uploadGrid,
+    uploadFile,
+    uploadMemory, uploadDirect
+} from "../util/middleware/filesMiddleware.js";
 
 const meetingsRouter = express.Router();
 meetingsRouter.use(authRestricted);
@@ -11,11 +18,14 @@ meetingsRouter.use(authRestricted);
 meetingsRouter.use(authErrorHandler)
 meetingsRouter.get("/", async (_req: Request, res: Response) => {
     try {
-        const meetings = (await MeetingModel.find({}));
+        const meetings = await MeetingModel
+            .find({})
+            // .populate('icon');
         meetings.map(meeting => meeting.toObject() as unknown as Meeting)
 
         res.status(200).send(meetings);
     } catch (error) {
+        console.log(error)
         if (error instanceof Error) {
             res.status(500).send(error.message);
         } else {
@@ -28,20 +38,32 @@ meetingsRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
     try {
         const query = { _id: new ObjectID(id) };
-        const meeting = (await MeetingModel.findOne(query)) as Meeting;
+        const meeting = await MeetingModel
+            .findOne(query)
+            // .populate('icon') as Meeting;
         if (meeting) {
             res.status(200).send(meeting);
         }
     } catch (error) {
+        console.log(error)
         res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
     }
 });
 
-meetingsRouter.post("/", async (req: Request, res: Response) => {
+meetingsRouter.post('/icon', uploadFile)
+
+meetingsRouter.post("/", uploadMemory.single('icon'), async (req: Request, res: Response) => {
     try {
-        const {id, ...rest} = req.body;
+        const {id,  ...rest} = req.body;
+        // console.log('received request', req)
+        console.log('received file', req?.file)
+        console.log('received file stream', req?.file?.stream)
         const newMeeting = new MeetingModel ({
             _id: id,
+            icon: {
+                data: req?.file?.buffer,
+                mimeType: req?.file?.mimetype
+            },
             ...rest
         })
         const result = await newMeeting.save();
@@ -59,7 +81,6 @@ meetingsRouter.post("/", async (req: Request, res: Response) => {
 
 meetingsRouter.put("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
         const query = { _id: new ObjectID(id) };
         const {title} = req.body;

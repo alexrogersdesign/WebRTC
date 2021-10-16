@@ -10,11 +10,14 @@ import PropTypes from 'prop-types';
 import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
 import {Container, Typography} from '@material-ui/core';
+import {MeetingIcon} from '../../shared/classes/MeetingIcon';
 
 
 interface Props extends ChildrenProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
 }
+const FILE_SIZE = 100000;
+const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
 
 const validationSchema = yup.object({
   title: yup
@@ -33,6 +36,12 @@ const validationSchema = yup.object({
       .date()
       .min(yup.ref('start'), 'End time cannot be before start time' )
       .defined('End date is required'),
+  // icon: yup
+  //     .mixed()
+  //     .test('fileSize', 'File size is too large', (value)=>
+  //       value.size <= FILE_SIZE)
+  //     .test('fileType', 'Unsupported File Format', (value) =>
+  //       SUPPORTED_FORMATS.includes(value.type)),
 });
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -78,6 +87,31 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       flexWrap: 'nowrap',
     },
+    input: {
+
+    },
+    button: {
+
+    },
+    imagePreview: {
+      height: 100,
+      width: 100,
+      borderRadius: 20,
+    },
+    imageContainer: {
+      height: 120,
+      // width: 100,
+      // margin: theme.spacing(1, 0, 2),
+      padding: theme.spacing(2, 2, 1),
+      // width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      alignContent: 'stretch',
+      flexGrow: 1,
+      flexWrap: 'nowrap',
+    },
   }),
 );
 
@@ -102,6 +136,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       description: '',
       start: defaultTime,
       end: defaultTime,
+      iconImage: '',
     },
     validationSchema: validationSchema,
 
@@ -130,6 +165,49 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       >
               New Meeting
       </Typography>
+      <Container className={classes.imageContainer}>
+        <input
+          accept="image/*"
+          className={classes.input}
+          style={{display: 'none'}}
+          id="raised-button-file"
+          multiple
+          type='file'
+          onBlur={formik.handleBlur}
+          onChange={(event)=>{
+            if (!event?.currentTarget?.files) return;
+            formik.setFieldValue('iconImage', event?.currentTarget?.files[0]);
+          }
+          }
+        />
+        <label htmlFor="raised-button-file">
+          {!formik.values.iconImage && (
+            <Button
+              variant="text"
+              component="span"
+              className={classes.button}
+            >
+                Upload Icon
+            </Button>
+          )}
+        </label>
+        {formik.values.iconImage && (
+          <>
+            <Button
+              variant="text"
+              // component="span"
+              // className={classes.button}
+              onClick={()=> formik.setFieldValue('iconImage', undefined)}
+            >
+                  Remove
+            </Button>
+            <img
+              className={classes.imagePreview}
+              src={URL.createObjectURL(formik.values.iconImage)}
+            />
+          </>
+        )}
+      </Container>
       <form onSubmit={formik.handleSubmit}>
         <TextField
           fullWidth
@@ -201,6 +279,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
             helperText={formik.touched.end && formik.errors.end}
           />
         </Container>
+
         <Button
           className={classes.formItem}
           color="primary"

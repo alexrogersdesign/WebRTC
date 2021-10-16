@@ -1,4 +1,4 @@
-import  mongoose from "mongoose";
+import mongoose from "mongoose";
 const {Schema, model} = mongoose;
 import User from "../../../frontend/src/shared/classes/User.js";
 import Meeting from "../../../frontend/src/shared/classes/Meeting.js";
@@ -6,8 +6,6 @@ import Message from "../../../frontend/src/shared/classes/Message.js";
 
 interface IUser extends User {
     passwordHash: string,
-    // _firstName: string,
-    // _lastName: string,
 }
 
 const userSchema = new Schema<IUser>({
@@ -29,7 +27,6 @@ const userSchema = new Schema<IUser>({
     }
 })
 
-// userSchema.loadClass(User);
 userSchema.set('toObject', {
     transform: function (doc: Document, ret):User {
         ret.id = ret._id
@@ -63,10 +60,13 @@ const meetingSchema = new Schema<Meeting>({
         type: Date,
         required: true,
     },
-    // attendees: {
-    //     type: [Schema.Types.ObjectId],
-    //     default: [],
-    //     ref: 'User'
+    icon: {
+        data: Buffer,
+        mimeType: String
+    },
+    // icon: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: 'Icon'
     // },
     attendees: [
         {
@@ -74,6 +74,11 @@ const meetingSchema = new Schema<Meeting>({
             ref: 'User'
         }
     ],
+    // attendees: {
+    //     type: [Schema.Types.ObjectId],
+    //     default: [],
+    //     ref: 'User'
+    // },
     // attendees: [
     //     {
     //         type: Schema.Types.ObjectId,
@@ -117,7 +122,6 @@ const messageSchema = new Schema<Message>({
         type: String
     },
 })
-// messageSchema.loadClass(Message)
 messageSchema.set('toObject', {
     transform: function (doc: Document, ret) {
         ret.id = ret._id
@@ -126,3 +130,26 @@ messageSchema.set('toObject', {
       }
 })
 export const MessageModel = model<Message>('Message', messageSchema)
+
+const meetingImageSchema = new Schema({
+    _id: {
+        type: Schema.Types.ObjectId
+    },
+    meeting: {
+        type: Schema.Types.ObjectId,
+        ref: 'Meeting'
+    },
+    image: {
+        data:Buffer,
+        contentType: String
+    }
+})
+meetingImageSchema.set('toObject', {
+    transform: function (doc: Document, ret) {
+        ret.id = ret._id
+        delete ret._id;
+        return ret
+    }
+})
+
+export const MeetingImageModel = model<Message>('MeetingImage', meetingImageSchema)

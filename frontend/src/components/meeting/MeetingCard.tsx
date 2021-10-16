@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+// TODO fix issue where join meeting button moves on screen size change
 import React, {useEffect, useContext, forwardRef, Children} from 'react';
 // import GoogleFontLoader from 'react-google-font-loader';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -12,6 +13,7 @@ import {Info, InfoSubtitle, InfoTitle} from '@mui-treasury/components/info';
 import {useApexInfoStyles} from '@mui-treasury/styles/info/apex';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import WebFont from 'webfontloader';
+
 
 import Meeting from '../../shared/classes/Meeting';
 import {RestContext} from '../../context/rest/RestContext';
@@ -85,7 +87,7 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
         });
       }, [] );
       const {
-        // thumbnail,
+        icon,
         title,
         id,
         description,
@@ -97,11 +99,13 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
           <Column className={classes.card}>
             <Row p={2} gap={2}>
               {/* <CardHeader>*/}
-              <Avatar
-                className={classes.logo}
-                variant={'rounded'}
-                // src={thumbnail}
-              />
+              {icon?.length !== 0 && (
+                <Avatar
+                  className={classes.logo}
+                  variant={'rounded'}
+                  src={icon}
+                />
+              )}
               <Info position={'middle'} useStyles={useApexInfoStyles}>
                 <InfoTitle>{title}</InfoTitle>
                 <InfoSubtitle>{`ID: ${id}`}</InfoSubtitle>

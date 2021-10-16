@@ -1,6 +1,8 @@
 import ObjectID from 'bson-objectid';
 
 import User from './User';
+// eslint-disable-next-line no-unused-vars
+import {MeetingIcon} from './MeetingIcon';
 /**
  * The meeting class representing the information about an existing meeting.
  */
@@ -11,14 +13,16 @@ export default class Meeting {
     private _attendees: User[];
     private _start: Date;
     private _end: Date;
+    private _icon: string | undefined;
 
     /**
      * The class constructor
-     * @param {String} title the meeting title
-     * @param {String} description the meeting description
+     * @param {string} title the meeting title
+     * @param {string} description the meeting description
      * @param {Date} start the start time of the meeting
      * @param {Date} end the end time of the meeting
      * @param {ObjectID} id an optional bson object ID
+     * @param {string} icon the meeting icon as image string
      */
     constructor(
         title: string,
@@ -26,12 +30,14 @@ export default class Meeting {
         start: Date,
         end: Date,
         id?: ObjectID,
+        icon?: string,
     ) {
       this._id = id?? new ObjectID();
       this._title = title;
       this._description = description;
       this._start = start;
       this._end = end;
+      this._icon = icon;
       this._attendees = [];
     }
 
@@ -133,5 +139,18 @@ export default class Meeting {
      */
     set end(value: Date ) {
       this._end = value;
+    }
+    /**
+     * gets the icon image as a string.
+     */
+    get icon(): string | undefined {
+      return this._icon;
+    }
+    /**
+     * sets the meeting Icon.
+     * @param {String | undefined} value the icon image as a string
+     */
+    set icon(value: string | undefined) {
+      this._icon = value;
     }
 }

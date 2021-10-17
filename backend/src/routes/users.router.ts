@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 
 import User from "../../../frontend/src/shared/classes/User";
 import {UserModel} from "../database/models.js";
+import {uploadMemory} from "../util/middleware/filesMiddleware.js";
 
 const usersRouter = express.Router();
 
@@ -37,7 +38,7 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-usersRouter.post("/", async (req: Request, res: Response) => {
+usersRouter.post("/", uploadMemory.single('icon'), async (req: Request, res: Response) => {
     try {
         const {id, firstName, lastName, password, email} = req.body;
         const passwordHash = await bcrypt.hash(password, 10)
@@ -46,7 +47,11 @@ usersRouter.post("/", async (req: Request, res: Response) => {
             firstName,
             lastName,
             passwordHash,
-            email
+            email,
+            icon: {
+                data: req?.file?.buffer,
+                mimeType: req?.file?.mimetype
+            },
         })
         const result = await newUser.save();
         result

@@ -2,7 +2,6 @@
 import React, {
   createContext,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import {OptionsObject, useSnackbar} from 'notistack';
@@ -35,6 +34,8 @@ export interface INewUser {
   password: string,
   firstName: string,
   lastName: string,
+  iconImage?: string,
+
 }
 export interface INewMeeting {
   title: string,
@@ -143,12 +144,16 @@ const RestContextProvider = ({children}: Props) => {
    * if the creation was not successful.
    */
   const createUser = async (newUser: INewUser):Promise<User | undefined> => {
+    const {firstName, lastName, email, password, iconImage} = newUser;
     const newId = new ObjectID();
-    const userToSubmit = {
-      ...newUser,
-      id: newId,
-    };
-    const response = await api.post('users', userToSubmit)
+    const formData = new FormData();
+    formData.append('id', newId.toString());
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('icon', iconImage?? '');
+    const response = await api.post('users', formData)
         .catch((error) => handleError(error, 'Unable to create user'));
     if (!response) return;
     const user = response.data;

@@ -9,22 +9,27 @@ export default class User {
     private _lastName?: string;
     private _fullName?: string;
     private _email?: string;
+    private _icon: string | undefined;
 
     /**
      * @param {_firstName} firstName First name
      * @param {_lastName} lastName Last name
-     * @param {_email} email email address
-     *
+     * @param {_email} email email
+     * @param {ObjectID} id an optional bson object ID
+     * @param {string} icon the user icon as image string
      */
     constructor(
         firstName: string,
         lastName: string,
         email: string,
+        id?: ObjectID,
+        icon?: string,
     ) {
-      this._id = new ObjectID();
+      this._id = id?? new ObjectID();
       this._firstName = firstName;
       this._lastName = lastName;
       this._email = email;
+      this._icon = icon;
       this.updateFullName();
     }
 
@@ -113,6 +118,19 @@ export default class User {
     set firstName(value: string) {
       this._firstName = value;
       this.updateFullName();
+    }
+    /**
+     * gets the icon image as a string.
+     */
+    get icon(): string | undefined {
+      return this._icon;
+    }
+    /**
+     * sets the meeting Icon.
+     * @param {String | undefined} value the icon image as a string
+     */
+    set icon(value: string | undefined) {
+      this._icon = value;
     }
 }
 

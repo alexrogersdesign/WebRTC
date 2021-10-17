@@ -24,7 +24,11 @@ const userSchema = new Schema<IUser>({
         type: String,
         required: true,
         unique: true,
-    }
+    },
+    icon:{
+        data: Buffer,
+        mimeType: String
+    },
 })
 
 userSchema.set('toObject', {
@@ -64,10 +68,6 @@ const meetingSchema = new Schema<Meeting>({
         data: Buffer,
         mimeType: String
     },
-    // icon: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'Icon'
-    // },
     attendees: [
         {
             type: Schema.Types.Mixed,

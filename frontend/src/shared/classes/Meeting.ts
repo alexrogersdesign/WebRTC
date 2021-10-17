@@ -2,7 +2,6 @@ import ObjectID from 'bson-objectid';
 
 import User from './User';
 // eslint-disable-next-line no-unused-vars
-// import {MeetingIcon} from './MeetingIcon';
 /**
  * The meeting class representing the information about an existing meeting.
  */

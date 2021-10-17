@@ -24,43 +24,15 @@ interface Props extends ModalProps{
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    listItem: {
-      display: 'flex',
-      // alignItems: 'flex-start',
-    },
-    secondary: {
-      // padding: theme.spacing(0, 70, 0),
-      alignSelf: 'flex-start',
-    },
-    paper: {
-      backgroundColor: theme.palette.background.paper,
-      border: '2px solid #000',
-      borderRadius: 5,
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3),
-      zIndex: 99,
-    },
     modal: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-    },
-    item: {
-      margin: theme.spacing(0, 0, 1),
-    },
-    title: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-    titleItem: {
-      padding: theme.spacing(0, 1, 0),
+      // justifyContent: 'center',
     },
     dialogContent: {
       display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
+      // flexDirection: 'row',
+      // alignItems: 'center',
       justifyContent: 'center',
     },
   }),
@@ -92,11 +64,13 @@ const ModalWrapper = ({
           timeout: 500,
         }}
       >
-        <Fade in={open} timeout={{enter: 750, exit: 250}}>
-          <DialogContent className={classes.dialogContent}>
-            <Component setOpen={setOpen} open={open} {...componentProps} />
-          </DialogContent>
-        </Fade>
+        <>
+          <Fade in={open} timeout={{enter: 750, exit: 250}}>
+            <DialogContent className={classes.dialogContent}>
+              <Component setOpen={setOpen} open={open} {...componentProps} />
+            </DialogContent>
+          </Fade>
+        </>
       </Modal>
     </div>
   );

@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
 
+console.log('test');
 
 interface Props extends ChildrenProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,

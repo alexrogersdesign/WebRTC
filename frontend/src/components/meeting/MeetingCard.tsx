@@ -1,13 +1,11 @@
 /* eslint-disable no-unused-vars */
 // TODO fix issue where join meeting button moves on screen size change
 import React, {useEffect, useContext, forwardRef, Children} from 'react';
-// import GoogleFontLoader from 'react-google-font-loader';
 import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 import {Column, Row, Item} from '@mui-treasury/components/flex';
 import {Info, InfoSubtitle, InfoTitle} from '@mui-treasury/components/info';
 import {useApexInfoStyles} from '@mui-treasury/styles/info/apex';
@@ -16,7 +14,6 @@ import WebFont from 'webfontloader';
 
 
 import Meeting from '../../shared/classes/Meeting';
-import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import CopyButtonIcon from '../common/CopyButtonIcon';
 import PropTypes from 'prop-types';
@@ -33,7 +30,7 @@ const initialShadow = '0 4px 6px 2px rgba(0,0,0,0.08),' +
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      'height': '30%',
+      'height': '40%',
       'width': '60%',
       'position': 'relative',
     },
@@ -98,7 +95,6 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
         <div className={classes.root} ref={ref}>
           <Column className={classes.card}>
             <Row p={2} gap={2}>
-              {/* <CardHeader>*/}
               {icon?.length !== 0 && (
                 <Avatar
                   className={classes.logo}
@@ -116,7 +112,6 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
                 edge='end'
                 className={classes.copyButton}
               />
-              {/* </CardHeader>*/}
             </Row>
             <Box
               pb={1}

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext, forwardRef} from 'react';
+import React, {useContext, forwardRef, useState, useEffect} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
@@ -9,9 +9,10 @@ import PropTypes from 'prop-types';
 
 import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
-import {Container, Typography} from '@material-ui/core';
-import {MeetingIcon} from '../../shared/classes/MeetingIcon';
-
+import {Container, Fade, Popper, Typography} from '@material-ui/core';
+import {OptionsObject, useSnackbar} from 'notistack';
+import UploadImage from '../common/UploadImage';
+// import {MeetingIcon} from '../../shared/classes/MeetingIcon';
 
 interface Props extends ChildrenProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
       zIndex: 99,
       display: 'flex',
       flexDirection: 'column',
-      width: '55%',
+      // width: '50%',
       // margin: theme.spacing(2),
     },
     title: {
@@ -38,60 +39,77 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'flex-start',
     },
     titleItem: {
-      padding: theme.spacing(0, 1, 0),
+      padding: theme.spacing(1, 1, 0),
+    },
+    formContainer: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      flexWrap: 'nowrap',
+
+      // justifyContent: 'center',
+      alignContent: 'center',
+      width: '100%',
     },
     formItem: {
+      margin: theme.spacing(1, 0, 3),
+      flexShrink: 1,
+      flexWrap: 'nowrap',
+      width: '70%',
+    },
+    nameItem: {
+      // padding: theme.spacing(1, 1, 2),
       margin: theme.spacing(1, 1, 1),
+      flexShrink: 1,
+      width: '100%',
+    },
+    nameContainer: {
+      // width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      alignContent: 'space-between',
+    },
+    helperText: {
+      // padding: 0,
+      // margin: 0,
+      position: 'absolute',
+      bottom: -20,
     },
     dateField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
+      // marginLeft: theme.spacing(1),
+      // marginRight: theme.spacing(1),
+      // width: '100%',
+      margin: theme.spacing(1, 2, 1),
+      // flexShrink: 1,
+      minWidth: 220,
       width: '100%',
     },
     dateContainer: {
       // margin: theme.spacing(1, 0, 2),
-      padding: theme.spacing(0, 2, 0),
-      // width: '100%',
+      // padding: theme.spacing(0, 2, 0),
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'stretch',
-      alignContent: 'stretch',
-      flexGrow: 1,
       flexWrap: 'nowrap',
-    },
-    input: {
-
-    },
-    button: {
-
-    },
-    imagePreview: {
-      height: 100,
-      width: 100,
-      borderRadius: 20,
-    },
-    imageContainer: {
-      height: 120,
-      // width: 100,
-      // margin: theme.spacing(1, 0, 2),
-      padding: theme.spacing(2, 2, 1),
-      // width: '100%',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
+      justifyContent: 'space-around',
       alignItems: 'center',
-      alignContent: 'stretch',
-      flexGrow: 1,
-      flexWrap: 'nowrap',
+      alignContent: 'space-between',
+      // width: '100%',
+      // display: 'flex',
+      // flexDirection: 'row',
+      // justifyContent: 'center',
+      // alignItems: 'stretch',
+      // alignContent: 'stretch',
+      // flexGrow: 1,
+      // flexWrap: 'nowrap',
     },
+
   }),
 );
 
-const FILE_SIZE = 100000;
-// eslint-disable-next-line max-len
-// const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
-const SUPPORTED_FORMATS = [''];
+const FILE_SIZE = 16_000_000; //* 16 Megabyte Document Size Limit
+const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 
 const validationSchema = yup.object({
   title: yup
@@ -110,14 +128,17 @@ const validationSchema = yup.object({
       .date()
       .min(yup.ref('start'), 'End time cannot be before start time' )
       .defined('End date is required'),
-  icon: yup
+  iconImage: yup
       .mixed()
-      .test('fileSize', 'File size is too large', (value)=>
-        value && value.size <= FILE_SIZE)
-      .test('fileType', 'Unsupported File Format', (value) =>
-        value && SUPPORTED_FORMATS.includes(value.type)),
+      .test('fileSize',
+          'File size is too large',
+          (value) => !value || (value && value.size <= FILE_SIZE),
+      )
+      .test('fileType',
+          'Unsupported File Format',
+          (value) => !value || SUPPORTED_FORMATS.includes(value.type),
+      ),
 });
-
 
 const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const {setOpen} = props;
@@ -129,7 +150,6 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       Math.ceil(new Date().getTime()/900000)*900000,
   );
   const offset = dateRoundedToQuarterHour.getTimezoneOffset();
-  // const dateRoundedToQuarterHour =
   /* Convert the default time into the string format used by picker components*/
   const defaultTime = new Date(
       dateRoundedToQuarterHour.getTime() - offset * 60000,
@@ -169,131 +189,96 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       >
               New Meeting
       </Typography>
-      <form onSubmit={formik.handleSubmit}>
-        <Container className={classes.imageContainer}>
-          <input
-            accept="image/*"
-            className={classes.input}
-            style={{display: 'none'}}
-            id="raised-button-file"
-            multiple
-            type='file'
-            onBlur={formik.handleBlur}
-            onChange={(event)=>{
-              if (!event?.currentTarget?.files) return;
-              formik.setFieldValue('iconImage', event?.currentTarget?.files[0]);
-            }
-            }
-          />
-          <label htmlFor="raised-button-file">
-            {!formik.values.iconImage && (
-              <Button
-                variant="text"
-                component="span"
-                className={classes.button}
-              >
-                Upload Icon
-              </Button>
-            )}
-          </label>
-          {formik.values.iconImage && (
-            <>
-              <Button
-                variant="text"
-                // component="span"
-                // className={classes.button}
-                onClick={()=> formik.setFieldValue('iconImage', undefined)}
-              >
-                  Remove
-              </Button>
-              <img
-                className={classes.imagePreview}
-                src={URL.createObjectURL(formik.values.iconImage)}
-              />
-            </>
-          )}
-        </Container>
-        <TextField
-          fullWidth
-          className={classes.formItem}
-          autoComplete='off'
-          variant="outlined"
-          id="title"
-          name="title"
-          label="Meeting Title"
-          value={formik.values.title}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-          error={formik.touched.title && Boolean(formik.errors.title)}
-          helperText={formik.touched.title && formik.errors.title}
-        />
-        <TextField
-          fullWidth
-          multiline
-          maxRows={4}
-          className={classes.formItem}
-          autoComplete='off'
-          variant="outlined"
-          id="description"
-          name="description"
-          label="Meeting Description"
-          value={formik.values.description}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-          error={
-            formik.touched.description && Boolean(formik.errors.description)
-          }
-          helperText={formik.touched.description && formik.errors.description}
-        />
-        <Container className={classes.dateContainer}>
-          <TextField
-            id="start"
-            label="Meeting start"
-            type="datetime-local"
-            variant="outlined"
-            // defaultValue={defaultTime}
-            className={classes.dateField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            value={formik.values.start}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange('start')}
-            error={
-              formik.touched.start && Boolean(formik.errors.start)
-            }
-            helperText={formik.touched.start && formik.errors.start}
-          />
-          <TextField
-            id="end"
-            label="Meeting end"
-            type="datetime-local"
-            variant="outlined"
-            // defaultValue={defaultTime}
-            className={classes.dateField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            value={formik.values.end}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange('end')}
-            error={
-              formik.touched.end && Boolean(formik.errors.end)
-            }
-            helperText={formik.touched.end && formik.errors.end}
-          />
-        </Container>
+      <Container className={classes.formContainer}>
+        <form onSubmit={formik.handleSubmit}>
+          <Container className={classes.dateContainer}>
+            <TextField
+              id="start"
+              label="Meeting start"
+              type="datetime-local"
+              variant="outlined"
+              // defaultValue={defaultTime}
+              className={classes.dateField}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={formik.values.start}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange('start')}
+              error={
+                formik.touched.start && Boolean(formik.errors.start)
+              }
+              helperText={formik.touched.start && formik.errors.start}
+              FormHelperTextProps={{className: classes.helperText}}
+            />
+            <TextField
+              id="end"
+              label="Meeting end"
+              type="datetime-local"
+              variant="outlined"
+              // defaultValue={defaultTime}
+              className={classes.dateField}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={formik.values.end}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange('end')}
+              error={
+                formik.touched.end && Boolean(formik.errors.end)
+              }
+              helperText={formik.touched.end && formik.errors.end}
+            />
+            <UploadImage formik={formik}/>
 
-        <Button
-          className={classes.formItem}
-          color="primary"
-          variant="contained"
-          fullWidth
-          type="submit"
-        >
+          </Container>
+          <TextField
+            fullWidth
+            className={classes.formItem}
+            autoComplete='off'
+            variant="outlined"
+            id="title"
+            name="title"
+            label="Meeting Title"
+            value={formik.values.title}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            error={formik.touched.title && Boolean(formik.errors.title)}
+            helperText={formik.touched.title && formik.errors.title}
+            FormHelperTextProps={{className: classes.helperText}}
+          />
+          <TextField
+            fullWidth
+            multiline
+            maxRows={4}
+            className={classes.formItem}
+            autoComplete='off'
+            variant="outlined"
+            id="description"
+            name="description"
+            label="Meeting Description"
+            value={formik.values.description}
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            error={
+              formik.touched.description && Boolean(formik.errors.description)
+            }
+            helperText={formik.touched.description && formik.errors.description}
+            FormHelperTextProps={{className: classes.helperText}}
+          />
+
+
+          <Button
+            className={classes.formItem}
+            color="primary"
+            variant="contained"
+            fullWidth
+            type="submit"
+          >
                     Submit
-        </Button>
-      </form>
+          </Button>
+        </form>
+      </Container>
     </div>
   );
 });

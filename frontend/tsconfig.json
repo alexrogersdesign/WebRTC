@@ -1,5 +1,5 @@
 {
-//  "compileOnSave": true,
+  //  "compileOnSave": true,
   "compilerOptions": {
     "target": "es5",
     "lib": [
@@ -29,11 +29,12 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "typeRoots": ["./types"],
-    "sourceMap": true,
+    //    "sourceMap": true,
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*"
+    //    "src/**/*.ts",
+    //    "src/**/*.tsx",
+    //    "src/**/*",
+    "src"
   ]
 }

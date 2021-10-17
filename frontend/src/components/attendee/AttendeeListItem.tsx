@@ -9,7 +9,7 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
 import User from '../../shared/classes/User';
 
-import VideoAvatar from '../video/VideoAvatar';
+import UserAvatar from '../common/UserAvatar';
 import AttendeeInfoModal from './AttendeeInfoModal';
 
 interface Props {
@@ -41,9 +41,9 @@ const AttendeeListItem = ({user}: Props) => {
         onClick={() => setModalOpen(true)}
       >
         <ListItemAvatar>
-          <VideoAvatar
+          <UserAvatar
             user={user}
-            disabled
+            clickDisabled
           />
         </ListItemAvatar>
         <ListItemText

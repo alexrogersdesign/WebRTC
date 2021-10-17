@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import User from '../../shared/classes/User';
 
-import VideoAvatar from '../video/VideoAvatar';
+import UserAvatar from '../common/UserAvatar';
 import {IconButton} from '@material-ui/core';
 
 interface Props {
@@ -72,7 +72,11 @@ const AttendeeInfoModal = ({open, setOpen, user}: Props) => {
             <CloseIcon/>
           </IconButton>
           <div className={classes.title}>
-            <VideoAvatar disabled className={classes.titleItem} user={user}/>
+            <UserAvatar
+              clickDisabled
+              className={classes.titleItem}
+              user={user}
+            />
             <Typography
               className={classes.titleItem}
               variant='h5'

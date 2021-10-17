@@ -6,7 +6,9 @@ import {Tooltip, Avatar, Fab} from '@material-ui/core';
 
 import User from '../../shared/classes/User';
 
-import AttendeeInfoModal from '../attendee/AttendeeInfoModal';
+// import AttendeeInfoModal from '../attendee/AttendeeInfoModal';
+import ModalWrapper from './ModalWrapper';
+import AttendeeInfo, {AttendeeInfoProps} from '../attendee/AttendeeInfo';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,10 +44,18 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
    user?: User,
    className?: string,
-   disabled?: boolean,
+   clickDisabled?: boolean,
+   Component?: JSX.Element,
+   componentProps?: any
 }
 
-const VideoAvatar = ({user, className, disabled}: Props) => {
+const UserAvatar = ({
+  user,
+  className,
+  clickDisabled,
+  Component,
+  componentProps,
+}: Props) => {
   const classes = useStyles();
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -54,7 +64,7 @@ const VideoAvatar = ({user, className, disabled}: Props) => {
       <div className={classes.root}>
         {user && (
           <>
-            {!disabled && (
+            {!clickDisabled && (
               <Tooltip
                 title={`${user.firstName} ${user.lastName}`}
                 aria-label='User Avatar'>
@@ -63,32 +73,40 @@ const VideoAvatar = ({user, className, disabled}: Props) => {
                   size='medium'
                   className={classes.fab}
                   onClick={() => setModalOpen(true)}
-                  disabled={disabled}
+                  disabled={clickDisabled}
                 >
-                  <Avatar className={classes.purple} >
-                    {user?.firstName?.charAt(0)} {user?.lastName?.charAt(0)}
+                  <Avatar className={classes.purple} src={user.icon} >
+                    {!user.icon &&
+                    user?.initials
+                    }
                   </Avatar>
                 </Fab>
               </Tooltip>
             )}
-            {disabled && (
+            {clickDisabled && (
               <Fab
                 color='secondary'
                 size='medium'
                 className={classes.fab}
                 onClick={() => setModalOpen(true)}
-                disabled={disabled}
+                disabled={clickDisabled}
               >
                 <Avatar className={classes.purple} >
                   {user?.firstName?.charAt(0)} {user?.lastName?.charAt(0)}
                 </Avatar>
               </Fab>
             )}
-            <AttendeeInfoModal
+            <ModalWrapper<AttendeeInfoProps>
               open={modalOpen}
               setOpen={setModalOpen}
-              user={user}
+              Component={AttendeeInfo}
+              {...{user}}
             />
+            {/* <AttendeeInfoModal*/}
+            {/*  open={modalOpen}*/}
+            {/*  setOpen={setModalOpen}*/}
+            {/*  user={user}*/}
+            {/* />*/}
           </>
         )}
         {!user && (
@@ -99,4 +117,4 @@ const VideoAvatar = ({user, className, disabled}: Props) => {
   );
 };
 
-export default VideoAvatar;
+export default UserAvatar;

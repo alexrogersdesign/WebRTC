@@ -36,5 +36,9 @@
     //    "src/**/*.tsx",
     //    "src/**/*",
     "src"
+  ],
+  "exclude": [
+    "src/**/*.js",
+    "src/**/*.jsx"
   ]
 }

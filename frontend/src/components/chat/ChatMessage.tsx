@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 
 import Message from '../../shared/classes/Message';
-import VideoAvatar from '../video/VideoAvatar';
+import UserAvatar from '../common/UserAvatar';
 import {RestContext} from '../../context/rest/RestContext';
 
 const size = 30;
@@ -159,7 +159,7 @@ const ChatMessage = ( {message}: Props) => {
       >
         {side === 'left' && (
           <Grid item>
-            <VideoAvatar user={message.user} className={cx(classes.avatar)} />
+            <UserAvatar user={message.user} className={cx(classes.avatar)} />
           </Grid>
         )}
         <Grid item xs >

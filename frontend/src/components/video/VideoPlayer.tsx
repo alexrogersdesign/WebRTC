@@ -4,7 +4,7 @@ import {Paper} from '@material-ui/core';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import User from '../../shared/classes/User';
-import VideoAvatar from './VideoAvatar';
+import UserAvatar from '../common/UserAvatar';
 import WebcamControls from './WebcamControls';
 import {SegmentationContext} from '../../context/SegmentationContext';
 import {MediaControlContext} from '../../context/MediaControlContext';
@@ -98,7 +98,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
   const renderExternalVideo = useMemo(() => (
     <div className={classes.externalContainer}>
       <Paper className={classes.paper} elevation={3} variant="outlined" >
-        <VideoAvatar className={classes.externalAvatar} user={user}/>
+        <UserAvatar className={classes.externalAvatar} user={user}/>
         <video
           className={classes.video}
           ref={(video) => {

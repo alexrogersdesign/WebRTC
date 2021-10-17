@@ -7,7 +7,6 @@ export default class User {
      _id: ObjectID;
     private _firstName?: string;
     private _lastName?: string;
-    private _fullName?: string;
     private _email?: string;
     private _icon: string | undefined;
 
@@ -30,23 +29,26 @@ export default class User {
       this._lastName = lastName;
       this._email = email;
       this._icon = icon;
-      this.updateFullName();
     }
 
     /**
-   * helper function to update the full name variable
-   * @private since it is only used internally
-   */
-    private updateFullName() {
-      this._fullName = `${this._firstName} ${this._lastName}`;
+     * returns fullName
+     */
+    get fullName(): string {
+      return `${this._firstName} ${this._lastName}`;
     }
-
-    /** `
+    /**
+     * returns initials
+     */
+    get initials(): string {
+      return `${this._firstName?.charAt(0)} ${this._lastName?.charAt(0)}`;
+    }
+    /**
      * @override toString method
      * @return {string} Users full name
      */
     toString() {
-      return this._fullName;
+      return this.fullName;
     }
     /**
      * @param {User} user the user to compare
@@ -57,12 +59,6 @@ export default class User {
       return user.id === this.id;
     }
 
-    /**
-     * returns fullName
-     */
-    get fullName(): string {
-      return this._fullName? this._fullName : '';
-    }
 
     /**
      * returns ID
@@ -109,7 +105,6 @@ export default class User {
      */
     set lastName(value: string) {
       this._lastName = value;
-      this.updateFullName();
     }
     /**
      * sets firstName
@@ -117,7 +112,6 @@ export default class User {
      */
     set firstName(value: string) {
       this._firstName = value;
-      this.updateFullName();
     }
     /**
      * gets the icon image as a string.

@@ -9,7 +9,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 
-import VideoAvatar from '../video/VideoAvatar';
+import UserAvatar from '../common/UserAvatar';
 import User from '../../shared/classes/User';
 
 
@@ -39,7 +39,7 @@ export const AttendeeList = ({users}: Props) => {
           return (
             <ListItem key={user.id.toString()} button>
               <ListItemAvatar>
-                <VideoAvatar
+                <UserAvatar
                   user={user}
                 />
               </ListItemAvatar>

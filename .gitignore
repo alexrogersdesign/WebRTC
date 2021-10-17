@@ -2,3 +2,4 @@ tfjs-models
 
 */src/**/*.d.ts
 */src/**/*.js
+*/src/**/*.jsx

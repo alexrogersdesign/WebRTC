@@ -55,9 +55,6 @@ meetingsRouter.post('/icon', uploadFile)
 meetingsRouter.post("/", uploadMemory.single('icon'), async (req: Request, res: Response) => {
     try {
         const {id,  ...rest} = req.body;
-        // console.log('received request', req)
-        console.log('received file', req?.file)
-        console.log('received file stream', req?.file?.stream)
         const newMeeting = new MeetingModel ({
             _id: id,
             icon: {

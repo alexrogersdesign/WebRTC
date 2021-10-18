@@ -5,9 +5,9 @@ import ObjectID from 'bson-objectid';
  */
 export default class User {
      _id: ObjectID;
-    private _firstName?: string;
-    private _lastName?: string;
-    private _email?: string;
+    private _firstName: string;
+    private _lastName: string;
+    private _email: string;
     private _icon: string | undefined;
 
     /**
@@ -41,7 +41,7 @@ export default class User {
      * returns initials
      */
     get initials(): string {
-      return `${this._firstName?.charAt(0)} ${this._lastName?.charAt(0)}`;
+      return `${this.firstName.charAt(0)}${this.lastName.charAt(0)}`;
     }
     /**
      * @override toString method

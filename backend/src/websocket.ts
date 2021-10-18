@@ -20,23 +20,37 @@ import ObjectID from "bson-objectid";
 const secretKey = process.env.SECRET_KEY
 
 const findUser = async (id: string) => {
+  try {
   const foundUser = await UserModel.findById(id) as unknown as IReceivedUser;
   return parseUser(foundUser);
+  } catch (error) {
+    console.log(error)
+  }
 }
 const findMeeting = async (id: string) => {
+  try {
   const foundMeeting = await MeetingModel.findById(id) as unknown as IReceivedMeeting;
   return parseMeeting(foundMeeting);
+  } catch (error) {
+    console.log(error)
+  }
 }
 const findAllMessages = async (meetingId: string): Promise<Message[]>=> {
+  try {
   const foundMessages = await MessageModel
       .find({meetingId: new ObjectID(meetingId)})
       .populate('user') as unknown as IReceivedMessage[]
   return foundMessages.map((message) => parseMessage(message));
+  } catch (error) {
+    throw (error)
+    console.log(error)
+  }
 }
 const updateMeetingList = async (id:string) => {
   return await findMeeting(id);
 };
 const sendMessageToDatabase = async (message: IReceivedMessage) => {
+  try {
   const {id, meetingId, user, contents, type, alt} = parseMessage(message);
   const newMessage = new MessageModel({
     _id: id,
@@ -47,6 +61,9 @@ const sendMessageToDatabase = async (message: IReceivedMessage) => {
     alt,
   });
   return await newMessage.save()
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const authHandler = async (socket: Socket): Promise<User| undefined>  => {

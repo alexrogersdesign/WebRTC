@@ -34,8 +34,7 @@ export const AttendeeList = ({users}: Props) => {
     <Paper className={classes.root} elevation={3} >
       <List dense className={classes.root}>
         {users && users.map((user) => {
-          const labelId = `checkbox-list-secondary-label-${user.id}`;
-          const name = `${user.firstName} ${user.lastName}`;
+          const labelId = `list-secondary-label-${user.id}`;
           return (
             <ListItem key={user.id.toString()} button>
               <ListItemAvatar>
@@ -45,7 +44,7 @@ export const AttendeeList = ({users}: Props) => {
               </ListItemAvatar>
               <ListItemText
                 id={labelId}
-                primary={name}
+                primary={user.fullName}
               />
               <ListItemSecondaryAction>
 

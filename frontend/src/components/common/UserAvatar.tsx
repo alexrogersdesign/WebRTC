@@ -66,7 +66,7 @@ const UserAvatar = ({
           <>
             {!clickDisabled && (
               <Tooltip
-                title={`${user.firstName} ${user.lastName}`}
+                title={user.fullName}
                 aria-label='User Avatar'>
                 <Fab
                   color='secondary'
@@ -75,10 +75,11 @@ const UserAvatar = ({
                   onClick={() => setModalOpen(true)}
                   disabled={clickDisabled}
                 >
-                  <Avatar className={classes.purple} src={user.icon} >
-                    {!user.icon &&
-                    user?.initials
-                    }
+                  <Avatar
+                    className={classes.purple}
+                    src={user.icon}
+                  >
+                    {!user.icon && user.initials}
                   </Avatar>
                 </Fab>
               </Tooltip>

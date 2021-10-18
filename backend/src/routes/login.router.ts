@@ -36,6 +36,7 @@ loginRouter.use(authErrorHandler)
 
 loginRouter.post('/', authNonRestricted, async (req, res) => {
     const {email, password} = req.body
+    try {
     const foundUser = await UserModel.findOne({email: email},{},{maxTime: 30_000})
     const passwordMatch = foundUser && await bcrypt.compare(password, foundUser.passwordHash)
     if (!foundUser || !passwordMatch) {
@@ -68,6 +69,9 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
     res
         .cookie('refreshToken', refreshToken, refreshTokenOptions)
         .status(200).send(response)
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 loginRouter.post('/refresh', async (req,res) => {

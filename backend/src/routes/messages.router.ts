@@ -12,7 +12,6 @@ messagesRouter.get("/", async (_req: Request, res: Response) => {
     try {
         const messages = (await MessageModel.find({}).populate('User','Meeting'));
         messages.map(message => message.toObject() as unknown as Message)
-
         res.status(200).send(messages);
     } catch (error) {
         if (error instanceof Error) {
@@ -25,9 +24,7 @@ messagesRouter.get("/", async (_req: Request, res: Response) => {
 
 messagesRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
-
         const query = { _id: new ObjectID(id) };
         const message = (await MessageModel.findOne(query)?.populate('User','Meeting')) as Message;
 

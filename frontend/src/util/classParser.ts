@@ -35,15 +35,16 @@ export type IReceivedMeeting = BaseIReceivedMeeting & _BaseIReceivedMeeting
     _id : string | ObjectID,
     _firstName: string,
     _lastName: string,
-    _email: string
-
-}
+    _email: string,
+    _icon?: ImageBuffer,
+ }
  type BaseIReceivedUser = {
     id : string | ObjectID,
     firstName: string,
     lastName: string,
-    email: string
-}
+    email: string,
+    icon?: ImageBuffer,
+ }
 export type IReceivedUser = _BaseIReceivedUser & BaseIReceivedUser
 
 export interface BaseIReceivedMessage {
@@ -72,12 +73,12 @@ const parseId = (input: string | ObjectID):ObjectID => {
   }
 };
 export const parseUser = (input: IReceivedUser): User => {
-  const newId = input.id?? input._id;
+  const newId = parseId(input.id?? input._id);
   const newFirstName = input.firstName?? input._firstName;
   const newLastName = input.lastName?? input._lastName;
   const newEmail = input.email?? input._email;
-  const newUser = new User(newFirstName, newLastName, newEmail);
-  newUser.id = parseId(newId);
+  const newIcon = parseBuffer(input.icon?? input._icon);
+  const newUser = new User(newFirstName, newLastName, newEmail, newId, newIcon);
   return newUser;
 };
 
@@ -120,8 +121,10 @@ interface ImageBuffer {
     mimeType: string
 }
 
-const parseBuffer = (input: ImageBuffer| undefined): string | undefined => {
+const parseBuffer = (input: ImageBuffer| string | undefined): string | undefined => {
   if (!input) return;
+  if (typeof input === 'string') return input;
+  // console.log('buffer input', input);
   const buffer = Buffer.from(input.data);
   const bufferString = buffer.toString('base64');
   const dataString = `data:${input.mimeType};base64,${bufferString}`;
@@ -136,9 +139,6 @@ export const parseMeeting =
       const newEnd = new Date(input.end?? input._end);
       const newDescription = input.description?? input._description;
       const newIcon = parseBuffer(input.icon?? input._icon);
-      // const newIcon = parseMeetingIcon(icon) ??
-      //   parseMeetingIcon(input.icon)??
-      //   parseMeetingIcon(input._icon);
       const newMeeting = new Meeting(
           newTitle,
           newDescription,

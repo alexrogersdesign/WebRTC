@@ -120,8 +120,9 @@ interface ImageBuffer {
     data: Buffer,
     mimeType: string
 }
+type ParseBuffer = ImageBuffer| string | undefined
 
-const parseBuffer = (input: ImageBuffer| string | undefined): string | undefined => {
+const parseBuffer = (input: ParseBuffer): string | undefined => {
   if (!input) return;
   if (typeof input === 'string') return input;
   // console.log('buffer input', input);

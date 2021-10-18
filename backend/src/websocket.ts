@@ -49,13 +49,13 @@ const findAllMessages = async (meetingId: string): Promise<Message[]>=> {
 const updateMeetingList = async (id:string) => {
   return await findMeeting(id);
 };
-const sendMessageToDatabase = async (message: IReceivedMessage) => {
+const sendMessageToDatabase = async (message: IReceivedMessage) : Promise<Message> => {
   try {
   const {id, meetingId, user, contents, type, alt} = parseMessage(message);
   const newMessage = new MessageModel({
     _id: id,
     meetingId,
-    user,
+    user: user.id,
     contents,
     type,
     alt,
@@ -63,6 +63,7 @@ const sendMessageToDatabase = async (message: IReceivedMessage) => {
   return await newMessage.save()
   } catch (error) {
     console.log(error)
+    throw error
   }
 }
 
@@ -132,9 +133,9 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
       };
 
       socket.on('SendMessage', (message) => {
+        sendMessageToDatabase(message);
         io.in(roomID).emit('ReceivedMessage', message);
         // socket.to(roomID).emit('ReceivedMessage', message);
-        sendMessageToDatabase(message);
       });
 
       socket.on('LeaveRoom', () => {

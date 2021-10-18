@@ -129,6 +129,11 @@ messageSchema.set('toObject', {
         return ret
       }
 })
+messageSchema.post('save', function(doc, next) {
+    doc.populate('user','meeting').then(function() {
+        next();
+    });
+});
 export const MessageModel = model<Message>('Message', messageSchema)
 
 const meetingImageSchema = new Schema({

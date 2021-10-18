@@ -48,6 +48,21 @@ interface Props {
    Component?: JSX.Element,
    componentProps?: any
 }
+type AvatarIconProps = {
+    user: User,
+    className: string
+}
+
+const AvatarIcon = ({user, className} : AvatarIconProps) => {
+  return (
+    <Avatar
+      className={className}
+      src={user.icon}
+    >
+      {!user.icon && user.initials}
+    </Avatar>
+  );
+};
 
 const UserAvatar = ({
   user,
@@ -75,27 +90,12 @@ const UserAvatar = ({
                   onClick={() => setModalOpen(true)}
                   disabled={clickDisabled}
                 >
-                  <Avatar
-                    className={classes.purple}
-                    src={user.icon}
-                  >
-                    {!user.icon && user.initials}
-                  </Avatar>
+                  <AvatarIcon user={user} className={classes.purple}/>
                 </Fab>
               </Tooltip>
             )}
             {clickDisabled && (
-              <Fab
-                color='secondary'
-                size='medium'
-                className={classes.fab}
-                onClick={() => setModalOpen(true)}
-                disabled={clickDisabled}
-              >
-                <Avatar className={classes.purple} >
-                  {user?.firstName?.charAt(0)} {user?.lastName?.charAt(0)}
-                </Avatar>
-              </Fab>
+              <AvatarIcon user={user} className={classes.purple}/>
             )}
             <ModalWrapper<AttendeeInfoProps>
               open={modalOpen}

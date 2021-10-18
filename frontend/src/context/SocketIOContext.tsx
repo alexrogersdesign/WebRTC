@@ -94,6 +94,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
 
   /* Authenticate with socket backend whenever a token changes */
   useEffect(() => {
+    if (!token && socket) socket.disconnect();
     const handshake = {
       auth: {token},
     };

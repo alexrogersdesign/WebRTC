@@ -37,7 +37,7 @@ loginRouter.use(authErrorHandler)
 loginRouter.post('/', authNonRestricted, async (req, res) => {
     const {email, password} = req.body
     try {
-    const foundUser = await UserModel.findOne({email: email},{},{maxTime: 30_000})
+    const foundUser = await UserModel.findOne({email: email},{},{maxTimeMS: 30_000})
     const passwordMatch = foundUser && await bcrypt.compare(password, foundUser.passwordHash)
     if (!foundUser || !passwordMatch) {
         return res.status(401).json({
@@ -80,7 +80,7 @@ loginRouter.post('/refresh', async (req,res) => {
     //* Decode token to retrieve email information.
     try {
         const {email} = jwtDecode<DecodedToken>(refreshToken);
-        const foundUser = await UserModel.findOne({email: email}, {},{maxTime: 30_000})
+        const foundUser = await UserModel.findOne({email: email}, {},{maxTimeMS: 30_000})
         if ((!refreshToken) || !(refreshToken in tokenList) || !foundUser) {
             return res.status(401).json({
                 error: 'invalid username or password'

@@ -43,7 +43,6 @@ const findAllMessages = async (meetingId: string): Promise<Message[]>=> {
   return foundMessages.map((message) => parseMessage(message));
   } catch (error) {
     throw (error)
-    console.log(error)
   }
 }
 const updateMeetingList = async (id:string) => {
@@ -67,7 +66,7 @@ const sendMessageToDatabase = async (message: IReceivedMessage) : Promise<Messag
   }
 }
 
-const authHandler = async (socket: Socket): Promise<User| undefined>  => {
+const authHandler = async (socket: Socket) => {
   //TODO test expired token refresh
   let { token = null } = socket.handshake.auth || {};
   if (token) {
@@ -80,14 +79,18 @@ const authHandler = async (socket: Socket): Promise<User| undefined>  => {
       //* expect decodedToken to be object not string
       if (typeof decodedToken === 'string')
         throw new Error('Token Decode Error');
-      return findUser(decodedToken.id);
+      const foundUser = await findUser(decodedToken.id);
+      if (!foundUser) throw new Error('User does not exist in database')
+      return foundUser;
     }
     catch (error) {
       if ((error as Error).name === 'TokenExpiredError') {
         socket.emit('ExpiredToken')
         console.log('Expired Token', error)
+        throw error
       }
       console.log(error)
+      throw error
       socket.disconnect()
     }
   }
@@ -97,8 +100,6 @@ const authHandler = async (socket: Socket): Promise<User| undefined>  => {
 const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
   const joinRoom = async (socket: Socket<DefaultEventsMap, DefaultEventsMap>, roomID:string) => {
       try {
-        // const newMeeting = await updateMeetingList(roomID);
-        // socket.emit('NewMeeting', newMeeting);
         socket.join(roomID);
         const messages = await findAllMessages(roomID)
         socket.emit('ExistingMessages', messages )
@@ -110,43 +111,56 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
   };
   /*Setup socket connection behaviors*/
   io.on('connection', async (socket) => {
-    const newUser = await authHandler(socket)
-    //* Send user id (not used)
-    socket.emit('CurrentUserID', newUser?.id.toString());
-    //* Get room parameter from url.
-    const roomID = socket.handshake.query.room;
+    try {
+      const user = await authHandler(socket)
+      //* Send user id (not used)
+      socket.emit('CurrentUserID', user?.id.toString());
+      let roomID: string | null = null
+      ;
+      //* Get room parameter from url.
+      const queryRoom = socket.handshake.query.room;
+      if (queryRoom && !Array.isArray(queryRoom) && queryRoom.length) roomID = queryRoom
 
-     /*Check if a room id parameter was supplied
-        If so, join that meeting.*/
-    if (roomID && roomID !== 'null' && !Array.isArray(roomID)) {
-      await joinRoom(socket, roomID);
-    }
-    socket.on('JoinMeeting', (meetingData) => {
-      const {user, roomID} = meetingData;
-      if (socket.rooms.has(roomID)) return;
-      io.to(roomID).emit('NewUserConnected', user);
-      joinRoom(socket, roomID);
-      // TODO add user to meeting attendees
-      //* Inform attendees if a user disconnects
-      const leaveRoom = () => {
-        socket.to(roomID).emit('UserDisconnected', user);
+      /*Check if a room id parameter was supplied
+         If so, join that meeting.*/
+      if(roomID && roomID !== 'null') await joinRoom(socket, roomID);
+
+      socket.on('JoinMeeting', (meetingData) => {
+        ({roomID} = meetingData);
+        if (!roomID) return
+        if (socket.rooms.has(roomID)) return;
+        io.to(roomID).emit('NewUserConnected', user);
+        joinRoom(socket, roomID);
+        // TODO add user to meeting attendees
+        //* Inform attendees if a user disconnects
+      });
+      const leaveRoom = (id: string) => {
+        socket.to(id).emit('UserDisconnected', user);
+        socket.leave(id)
       };
 
       socket.on('SendMessage', (message) => {
+        if (!roomID) return
         sendMessageToDatabase(message);
         io.in(roomID).emit('ReceivedMessage', message);
         // socket.to(roomID).emit('ReceivedMessage', message);
       });
 
       socket.on('LeaveRoom', () => {
-        leaveRoom();
+        if (!roomID) return
+        leaveRoom(roomID);
       });
 
       socket.on('disconnect', () => {
-        leaveRoom();
+        if (!roomID) return
+        leaveRoom(roomID);
         // TODO: clean up room attendees.
       });
-    });
+    }
+    catch (error){
+      console.log(error)
+    }
+
   });
 };
 

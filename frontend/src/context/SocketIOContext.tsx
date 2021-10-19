@@ -95,8 +95,10 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   /* Authenticate with socket backend whenever a token changes */
   useEffect(() => {
     if (!token && socket) socket.disconnect();
+    if (!token) return;
     const handshake = {
       auth: {token},
+      query: {'userID': currentUser?.id.toString()?? ''},
     };
     const newConnection = io(connectionUrl, token? handshake : undefined);
     setSocket(newConnection);
@@ -182,7 +184,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
      * Cleans up connection on error or if far side closes connection.
      */
     socket.on('NewUserConnected', (receivedUser: IReceivedUser) => {
-      // parse received json object into User
+      //* parse received json object into User
       const user = parseUser(receivedUser);
       if (!currentUser) throw new Error('current user does not exist');
       //* Prevent local user from being added.
@@ -313,7 +315,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     if (!foundMeeting) throw new Error('Unable to find meeting');
     setMeeting(foundMeeting);
     const meetingData = {
-      user: currentUser,
+      userID: currentUser?.id.toString(),
       roomID: foundMeeting.id.toString(),
     };
     socket.emit('JoinMeeting', meetingData);

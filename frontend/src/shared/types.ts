@@ -8,6 +8,9 @@ import Message from './classes/Message';
 export interface ChildrenProps {
    children?: JSX.Element;
 }
+export interface MultipleChildrenProps {
+   children?: JSX.Element| JSX.Element[];
+}
 export interface ChildrenPropsMandatory {
    children: JSX.Element;
 }

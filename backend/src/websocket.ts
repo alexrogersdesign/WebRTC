@@ -5,14 +5,17 @@ import jwt from "jsonwebtoken";
 import {DefaultEventsMap} from "socket.io/dist/typed-events";
 
 import {MeetingModel, MessageModel, UserModel} from "./database/models.js";
+import * as classParser from '../../frontend/src/util/classParser.js'
 import {
   IReceivedMeeting,
   IReceivedMessage,
-  IReceivedUser,
+  IReceivedUser
+} from '../../frontend/src/util/classParser';
+const {
   parseMeeting,
   parseMessage,
   parseUser
-} from "../../frontend/src/util/classParser.js";
+} = classParser
 import User from "../../frontend/src/shared/classes/User.js";
 import Message from "../../frontend/src/shared/classes/Message";
 import ObjectID from "bson-objectid";

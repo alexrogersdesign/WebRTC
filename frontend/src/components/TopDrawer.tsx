@@ -149,7 +149,11 @@ export const TopDrawer = (props: Props) => {
     const loginDialog = 'Login';
     const createAccountDialog = 'Create Account';
     return (<>
-      <ListItem button onClick={() => setCreateAccountModalOpen(true)} >
+      <ListItem
+        button
+        onClick={() => setCreateAccountModalOpen(true)}
+        id='login-button'
+      >
         <ListItemIcon> <FiberNewIcon /></ListItemIcon>
         <ListItemText primary={createAccountDialog} />
       </ListItem>
@@ -200,7 +204,7 @@ export const TopDrawer = (props: Props) => {
           edge="end"
         >
           <ViewHeadlineIcon/>
-          <Typography variant="h6" noWrap >
+          <Typography variant="h6" noWrap id='menu-button' >
            Menu
           </Typography>
         </IconButton>

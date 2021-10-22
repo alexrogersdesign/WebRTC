@@ -7,6 +7,7 @@ import {SocketIOContextProvider} from './SocketIOContext';
 import NotificationProvider from './NotificationProvider';
 import CustomThemeProvider from './CustomThemeProvider';
 import {MediaControlContextProvider} from './MediaControlContext';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 interface Props extends ChildrenProps {};
 
@@ -28,6 +29,7 @@ const AppContext = ({children}: Props) => {
           </RestContextProvider>
         </NotificationProvider>
       </CustomThemeProvider>
+      <CssBaseline/>
     </>
   );
 };

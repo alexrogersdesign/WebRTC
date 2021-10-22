@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \\\"Error: no ../frontend/src/test specified\\\" && exit 1",
     "start": "nodemon --exec \"node --loader ts-node/esm src/index.ts\"",
     "start_inspect": "node  --inspect-brk  src/index.js",
     "debug": "DEBUG=socket.io:* nodemon --exec \"node --loader ts-node/esm src/index.ts\"",

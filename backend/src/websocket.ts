@@ -9,7 +9,7 @@ import * as classParser from '../../frontend/src/util/classParser.js'
 import {
   IReceivedMeeting,
   IReceivedMessage,
-  IReceivedUser
+  IReceivedUser,
 } from '../../frontend/src/util/classParser';
 const {
   parseMeeting,

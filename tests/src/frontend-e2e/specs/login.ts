@@ -1,4 +1,4 @@
-import LoginPage from '../pageobjects/login.page';
+import LoginPage from '../pageobjects/LoginPage';
 // const LoginPage= require('../pageobjects/login.page');
 import {correctEmail, correctPassword} from '../constants';
 // import SecurePage from '../pageobjects/secure.page';
@@ -8,7 +8,7 @@ import {correctEmail, correctPassword} from '../constants';
 // const failedLoginMessage = 'Invalid Username or Password';
 
 
-describe('My Login application', () => {
+describe('Login Functionality', () => {
   it('should login with valid credentials', async () => {
     // await browser.debug();
     // test;

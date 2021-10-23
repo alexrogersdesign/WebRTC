@@ -22,7 +22,7 @@ exports.config = {
   // will be called from there.
   //
   specs: [
-    './src/test/specs/**/*.ts',
+    './src/frontend-e2e/specs/**/*.ts',
   ],
   // Patterns to exclude.
   exclude: [

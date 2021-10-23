@@ -1,6 +1,5 @@
-import LoginPage from '../pageobjects/login.page';
-// const LoginPage= require('../pageobjects/login.page');
-import {correctEmail, correctPassword} from '../constants';
+const LoginPage = require( '../pageobjects/login.page.cjs');
+const {correctEmail, correctPassword} = require('./constants');
 // import SecurePage from '../pageobjects/secure.page';
 // import expect from 'expect';
 
@@ -10,8 +9,6 @@ import {correctEmail, correctPassword} from '../constants';
 
 describe('My Login application', () => {
   it('should login with valid credentials', async () => {
-    // await browser.debug();
-    // test;
     await LoginPage.open();
     await LoginPage.login(correctEmail, correctPassword);
     await expect(LoginPage.notification).toBeExisting();

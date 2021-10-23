@@ -4,7 +4,7 @@
       "wdio.conf.ts": "cjs",
       "test": "cjs",
       "test/**/*": "cjs",
-      "example.e2e.ts": "cjs"
+      "login.ts": "cjs"
     },
     "compilerOptions": { "module": "commonjs" }
   },
@@ -29,7 +29,7 @@
     "module": "ESNext"
   },
 //  "extends": "../tsconfig.json.old",
-  "files": ["wdio.conf.ts", "example.e2e.ts"],
+  "files": ["wdio.conf.ts", "login.ts"],
   "include": [
     "src/test",
     "./src/test/**/*.ts",

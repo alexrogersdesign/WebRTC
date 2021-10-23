@@ -23,7 +23,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -38,9 +38,10 @@
   },
   "include": [
     "./src/**/*.ts",
-    "./src/**/*.tsx",
+    "./src/**/*.tsx"
   ],
   "exclude": [
+//    "src/test",
     "src/**/*.js",
     "src/**/*.jsx"
   ]

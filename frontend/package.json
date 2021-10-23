@@ -60,6 +60,8 @@
     "yup": "^0.32.9"
   },
   "scripts": {
+    "watch-test2": "tsc-watch --noClear -p ./tsconfig.test.json",
+    "watch-test": "ts-node -T",
     "start": "react-dotenv && react-scripts start",
     "build": "react-dotenv && react-scripts build",
     "test": "react-dotenv && npx wdio run wdio.conf.ts",
@@ -113,8 +115,11 @@
     "eslint": "^7.32.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-react": "^7.25.1",
+    "nodemon": "^2.0.14",
     "ts-node": "^10.3.0",
+    "tsc-watch": "^4.5.0",
     "typescript": "^4.4.4",
+    "typescript-b": "npm:typescript@^4.5.0-beta",
     "wdio-chromedriver-service": "^7.2.2"
   },
   "react-dotenv": {

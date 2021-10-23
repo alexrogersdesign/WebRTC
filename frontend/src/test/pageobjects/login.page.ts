@@ -29,7 +29,7 @@ class LoginPage extends Page {
      * overwrite specific options to adapt it to page object
      */
   async open() {
-    const browser = await super.open();
+    const browser = super.open();
     await $('#menu-button').click();
     const loginButton = await $('#login-button');
     await loginButton.click();

@@ -1,6 +1,3 @@
-// #!/usr/bin/env node
-let exports = {};
-
 
 import debugFactory from 'debug';
 const debug = debugFactory('WebRTC:server');

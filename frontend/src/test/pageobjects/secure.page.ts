@@ -11,3 +11,5 @@
 // }
 //
 // export default new SecurePage();
+
+export {};

@@ -10,8 +10,8 @@ import {correctEmail, correctPassword} from '../constants';
 
 describe('My Login application', () => {
   it('should login with valid credentials', async () => {
+    // await browser.debug();
     await LoginPage.open();
-    browser.debug();
     await LoginPage.login(correctEmail, correctPassword);
     await expect(LoginPage.notification).toBeExisting();
     await expect(LoginPage.notification).toHaveTextContaining(

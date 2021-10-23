@@ -152,12 +152,16 @@ export const TopDrawer = (props: Props) => {
       <ListItem
         button
         onClick={() => setCreateAccountModalOpen(true)}
-        id='login-button'
+        id='create-account-button'
       >
         <ListItemIcon> <FiberNewIcon /></ListItemIcon>
         <ListItemText primary={createAccountDialog} />
       </ListItem>
-      <ListItem button onClick={() => setLoginModalOpen(true)} >
+      <ListItem
+        button
+        onClick={() => setLoginModalOpen(true)}
+        id='login-button'
+      >
         <ListItemIcon> <ExitToAppIcon /></ListItemIcon>
         <ListItemText primary={loginDialog} />
       </ListItem>

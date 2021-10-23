@@ -25,3 +25,4 @@ describe('Login Test', async ()=> {
     // assert.strictEqual(title, 'Menu');
   });
 });
+export {};

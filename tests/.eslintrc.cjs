@@ -21,5 +21,7 @@ module.exports = {
   ],
   "ignorePatterns": ["**/*.js", "**/*.jsx"],
   'rules': {
+    'require-jsdoc': 0,
+    'valid-jsdoc': 0,
   },
 };

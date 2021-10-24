@@ -55,7 +55,7 @@ const ModalWrapper= <T, >({
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const handleClose = () => setOpen(false);
   return (
-    <div>
+    <>
       <Dialog
         className={classes.modal}
         open={open}
@@ -71,19 +71,17 @@ const ModalWrapper= <T, >({
           timeout: 500,
         }}
       >
-        <>
-          <Fade in={open} timeout={{enter: 750, exit: 250}}>
-            <div className={classes.dialogContent}>
-              <Component
-                setOpen={setOpen}
-                open={open}
-                {...(remainingProps as T)}
-              />
-            </div>
-          </Fade>
-        </>
+        <Fade in={open} timeout={{enter: 750, exit: 250}}>
+          <div className={classes.dialogContent}>
+            <Component
+              setOpen={setOpen}
+              open={open}
+              {...(remainingProps as T)}
+            />
+          </div>
+        </Fade>
       </Dialog>
-    </div>
+    </>
   );
 };
 

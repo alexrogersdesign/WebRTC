@@ -1,4 +1,4 @@
-import Page from './page';
+import Page from './Page';
 // const Page = require('./page');
 
 /**
@@ -25,12 +25,13 @@ class LoginPage extends Page {
     await this.btnSubmit.click();
   }
 
+
   /**
      * overwrite specific options to adapt it to page object
      */
   async open() {
     const browser = super.open();
-    await $('#menu-button').click();
+    await this.menu.click();
     const loginButton = await $('#login-button');
     await loginButton.click();
     return browser;

@@ -60,12 +60,8 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "watch-test2": "tsc-watch --noClear -p ./tsconfig.test.json",
-    "watch-test": "ts-node -T",
     "start": "react-dotenv && react-scripts start",
     "build": "react-dotenv && react-scripts build",
-    "test": "react-dotenv && npx wdio run wdio.conf.ts",
-    "test2": "react-dotenv && NODE_OPTIONS=\"--loader ts-node/esm\" npx wdio run wdio.conf.ts ",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

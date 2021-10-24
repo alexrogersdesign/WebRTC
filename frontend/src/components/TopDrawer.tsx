@@ -91,15 +91,21 @@ export const TopDrawer = (props: Props) => {
     if (!meeting) {
       return (
         <>
-          {/* <ListItem button onClick={startNewMeeting}>*/}
-          {/*  <ListItemIcon> <CreateIcon /></ListItemIcon>*/}
-          {/*  <ListItemText primary={createDialog} />*/}
-          {/* </ListItem>*/}
-          <ListItem button onClick={() => setCreateMeetingModalOpen(true)}>
+          <ListItem
+            button
+            onClick={() => setCreateMeetingModalOpen(true)}
+            id='create-meeting-button'
+            aria-label='create meeting button'
+          >
             <ListItemIcon> <CreateIcon /></ListItemIcon>
             <ListItemText primary={createDialog} />
           </ListItem>
-          <ListItem button onClick={() => setJoinMeetingModal(true)} >
+          <ListItem
+            button
+            onClick={() => setJoinMeetingModal(true)}
+            id='join-meeting-button'
+            aria-label='join meeting button'
+          >
             <ListItemIcon> <MeetingRoomIcon /></ListItemIcon>
             <ListItemText primary={joinDialog} />
           </ListItem>
@@ -112,7 +118,12 @@ export const TopDrawer = (props: Props) => {
     const logoutDialog = 'Logout';
     return (
       <>
-        <ListItem button onClick={logout}>
+        <ListItem
+          button
+          onClick={logout}
+          id='logout-button'
+          aria-label='logout button'
+        >
           <ListItemIcon className={classes.red}>
             <ExitToAppIcon />
           </ListItemIcon>
@@ -131,7 +142,12 @@ export const TopDrawer = (props: Props) => {
       return (
         <>
           <MeetingListDisplay meeting={meeting}/>
-          <ListItem button onClick={leaveMeeting}>
+          <ListItem
+            button
+            onClick={leaveMeeting}
+            id='leave-meeting-button'
+            aria-label= 'leave meeting button'
+          >
             <ListItemIcon className={classes.red}>
               <NoMeetingRoomIcon />
             </ListItemIcon>
@@ -153,6 +169,7 @@ export const TopDrawer = (props: Props) => {
         button
         onClick={() => setCreateAccountModalOpen(true)}
         id='create-account-button'
+        aria-label='create account button'
       >
         <ListItemIcon> <FiberNewIcon /></ListItemIcon>
         <ListItemText primary={createAccountDialog} />
@@ -161,6 +178,7 @@ export const TopDrawer = (props: Props) => {
         button
         onClick={() => setLoginModalOpen(true)}
         id='login-button'
+        aria-label='login button'
       >
         <ListItemIcon> <ExitToAppIcon /></ListItemIcon>
         <ListItemText primary={loginDialog} />

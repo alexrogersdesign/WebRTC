@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import {useEffect, useRef, useState} from 'react';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 
 import User from '../../shared/classes/User';
 import {
@@ -115,12 +115,17 @@ const setResponseInterceptor = () => {
           originalConfig.headers['Authorization']= `Bearer ${newToken}`;
           // originalConfig.headers['x-access-token'] = newToken;
           return api(originalConfig);
-        } catch (error) {
+        } catch (error:any) {
+          if ('response' in error && error?.response?.status === 401) return;
           errorHandler(error);
           return Promise.reject(error);
         }
       }
-    } else errorHandler(err);
+    } else {
+      if (!('response' in err) || err?.response?.status !== 401) {
+        errorHandler(err);
+      }
+    }
     return Promise.reject(err);
   });
 };

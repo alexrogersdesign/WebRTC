@@ -1,4 +1,6 @@
 /* eslint-disable max-len */
+const debug = process.env.DEBUG;
+
 exports.config = {
   //
   // ====================
@@ -55,7 +57,7 @@ exports.config = {
     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
     // grid with only 5 firefox instances available you can make sure that not more than
     // 5 instances get started at a time.
-    'maxInstances': 5,
+    'maxInstances': debug? 1 : 5,
     //
     'browserName': 'chrome',
     'acceptInsecureCerts': true,
@@ -75,13 +77,14 @@ exports.config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: 'info',
+  logLevel: 'debug',
   //
   // Set specific log levels per logger
   // loggers:
   // - webdriver, webdriverio
   // - @wdio/browserstack-service, @wdio/devtools-service, @wdio/sauce-service
-  // - @wdio/mocha-framework, @wdio/jasmine-framework
+  // - @wdio/mocha-framework,
+  // @wdio/jasmine-framework
   // - @wdio/local-runner
   // - @wdio/sumologic-reporter
   // - @wdio/cli, @wdio/config, @wdio/utils

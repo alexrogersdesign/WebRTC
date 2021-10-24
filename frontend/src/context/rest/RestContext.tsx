@@ -55,14 +55,13 @@ const RestContextProvider = ({children}: Props) => {
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
 
   const handleError = (error:any, message?: string) => {
-    message = message || 'An error has occurred';
+    const newMessage = message?? error.message?? 'An error has occurred';
     if (error?.response?.status === 401) {
-      enqueueSnackbar(message, snackbarWarnOptions);
-    }
-    if (error?.response?.status >= 500) {
+      enqueueSnackbar(newMessage, snackbarWarnOptions);
+      console.log(JSON.stringify(error.stacktrace));
+    } else if (error?.response?.status >= 500) {
       console.log(error.message);
-    }
-    console.log(error.message);
+    } else console.log(error.message);
     return;
   };
   const {

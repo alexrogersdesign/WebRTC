@@ -77,7 +77,7 @@ exports.config = {
   // Define all options that are relevant for the WebdriverIO instance here
   //
   // Level of logging verbosity: trace | debug | info | warn | error | silent
-  logLevel: 'debug',
+  logLevel: 'info',
   //
   // Set specific log levels per logger
   // loggers:
@@ -200,7 +200,17 @@ exports.config = {
      * @param {String} commandName hook command name
      * @param {Array} args arguments that command would receive
      */
-  // beforeCommand: function (commandName, args) {
+  // beforeCommand: function(commandName, args) {
+  // async function clearValue(browser, selector) {
+  //   await browser.$(selector).click();
+  //   await browser.keys(['Meta', 'a']);
+  //   await browser.keys(['Meta', 'x']);
+  // }
+  // async function setValue(browser, selector, value) {
+  //   await clearValue(browser, selector);
+  //   await browser.setValue(value);
+  // }
+  // browser.overwriteCommand("setValue", setValue , undefined, undefined, undefined);
   // },
   /**
      * Hook that gets executed before the suite starts

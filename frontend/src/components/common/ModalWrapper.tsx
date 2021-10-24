@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
-import React, {Component, useContext, useEffect} from 'react';
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import React, {Component, useRef} from 'react';
+import {makeStyles,
+  Theme,
+  createStyles,
+  useTheme} from '@material-ui/core/styles';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-
-import Modal from '@material-ui/core/Modal';
-import {DialogContent} from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Dialog from '@material-ui/core/Dialog';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -13,12 +15,10 @@ const useStyles = makeStyles((theme: Theme) =>
     modal: {
       display: 'flex',
       alignItems: 'center',
-      // justifyContent: 'center',
+      justifyContent: 'center',
     },
     dialogContent: {
       display: 'flex',
-      // flexDirection: 'row',
-      // alignItems: 'center',
       justifyContent: 'center',
     },
   }),
@@ -28,9 +28,9 @@ export interface ModalProps {
     open: boolean,
     setOpen: (open: boolean) => void,
 }
-interface PassedProps<T> {
-    data: T;
-}
+// interface PassedProps<T> {
+//     data: T;
+// }
 
 interface Props <T> extends ModalProps{
     Component: React.ComponentType<T & ModalProps>,
@@ -51,15 +51,20 @@ const ModalWrapper= <T, >({
   // TODO investigate double rendering
   // TODO implement aria label and described
   const classes = useStyles();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const handleClose = () => setOpen(false);
   return (
     <div>
-      <Modal
+      <Dialog
         className={classes.modal}
         open={open}
         onClose={handleClose}
+        maxWidth='lg'
+        fullWidth
         aria-labelledby={ariaLabeledBy}
         aria-describedby={ariaDescribedBy}
+        // fullScreen={fullScreen}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -68,16 +73,16 @@ const ModalWrapper= <T, >({
       >
         <>
           <Fade in={open} timeout={{enter: 750, exit: 250}}>
-            <DialogContent className={classes.dialogContent}>
+            <div className={classes.dialogContent}>
               <Component
                 setOpen={setOpen}
                 open={open}
                 {...(remainingProps as T)}
               />
-            </DialogContent>
+            </div>
           </Fade>
         </>
-      </Modal>
+      </Dialog>
     </div>
   );
 };

@@ -6,6 +6,8 @@ import * as yup from 'yup';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
@@ -27,25 +29,19 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
       zIndex: 99,
-      display: 'flex',
-      flexDirection: 'column',
+      // display: 'flex',
+      // flexDirection: 'column',
       minWidth: 1020,
-    },
-    title: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
     },
     titleItem: {
       padding: theme.spacing(1, 1, 0),
     },
     formContainer: {
-      flexDirection: 'column',
-      alignItems: 'center',
-      flexWrap: 'nowrap',
-      alignContent: 'center',
-      width: '100%',
+      // flexDirection: 'column',
+      // alignItems: 'center',
+      // flexWrap: 'nowrap',
+      // alignContent: 'center',
+      // width: '100%',
     },
     formItem: {
       margin: theme.spacing(1, 0, 3),
@@ -69,8 +65,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignContent: 'space-between',
     },
     helperText: {
-      // padding: 0,
-      // margin: 0,
       position: 'absolute',
       bottom: -20,
     },
@@ -166,14 +160,13 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   });
   return (
     <div className={classes.paper} ref={ref}>
-      <Typography
+      <DialogTitle
         className={classes.titleItem}
-        variant='h5'
-        id="MeetingForm"
+        id="new-meeting-form-title"
       >
               New Meeting
-      </Typography>
-      <Container className={classes.formContainer}>
+      </DialogTitle>
+      <DialogContent className={classes.formContainer}>
         <form onSubmit={formik.handleSubmit}>
           <Container className={classes.dateContainer}>
             <TextField
@@ -262,7 +255,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
                     Submit
           </Button>
         </form>
-      </Container>
+      </DialogContent>
     </div>
   );
 });

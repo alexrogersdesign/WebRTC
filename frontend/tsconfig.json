@@ -9,10 +9,6 @@
     ],
     "types": [
       "node",
-      "webdriverio/async",
-      "@wdio/mocha-framework",
-      "expect-webdriverio",
-      "mocha"
     ],
     "allowJs": true,
     "checkJs": false,

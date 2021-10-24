@@ -12,7 +12,7 @@ import {ChildrenProps} from '../../shared/types';
 import {useSnackbar} from 'notistack';
 import UploadImage from '../common/UploadImage';
 import Typography from '@material-ui/core/Typography';
-import {Container} from '@material-ui/core';
+import {Container, DialogContent, DialogTitle} from '@material-ui/core';
 
 
 interface Props extends ChildrenProps {
@@ -143,14 +143,14 @@ const NewUserForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   });
   return (
     <div className={classes.paper} ref={ref}>
-      <Typography
+      <DialogTitle
         className={classes.titleItem}
-        variant='h5'
-        id="Login"
+        // variant='h5'
+        id="create-account-title"
       >
               Create Account
-      </Typography>
-      <Container className={classes.formContainer}>
+      </DialogTitle>
+      <DialogContent className={classes.formContainer}>
         <form onSubmit={formik.handleSubmit}>
           <Container className={classes.nameContainer}>
             <TextField
@@ -226,7 +226,7 @@ const NewUserForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
                     Submit
           </Button>
         </form>
-      </Container>
+      </DialogContent>
     </div>
   );
 });

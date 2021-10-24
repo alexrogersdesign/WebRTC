@@ -1,6 +1,8 @@
 import React, {forwardRef} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 
 import JoinMeetingInputField from './JoinMeetingInputField';
 import PropTypes from 'prop-types';
@@ -35,13 +37,15 @@ const JoinMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   return (
     <div>
       <div className={classes.paper} ref={ref}>
-        <Typography className={classes.item} variant='h5' id="join-meeting">
+        <DialogTitle className={classes.item} id="join-meeting">
                         Join Meeting
-        </Typography>
-        <JoinMeetingInputField
-          className={classes.item}
-          placeholder='Enter Meeting Code'
-        />
+        </DialogTitle>
+        <DialogContent>
+          <JoinMeetingInputField
+            className={classes.item}
+            placeholder='Enter Meeting Code'
+          />
+        </DialogContent>
       </div>
     </div>
   );

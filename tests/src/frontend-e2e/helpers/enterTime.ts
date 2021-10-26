@@ -20,14 +20,17 @@ const enterTime = async (
   for (const item of dateArray) {
     let counter = 0;
     for (const key of item.split('')) {
-      /* compensate for a single didgit value by adding a leading 0*/
+      /* compensate for a single digit value by adding a leading 0*/
       if (item.length === 1) await browserObject.keys(['0']);
+      /* Enters keys into the field on at a time*/
       await browserObject.keys([key]);
       counter++;
     }
+    /* Counter is used to compensate for the ability to add a 5 or 6
+       digit year value if the count is above 4, and the above loop
+       finishes a tab key is entered to skip the last 2 of the
+       6 digit year input */
     if (counter >= 4) await browserObject.keys(['Tab']);
-    /* Tab to the next value*/
-    // await browserObject.keys(['Tab']);
   }
 };
 

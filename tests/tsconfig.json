@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
+    "target": "ES2020",
     "module": "commonjs",
+    "sourceMap": true,
+    "moduleResolution": "node",
     "types": [
       "node",
       "webdriverio/async",
@@ -10,11 +12,8 @@
       "mocha"
     ],
     "esModuleInterop": true,
+    "noEmitHelpers": false,
     "baseUrl": ".",
-    "paths": {
-      "*": [ "./*" ],
-      "src/*": ["./src/*"]
-    }
   },
   "include": [
     "./src/**/*"

@@ -1,7 +1,5 @@
 import LoginPage from '../pageobjects/LoginPage';
-import {correctEmail, correctPassword} from '../constants';
-import faker from 'faker';
-import deleteValue from 'src/frontend-e2e/helpers/deleteValue';
+import {correctEmail, correctPassword, User} from '../constants';
 
 describe('Login Functionality', () => {
   beforeEach('setup', async () => {
@@ -21,20 +19,12 @@ describe('Login Functionality', () => {
     await expect(LoginPage.notification).toBeExisting();
     await expect(LoginPage.notification).toHaveTextContaining('Invalid');
   });
-});
-describe('Create User', () => {
-  beforeEach('setup', async () => {
-    await LoginPage.logout();
-  });
-  it('should create a new user', async () => {
-    const first = faker.name.firstName();
-    const last = faker.name.lastName();
-    const email = faker.internet.email();
-    const password = faker.internet.password(8, true);
-    await LoginPage.createUser(first, last, email, password);
+  it('A created user should be able to login', async () => {
+    const user = new User();
+    // const filePath = '../files/icon1.jpeg';
+    await LoginPage.createUserAndLogin(user);
     await expect(LoginPage.notification).toBeExisting();
-    await expect(LoginPage.notification).toHaveTextContaining(
-        `Account for ${email}`);
+    await expect(LoginPage.notification).toHaveTextContaining(user.firstName);
   });
 });
 

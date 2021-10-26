@@ -207,7 +207,6 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
               helperText={formik.touched.end && formik.errors.end}
             />
             <UploadImage formik={formik}/>
-
           </Container>
           <TextField
             fullWidth

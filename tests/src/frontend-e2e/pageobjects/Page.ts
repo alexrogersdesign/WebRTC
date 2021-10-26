@@ -1,3 +1,6 @@
+import path from 'path';
+import deleteValue from '../helpers/deleteValue';
+
 /* eslint-disable valid-jsdoc */
 const url = 'http://localhost:3000';
 /**
@@ -19,36 +22,40 @@ export default class Page {
     // return $('#menu/-button');
     return $('#menu-button');
   }
+  get inputFileUpload() {
+    const fileUpload = $('#input-file-upload');
+    browser.execute(
+        (el:any) => el.style.display = 'block',
+        fileUpload,
+    );
+    return fileUpload;
+  }
+  get btnSubmit() {
+    return $('button[type="submit"]');
+  }
   get logoutButton() {
     return $('#logout-button');
   }
   async clearValue(browser, selector) {
-    await browser.$(selector).click();
-    await browser.keys(['Meta', 'a']);
-    await browser.keys(['Meta', 'x']);
+    await deleteValue(browser, selector);
   }
-
   async setValue(browser, selector, value) {
     await this.clearValue(browser, selector);
     await selector.setValue(value);
   }
+  async joinPath(filePath:string) {
+    return path.join(__dirname, filePath);
+  }
   async logout() {
     await this.open();
     await browser.keys(['Escape']);
-    await this.menu.waitForClickable({timeout: 3000});
+    await this.menu.waitForClickable({timeout: 1000});
     await this.menu.click();
-    // eslint-disable-next-line max-len
-    // if (await this.logoutButton.isExisting()) await this.logoutButton.click();
     try {
-      await this.logoutButton.waitForClickable({timeout: 3000});
+      await this.logoutButton.waitForClickable({timeout: 1000});
       await this.logoutButton.click();
     } catch (e) {
       await this.open();
     }
-    // else await browser.keys(['Escape']);
-    // await browser.debug();
-    // eslint-disable-next-line max-len
-    // if (await this.logoutButton.isClickable()) await this.logoutButton.click();
-    // else await this.open();
   }
 }

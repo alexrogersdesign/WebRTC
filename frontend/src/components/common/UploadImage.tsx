@@ -66,7 +66,7 @@ const UploadImage = ({formik}: Props)=> {
         accept="image/*"
         className={classes.input}
         style={{display: 'none'}}
-        id="raised-button-file"
+        id="input-file-upload"
         multiple
         type='file'
         onChange={(event)=>{

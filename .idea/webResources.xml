@@ -6,8 +6,6 @@
         <entryData>
           <resourceRoots>
             <path value="file://$PROJECT_DIR$/backend" />
-            <path value="file://$PROJECT_DIR$/frontend" />
-            <path value="file://$PROJECT_DIR$/tests" />
           </resourceRoots>
         </entryData>
       </entry>

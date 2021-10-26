@@ -1,5 +1,9 @@
 /* eslint-disable max-len */
+
+import {defaultTestTimeout} from './src/frontend-e2e/constants';
+
 const debug = process.env.DEBUG;
+
 
 exports.config = {
   //
@@ -23,9 +27,7 @@ exports.config = {
   // then the current working directory is where your `package.json` resides, so `wdio`
   // will be called from there.
   //
-  specs: [
-    './src/frontend-e2e/specs/**/*.ts',
-  ],
+  specs: ['./src/frontend-e2e/specs/**/*.ts'],
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
@@ -148,7 +150,7 @@ exports.config = {
   // See the full list at http://mochajs.org/
   mochaOpts: {
     ui: 'bdd',
-    timeout: 60000,
+    timeout: debug? (2* 60 * 60 * 1000): defaultTestTimeout,
   },
   //
   // =====

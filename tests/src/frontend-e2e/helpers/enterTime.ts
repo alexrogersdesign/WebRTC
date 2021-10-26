@@ -13,7 +13,7 @@ const enterTime = async (
   /* split the date into an array that can be looped through
   * the regex will remove all of the delimiters and create an array of
   * strings that match the time picker string
-  * [month, day, year, hour, min, second, AM/PM]*/
+  * i.e [month, day, year, hour, min, second, <AM | PM>*/
   const dateArray = time.toLocaleString().split(/(?:[\s,]|[\/]|[:])+/);
 
   /* split string into char array */

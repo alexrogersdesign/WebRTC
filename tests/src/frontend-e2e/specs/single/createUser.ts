@@ -1,5 +1,5 @@
-import LoginPage from '../pageobjects/LoginPage';
-import {User} from '../constants';
+import LoginPage from '../../pageobjects/LoginPage';
+import {User} from '../../constants';
 
 describe('Create User', () => {
   beforeEach('setup', async () => {

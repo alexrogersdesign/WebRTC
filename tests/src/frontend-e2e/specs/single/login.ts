@@ -1,5 +1,5 @@
-import LoginPage from '../pageobjects/LoginPage';
-import {correctEmail, correctPassword, User} from '../constants';
+import LoginPage from '../../pageobjects/LoginPage';
+import {correctEmail, correctPassword, User} from '../../constants';
 
 describe('Login Functionality', () => {
   beforeEach('setup', async () => {

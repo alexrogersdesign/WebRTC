@@ -1,6 +1,6 @@
-import LoginPage from '../pageobjects/LoginPage';
-import {correctEmail, correctPassword, Meeting, User} from '../constants';
-import PreMeeting from '../pageobjects/PreMeeting';
+import LoginPage from '../../pageobjects/LoginPage';
+import {correctEmail, correctPassword, Meeting} from '../../constants';
+import PreMeeting from '../../pageobjects/PreMeeting';
 
 describe('Create Meeting', () => {
   before('setup', async () => {

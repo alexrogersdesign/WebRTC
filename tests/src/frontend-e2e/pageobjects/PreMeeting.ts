@@ -20,6 +20,10 @@ class PreMeeting extends Page {
   }
 
 
+  constructor(paramBrowser?: WebdriverIO.Browser) {
+    super(paramBrowser);
+  }
+
   async createMeeting(meeting:Meeting) {
     await this.menu.click();
     const {start, end, title, description} = meeting;
@@ -27,10 +31,10 @@ class PreMeeting extends Page {
     await this.createMeetingButton.click();
     // await this.setValue(browser, await this.inputStart, start);
     // await this.setValue(browser, await this.inputEnd, end);
-    await enterTime(browser, await this.inputStart, start);
-    await enterTime(browser, await this.inputEnd, end);
-    await this.setValue(browser, await this.inputTitle, title);
-    await this.setValue(browser, await this.inputDescription, description);
+    await enterTime(this.internalBrowser, await this.inputStart, start);
+    await enterTime(this.internalBrowser, await this.inputEnd, end);
+    await this.setValue(this.internalBrowser, await this.inputTitle, title);
+    await this.setValue(this.internalBrowser, await this.inputDescription, description);
     await this.btnSubmit.click();
   }
 }

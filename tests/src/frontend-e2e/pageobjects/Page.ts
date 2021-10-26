@@ -7,13 +7,21 @@ const url = 'http://localhost:3000';
 * main page object containing all methods, selectors and functionality
 * that is shared across all page objects
 */
+
+export type ParamBrowser = WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
 export default class Page {
+  internalBrowser: WebdriverIO.MultiRemoteBrowser
+
+  constructor(paramBrowser?: WebdriverIO.MultiRemoteBrowser ) {
+    this.internalBrowser = paramBrowser?? browser;
+  }
+
   /**
     * Opens a sub page of the page
     * @param path path of the sub page (e.g. /path/to/page.html)
     */
   async open(path?: string) {
-    return browser.url(path?? url);
+    return this.internalBrowser.url(path?? url);
   }
   get notification() {
     return $('#notistack-snackbar');
@@ -24,7 +32,7 @@ export default class Page {
   }
   get inputFileUpload() {
     const fileUpload = $('#input-file-upload');
-    browser.execute(
+    this.internalBrowser.execute(
         (el:any) => el.style.display = 'block',
         fileUpload,
     );
@@ -48,7 +56,7 @@ export default class Page {
   }
   async logout() {
     await this.open();
-    await browser.keys(['Escape']);
+    await this.internalBrowser.keys(['Escape']);
     await this.menu.waitForClickable({timeout: 1000});
     await this.menu.click();
     try {

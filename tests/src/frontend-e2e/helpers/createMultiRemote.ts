@@ -1,4 +1,5 @@
 import {multiremote} from 'webdriverio';
+import LoginPage from '../pageobjects/LoginPage';
 
 export async function createMultiRemote() {
   const browser = await multiremote({
@@ -24,6 +25,9 @@ export async function createMultiRemote() {
   const elem = await browser.$('#someElem');
   await elem.click();
 
+  browser.url('test');
   // only click with one browser (Firefox)
   await elem.myFirefoxBrowser.click();
+
+  const loginPageA = new LoginPage(browser);
 }

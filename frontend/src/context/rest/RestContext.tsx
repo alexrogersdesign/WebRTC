@@ -243,15 +243,40 @@ const RestContextProvider = ({children}: Props) => {
   const deleteMeeting = async (id:string) => {
     try {
       await deleteMeetingRequest(id);
-      setMeetingList((oldState) => {
-        return oldState.filter((meeting) => meeting.id.toString() !== id);
-      });
-      enqueueSnackbar(`Meeting Deleted`, snackbarSuccessOptions);
+      removeMeetingFromList(id, false);
+      enqueueSnackbar(`Meeting Deleted`, snackbarInfoOptions);
       return true;
     } catch (error) {
       console.log(error);
       return false;
     }
+  };
+  const addMeetingToList = (addedMeeting:Meeting, notify =true) => {
+    setMeetingList((oldState) => {
+      /* Guard against duplicates*/
+      const meetingFound = oldState.find((meeting) =>
+        addedMeeting.id.toHexString() === meeting.id.toHexString());
+      if (meetingFound) {
+        return oldState;
+      }
+      notify && enqueueSnackbar(
+          `New meeting titled \"${addedMeeting?.title}\" available`,
+          snackbarInfoOptions);
+      return [...oldState, addedMeeting];
+    });
+  };
+  const removeMeetingFromList = (id:string, notify =true) => {
+    setMeetingList((oldState) => {
+      const meetingIndex = oldState.findIndex((meeting) =>
+        id === meeting.id.toHexString());
+      if (meetingIndex > -1) {
+        notify && enqueueSnackbar(
+            `Meeting titled \"${oldState[meetingIndex].title}\" 
+            no long available`, snackbarInfoOptions);
+        return [...oldState.splice(meetingIndex, 1)];
+      }
+      return oldState;
+    });
   };
 
   return (
@@ -270,6 +295,8 @@ const RestContextProvider = ({children}: Props) => {
         meetingList,
         token,
         deleteMeeting,
+        addMeetingToList,
+        removeMeetingFromList,
       }}
     >
       {children}
@@ -293,6 +320,14 @@ const snackbarWarnOptions :OptionsObject = {
     horizontal: 'center',
   },
 };
+const snackbarInfoOptions :OptionsObject = {
+  variant: 'info',
+  autoHideDuration: 2000,
+  anchorOrigin: {
+    vertical: 'bottom',
+    horizontal: 'left',
+  },
+};
 
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
@@ -308,6 +343,8 @@ export interface IRestContext {
   token: string | null,
   checkIfLogged: ()=> void,
   deleteMeeting: (id:string) => Promise<boolean>;
+  addMeetingToList: (meeting:Meeting) => void;
+  removeMeetingFromList: (id:string) => void;
 }
 
 RestContext.displayName = 'Rest Context';

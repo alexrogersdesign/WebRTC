@@ -53,7 +53,8 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     findMeeting,
     token,
     refreshToken,
-    checkIfLogged,
+    addMeetingToList,
+    removeMeetingFromList,
   } = useContext(RestContext);
 
   //* The current meeting being attended
@@ -178,6 +179,13 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     const stream = await initializeMediaStream();
     if (!stream) throw new Error('Video Stream not received');
     changePeerStream(stream);
+
+    socket.on('MeetingDeleted', (meetingId: string)=> {
+      removeMeetingFromList(meetingId);
+    });
+    socket.on('MeetingAdded', (receivedMeeting: IReceivedMeeting)=> {
+      addMeetingToList(parseMeeting(receivedMeeting));
+    });
 
     /**
      * Listens for new user connected event then calls user

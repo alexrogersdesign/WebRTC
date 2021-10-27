@@ -180,6 +180,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     if (!stream) throw new Error('Video Stream not received');
     changePeerStream(stream);
 
+    /* Keeps the application state up to date with database*/
     socket.on('MeetingDeleted', (meetingId: string)=> {
       removeMeetingFromList(meetingId);
     });

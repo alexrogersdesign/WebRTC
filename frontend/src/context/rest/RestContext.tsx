@@ -251,6 +251,12 @@ const RestContextProvider = ({children}: Props) => {
       return false;
     }
   };
+  /**
+   * Adds the provided meeting to the meeting list and updates state
+   * @param {Meeting} addedMeeting The meeting to add
+   * @param {boolean } notify Whether or not a notification should appear
+   * indicating the change. Defaults to true.
+   */
   const addMeetingToList = (addedMeeting:Meeting, notify =true) => {
     setMeetingList((oldState) => {
       /* Guard against duplicates*/
@@ -265,6 +271,12 @@ const RestContextProvider = ({children}: Props) => {
       return [...oldState, addedMeeting];
     });
   };
+  /**
+   * Removes the provided meeting from meeting list and updates state
+   * @param {String} id The id of the meeting to remove
+   * @param {boolean } notify Whether or not a notification should appear
+   * indicating the change. Defaults to true.
+   */
   const removeMeetingFromList = (id:string, notify =true) => {
     setMeetingList((oldState) => {
       const meetingIndex = oldState.findIndex((meeting) =>
@@ -273,7 +285,9 @@ const RestContextProvider = ({children}: Props) => {
         notify && enqueueSnackbar(
             `Meeting titled \"${oldState[meetingIndex].title}\" 
             no long available`, snackbarInfoOptions);
-        return [...oldState.splice(meetingIndex, 1)];
+        const newState= [...oldState];
+        newState.splice(meetingIndex, 1);
+        return newState;
       }
       return oldState;
     });

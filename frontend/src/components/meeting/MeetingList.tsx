@@ -63,7 +63,7 @@ const MeetingList = (props:Props) => {
       <Typography className={classes.title} variant='h4'>
           Meetings
       </Typography>
-      <List className={classes.list}>
+      <List className={classes.list} id={'meeting-list'}>
         {meetingList?.map((meeting) =>
           <MeetingListItem key={meeting.id.toString()} meeting={meeting}/>,
         )}

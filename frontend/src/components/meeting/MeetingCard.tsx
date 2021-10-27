@@ -137,6 +137,7 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
               </Item>
               <Item position={'middle-right'}>
                 <Button
+                  id='join-meeting-button'
                   className={classes.join}
                   // classes={btnStyles}
                   variant={'contained'}

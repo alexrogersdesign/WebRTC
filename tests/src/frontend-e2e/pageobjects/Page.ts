@@ -10,29 +10,22 @@ const url = 'http://localhost:3000';
 
 export type ParamBrowser = WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
 export default class Page {
-  internalBrowser: WebdriverIO.MultiRemoteBrowser
-
-  constructor(paramBrowser?: WebdriverIO.MultiRemoteBrowser ) {
-    this.internalBrowser = paramBrowser?? browser;
-  }
-
   /**
     * Opens a sub page of the page
     * @param path path of the sub page (e.g. /path/to/page.html)
     */
   async open(path?: string) {
-    return this.internalBrowser.url(path?? url);
+    return browser.url(path?? url);
   }
   get notification() {
     return $('#notistack-snackbar');
   }
   get menu() {
-    // return $('#menu/-button');
     return $('#menu-button');
   }
   get inputFileUpload() {
     const fileUpload = $('#input-file-upload');
-    this.internalBrowser.execute(
+    browser.execute(
         (el:any) => el.style.display = 'block',
         fileUpload,
     );
@@ -56,7 +49,7 @@ export default class Page {
   }
   async logout() {
     await this.open();
-    await this.internalBrowser.keys(['Escape']);
+    await browser.keys(['Escape']);
     await this.menu.waitForClickable({timeout: 1000});
     await this.menu.click();
     try {

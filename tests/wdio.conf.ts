@@ -1,9 +1,47 @@
 /* eslint-disable max-len */
 
-import {defaultTestTimeout} from './src/frontend-e2e/constants';
+import {defaultTestTimeout, userAEmail, userBEmail} from './src/frontend-e2e/constants';
+import {multiremote} from 'webdriverio';
+import LoginPage from './src/frontend-e2e/pageobjects/LoginPage';
 
 const debug = process.env.DEBUG;
 
+declare global {
+  export namespace WebdriverIO {
+   export interface Browser {
+      email: string,
+    }
+  }
+}
+export async function getBrowser() {
+  const browser = await multiremote({
+    a: {
+      capabilities: {
+        'maxInstances': debug ? 1 : 5,
+        //
+        'browserName': 'chrome',
+        'acceptInsecureCerts': true,
+        'goog:chromeOptions': {
+          args: ['--use-fake-ui-for-media-stream'],
+        },
+      },
+    },
+    b: {
+      capabilities: {
+        'maxInstances': debug ? 1 : 5,
+        //
+        'browserName': 'chrome',
+        'acceptInsecureCerts': true,
+        'goog:chromeOptions': {
+          args: ['--use-fake-ui-for-media-stream'],
+        },
+      },
+    },
+  });
+  browser['a'].addCommand('email', ()=> userAEmail);
+  browser['b'].addCommand('email', ()=> userBEmail);
+  return browser;
+}
 
 exports.config = {
   //
@@ -54,6 +92,32 @@ exports.config = {
   // Sauce Labs platform configurator - a great tool to configure your capabilities:
   // https://docs.saucelabs.com/reference/platforms-configurator
   //
+  // capabilities: {
+  //
+  // a: {
+  //   capabilities: {
+  //     'maxInstances': debug? 1 : 5,
+  //     //
+  //     'browserName': 'chrome',
+  //     'acceptInsecureCerts': true,
+  //     'goog:chromeOptions': {
+  //       args: ['--use-fake-ui-for-media-stream'],
+  //     },
+  //   },
+  // },
+  // b: {
+  //   capabilities: {
+  //     'maxInstances': debug? 1 : 5,
+  //     //
+  //     'browserName': 'chrome',
+  //     'acceptInsecureCerts': true,
+  //     'goog:chromeOptions': {
+  //       args: ['--use-fake-ui-for-media-stream'],
+  //     },
+  //   },
+  // },
+
+  // },
   capabilities: [{
 
     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
@@ -66,11 +130,6 @@ exports.config = {
     'goog:chromeOptions': {
       args: ['--use-fake-ui-for-media-stream'],
     },
-    // chromedriverArgs: ['--use-fake-ui-for-media-stream'],
-    // If outputDir is provided WebdriverIO can capture driver session logs
-    // it is possible to configure which logTypes to include/exclude.
-    // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
-    // excludeDriverLogs: ['bugreport', 'server'],
   }],
   //
   // ===================

@@ -84,11 +84,7 @@ const MeetingCardModal = ({open, setOpen, meeting, action}: Props) => {
         }}
       >
         <Fade in={open} timeout={{enter: 750, exit: 250}}>
-          {/* <Grid container spacing={4}>*/}
-          {/* <Grid item xs={12} md={8} lg={8}>*/}
           <MeetingCard meeting={meeting}/>
-          {/* </Grid>*/}
-          {/* </Grid>*/}
         </Fade>
       </Modal>
     </div>

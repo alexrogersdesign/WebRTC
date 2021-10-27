@@ -1,9 +1,10 @@
 import faker from 'faker';
 
 export const correctEmail = 'test@test.com';
-export const incorrectEmail = 'wrong@test.com';
 export const correctPassword = 'test';
-export const incorrectPassword = 'wrong';
+export const userAEmail = 'testa@test.com';
+export const userBEmail = 'testb@test.com';
+
 
 export const menuWaitTime = 3000;
 export const defaultTestTimeout = 60000;

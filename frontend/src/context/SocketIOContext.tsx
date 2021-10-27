@@ -160,8 +160,8 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     socket.on('NewMeeting', async (receivedMeeting:IReceivedMeeting) => {
       try {
         const newMeeting = parseMeeting(receivedMeeting);
-        if (!newMeeting) return;
-        newMeeting && enqueueSnackbar(
+        if (!newMeeting) throw new Error('Invalid meeting received');
+        enqueueSnackbar(
             `Joining meeting ${newMeeting.title}`,
             {variant: 'info'},
         );
@@ -321,6 +321,10 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     socket.emit('JoinMeeting', meetingData);
     //* Push meeting to url parameter.
     history.push('?room='+ foundMeeting?.id);
+    enqueueSnackbar(
+        `Joining meeting ${foundMeeting.title}`,
+        {variant: 'info'},
+    );
     setHasJoinedMeeting(true);
   };
 

@@ -74,7 +74,12 @@ const MeetingListItem = ({meeting}: Props) => {
         // style={{backgroundColor: 'transparent', cursor: 'default'}}
         disableRipple={true}
       >
-        <ListItemText primary={meetingPrimary} secondary={meetingSecondary} />
+        <ListItemText
+          primary={meetingPrimary}
+          primaryTypographyProps={{id: 'meeting-title'}}
+          secondary={meetingSecondary}
+          secondaryTypographyProps={{id: 'meeting-id'}}
+        />
         <ListItemSecondaryAction>
           <ToolTip title="Delete Meeting">
             <IconButton

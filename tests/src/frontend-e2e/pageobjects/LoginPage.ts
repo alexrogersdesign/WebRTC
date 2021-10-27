@@ -24,10 +24,6 @@ class LoginPage extends Page {
     return $('#create-account-button');
   }
 
-  constructor(paramBrowser?: WebdriverIO.Browser) {
-    super(paramBrowser);
-  }
-
   /**
      * a method to encapsulate automation code to interact with the page
      * e.g. to login using username and password
@@ -40,24 +36,26 @@ class LoginPage extends Page {
     await this.inputPassword.setValue(password);
     await this.btnSubmit.click();
   }
+  async multiLogin() {
+    await this.login(browser.email, 'test');
+  }
   async createUser(user:User) {
     // const filePath = this.joinPath(file);
     await this.menu.click();
     await this.createAccountButton.waitForClickable({timeout: menuWaitTime});
     await this.createAccountButton.click();
-    // eslint-disable-next-line max-len
-    await this.setValue(this.internalBrowser, await this.inputFirstName, user.firstName);
-    await this.setValue(this.internalBrowser, await this.inputLastName, user.lastName);
-    await this.setValue(this.internalBrowser, await this.inputEmail, user.email);
-    await this.setValue(this.internalBrowser, await this.inputPassword, user.password);
+    await this.setValue(browser, await this.inputFirstName, user.firstName);
+    await this.setValue(browser, await this.inputLastName, user.lastName);
+    await this.setValue(browser, await this.inputEmail, user.email);
+    await this.setValue(browser, await this.inputPassword, user.password);
     // await this.setValue(browser, await this.inputFileUpload, filePath);
     await this.btnSubmit.click();
   }
   async createUserAndLogin(user:User) {
     await this.createUser(user);
-    await this.internalBrowser.pause(1000);
+    await browser.pause(1000);
     await this.login(user.email, user.password);
   }
 }
 
-export default LoginPage;
+export default new LoginPage();

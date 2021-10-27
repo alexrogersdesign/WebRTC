@@ -11,9 +11,8 @@ describe('Join Meeting', () => {
   });
   it('if a meeting exists, it should be join-able', async () => {
     const meetings = await PreMeeting.meetingList();
-    // await browser.debug();
+    await expect(meetings).not.toHaveLength(0);
     const meeting = await meetings[0].$('#meeting-title');
-    // const meetingText = await meeting.getText();
     const meetingTitle = await meeting.getText();
     await PreMeeting.joinMeeting(meeting);
     await expect(PreMeeting.notification).toBeExisting();

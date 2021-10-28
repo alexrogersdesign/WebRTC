@@ -47,6 +47,14 @@ class PreMeeting extends Page {
     await this.joinMeetingButton.waitForClickable({timeout: menuWaitTime});
     await this.joinMeetingButton.click();
   }
+  async joinFirstMeeting() {
+    const meetingList = await this.meetingList;
+    // const meetingElements = await $$('#meeting-title');
+    // await expect(meetingElements).not.toHaveLength(0);
+    const meeting = await meetingList.$('#meeting-title');
+    await this.joinMeeting(meeting);
+    return await meeting.getText();
+  }
 }
 
 export default new PreMeeting();

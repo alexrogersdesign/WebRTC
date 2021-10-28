@@ -1,18 +1,18 @@
 import LoginPage from '../../pageobjects/LoginPage';
 import {correctEmail, correctPassword, Meeting} from '../../constants';
 import PreMeeting from '../../pageobjects/PreMeeting';
+import {getBrowser} from '../../../../wdio.conf';
 
-describe('Create Meeting', () => {
+describe('Create Meeting', async () => {
+  const browser = await getBrowser();
   before('setup', async () => {
-    await LoginPage.logout();
-    // const user = new User();
-    // await LoginPage.createUserAndLogin(user);
-    await LoginPage.login(correctEmail, correctPassword);
+    await LoginPage.multiLogin();
+    await LoginPage.open();
   });
-  it('should create a new meeting', async () => {
-    const meeting = new Meeting();
-    await PreMeeting.createMeeting(meeting);
-    await expect(LoginPage.notification).toBeExisting();
-    await expect(LoginPage.notification).toHaveTextContaining(meeting.title);
+  it('multiple browsers should be able to join the same meeting', async () => {
+    const meetingTitle = await PreMeeting.joinFirstMeeting();
+    await expect(PreMeeting.notification).toBeExisting();
+    await expect(PreMeeting.notification).toHaveTextContaining(meetingTitle);
+    await browser.debug();
   });
 });

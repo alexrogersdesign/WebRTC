@@ -7,7 +7,7 @@ class PreMeeting extends Page {
     return $('#create-meeting-button');
   }
   get meetingList() {
-    return async () => $$('#meeting-list');
+    return $('#meeting-list');
   }
   // get meetings() {
   //   return async () => {

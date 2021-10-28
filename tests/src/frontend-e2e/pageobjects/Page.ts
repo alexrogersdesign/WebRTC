@@ -2,7 +2,6 @@ import path from 'path';
 import deleteValue from '../helpers/deleteValue';
 
 /* eslint-disable valid-jsdoc */
-const url = 'http://localhost:3000';
 /**
 * main page object containing all methods, selectors and functionality
 * that is shared across all page objects
@@ -14,8 +13,9 @@ export default class Page {
     * Opens a sub page of the page
     * @param path path of the sub page (e.g. /path/to/page.html)
     */
+  url = 'http://localhost:3000';
   async open(path?: string) {
-    return browser.url(path?? url);
+    return browser.url(path?? this.url);
   }
   get notification() {
     return $('#notistack-snackbar');

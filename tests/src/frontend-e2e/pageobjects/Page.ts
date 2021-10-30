@@ -1,5 +1,6 @@
 import path from 'path';
 import deleteValue from '../helpers/deleteValue';
+import {Browser} from 'webdriverio';
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -9,11 +10,18 @@ import deleteValue from '../helpers/deleteValue';
 
 export type ParamBrowser = WebdriverIO.Browser | WebdriverIO.MultiRemoteBrowser
 export default class Page {
+  browser: Browser<any>
+  url = 'http://localhost:3000';
+
+
+  constructor(newBrowser: Browser<any> =browser) {
+    this.browser = newBrowser;
+  }
+
   /**
     * Opens a sub page of the page
     * @param path path of the sub page (e.g. /path/to/page.html)
     */
-  url = 'http://localhost:3000';
   async open(path?: string) {
     return browser.url(path?? this.url);
   }

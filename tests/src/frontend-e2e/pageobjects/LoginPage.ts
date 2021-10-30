@@ -1,5 +1,8 @@
 import Page from './Page';
 import {menuWaitTime, User} from '../constants';
+import {getBrowser} from '../../../wdio.conf';
+import {Browser, MultiRemoteBrowser} from 'webdriverio';
+
 
 /**
  * sub page containing specific selectors and methods for a specific page
@@ -23,6 +26,12 @@ class LoginPage extends Page {
   get createAccountButton() {
     return $('#create-account-button');
   }
+
+
+  // constructor(browser:Browser<any>) {
+  //   super();
+  //   browser = browser;
+  // }
 
   /**
      * a method to encapsulate automation code to interact with the page
@@ -58,4 +67,4 @@ class LoginPage extends Page {
   }
 }
 
-export default new LoginPage;
+export default new LoginPage();

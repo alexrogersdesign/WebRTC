@@ -1,11 +1,12 @@
 import LoginPage from '../../pageobjects/LoginPage';
-import {correctEmail, correctPassword, Meeting, userAEmail, userBEmail} from '../../constants';
-import {getBrowser} from '../../../../wdio.conf';
-import PreMeeting from '../../pageobjects/PreMeeting';
+// eslint-disable-next-line max-len
+// import {correctEmail, correctPassword, Meeting, userAEmail, userBEmail} from '../../constants';
+import {getMultiBrowser} from '../../../../wdio.base.conf';
+// import PreMeeting from '../../pageobjects/PreMeeting';
 
 
 describe('Create Multi Remote', async () => {
-  const browser = await getBrowser();
+  const browser = await getMultiBrowser();
   before('setup', async () => {
     await LoginPage.multiLogin();
     await LoginPage.open();

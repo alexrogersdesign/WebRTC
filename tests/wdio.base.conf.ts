@@ -1,8 +1,11 @@
 /* eslint-disable max-len */
 
 import {defaultTestTimeout, userAEmail, userBEmail} from './src/frontend-e2e/constants';
-import {multiremote} from 'webdriverio';
-import LoginPage from './src/frontend-e2e/pageobjects/LoginPage';
+import {multiremote, remote} from 'webdriverio';
+import * as tsConfig from './tsconfig.json';
+import WebDriver from 'webdriver';
+import allure from 'allure-commandline';
+// import type {Capabilities} from '@wdio/types';
 
 const debug = process.env.DEBUG;
 
@@ -11,39 +14,53 @@ declare global {
    export interface Browser {
       email: string,
     }
+    export interface MultiRemoteBrowser{
+     a: Browser,
+      b: Browser
+    }
   }
 }
+export const chromeArgsTempProfile = [
+  '--use-fake-ui-for-media-stream',
+];
+
+export const chromeArgs = [
+  ...chromeArgsTempProfile,
+  'user-data-dir=/Users/alexrogers/Library/Application Support/Google/Chrome/',
+  'profile-directory=Profile\ 2',
+  // '--auto-open-devtools-for-tabs',
+];
+
+
 export async function getBrowser() {
-  const browser = await multiremote({
-    a: {
-      capabilities: {
-        'maxInstances': debug ? 1 : 5,
-        //
-        'browserName': 'chrome',
-        'acceptInsecureCerts': true,
-        'goog:chromeOptions': {
-          args: ['--use-fake-ui-for-media-stream'],
-        },
-      },
-    },
-    b: {
-      capabilities: {
-        'maxInstances': debug ? 1 : 5,
-        //
-        'browserName': 'chrome',
-        'acceptInsecureCerts': true,
-        'goog:chromeOptions': {
-          args: ['--use-fake-ui-for-media-stream'],
-        },
+  return remote({
+    logLevel: 'info',
+    capabilities: {
+      'maxInstances': debug ? 1 : 5,
+      //
+      'browserName': 'chrome',
+      'acceptInsecureCerts': true,
+      'goog:chromeOptions': {
+        args: chromeArgs,
       },
     },
   });
-  browser['a'].addCommand('email', ()=> userAEmail);
-  browser['b'].addCommand('email', ()=> userBEmail);
-  return browser;
 }
+// export async function getBrowser() {
+//   return await WebDriver.newSession({
+//     capabilities: {
+//       'maxInstances': debug ? 1 : 5,
+//       //
+//       'browserName': 'chrome',
+//       'acceptInsecureCerts': true,
+//       'goog:chromeOptions': {
+//         args: ['--use-fake-ui-for-media-stream'],
+//       },
+//     },
+//   });
+// }
 
-exports.config = {
+export const config: Partial<WebdriverIO.Config> = {
   //
   // ====================
   // Runner Configuration
@@ -65,7 +82,7 @@ exports.config = {
   // then the current working directory is where your `package.json` resides, so `wdio`
   // will be called from there.
   //
-  specs: ['./src/frontend-e2e/specs/**/*.ts'],
+  // specs: ['./src/frontend-e2e/specs/**/*.ts'],
   // Patterns to exclude.
   exclude: [
     // 'path/to/excluded/files'
@@ -118,19 +135,57 @@ exports.config = {
   // },
 
   // },
-  capabilities: [{
+  // capabilities: [{
+  //   // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+  //   // grid with only 5 firefox instances available you can make sure that not more than
+  //   // 5 instances get started at a time.
+  //   'maxInstances': debug? 1 : 5,
+  //   //
+  //   'browserName': 'chrome',
+  //   'acceptInsecureCerts': true,
+  //   'goog:chromeOptions': {
+  //     args: ['--use-fake-ui-for-media-stream'],
+  //   },
+  // }],
 
-    // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-    // grid with only 5 firefox instances available you can make sure that not more than
-    // 5 instances get started at a time.
-    'maxInstances': debug? 1 : 5,
-    //
-    'browserName': 'chrome',
-    'acceptInsecureCerts': true,
-    'goog:chromeOptions': {
-      args: ['--use-fake-ui-for-media-stream'],
+  // capabilities: {
+  //   // maxInstances: debug? 1 : 5,
+  //   a: {
+  //     capabilities: {
+  //       //
+  //       'browserName': 'chrome',
+  //       'acceptInsecureCerts': true,
+  //       'goog:chromeOptions': {
+  //         args: ['--use-fake-ui-for-media-stream'],
+  //       },
+  //     },
+  //   },
+  //   b: {
+  //     capabilities: {
+  //       //
+  //       'browserName': 'chrome',
+  //       'acceptInsecureCerts': true,
+  //       'goog:chromeOptions': {
+  //         args: ['--use-fake-ui-for-media-stream'],
+  //       },
+  //     },
+  //   },
+  // },
+
+  autoCompileOpts: {
+    autoCompile: true,
+    // see https://github.com/TypeStrong/ts-node#cli-and-programmatic-options
+    // for all available options
+    tsNodeOpts: {
+      transpileOnly: true,
+      project: __dirname + '/tsconfig.json',
     },
-  }],
+    tsConfigPathsOpts: {
+      baseUrl: './',
+      paths: tsConfig.compilerOptions.paths,
+    },
+  },
+
   //
   // ===================
   // Test Configurations
@@ -179,7 +234,14 @@ exports.config = {
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: ['chromedriver'],
+  services: [
+    ['chromedriver', {
+      logFileName: 'wdio-chromedriver.log', // default
+      outputDir: 'driver-logs', // overwrites the config.outputDir
+      // args: ['--use-fake-ui-for-media-stream'],
+      chromedriverCustomPath: '/Users/alexrogers/.nvm/versions/node/v16.8.0/lib/node_modules/webdriver-manager/selenium/chromedriver_95.0.4638.54',
+    }],
+  ],
 
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber
@@ -201,7 +263,19 @@ exports.config = {
   // Test reporter for stdout.
   // The only one supported by default is 'dot'
   // see also: https://webdriver.io/docs/dot-reporter
-  reporters: ['spec'],
+  reporters: [
+    // [video, {
+    //   saveAllVideos: false, // If true, also saves videos for successful test cases
+    //   videoSlowdownMultiplier: 3, // Higher to get slower videos, lower for faster videos [Value 1-100]
+    // }],
+    'spec',
+    ['allure', {
+      outputDir: 'allure-results',
+      disableWebdriverStepsReporting: true,
+      // disableWebdriverScreenshotsReporting: true,
+      addConsoleLogs: true,
+    }],
+  ],
 
 
   //
@@ -254,7 +328,10 @@ exports.config = {
      * @param {Array.<String>} specs        List of spec file paths that are to be run
      * @param {Object}         browser      instance of created browser/device session
      */
-  // before: function (capabilities, specs) {
+
+  // before: function(capabilities, specs) {
+  //   browser['a'].addCommand('email', ()=> userAEmail);
+  //   browser['b'].addCommand('email', ()=> userBEmail);
   // },
   /**
      * Runs before a WebdriverIO command gets executed.
@@ -274,6 +351,7 @@ exports.config = {
   // browser.overwriteCommand("setValue", setValue , undefined, undefined, undefined);
   // },
   /**
+     * Hook that gets executed before the suite starts
      * Hook that gets executed before the suite starts
      * @param {Object} suite suite details
      */
@@ -299,8 +377,11 @@ exports.config = {
   /**
      * Function to be executed after a test (in Mocha/Jasmine).
      */
-  // afterTest: function(test, context, { error, result, duration, passed, retries }) {
-  // },
+  afterTest: function(test, context, {error, result, duration, passed, retries}) {
+    if (error) {
+      browser.takeScreenshot();
+    }
+  },
 
 
   /**
@@ -343,8 +424,26 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-  // onComplete: function(exitCode, config, capabilities, results) {
-  // },
+  onComplete: function(exitCode, config, capabilities, results) {
+    const reportError = new Error('Could not generate Allure report');
+    const generation = allure(['generate', 'allure-results', '--clean']);
+    return new Promise<void>((resolve, reject) => {
+      const generationTimeout = setTimeout(
+          () => reject(reportError),
+          5000);
+
+      generation.on('exit', function(exitCode) {
+        clearTimeout(generationTimeout);
+
+        if (exitCode !== 0) {
+          return reject(reportError);
+        }
+
+        console.log('Allure report successfully generated');
+        resolve();
+      });
+    });
+  },
   /**
     * Gets executed when a refresh happens.
     * @param {String} oldSessionId session ID of the old session

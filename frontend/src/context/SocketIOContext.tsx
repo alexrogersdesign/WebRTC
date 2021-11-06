@@ -193,12 +193,13 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
      * Cleans up connection on error or if far side closes connection.
      */
     socket.on('NewUserConnected', (receivedUser: IReceivedUser) => {
+      console.log('io - NewUserConnected');
       //* parse received json object into User
       const user = parseUser(receivedUser);
       if (!currentUser) throw new Error('current user does not exist');
       //* Prevent local user from being added.
       if (user.id === currentUser.id) return;
-      enqueueSnackbar(`${user} has connected`);
+      enqueueSnackbar(`${user} has joined`, {key: 'user-joined'});
       const metadata : ICallMetadata = {
         user: currentUser,
       };
@@ -216,9 +217,9 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
         // TODO retrieve metadata from callee.
         // TODO Check if user ID needs to be updated from
         // TODO the one provided by websocket to call.peer
+        console.log('peer- stream received', stream);
         addPeer(call);
         addExternalMedia(user, stream, callOption);
-        console.log('stream received', stream);
       });
       //* remove media if closed by far side
       call.on('close', () => {
@@ -238,7 +239,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
      */
     socket.on('UserDisconnected', (receivedUser: IReceivedUser) => {
       const user = parseUser(receivedUser);
-      console.log('user disconnected', user.id );
+      console.log('io - user disconnected', user.id );
       if (user.id.toString() in peers.current) {
         peers.current[user.id.toString()].close();
       }
@@ -372,10 +373,12 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
       console.log('call received and answered', call);
       addPeer(call);
       call.on('stream', (stream) => {
+        console.log('peer - call - stream received after call received');
         const newUser = parseUser(call.metadata.user);
         addExternalMedia(newUser, stream);
       });
       call.on('close', ()=>{
+        console.log('peer - call - connection closed by call');
         removeMedia(call.peer);
       });
       call.on('error', () => {

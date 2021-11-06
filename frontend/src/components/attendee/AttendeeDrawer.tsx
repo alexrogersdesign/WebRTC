@@ -27,6 +27,7 @@ import User from '../../shared/classes/User';
 import Meeting from '../../shared/classes/Meeting';
 
 interface Props {
+   user: User| null,
    users: User[]| undefined,
    meeting: Meeting | undefined| null,
 }
@@ -92,6 +93,11 @@ const useStyles = makeStyles((theme: Theme) =>
       //* necessary for content to be below app bar
       ...theme.mixins.toolbar,
     },
+    toolbarItem: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
     content: {
       flexGrow: 1,
       padding: theme.spacing(3),
@@ -102,11 +108,19 @@ const useStyles = makeStyles((theme: Theme) =>
     listItemText: {
       padding: theme.spacing(0, 2),
     },
+    userName: {
+      padding: theme.spacing(0, 3),
+      justifySelf: 'center',
+      justifyItems: 'center',
+      alignContent: 'center',
+      alignSelf: 'center',
+      flexShrink: 0,
+    },
   }),
 );
 
 
-export const AttendeeDrawer = ({users, meeting}: Props) => {
+export const AttendeeDrawer = ({user, users, meeting}: Props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -128,7 +142,7 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar >
+        <Toolbar classes={{root: classes.toolbarItem}} >
           <IconButton
             style={{display: meeting? 'flex': 'none'}}
             // color="inherit"
@@ -143,9 +157,12 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
             <Typography style={hideWhenOpen} variant="h6" >
               Attendees
             </Typography>
+
           </IconButton>
+          <Typography variant="h6" className={classes.userName}>
+            {user&& user.fullName}
+          </Typography>
           <TopDrawer/>
-          {/* <ChatDrawer meeting={meeting}/> */}
         </Toolbar>
       </AppBar>
       {meeting && (<Drawer
@@ -182,7 +199,6 @@ export const AttendeeDrawer = ({users, meeting}: Props) => {
       </Drawer>)}
       <main className={classes.content}>
         <div className={classes.toolbar} />
-
       </main>
     </div>
   );

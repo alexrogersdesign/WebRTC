@@ -1,13 +1,20 @@
-import Page from './Page';
+import Page, {ParamBrowser} from './Page';
 import {Meeting, menuWaitTime} from '../constants';
 import enterTime from '../helpers/enterTime';
+import LoginPage from '@e2ePage/LoginPage';
 
-class PreMeeting extends Page {
+class PreMeetingPage extends LoginPage {
+  browser: any
+  constructor(browser?:ParamBrowser) {
+    super(browser);
+    this.browser = browser;
+  }
+
   get createMeetingButton() {
-    return $('#create-meeting-button');
+    return this.browser.$('#create-meeting-button');
   }
   get meetingList() {
-    return $('#meeting-list');
+    return this.browser.$('#meeting-list');
   }
   // get meetings() {
   //   return async () => {
@@ -16,19 +23,19 @@ class PreMeeting extends Page {
   //   };
   // }
   get inputStart() {
-    return $('#start');
+    return this.browser.$('#start');
   }
   get inputEnd() {
-    return $('#end');
+    return this.browser.$('#end');
   }
   get inputTitle() {
-    return $('#title');
+    return this.browser.$('#title');
   }
   get joinMeetingButton() {
-    return $('#join-meeting-button');
+    return this.browser.$('#join-meeting-button');
   }
   get inputDescription() {
-    return $('#description');
+    return this.browser.$('#description');
   }
 
   async createMeeting(meeting:Meeting) {
@@ -49,12 +56,14 @@ class PreMeeting extends Page {
   }
   async joinFirstMeeting() {
     const meetingList = await this.meetingList;
-    // const meetingElements = await $$('#meeting-title');
-    // await expect(meetingElements).not.toHaveLength(0);
     const meeting = await meetingList.$('#meeting-title');
+    const meetingText = await meeting.getText();
     await this.joinMeeting(meeting);
-    return await meeting.getText();
+    return meetingText;
   }
 }
+export function preMeetingPageCreator(newBrowser?: ParamBrowser) {
+  return new PreMeetingPage(newBrowser);
+}
 
-export default new PreMeeting();
+export default PreMeetingPage;

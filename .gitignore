@@ -1,5 +1,8 @@
-tfjs-models
+
 
 */src/**/*.d.ts
 */src/**/*.js
 */src/**/*.jsx
+*/src/**/*.js.map
+*/src/**/*.*.js
+*/src/**/*.*.js.map

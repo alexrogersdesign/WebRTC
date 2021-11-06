@@ -1,7 +1,5 @@
-import Page from './Page';
+import Page, {ParamBrowser} from './Page';
 import {menuWaitTime, User} from '../constants';
-import {getBrowser} from '../../../wdio.conf';
-import {Browser, MultiRemoteBrowser} from 'webdriverio';
 
 
 /**
@@ -9,29 +7,29 @@ import {Browser, MultiRemoteBrowser} from 'webdriverio';
  */
 class LoginPage extends Page {
   get inputEmail() {
-    return $('#email');
+    return this.browser.$('#email');
   }
   get inputFirstName() {
-    return $('#firstName');
+    return this.browser.$('#firstName');
   }
   get inputLastName() {
-    return $('#lastName');
+    return this.browser.$('#lastName');
   }
   get inputPassword() {
-    return $('#password');
+    return this.browser.$('#password');
   }
   get loginButton() {
-    return $('#login-button');
+    return this.browser.$('#login-button');
   }
   get createAccountButton() {
-    return $('#create-account-button');
+    return this.browser.$('#create-account-button');
   }
+  browser: any
 
-
-  // constructor(browser:Browser<any>) {
-  //   super();
-  //   browser = browser;
-  // }
+  constructor(browser?:ParamBrowser) {
+    super(browser);
+    this.browser = browser;
+  }
 
   /**
      * a method to encapsulate automation code to interact with the page
@@ -46,7 +44,7 @@ class LoginPage extends Page {
     await this.btnSubmit.click();
   }
   async multiLogin() {
-    await this.login(browser.email, 'test');
+    await this.login(await this.browser.a.email(), 'test');
   }
   async createUser(user:User) {
     // const filePath = this.joinPath(file);
@@ -62,9 +60,12 @@ class LoginPage extends Page {
   }
   async createUserAndLogin(user:User) {
     await this.createUser(user);
-    await browser.pause(1000);
+    await this.browser.pause(1000);
     await this.login(user.email, user.password);
   }
 }
+export function loginPageCreator(newBrowser?: ParamBrowser) {
+  return new LoginPage(newBrowser);
+}
 
-export default new LoginPage();
+export default LoginPage;

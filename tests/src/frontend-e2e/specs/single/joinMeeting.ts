@@ -1,28 +1,35 @@
-import LoginPage from '../../pageobjects/LoginPage';
-import {correctEmail, correctPassword, Meeting, User} from '../../constants';
-import PreMeeting from '../../pageobjects/PreMeeting';
+import LoginPage, {loginPageCreator} from '../../pageobjects/LoginPage';
+import {correctEmail, correctPassword, Meeting} from '../../constants';
+import PreMeetingPage, {preMeetingPageCreator} from '../../pageobjects/PreMeetingPage';
+import {getBrowser} from '../../../../wdio.base.conf';
 
-describe('Join Meeting', () => {
+describe('Join Meeting', async () => {
+  let loginPage;
+  let preMeetingPage;
   before('login', async () => {
-    await LoginPage.logout();
-    await LoginPage.login(correctEmail, correctPassword);
+    // const browser = await getBrowser();
+    loginPage = loginPageCreator(browser);
+    preMeetingPage = preMeetingPageCreator(browser);
+    await loginPage.logout();
+    await loginPage.login(correctEmail, correctPassword);
     await browser.pause(2000);
-    // await PreMeeting.createMeeting(new Meeting());
   });
   afterEach('return to main page', async () => {
-    await PreMeeting.open();
+    await preMeetingPage.open();
   });
   it('if a meeting exists, the first meeting should be join-able', async () => {
-    const meetingTitle = await PreMeeting.joinFirstMeeting();
-    await expect(PreMeeting.notification).toBeExisting();
-    await expect(PreMeeting.notification).toHaveTextContaining(meetingTitle);
+    const meetingTitle = await preMeetingPage.joinFirstMeeting();
+    await expect(preMeetingPage.notification).toBeExisting();
+    await expect(preMeetingPage.notification)
+        .toHaveTextContaining(meetingTitle);
   });
   it('a created meeting should be join-able', async () => {
     const meeting = new Meeting();
-    await PreMeeting.createMeeting(meeting);
+    await preMeetingPage.createMeeting(meeting);
     const newMeeting = await $(`span=${meeting.title}`);
     await newMeeting.waitForExist({timeout: 5000});
-    await PreMeeting.joinMeeting(newMeeting);
-    await expect(PreMeeting.notification).toHaveTextContaining(meeting.title);
+    await preMeetingPage.joinMeeting(newMeeting);
+    await expect(preMeetingPage.notification)
+        .toHaveTextContaining(meeting.title);
   });
 });

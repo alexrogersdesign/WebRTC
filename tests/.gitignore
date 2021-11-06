@@ -21,3 +21,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/allure-report
+/_results_
+/allure-results
+/driver-logs
+/wdio.base.conf.js
+/wdio.base.conf.js.map
+/wdio.multi.conf.js
+/wdio.multi.conf.js.map
+/wdio.single.conf.js
+/wdio.single.conf.js.map

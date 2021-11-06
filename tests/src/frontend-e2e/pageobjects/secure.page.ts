@@ -7,7 +7,7 @@
 //     /**
 //      * define selectors using getter methods
 //      */
-//     get flashAlert () { return $('#flash') }
+//     get flashAlert () { return this.browser.$('#flash') }
 // }
 //
 // export default new SecurePage();

@@ -17,6 +17,7 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {SocketIOContext} from '../context/SocketIOContext';
 import {ChildrenProps} from '../shared/types';
 import TopDrawer from './TopDrawer';
+import {RestContext} from '../context/rest/RestContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,52 +36,13 @@ interface Props extends ChildrenProps{
 const TopBar = ({children, className, position}: Props) => {
   const classes = useStyles();
 
-  const {meeting, startNewMeeting, leaveMeeting} = useContext(SocketIOContext);
+  const {currentUser} = useContext(RestContext);
   return (
     <AppBar className={className} position={position? position: 'static'}>
       <Toolbar>
-        {/* <IconButton edge='start' color='inherit' aria-label='menu'> */}
-        {/* <MenuIcon /> */}
-        {/* </IconButton> */}
+        <Typography>{currentUser?.fullName}</Typography>
         {children}
-        { meeting && (
-          <div>
-            {/* <Typography variant='h6'>
-          Meeting ID:
-              <Typography variant='button'>   {meeting.id}</Typography>
-              <Tooltip title='Leave Meeting'>
-                <IconButton
-                  className={classes.cancelIcon}
-                  edge='end'
-                  aria-label='Leave meeting'
-                  size='medium'
-                  onClick={leaveMeeting}
-                >
-                  <CancelIcon/>
-                </IconButton>
-              </Tooltip>
-            </Typography> */}
-          </div>
-        )}
-        {/* {!meeting && (
-          <div>
-            <Typography variant='button' gutterBottom>
-            Create a new meeting
-            </Typography>
-            <Tooltip title='Start New Meeting'>
-              <IconButton
-                edge='end'
-                aria-label='new meeting'
-                size='medium'
-                color='inherit'
-                onClick={startNewMeeting}
-              >
-                <FiberNewIcon/>
-              </IconButton>
-            </Tooltip>
-          </div>
-        )} */}
-        <TopDrawer/>
+        {/* <TopDrawer/>*/}
       </Toolbar>
     </AppBar>
   );

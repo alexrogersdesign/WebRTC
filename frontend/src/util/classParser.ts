@@ -2,9 +2,7 @@
 import ObjectID from 'bson-objectid';
 import {Buffer} from 'buffer';
 import Meeting from '../shared/classes/Meeting.js';
-import Message,
-{MessageImage,
-  MessageType} from '../shared/classes/Message.js';
+import Message, {MessageImage, MessageType} from '../shared/classes/Message.js';
 import User from '../shared/classes/User.js';
 // import {MeetingIcon} from '../shared/classes/MeetingIcon.js';
 // import {RequireAtLeastOne} from '../shared/types';
@@ -123,13 +121,14 @@ interface ImageBuffer {
 type ParseBuffer = ImageBuffer| string | undefined
 
 const parseBuffer = (input: ParseBuffer): string | undefined => {
-  if (!input) return;
-  if (typeof input === 'string') return input;
-  // console.log('buffer input', input);
+  /* if input is a valid string buffer, return it */
+  if (typeof input === 'string') {
+    return Buffer.isBuffer(input)? input: undefined;
+  }
+  if (!input || !input?.data) return;
   const buffer = Buffer.from(input.data);
   const bufferString = buffer.toString('base64');
-  const dataString = `data:${input.mimeType};base64,${bufferString}`;
-  return dataString;
+  return `data:${input.mimeType};base64,${bufferString}`;
 };
 
 export const parseMeeting =

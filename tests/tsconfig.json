@@ -14,14 +14,23 @@
     "esModuleInterop": true,
     "noEmitHelpers": false,
     "baseUrl": ".",
+    "resolveJsonModule": true,
+    "paths": {
+      "@src/*": ["src/*"],
+      "@e2e/*": ["src/frontend-e2e/*"],
+      "@/*": ["./*"],
+      "@e2ePage/*": ["src/frontend-e2e/pageobjects/*"]
+    }
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    "./"
   ],
   "exclude": [
+    "node_modules",
     "src/**/*.js",
     "src/**/*.jsx",
     "src/**/*.mjs",
-    "src/**/*.cjs",
+    "src/**/*.cjs"
   ]
 }

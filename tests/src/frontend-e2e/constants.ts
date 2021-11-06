@@ -3,11 +3,15 @@ import faker from 'faker';
 export const correctEmail = 'test@test.com';
 export const correctPassword = 'test';
 export const userAEmail = 'testa@test.com';
+export const userAName = 'Johan Atest';
 export const userBEmail = 'testb@test.com';
+export const userBName = 'Stacy Btest';
+
+export const notificationID = '#notistack-snackbar';
 
 
 export const menuWaitTime = 3000;
-export const defaultTestTimeout = 60000;
+export const defaultTestTimeout = 120000;
 
 export class User {
     firstName: string

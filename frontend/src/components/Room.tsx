@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const Room = (props: Props) => {
   const classes = useStyles();
   const {meeting} = useContext(SocketIOContext);
-  const {token} = useContext(RestContext);
+  const {token, currentUser} = useContext(RestContext);
   const {externalMedia, videoReady} = useContext(MediaControlContext);
   const {currentTheme, setTheme} = useContext(CustomThemeContext);
   const {loggedIn} = useContext(RestContext);
@@ -72,7 +72,7 @@ const Room = (props: Props) => {
   return (
     <div >
       <div className={classes.topBar}>
-        <AttendeeDrawer users={users} meeting={meeting}/>
+        <AttendeeDrawer user={currentUser} users={users} meeting={meeting}/>
         <ChatDrawer meeting={meeting}/>
       </div>
       <Container className={classes.container}>

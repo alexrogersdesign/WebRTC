@@ -8,28 +8,18 @@ import {makeStyles,
   useTheme,
 } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
-import Toolbar from '@material-ui/core/Toolbar';
-import AppBar from '@material-ui/core/AppBar';
-import Paper from '@material-ui/core/Paper';
-import List from '@material-ui/core/List';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+
 import IconButton from '@material-ui/core/IconButton';
-import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Chip from '@material-ui/core/Chip';
 import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 
-// import {User, Meeting} from '../../shared/types';
-import User from '../../shared/classes/User';
 import Meeting from '../../shared/classes/Meeting';
 
-import ChatBox from './ChatBox';
+import ChatBox from '../chat-scope/ChatBox';
 
 interface Props {
-  //  users: User[]| undefined,
    meeting: Meeting | undefined| null,
 }
 type StyleRef = React.MutableRefObject<HTMLDivElement | undefined>
@@ -40,7 +30,6 @@ const offset = 90;
 const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
   createStyles({
     root: {
-
     },
     appBar: {
       float: 'right',
@@ -108,8 +97,6 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     },
   }),
 );
-
-
 const ChatDrawer = ({meeting}: Props) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);

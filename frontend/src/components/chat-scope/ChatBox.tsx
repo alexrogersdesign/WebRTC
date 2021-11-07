@@ -136,6 +136,7 @@ const ChatBox = ({innerRef}: Props) => {
               {renderMessage()}
             </MessageList>
             <MessageInput
+              attachButton={false}
               onSend={handleSend}
               placeholder='Type a message...'
             />

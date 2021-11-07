@@ -9,8 +9,10 @@ import User from '../../shared/classes/User';
 // import AttendeeInfoModal from '../attendee/AttendeeInfoModal';
 import ModalWrapper from './ModalWrapper';
 import AttendeeInfo, {AttendeeInfoProps} from '../attendee/AttendeeInfo';
+// TODO cleanup props and styles
+interface StyleProps {avatarSize: number}
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
     root: {
       'display': 'flex',
@@ -18,12 +20,14 @@ const useStyles = makeStyles((theme: Theme) =>
         // margin: theme.spacing(1),
       },
     },
-    fab: {
+    fab: (props) => ({
+      width: theme.spacing(props.avatarSize + .5),
+      height: theme.spacing(props.avatarSize + .5),
       flexShrink: 0,
       // margin: 2,
-      opacity: .9,
+      // opacity: .9,
       zindex: 99,
-    },
+    }),
     absolute: {
       position: 'absolute',
       // bottom: theme.spacing(2),
@@ -33,10 +37,12 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.getContrastText(deepOrange[500]),
       backgroundColor: deepOrange[500],
     },
-    purple: {
+    avatar: (props) => ({
+      width: theme.spacing(props.avatarSize),
+      height: theme.spacing(props.avatarSize),
       color: theme.palette.getContrastText(deepPurple[500]),
       backgroundColor: deepPurple[500],
-    },
+    }),
   }),
 );
 
@@ -44,13 +50,14 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
    user?: User,
    className?: string,
+   avatarSize?: number,
    clickDisabled?: boolean,
    Component?: JSX.Element,
-   componentProps?: any
+   componentProps?: any,
 }
 type AvatarIconProps = {
     user: User,
-    className: string
+    className: string,
 }
 
 const AvatarIcon = ({user, className} : AvatarIconProps) => {
@@ -67,11 +74,12 @@ const AvatarIcon = ({user, className} : AvatarIconProps) => {
 const UserAvatar = ({
   user,
   className,
+  avatarSize,
   clickDisabled,
   Component,
   componentProps,
 }: Props) => {
-  const classes = useStyles();
+  const classes = useStyles({avatarSize: avatarSize?? 5});
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -90,12 +98,12 @@ const UserAvatar = ({
                   onClick={() => setModalOpen(true)}
                   disabled={clickDisabled}
                 >
-                  <AvatarIcon user={user} className={classes.purple}/>
+                  <AvatarIcon user={user} className={classes.avatar}/>
                 </Fab>
               </Tooltip>
             )}
             {clickDisabled && (
-              <AvatarIcon user={user} className={classes.purple}/>
+              <AvatarIcon user={user} className={classes.avatar}/>
             )}
             <ModalWrapper<AttendeeInfoProps>
               open={modalOpen}

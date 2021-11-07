@@ -59,7 +59,6 @@ const ChatInput = () => {
       <IconButton edge="start" color="inherit">
         <AttachFileIcon className={classes.icon} />
       </IconButton>
-
       <InputBase
         value={field}
         onChange={(e)=> setField(e.target.value)}

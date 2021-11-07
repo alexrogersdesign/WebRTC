@@ -1,3 +1,5 @@
+import Message from '../shared/classes/Message';
+import User from '../shared/classes/User';
 
 export const promiseWithTimeout = <T>
   (timeoutMs: number, promise: () => Promise<T>, failureMessage?: string) => {
@@ -18,3 +20,20 @@ export const promiseWithTimeout = <T>
   });
 };
 
+/**
+ * Determines whether or not the supplied message should be displayed
+ * as incoming or outgoing depending on the supplied user.
+ *
+ * Checks whether the user value of the message matches the supplied
+ * user Parameter. If they match, the direction is 'outgoing',
+ * otherwise the direction is 'incoming'.
+ * @param {Message} message  The message to check
+ * @param {User} user The current user to validate the message against.
+ * @return {'outgoing'|'incoming'} The determined direction the message
+ * should be displayed as: either 'outgoing' or 'incoming'
+ */
+export function getMessageDirection(message: Message, user: User) {
+  return message.user.id.toString() === user?.id.toString() ?
+      'outgoing':
+      'incoming';
+}

@@ -1,4 +1,5 @@
 import Message from '../shared/classes/Message';
+// import Meeting from '../shared/classes/Meeting';
 /**
  * Formats provided time input to provide a user friendly string which
  * displays the difference between current time
@@ -6,7 +7,7 @@ import Message from '../shared/classes/Message';
  * @param {Date}inputTime The time to format
  * @return {string} The difference in time
  */
-export function getTimeDifference(inputTime:Date) {
+export function getPastTimeDifference(inputTime:Date) {
   /* timeDiff = difference in time (minutes) */
   const timeDiff = Math.floor((Date.now() - inputTime.getTime()) / (60_000));
   const today = new Date();
@@ -37,7 +38,7 @@ export function getTimeDifference(inputTime:Date) {
     );
   }
   return timeToDisplay;
-};
+}
 
 /**
  * Formats message time to display how recently it occurred.
@@ -45,6 +46,9 @@ export function getTimeDifference(inputTime:Date) {
  * @return {string} The difference in time.
  */
 export function getMessageTimeDifference(message:Message) {
-  return getTimeDifference(message.timeStamp);
+  return getPastTimeDifference(message.timeStamp);
 }
-
+// export function getMeetingTimeUntilStart(meeting:Meeting) {
+//
+// }
+//

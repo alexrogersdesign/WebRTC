@@ -33,16 +33,11 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
       display: 'flex',
-      // width: '100%',
       flexShrink: 1,
-      // alignItems: 'flex-start',
     },
     secondary: {
-      // padding: theme.spacing(0, 70, 0),
-      // alignSelf: 'flex-start',
     },
     delete: {
-      // padding: theme.spacing(0, 70, 0),
       alignSelf: 'flex-start',
       color: '#f44336',
       fill: '#f44336',
@@ -63,7 +58,8 @@ const MeetingListItem = ({meeting}: Props) => {
     joinMeeting(meeting.id.toString());
   };
   const meetingPrimary = `${meeting?.title}`;
-  const meetingSecondary = `ID: ${meeting?.id}`;
+  const meetingSecondary = `${meeting?.start.toLocaleString([],
+      {month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit'})}`;
   return (
     <>
       <ListItem

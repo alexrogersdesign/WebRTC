@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import ToolTip from '@material-ui/core/Tooltip';
+import ToolTip, {TooltipProps} from '@material-ui/core/Tooltip';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 
@@ -13,7 +13,8 @@ interface Props {
     className?: string | undefined,
     textToCopy: string,
     description: string,
-    edge?: false | 'end' | 'start' | undefined
+    edge?: false | 'end' | 'start' | undefined,
+    tooltipPlacement?: TooltipProps['placement']
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -29,7 +30,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const CopyButtonIcon = ({className, textToCopy, description, edge}: Props) => {
+const CopyButtonIcon = (props: Props) => {
+  const {className, textToCopy, description, edge, tooltipPlacement} = props;
   const classes = useStyles();
   const [copied, setCopied] = useState(false);
 
@@ -46,8 +48,8 @@ const CopyButtonIcon = ({className, textToCopy, description, edge}: Props) => {
       onCopy={()=> setCopied(true)}
     >
       <ToolTip
-        title={`Copy ${description?? '?'}`}
-        placement="top"
+        title={`Copy ${description?? ''}`}
+        placement={tooltipPlacement?? 'top'}
         // title='Meeting Copied!'
         // disableHoverListener={true}
         // disableFocusListener={true}

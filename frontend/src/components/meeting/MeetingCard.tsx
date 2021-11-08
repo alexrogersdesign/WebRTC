@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 // TODO fix issue where join meeting button moves on screen size change
 import React, {useEffect, useContext, forwardRef, Children} from 'react';
-import NoSsr from '@material-ui/core/NoSsr';
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import Box from '@material-ui/core/Box';
@@ -11,13 +10,18 @@ import {Info, InfoSubtitle, InfoTitle} from '@mui-treasury/components/info';
 import {useApexInfoStyles} from '@mui-treasury/styles/info/apex';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import WebFont from 'webfontloader';
-
+import CalendarTodayTwoToneIcon from '@material-ui/icons/CalendarTodayTwoTone';
+import ScheduleTwoToneIcon from '@material-ui/icons/ScheduleTwoTone';
 
 import Meeting from '../../shared/classes/Meeting';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import CopyButtonIcon from '../common/CopyButtonIcon';
 import PropTypes from 'prop-types';
 import {ChildrenProps} from '../../shared/types';
+import {getTimeDiffMinutes, toLocalStringMonth} from '../../util/formatTime';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Chip from '@material-ui/core/Chip';
 
 
 interface Props extends ChildrenProps{
@@ -36,36 +40,54 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     card: {
       zIndex: 1,
-      boxShadow: theme.shadows[5],
+      boxShadow: theme.shadows[6],
       position: 'relative',
       borderRadius: 5,
-      // boxShadow: '0 6px 20px 0 #dbdbe8',
-      backgroundColor: '#fff',
-      transition: '0.4s',
+      backgroundColor: theme.palette.neutral.main,
+      transition: '0.1s',
       height: '100%',
-      border: '2px solid #000',
+      border: '1px solid #000',
     },
     logo: {
       width: 48,
       height: 48,
       borderRadius: 5,
     },
+    itemDisplay: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      padding: theme.spacing(0, .5, 0),
+      backgroundColor: theme.palette.neutralGray.light,
+      borderRadius: 3,
+      border: `1px solid ${theme.palette.neutralGray.main}`,
+      margin: theme.spacing(1.2),
+    },
+    description: {
+      display: 'flex',
+      flexDirection: 'column',
+      padding: theme.spacing(1),
+      height: '100%',
+      backgroundColor: theme.palette.neutral.main,
+    },
+    button: {
+      border: `1px solid ${theme.palette.primary.dark}`,
+    },
+    icon: {
+      margin: theme.spacing(.25, .25, .25),
+    },
     avatar: {
       fontFamily: 'Ubuntu',
       fontSize: '0.875rem',
       backgroundColor: '#6d7efc',
-    },
-    join: {
-      // 'background': 'linear-gradient(to top, #638ef0, #82e7fe)',
-      // '& > *': {
-      //   textTransform: 'none !important',
-      // },
     },
     delete: {
       // padding: theme.spacing(0, 70, 0),
       alignSelf: 'flex-start',
       color: '#f44336',
       fill: '#f44336',
+    },
+    title: {
+      padding: theme.spacing(0, 1, 0),
     },
     copyButton: {
       // position: 'absolute',
@@ -88,13 +110,15 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
         title,
         id,
         description,
+        start,
+        end,
       }= meeting;
       const classes = useStyles();
       const {joinMeeting} = useContext(SocketIOContext);
       return (
         <div className={classes.root} ref={ref}>
           <Column className={classes.card}>
-            <Row p={2} gap={2}>
+            <Row p={2} gap={1}>
               {icon?.length !== 0 && (
                 <Avatar
                   className={classes.logo}
@@ -102,11 +126,16 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
                   src={icon}
                 />
               )}
-              <Info position={'middle'} useStyles={useApexInfoStyles}>
+              <Info
+                className={classes.title}
+                position={'middle'}
+                useStyles={useApexInfoStyles}
+              >
                 <InfoTitle>{title}</InfoTitle>
                 <InfoSubtitle>{`ID: ${id}`}</InfoSubtitle>
               </Info>
               <CopyButtonIcon
+                tooltipPlacement={'right-end'}
                 textToCopy={id.toString()}
                 description={'Meeting ID'}
                 edge='end'
@@ -115,12 +144,70 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
             </Row>
             <Box
               pb={1}
-              px={2}
+              px={3}
+              color="text.primary"
+              fontSize={'0.675rem'}
+              fontFamily={'Ubuntu'}
+            >
+              <Paper
+                className={classes.itemDisplay}
+                // variant={'outlined'}
+                // elevation={1}
+              >
+                <CalendarTodayTwoToneIcon
+                  fontSize={'small'}
+                  className={classes.icon}
+                />
+                <Typography variant={'caption'}>
+                  {'Start:  '}
+                </Typography>
+                <Typography
+                  variant={'caption'}
+                  color={'textPrimary'}
+                >
+                  {toLocalStringMonth(start)}
+                </Typography>
+              </Paper>
+              <Paper
+                // variant={'outlined'}
+                elevation={1}
+                className={classes.itemDisplay}
+              >
+                <ScheduleTwoToneIcon
+                  fontSize={'small'}
+                  className={classes.icon}
+                />
+                <Typography variant={'caption'}>
+                  {'Duration:  '}
+                </Typography>
+                <Typography
+                  variant={'caption'}
+                  color={'textPrimary'}
+                >
+                  {`${getTimeDiffMinutes(start, end)} Minutes`}
+                </Typography>
+              </Paper>
+            </Box>
+            <Box
+              pb={1}
+              px={4}
               color={'grey.600'}
               fontSize={'0.875rem'}
               fontFamily={'Ubuntu'}
             >
-              {description}
+              {/* <Paper*/}
+              {/*  className={classes.description}*/}
+              {/* >*/}
+              <Typography
+                variant={'subtitle2'}
+                color={'textPrimary'}
+              >
+                Description
+              </Typography>
+              <Typography variant={'caption'} color ={'textSecondary'}>
+                {description}
+              </Typography>
+              {/* </Paper>*/}
             </Box>
             <Row p={2} gap={2} position={'bottom'}>
               <Item>
@@ -138,8 +225,7 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
               <Item position={'middle-right'}>
                 <Button
                   id='join-meeting-button'
-                  className={classes.join}
-                  // classes={btnStyles}
+                  className={classes.button}
                   variant={'contained'}
                   color={'primary'}
                   onClick={()=>joinMeeting(meeting.id.toString())}

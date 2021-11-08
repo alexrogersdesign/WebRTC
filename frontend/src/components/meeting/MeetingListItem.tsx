@@ -23,6 +23,7 @@ import ModalWrapper from '../common/ModalWrapper';
 import MeetingCard from './MeetingCard';
 import PropTypes from 'prop-types';
 import JoinMeetingForm from '../forms/JoinMeetingForm';
+import {toLocalStringMonth} from '../../util/formatTime';
 
 interface Props {
   meeting: Meeting
@@ -58,8 +59,7 @@ const MeetingListItem = ({meeting}: Props) => {
     joinMeeting(meeting.id.toString());
   };
   const meetingPrimary = `${meeting?.title}`;
-  const meetingSecondary = `${meeting?.start.toLocaleString([],
-      {month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit'})}`;
+  const meetingSecondary = toLocalStringMonth(meeting?.start);
   return (
     <>
       <ListItem
@@ -74,7 +74,7 @@ const MeetingListItem = ({meeting}: Props) => {
           primary={meetingPrimary}
           primaryTypographyProps={{id: 'meeting-title'}}
           secondary={meetingSecondary}
-          secondaryTypographyProps={{id: 'meeting-id'}}
+          secondaryTypographyProps={{id: 'meeting-start'}}
         />
         <ListItemSecondaryAction>
           <ToolTip title="Delete Meeting">

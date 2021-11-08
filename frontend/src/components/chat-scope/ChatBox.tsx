@@ -58,6 +58,11 @@ const useStyles = makeStyles(({palette, spacing}) =>
     avatar: {
       padding: spacing(0, 1, 0),
     },
+    input: {
+      width: '90%',
+      height: '90%',
+      margin: spacing(.5, .5, .5),
+    },
     content: {
       display: 'flex',
       flexDirection: 'row',
@@ -135,13 +140,15 @@ const ChatBox = ({innerRef}: Props) => {
             <MessageList>
               {renderMessage()}
             </MessageList>
-            <MessageInput
-              attachButton={false}
-              onSend={handleSend}
-              placeholder='Type a message...'
-            />
           </ChatContainer>
         </MainContainer>
+        <MessageInput
+          className={classes.input}
+          autoFocus
+          attachButton={false}
+          onSend={handleSend}
+          placeholder='Type a message...'
+        />
       </Paper>
     </div>
   );

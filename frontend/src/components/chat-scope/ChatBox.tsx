@@ -7,7 +7,7 @@ import {
   MessageList,
   MessageInput,
   MainContainer,
-  Message, Avatar,
+  Message, Avatar, MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
 import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
@@ -40,6 +40,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
     },
     chatContainer: {
       width: '28vw',
+      minHeight: 200,
     },
     message: {
       width: 'calc( 100% - 20px )',
@@ -85,6 +86,9 @@ const ChatBox = ({innerRef}: Props) => {
   };
 
   const renderMessage = () => {
+    if (messageList?.length === 0) {
+      return <MessageSeparator>No Messages</MessageSeparator>;
+    }
     return messageList?.map((message) => {
       if (!currentUser) throw new Error('currentUser is undefined');
       const direction = getMessageDirection(message, currentUser);

@@ -17,7 +17,7 @@ import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 
 import Meeting from '../../shared/classes/Meeting';
 
-import ChatBox from '../chat-scope/ChatBox';
+import ChatBox from './ChatBox';
 
 interface Props {
    meeting: Meeting | undefined| null,

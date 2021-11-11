@@ -53,7 +53,6 @@ const SegmentationContextProvider: React.FC<Props> = ({
       if (!ctx) return;
       ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      // setRemoveBackground(false);
     }
     if (!videoDisabled && removeBackground) {
       processBackground().then(() => setSegmentationReady(true));
@@ -70,7 +69,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
    * If !removeBackground, the outgoing streams are set to the unaltered webcam
    * stream. Else the background is removed via segmentation and the altered
    * webcam stream is sent outgoing to peers
-   * @return {Promise} Promise
+   * @return {Promise<void>} Promise
    */
   const processBackground = async () => {
     // TODO update request animation frame to render when not focused
@@ -103,12 +102,13 @@ const SegmentationContextProvider: React.FC<Props> = ({
       if (!segmentingStopped.current) {
         requestID = requestAnimationFrame(processImage);
       }
+      //* readyState 4 == video is ready, return if video is not
       if (tempVideo.current.readyState !== 4) return;
       const modelConfig= {
         //* The resolution that determines accuracy (time tradeoff)
         internalResolution: .25,
         //* To what confidence level background is removed
-        segmentationThreshold: 0.7,
+        segmentationThreshold: 0.4,
       };
       const model = network.current;
       const body = await model?.segmentPerson(tempVideo.current, modelConfig);

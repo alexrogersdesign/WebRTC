@@ -58,13 +58,10 @@ const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
       zIndex: 98,
     },
     localContainer: {
-      // flexWrap: 'nowrap',
       position: 'relative',
       padding: '5%',
       width: '30em !important',
-      // height: 'auto !important',
       borderRadius: '10px',
-      // border: '10px solid',
 
       [theme.breakpoints.down('xs')]: {
         // width: '30%',
@@ -73,7 +70,7 @@ const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
     controls: {
       zIndex: 99,
       borderRadius: '10',
-      marginTop: '-13%',
+      marginTop: '-12.75%',
       width: '100%',
       height: '100%',
     },
@@ -108,7 +105,6 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
           autoPlay
           preload={'auto'}
           onLoadedData={ () => setVideoLoading(false)}
-          // onLoadStart={ ()=> setVideoLoading(true)}
         />
       </Paper>
     </div>
@@ -123,7 +119,6 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
           playsInline
           muted
           autoPlay
-          // preload={'auto'}
           onLoadedData={ () => setVideoLoading(false)}
           onLoadStart={ ()=> setVideoLoading(true)}
           style={{
@@ -139,8 +134,6 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
             display: !showBackground?
                  'block':
                  'none',
-            // backgroundImage: `url(${tree})`,
-            // backgroundSize: 'cover',
           }}
         />
         <div className={classes.controls}>

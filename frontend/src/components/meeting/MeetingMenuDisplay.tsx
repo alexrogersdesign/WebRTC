@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const MeetingListDisplay = ({meeting}: Props) => {
+const MeetingMenuDisplay = ({meeting}: Props) => {
   const classes = useStyles();
   const [copied, setCopied] = useState(false);
 
@@ -58,7 +58,6 @@ const MeetingListDisplay = ({meeting}: Props) => {
         <ToolTip title='Copy Current Meeting ID' placement="top">
           <ListItemIcon>
             <IconButton
-            //   className={classes.iconButton}
               edge='start'
               aria-label='copy to clipboard'>
               <ConfirmationNumberIcon />
@@ -74,7 +73,6 @@ const MeetingListDisplay = ({meeting}: Props) => {
         >
           <ToolTip title="Copy Current Meeting ID">
             <IconButton
-            //   className={classes.iconButton}
               edge='start'
               aria-label="copy to clipboard">
               <FileCopyIcon />
@@ -86,4 +84,4 @@ const MeetingListDisplay = ({meeting}: Props) => {
   );
 };
 
-export default MeetingListDisplay;
+export default MeetingMenuDisplay;

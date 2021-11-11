@@ -18,7 +18,7 @@ import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
 
-import MeetingListDisplay from './meeting/MeetingListDisplay';
+import MeetingMenuDisplay from './meeting/MeetingMenuDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
 import {RestContext} from '../context/rest/RestContext';
 import ModalWrapper from './common/ModalWrapper';
@@ -141,7 +141,7 @@ export const TopDrawer = (props: Props) => {
     if (meeting) {
       return (
         <>
-          <MeetingListDisplay meeting={meeting}/>
+          <MeetingMenuDisplay meeting={meeting}/>
           <ListItem
             button
             onClick={leaveMeeting}

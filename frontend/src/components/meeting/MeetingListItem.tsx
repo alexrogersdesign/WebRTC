@@ -1,42 +1,28 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable-next-line new-cap */
-// eslint-disable-next-line new-cap
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import IconButton from '@material-ui/core/IconButton';
-import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
 import ToolTip from '@material-ui/core/Tooltip';
 import Meeting from '../../shared/classes/Meeting';
-import AlertDialog from './AlertDialog';
+import AlertDialog from '../common/AlertDialog';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
-import MeetingInfoModal from './MeetingInfoModal';
-import {join} from 'lodash';
 import MeetingCardModal from './MeetingCardModal';
-import ModalWrapper from '../common/ModalWrapper';
-import MeetingCard from './MeetingCard';
-import PropTypes from 'prop-types';
-import JoinMeetingForm from '../forms/JoinMeetingForm';
 import {toLocalStringMonth} from '../../util/formatTime';
 
 interface Props {
   meeting: Meeting
 }
 
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
       display: 'flex',
       flexShrink: 1,
-    },
-    secondary: {
     },
     delete: {
       alignSelf: 'flex-start',
@@ -67,7 +53,6 @@ const MeetingListItem = ({meeting}: Props) => {
         onClick={()=>setJoinModalOpen(true)}
         className={classes.listItem}
         button
-        // style={{backgroundColor: 'transparent', cursor: 'default'}}
         disableRipple={true}
       >
         <ListItemText
@@ -98,24 +83,12 @@ const MeetingListItem = ({meeting}: Props) => {
         cancelLabel={'Cancel'}
         warn
       />
-      {/* <MeetingInfoModal*/}
-      {/*  open={joinModalOpen}*/}
-      {/*  setOpen={setJoinModalOpen}*/}
-      {/*  meeting={meeting}*/}
-      {/*  action={handleJoin}*/}
-      {/* />*/}
       <MeetingCardModal
         open={joinModalOpen}
         setOpen={setJoinModalOpen}
         meeting={meeting}
         action={handleJoin}
       />
-      {/* <ModalWrapper*/}
-      {/*  Component={<MeetingCard meeting={meeting}/>}*/}
-      {/*  componentProps={meeting}*/}
-      {/*  open={joinModalOpen}*/}
-      {/*  setOpen={setJoinModalOpen}*/}
-      {/* />*/}
     </>
   );
 };

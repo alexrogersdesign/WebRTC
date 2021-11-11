@@ -13,7 +13,7 @@ import ToolTip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import AlertDialog from './AlertDialog';
+import AlertDialog from '../common/AlertDialog';
 import Meeting from '../../shared/classes/Meeting';
 
 interface Props {
@@ -22,8 +22,6 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     title: {
-      // textAlign: 'center',
-      // padding: theme.spacing(1),
       margin: theme.spacing(2, 1, 1),
     },
     paper: {

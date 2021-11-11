@@ -12,7 +12,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import MeetingCardModal from './MeetingCardModal';
-import {toLocalStringMonth} from '../../util/formatTime';
+import {toLocalStringMonth} from '../../util/timeHelper';
 
 interface Props {
   meeting: Meeting

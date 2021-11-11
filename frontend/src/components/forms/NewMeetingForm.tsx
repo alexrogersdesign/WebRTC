@@ -8,12 +8,17 @@ import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import {Container, Fade, Popper, Typography} from '@material-ui/core';
 
 import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
-import {Container, Fade, Popper, Typography} from '@material-ui/core';
-import {OptionsObject, useSnackbar} from 'notistack';
 import UploadImage from '../common/UploadImage';
+import {
+  addMinutes,
+  dateRoundedToQuarterHour,
+  formatDateForPicker,
+} from '../../util/timeHelper';
+import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
 // import {MeetingIcon} from '../../shared/classes/MeetingIcon';
 
 interface Props extends ChildrenProps {
@@ -86,8 +91,6 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const FILE_SIZE = 16_000_000; //* 16 Megabyte Document Size Limit
-const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 
 const validationSchema = yup.object({
   title: yup
@@ -122,22 +125,16 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const {setOpen} = props;
   const {createMeeting} = useContext(RestContext);
   const classes = useStyles();
-  const dateRoundedToQuarterHour = new Date(
-      /* Rounds current time by 15 minutes.
-         900000 = amount of milliseconds in 15 minutes*/
-      Math.ceil(new Date().getTime()/900000)*900000,
+  const defaultStartTime = formatDateForPicker(dateRoundedToQuarterHour);
+  const defaultEndTime = formatDateForPicker(
+      addMinutes(dateRoundedToQuarterHour, 30),
   );
-  const offset = dateRoundedToQuarterHour.getTimezoneOffset();
-  /* Convert the default time into the string format used by picker components*/
-  const defaultTime = new Date(
-      dateRoundedToQuarterHour.getTime() - offset * 60000,
-  ).toISOString().substring(0, 16);
   const formik = useFormik({
     initialValues: {
       title: '',
       description: '',
-      start: defaultTime,
-      end: defaultTime,
+      start: defaultStartTime,
+      end: defaultEndTime,
       iconImage: '',
     },
     validationSchema: validationSchema,
@@ -242,8 +239,6 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
             helperText={formik.touched.description && formik.errors.description}
             FormHelperTextProps={{className: classes.helperText}}
           />
-
-
           <Button
             className={classes.formItem}
             color="primary"

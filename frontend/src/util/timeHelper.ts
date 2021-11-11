@@ -1,5 +1,8 @@
 import Message from '../shared/classes/Message';
 // import Meeting from '../shared/classes/Meeting';
+
+const today = new Date();
+
 /**
  * Format time into a string as: Month DD HH:MM PM/AM in the local time zone
  * @param {Date} date object to format
@@ -8,7 +11,7 @@ import Message from '../shared/classes/Message';
 export function toLocalStringMonth(date:Date) {
   return date.toLocaleTimeString([],
       {month: 'long', day: '2-digit', hour: '2-digit', minute: '2-digit'});
-};
+}
 /**
  * Format time into a string as: Weekday HH:MM PM/AM in the local time zone
  * @param {Date} date object to format
@@ -17,7 +20,7 @@ export function toLocalStringMonth(date:Date) {
 export function toLocalStringWeekday(date:Date) {
   return date.toLocaleTimeString([],
       {weekday: 'long', hour: 'numeric', minute: '2-digit'});
-};
+}
 /**
  * Format time into a string as: HH:MM PM/AM in the local time zone
  * @param {Date} date object to format
@@ -26,7 +29,7 @@ export function toLocalStringWeekday(date:Date) {
 export function toLocalStringHour(date:Date) {
   return date.toLocaleTimeString([],
       {hour: 'numeric', minute: '2-digit'});
-};
+}
 /**
  * Calculates the difference in minutes between the supplied Date objects.
  * If a second date is not supplied, the current time is used.
@@ -37,7 +40,7 @@ export function toLocalStringHour(date:Date) {
  */
 export function getTimeDiffMinutes(dateToCompare:Date, reference= new Date()) {
   return Math.floor((reference.getTime() - dateToCompare.getTime()) / (60_000));
-};
+}
 
 /**
  * Formats provided time input to provide a user friendly string which
@@ -49,10 +52,8 @@ export function getTimeDiffMinutes(dateToCompare:Date, reference= new Date()) {
 export function getPastTimeDifference(inputTime:Date) {
   /* timeDiff = difference in time (minutes) */
   const timeDiff = getTimeDiffMinutes(inputTime);
-  const today = new Date();
   const oneWeekAgo = new Date().setDate(today.getDate() - 7);
   const beforeOneWeekAgo = oneWeekAgo > inputTime.getTime();
-
   const midnight = new Date().setHours(0, 0, 0, 0);
   const beforeMidnight = midnight > inputTime.getTime();
 
@@ -77,7 +78,39 @@ export function getPastTimeDifference(inputTime:Date) {
 export function getMessageTimeDifference(message:Message) {
   return getPastTimeDifference(message.timeStamp);
 }
-// export function getMeetingTimeUntilStart(meeting:Meeting) {
-//
-// }
-//
+
+/**
+ * The current time rounded up to the nearest quarter hour
+ */
+export const dateRoundedToQuarterHour = new Date(
+    /* 900_000 = amount of milliseconds in 15 minutes*/
+    Math.ceil(new Date().getTime()/900_000)*900_000,
+);
+
+/**
+ * Adds minutes to supplied Date object.
+ * @param {Date} date Base Date to add minutes to
+ * @param {number} minutes The amount of minutes to add
+ * @return {Date} A new Date object advanced by the supplied minutes
+ */
+export function addMinutes(date:Date, minutes:number) {
+  return new Date(date.getTime() + minutes * 60_000);
+}
+
+/**
+ * Formats the supplied date into the string format YYYY-MM-DDTHH:MM
+ * which is expected by the time picker components.
+ * @param {Date} date The Date object to format
+ * @return {string} a formatted string
+ */
+export function formatDateForPicker(date:Date) {
+  return new Date(
+      /* Compensate for local time zone
+      * Multiply by 60_000 converts getTimeZoneOffset (minutes) to milliseconds.
+      * Discard the seconds and millisecond information
+      * (after first 16 chars) of string.
+      * */
+      date.getTime() - today.getTimezoneOffset() * 60_000,
+  ).toISOString().substring(0, 16);
+}
+

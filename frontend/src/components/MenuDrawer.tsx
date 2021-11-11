@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const TopDrawer = (props: Props) => {
+export const MenuDrawer = (props: Props) => {
   const classes = useStyles();
   const {meeting, leaveMeeting, startNewMeeting} = useContext(SocketIOContext);
   const {loggedIn, logout} = useContext(RestContext);
@@ -264,5 +264,5 @@ export const TopDrawer = (props: Props) => {
     </div>
   );
 };
-export default TopDrawer;
+export default MenuDrawer;
 

@@ -13,14 +13,13 @@ import {useSnackbar} from 'notistack';
 import UploadImage from '../common/UploadImage';
 import Typography from '@material-ui/core/Typography';
 import {Container, DialogContent, DialogTitle} from '@material-ui/core';
+import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
 
 
 interface Props extends ChildrenProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
-const FILE_SIZE = 16_000_000; //* 16 Megabyte Document Size Limit
-const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/png'];
 const validationSchema = yup.object({
   email: yup
       .string()
@@ -168,7 +167,6 @@ const NewUserForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
               }
               helperText={formik.touched.firstName && formik.errors.firstName}
               FormHelperTextProps={{className: classes.helperText}}
-
             />
             <TextField
               className={classes.nameItem}
@@ -182,7 +180,6 @@ const NewUserForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
               error={formik.touched.lastName && Boolean(formik.errors.lastName)}
               helperText={formik.touched.lastName && formik.errors.lastName}
               FormHelperTextProps={{className: classes.helperText}}
-
             />
             <UploadImage formik={formik}/>
           </Container>

@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-// TODO fix this mess
 import React, {useContext} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
@@ -14,7 +12,7 @@ interface Props extends ChildrenProps{
   position?: AppBarProps['position'],
 }
 
-const TopBar = ({children, className, position}: Props) => {
+const ControlBar = ({children, className, position}: Props) => {
   const {currentUser} = useContext(RestContext);
 
   return (
@@ -27,4 +25,4 @@ const TopBar = ({children, className, position}: Props) => {
   );
 };
 
-export default TopBar;
+export default ControlBar;

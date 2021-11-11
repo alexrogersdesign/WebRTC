@@ -19,7 +19,7 @@ import MessageClass from '../../shared/classes/Message';
 import UserAvatar from '../common/UserAvatar';
 import Typography from '@material-ui/core/Typography';
 import {getMessageDirection} from '../../util/helpers';
-import {getMessageTimeDifference} from '../../util/formatTime';
+import {getMessageTimeDifference} from '../../util/timeHelper';
 
 
 interface Props {

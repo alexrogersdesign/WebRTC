@@ -18,7 +18,7 @@ import {SocketIOContext} from '../../context/SocketIOContext';
 import CopyButtonIcon from '../common/CopyButtonIcon';
 import PropTypes from 'prop-types';
 import {ChildrenProps} from '../../shared/types';
-import {getTimeDiffMinutes, toLocalStringMonth} from '../../util/formatTime';
+import {getTimeDiffMinutes, toLocalStringMonth} from '../../util/timeHelper';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Chip from '@material-ui/core/Chip';

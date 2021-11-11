@@ -19,7 +19,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 
-import TopDrawer from '../TopDrawer';
+import MenuDrawer from '../MenuDrawer';
 import ChatDrawer from '../chat/ChatDrawer';
 
 import AttendeeListItem from './AttendeeListItem';
@@ -162,7 +162,7 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
           <Typography variant="h6" className={classes.userName}>
             {user&& user.fullName}
           </Typography>
-          <TopDrawer/>
+          <MenuDrawer/>
         </Toolbar>
       </AppBar>
       {meeting && (<Drawer

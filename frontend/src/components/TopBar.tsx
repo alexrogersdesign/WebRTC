@@ -1,22 +1,14 @@
 /* eslint-disable no-unused-vars */
 // TODO fix this mess
 import React, {useContext} from 'react';
-import {AppBar,
-  AppBarProps,
-  Typography,
-  Toolbar,
-  IconButton,
-  Tooltip,
-}
-  from '@material-ui/core';
-// import MenuIcon from '@material-ui/icons/Menu';
-import CancelIcon from '@material-ui/icons/Cancel';
-import FiberNewIcon from '@material-ui/icons/FiberNew';
+import AppBar from '@material-ui/core/AppBar';
+import Typography from '@material-ui/core/Typography';
+import Toolbar from '@material-ui/core/Toolbar';
+import {AppBarProps} from '@material-ui/core';
+
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
-import {SocketIOContext} from '../context/SocketIOContext';
 import {ChildrenProps} from '../shared/types';
-import TopDrawer from './TopDrawer';
 import {RestContext} from '../context/rest/RestContext';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -24,7 +16,6 @@ const useStyles = makeStyles((theme: Theme) =>
     cancelIcon: {
       fill: 'red',
       color: '#f44336',
-      // boxShadow: theme.shadows[2],
     },
   }),
 );
@@ -42,7 +33,6 @@ const TopBar = ({children, className, position}: Props) => {
       <Toolbar>
         <Typography>{currentUser?.fullName}</Typography>
         {children}
-        {/* <TopDrawer/>*/}
       </Toolbar>
     </AppBar>
   );

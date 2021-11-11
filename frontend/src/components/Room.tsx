@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, {useContext, useEffect} from 'react';
-// import {RouteComponentProps, useHistory} from 'react-router-dom';
-import {Grid, Container, Typography} from '@material-ui/core';
+import Container from '@material-ui/core/Container';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 
@@ -15,9 +14,6 @@ import MeetingList from './meeting/MeetingList';
 import {RestContext} from '../context/rest/RestContext';
 import {MediaControlContext} from '../context/MediaControlContext';
 interface Props {
-  // history: RouteComponentProps['history'];
-  // location: RouteComponentProps['location'];
-  // match: RouteComponentProps['match'];
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -48,10 +44,6 @@ const useStyles = makeStyles((theme: Theme) =>
       right: 0,
       bottom: 0,
     },
-    topBar: {
-      // display: 'flex',
-      // flexDirection: 'column',
-    },
   }),
 );
 
@@ -60,7 +52,7 @@ const Room = (props: Props) => {
   const {meeting} = useContext(SocketIOContext);
   const {token, currentUser} = useContext(RestContext);
   const {externalMedia, videoReady} = useContext(MediaControlContext);
-  const {currentTheme, setTheme} = useContext(CustomThemeContext);
+  const {setTheme} = useContext(CustomThemeContext);
   const {loggedIn} = useContext(RestContext);
   const users = externalMedia?.map(({user, stream}) => user);
 
@@ -71,7 +63,7 @@ const Room = (props: Props) => {
 
   return (
     <div >
-      <div className={classes.topBar}>
+      <div>
         <AttendeeDrawer user={currentUser} users={users} meeting={meeting}/>
         <ChatDrawer meeting={meeting}/>
       </div>

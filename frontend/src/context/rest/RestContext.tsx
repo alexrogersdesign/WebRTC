@@ -10,6 +10,7 @@ import ObjectID from 'bson-objectid';
 import {ChildrenProps} from '../../shared/types';
 import User from '../../shared/classes/User.js';
 import {
+  IReceivedMeeting,
   parseMeeting,
   // parseMeetingIcon,
   parseUser,
@@ -70,12 +71,12 @@ const RestContextProvider = ({children}: Props) => {
     setToken,
     currentUser,
     setCurrentUser,
-    loginRequest,
-    logoutRequest,
     refreshToken,
-    findMeeting,
-    getAllMeetingsRequest,
-    deleteMeetingRequest,
+    // loginRequest,
+    // logoutRequest,
+    // findMeeting,
+    // getAllMeetingsRequest,
+    // deleteMeetingRequest,
   } = useRestApi(null, handleError);
 
   const checkIfLogged = async () => {
@@ -121,8 +122,8 @@ const RestContextProvider = ({children}: Props) => {
   const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
     const failedLoginMessage = 'Invalid Username or Password';
     try {
-      const response = await loginRequest(credentials);
-      const {token: receivedToken, user} = response;
+      const response = await api.post('/login', credentials);
+      const {token: receivedToken, user} = response.data;
       setToken(receivedToken);
       const parsedUser = parseUser(user);
       setCurrentUser(parsedUser);
@@ -218,7 +219,7 @@ const RestContextProvider = ({children}: Props) => {
     setLogoutStorage(Date.now().toString());
     setLoggedIn(false);
     try {
-      logoutRequest();
+      api.get('/login/logout');
     } catch (e) {
       handleError(e, 'Error when logging out');
       console.log(e);
@@ -234,19 +235,30 @@ const RestContextProvider = ({children}: Props) => {
 
   const getMeetings = async () => {
     try {
-      const response = await getAllMeetingsRequest();
-      setMeetingList(response);
-    } catch (e) {
-      console.log(e);
+      const response = await api.get('/meetings/');
+      const parsedMeetings = response.data.map(
+          (meeting:IReceivedMeeting) => parseMeeting(meeting),
+      );
+      setMeetingList(parsedMeetings);
+    } catch (error) {
+      handleError(error);
+      console.log(error);
     }
   };
+
+  const findMeeting = async (id:string) : Promise<Meeting | undefined> => {
+    const response = await api.get(`/meetings/${id}`);
+    return parseMeeting(response?.data);
+  };
+
   const deleteMeeting = async (id:string) => {
     try {
-      await deleteMeetingRequest(id);
+      await api.delete(`/meetings/${id}`);
       removeMeetingFromList(id, false);
       enqueueSnackbar(`Meeting Deleted`, snackbarInfoOptions);
       return true;
     } catch (error) {
+      handleError(error);
       console.log(error);
       return false;
     }

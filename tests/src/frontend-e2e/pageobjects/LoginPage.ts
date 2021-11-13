@@ -24,7 +24,7 @@ class LoginPage extends Page {
   get createAccountButton() {
     return this.browser.$('#create-account-button');
   }
-  browser: any
+  protected browser: any
 
   constructor(browser?:ParamBrowser) {
     super(browser);
@@ -41,13 +41,13 @@ class LoginPage extends Page {
     await this.loginButton.click();
     await this.inputEmail.setValue(email);
     await this.inputPassword.setValue(password);
+    await this.btnSubmit.waitForClickable();
     await this.btnSubmit.click();
   }
   async multiLogin() {
     await this.login(await this.browser.a.email(), 'test');
   }
-  async createUser(user:User) {
-    // const filePath = this.joinPath(file);
+  async createUser(user:User, filePath?:string) {
     await this.menu.click();
     await this.createAccountButton.waitForClickable({timeout: menuWaitTime});
     await this.createAccountButton.click();
@@ -55,7 +55,8 @@ class LoginPage extends Page {
     await this.setValue(browser, await this.inputLastName, user.lastName);
     await this.setValue(browser, await this.inputEmail, user.email);
     await this.setValue(browser, await this.inputPassword, user.password);
-    // await this.setValue(browser, await this.inputFileUpload, filePath);
+    const fileElem = await this.inputFileUpload();
+    await fileElem.setValue(filePath);
     await this.btnSubmit.click();
   }
   async createUserAndLogin(user:User) {

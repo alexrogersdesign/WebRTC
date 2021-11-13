@@ -155,28 +155,25 @@ const loginRequest = async (credentials: ILoginCredentials):Promise<LoginRespons
   if (!response) throw new Error('No response from server');
   return response.data;
 };
+//
+// const logoutRequest = async () => {
+//   await api.get('/login/logout');
+// };
 
-const logoutRequest = async () => {
-  await api.get('/login/logout');
-};
 
-const findMeetingRequest = async (id:string) : Promise<Meeting | undefined> => {
-  const response = await api.get(`/meetings/${id}`);
-  return parseMeeting(response?.data);
-};
-const deleteMeetingRequest = async (id:string) => {
-  try {
-    return await api.delete(`/meetings/${id}`);
-  } catch (error) {
-    errorHandler(error);
-  }
-};
-const getAllMeetingsRequest = async () : Promise<Meeting[]> => {
-  const response = await api.get('/meetings/');
-  return response.data.map(
-      (meeting:IReceivedMeeting) => parseMeeting(meeting),
-  );
-};
+// const deleteMeetingRequest = async (id:string) => {
+//   try {
+//     return await api.delete(`/meetings/${id}`);
+//   } catch (error) {
+//     errorHandler(error);
+//   }
+// };
+// const getAllMeetingsRequest = async () : Promise<Meeting[]> => {
+//   const response = await api.get('/meetings/');
+//   return response.data.map(
+//       (meeting:IReceivedMeeting) => parseMeeting(meeting),
+//   );
+// };
 
 return {
   token,
@@ -185,11 +182,11 @@ return {
   setCurrentUser,
   api,
   refreshToken,
-  findMeeting: findMeetingRequest,
+  // findMeetingRequest,
   loginRequest,
-  logoutRequest,
-  getAllMeetingsRequest,
-  deleteMeetingRequest,
+  // logoutRequest,
+  // getAllMeetingsRequest,
+  // deleteMeetingRequest,
 };
 };
 export {useRestApi};

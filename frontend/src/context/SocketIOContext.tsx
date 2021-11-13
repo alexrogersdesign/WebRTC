@@ -50,7 +50,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   } = useContext(MediaControlContext);
   const {
     currentUser,
-    findMeeting,
+    findMeeting: findMeeting,
     token,
     refreshToken,
     addMeetingToList,

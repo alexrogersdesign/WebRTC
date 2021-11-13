@@ -1,4 +1,4 @@
-import Page, {ParamBrowser} from './Page';
+import {ParamBrowser} from './Page';
 import {Meeting, menuWaitTime} from '../constants';
 import enterTime from '../helpers/enterTime';
 import LoginPage from '@e2ePage/LoginPage';
@@ -16,12 +16,6 @@ class PreMeetingPage extends LoginPage {
   get meetingList() {
     return this.browser.$('#meeting-list');
   }
-  // get meetings() {
-  //   return async () => {
-  //     const meetingList = await this.meetingList();
-  //     return await meetingList.$$('li');
-  //   };
-  // }
   get inputStart() {
     return this.browser.$('#start');
   }
@@ -38,7 +32,7 @@ class PreMeetingPage extends LoginPage {
     return this.browser.$('#description');
   }
 
-  async createMeeting(meeting:Meeting) {
+  async createMeeting(meeting:Meeting, filePath?:string) {
     await this.menu.click();
     const {start, end, title, description} = meeting;
     await this.createMeetingButton.waitForClickable({timeout: menuWaitTime});
@@ -47,6 +41,8 @@ class PreMeetingPage extends LoginPage {
     await enterTime(browser, await this.inputEnd, end);
     await this.setValue(browser, await this.inputTitle, title);
     await this.setValue(browser, await this.inputDescription, description);
+    const fileElem = await this.inputFileUpload();
+    await fileElem.setValue(filePath);
     await this.btnSubmit.click();
   }
   async joinMeeting(element:WebdriverIO.Element) {

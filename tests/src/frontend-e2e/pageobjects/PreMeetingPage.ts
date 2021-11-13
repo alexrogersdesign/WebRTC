@@ -6,10 +6,8 @@ import fs from 'fs';
 import path from 'path';
 
 class PreMeetingPage extends LoginPage {
-  browser: any
   constructor(browser?:ParamBrowser) {
     super(browser);
-    this.browser = browser;
   }
 
   get createMeetingButton() {

@@ -26,11 +26,8 @@ class LoginPage extends Page {
   get createAccountButton() {
     return this.browser.$('#create-account-button');
   }
-  protected browser: any
-
   constructor(browser?:ParamBrowser) {
     super(browser);
-    this.browser = browser;
   }
 
   /**

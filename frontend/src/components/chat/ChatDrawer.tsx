@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import clsx from 'clsx';
 import {makeStyles,
   Theme,
@@ -104,12 +104,14 @@ const ChatDrawer = ({meeting}: Props) => {
   const classes = useStyles(chatBoxRef);
 
   const handleDrawerOpen = () => setOpen(true);
-
   const handleDrawerClose = () => setOpen(false);
-
-  const hideWhenOpen = {
-    // display: open? 'none': 'flex'
+  const chatBottomRef = useRef<HTMLDivElement>(null!);
+  const scrollToBottom = () => {
+    chatBottomRef.current?.scrollIntoView({behavior: 'smooth'});
   };
+  useEffect(() => {
+    if (open) scrollToBottom();
+  }, [open]);
   if (!meeting) return <></>;
   return (
     <div className={classes.root}>
@@ -120,7 +122,7 @@ const ChatDrawer = ({meeting}: Props) => {
       >
         <Chip
           className={classes.openIcon}
-          // variant='outlined'
+          id={'open-chat-button'}
           aria-label="open drawer"
           color='secondary'
           size='medium'
@@ -148,6 +150,7 @@ const ChatDrawer = ({meeting}: Props) => {
       >
         <div className={classes.drawerHeader}>
           <IconButton
+            id={'close-chat-button'}
             className={classes.iconButton}
             onClick={handleDrawerClose}
             size='small'
@@ -155,7 +158,8 @@ const ChatDrawer = ({meeting}: Props) => {
             {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
-        <ChatBox innerRef={chatBoxRef}/>
+        <ChatBox innerRef={chatBoxRef} isOpen={open}/>
+        <div ref={chatBottomRef}/>
       </Drawer>
     </div>
   );

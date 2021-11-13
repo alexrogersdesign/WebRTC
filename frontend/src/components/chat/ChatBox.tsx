@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars,max-len */
 // TODO add ability to attach files and emotes
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
 import {
   ChatContainer,
@@ -20,10 +20,12 @@ import UserAvatar from '../common/UserAvatar';
 import Typography from '@material-ui/core/Typography';
 import {getMessageDirection} from '../../util/helpers';
 import {getMessageTimeDifference} from '../../util/timeHelper';
+import {ScrollToBottom} from '../common/ScrollToBottom';
 
 
 interface Props {
     innerRef: React.MutableRefObject<any>
+    isOpen: boolean
 }
 const useStyles = makeStyles(({palette, spacing}) =>
   createStyles({
@@ -73,7 +75,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
   }),
 );
 
-const ChatBox = ({innerRef}: Props) => {
+const ChatBox = ({innerRef, isOpen}: Props) => {
   const classes = useStyles();
   const {messageList, sendMessage} = useContext(ChatContext);
   const {currentUser} = useContext(RestContext);
@@ -141,8 +143,12 @@ const ChatBox = ({innerRef}: Props) => {
           responsive
         >
           <ChatContainer className={classes.chatContainer}>
-            <MessageList>
+            <MessageList
+              // autoScrollToBottom
+              // scrollBehavior="smooth"
+            >
               {renderMessage()}
+              <ScrollToBottom/>
             </MessageList>
           </ChatContainer>
         </MainContainer>

@@ -37,7 +37,10 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
       const message = parseMessage(receivedMessage);
       setMessageList((prevState) => [...prevState, message]);
       if (message.user.id.toString() !== currentUser?.id.toString()) {
-        enqueueSnackbar(`New message from ${message.user}`);
+        enqueueSnackbar(
+            `New message from ${message.user}`,
+            {key: 'new-message'},
+        );
       }
     });
     socket?.on('ExistingMessages', (receivedMessages:IReceivedMessage[]) => {

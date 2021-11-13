@@ -8,7 +8,10 @@ declare module '@chatscope/chat-ui-kit-react'{
 
     interface ChatContainer extends React.FC<any> {}
     interface MessageInput extends React.FC<any> {}
-    interface MessageList extends React.FC<any> {}
+    interface MessageContent extends React.FC<any> {}
+    interface MessageList extends React.FC<any> {
+        Content:MessageContent,
+    }
     interface MessageSeparator extends React.FC<any> {}
     interface TypingIndicator extends React.FC<any> {}
     interface MainContainer extends React.FC<any> {}
@@ -19,7 +22,7 @@ declare module '@chatscope/chat-ui-kit-react'{
     interface Message extends React.ComponentClass<any> {
         Header:MessageHeader,
         Footer:MessageFooter,
-        CustomContent:MessageCustomContent
+        CustomContent:MessageCustomContent,
         TextContent: MessageTextContent,
     }
     export const ChatContainer: ChatContainer;

@@ -2,6 +2,8 @@ import {ParamBrowser} from './Page';
 import {Meeting, menuWaitTime} from '../constants';
 import enterTime from '../helpers/enterTime';
 import LoginPage from '@e2ePage/LoginPage';
+import fs from 'fs';
+import path from 'path';
 
 class PreMeetingPage extends LoginPage {
   browser: any
@@ -32,7 +34,12 @@ class PreMeetingPage extends LoginPage {
     return this.browser.$('#description');
   }
 
-  async createMeeting(meeting:Meeting, filePath?:string) {
+  async createMeeting(meeting:Meeting) {
+    const iconDir = '/Volumes/Macintosh-HD-Data/development/react' +
+        '/webstorm/WebRTC/tests/src/frontend-e2e/files/meeting-icon';
+    const files = fs.readdirSync(iconDir);
+    const foundFile = files[Math.floor(Math.random()* files.length)];
+    const filePath = path.join(iconDir, foundFile);
     await this.menu.click();
     const {start, end, title, description} = meeting;
     await this.createMeetingButton.waitForClickable({timeout: menuWaitTime});

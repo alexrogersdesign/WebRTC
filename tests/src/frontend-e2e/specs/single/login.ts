@@ -1,30 +1,29 @@
-import LoginPage from '../../pageobjects/LoginPage';
-import {correctEmail, correctPassword, User} from '../../constants';
+import {loginPageCreator} from '@e2ePage/LoginPage';
+import {correctEmail, correctPassword, User} from '@e2e/constants';
 
 describe('Login Functionality', () => {
+  let loginPage;
   beforeEach('setup', async () => {
-    await LoginPage.logout();
+    loginPage = loginPageCreator(browser);
+    await loginPage.logout();
   });
   it('should login with valid credentials', async () => {
-    // await browser.debug();
-    // test;
-    await LoginPage.login(correctEmail, correctPassword);
-    await expect(LoginPage.notification).toBeExisting();
-    await expect(LoginPage.notification).toHaveTextContaining(
+    await loginPage.login(correctEmail, correctPassword);
+    await expect(loginPage.notification).toBeExisting();
+    await expect(loginPage.notification).toHaveTextContaining(
         'Welcome');
   });
   it('should not login with invalid credentials', async () => {
-    await LoginPage.logout();
-    await LoginPage.login('wrongEmail@email.com', 'wrong');
-    await expect(LoginPage.notification).toBeExisting();
-    await expect(LoginPage.notification).toHaveTextContaining('Invalid');
+    await loginPage.logout();
+    await loginPage.login('wrongEmail@email.com', 'wrong');
+    await expect(loginPage.notification).toBeExisting();
+    await expect(loginPage.notification).toHaveTextContaining('Invalid');
   });
   it('A created user should be able to login', async () => {
     const user = new User();
-    // const filePath = '../files/icon1.jpeg';
-    await LoginPage.createUserAndLogin(user);
-    await expect(LoginPage.notification).toBeExisting();
-    await expect(LoginPage.notification).toHaveTextContaining(user.firstName);
+    await loginPage.createUserAndLogin(user);
+    await expect(loginPage.notification).toBeExisting();
+    await expect(loginPage.notification).toHaveTextContaining(user.firstName);
   });
 });
 

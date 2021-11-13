@@ -1,5 +1,7 @@
 import Page, {ParamBrowser} from './Page';
 import {menuWaitTime, User} from '../constants';
+import fs from 'fs';
+import path from 'path';
 
 
 /**
@@ -47,7 +49,12 @@ class LoginPage extends Page {
   async multiLogin() {
     await this.login(await this.browser.a.email(), 'test');
   }
-  async createUser(user:User, filePath?:string) {
+  async createUser(user:User) {
+    const iconDir = '/Volumes/Macintosh-HD-Data/development/react' +
+        '/webstorm/WebRTC/tests/src/frontend-e2e/files/user-icon';
+    const files = fs.readdirSync(iconDir);
+    const foundFile = files[Math.floor(Math.random()* files.length)];
+    const filePath = path.join(iconDir, foundFile);
     await this.menu.click();
     await this.createAccountButton.waitForClickable({timeout: menuWaitTime});
     await this.createAccountButton.click();

@@ -1,7 +1,6 @@
 import LoginPage, {loginPageCreator} from '../../pageobjects/LoginPage';
 import {correctEmail, correctPassword, Meeting} from '../../constants';
 import PreMeetingPage, {preMeetingPageCreator} from '../../pageobjects/PreMeetingPage';
-import {getBrowser} from '../../../../wdio.base.conf';
 
 describe('Join Meeting', async () => {
   let loginPage;

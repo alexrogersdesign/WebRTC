@@ -22,6 +22,7 @@ const userSchema = new Schema<IUser>({
     passwordHash: String,
     email:{
         type: String,
+        lowercase: true,
         required: true,
         unique: true,
     },

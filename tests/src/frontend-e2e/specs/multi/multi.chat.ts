@@ -2,7 +2,7 @@ import {meetingPageCreator} from '@e2ePage/MeetingPage';
 import {getMultiBrowser} from '@/wdio.multi.conf';
 import {userAEmail, userBEmail, userBName} from '@e2e/constants';
 
-describe('Join Meeting Multi-Remote', async () => {
+describe('Chat Functionality Multi-Remote', async () => {
   let meetingPage;
   let meetingPageA;
   let meetingPageB;
@@ -19,10 +19,17 @@ describe('Join Meeting Multi-Remote', async () => {
   });
   after('logout', async () => meetingPage.logout());
 
-  it('a user should be notified when a message is received', async () => {
+  it('a message should be received if sent from another user', async () => {
+    const messageContent = await meetingPageB.sendMessage();
     const elem = await meetingPageA.newMessageNotification;
     await elem.waitForDisplayed();
     const noteText = await elem.getText();
     expect(noteText).toContain(`New message from ${userBName}`);
+    const messages = await meetingPage.messages;
+    const found = await messages.find(async (message) => {
+      const text = await message.getText();
+      return text === messageContent;
+    });
+    expect(found).toBeTruthy();
   });
 });

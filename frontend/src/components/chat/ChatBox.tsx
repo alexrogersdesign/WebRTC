@@ -144,8 +144,6 @@ const ChatBox = ({innerRef, isOpen}: Props) => {
         >
           <ChatContainer className={classes.chatContainer}>
             <MessageList
-              // autoScrollToBottom
-              // scrollBehavior="smooth"
             >
               {renderMessage()}
               <ScrollToBottom/>

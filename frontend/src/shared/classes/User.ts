@@ -15,7 +15,7 @@ export default class User {
      * @param {_lastName} lastName Last name
      * @param {_email} email email
      * @param {ObjectID} id an optional bson object ID
-     * @param {string} icon the user icon as image string
+     * @param {string} icon the user icon as image Buffer string
      */
     constructor(
         firstName: string,

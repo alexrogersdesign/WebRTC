@@ -1,7 +1,8 @@
 import React, {useEffect, useRef} from 'react';
 
 /**
- * An element that forces the browser to scroll to its location when its rendered
+ * An element that forces the browser to scroll to its location
+ * when its rendered.
  * @constructor none
  */
 export function ScrollToBottom() {

@@ -50,4 +50,4 @@ declare module '@chatscope/chat-ui-kit-react'{
 // }
 
 
-// declare module '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+declare module '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';

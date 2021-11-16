@@ -1,5 +1,6 @@
 import {ParamBrowser} from './Page';
 import PreMeetingPage from '@e2ePage/PreMeetingPage';
+import faker from 'faker';
 
 class MeetingPage extends PreMeetingPage {
   constructor(browser?:ParamBrowser) {
@@ -16,7 +17,7 @@ class MeetingPage extends PreMeetingPage {
     });
   }
   get messageInputField(): WebdriverIO.Element {
-    return this.browser.$('.cs-message-input');
+    return this.browser.$('.cs-message-input__content-editor');
   }
   get messageSendButton(): WebdriverIO.Element {
     return this.browser.$('.cs-button--send');
@@ -27,12 +28,20 @@ class MeetingPage extends PreMeetingPage {
   get closeChatButton(): WebdriverIO.Element {
     return this.browser.$('#close-chat-button');
   }
+  get messages():WebdriverIO.Element[] {
+    return this.browser.$$('.cs-message__content');
+  }
 
-  async sendMessage(content:string) {
+  async sendMessage(content?:string) {
+    const message = content?? faker.lorem.sentence(6, 12);
     await this.openChatButton.click();
-    await this.messageInputField.waitForDisplayed();
-    await this.messageInputField.setValue(content);
+    await this.messageInputField.waitForClickable({
+      timeout: 6000,
+      timeoutMsg: 'Input not clickable',
+    });
+    await this.messageInputField.addValue(message);
     await this.messageSendButton.click();
+    return message;
   }
 }
 export function meetingPageCreator(newBrowser?: ParamBrowser) {

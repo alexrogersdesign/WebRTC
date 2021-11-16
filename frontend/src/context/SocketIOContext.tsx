@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {useHistory} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {io, Socket} from 'socket.io-client';
 import Peer, {MediaConnection} from 'peerjs';
 import {useSnackbar} from 'notistack';
@@ -22,6 +22,7 @@ import {
 import {MediaControlContext} from './MediaControlContext';
 import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
 import {RestContext} from './rest/RestContext';
+import User from '../shared/classes/User';
 
 // const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
@@ -47,6 +48,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     removeMedia,
     addExternalMedia,
     clearExternalMedia,
+    createDummyStreams,
   } = useContext(MediaControlContext);
   const {
     currentUser,
@@ -64,7 +66,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   const [hasJoinedMeeting, setHasJoinedMeeting] = useState<boolean>(false);
   const peerConnection = useRef<Peer | null>(null);
   const socketListeners = useRef<string[]>([]);
-  const history = useHistory();
+  const navigate = useNavigate();
   //* enables notification
   const {enqueueSnackbar} = useSnackbar();
   //* indicate that the video is ready to be rendered
@@ -88,7 +90,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
         joinMeeting(foundMeeting.id.toString());
       }
     };
-    findMeetingFromUrl();
+    void findMeetingFromUrl();
     return () => {
     };
   }, [, socket]);
@@ -124,12 +126,25 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
         outgoingMedia?.current &&
         hasJoinedMeeting
     ) {
-      initiateStartup();
+      void initiateStartup();
     }
     return () => {
       // endConnection();
     };
   }, [meeting, hasJoinedMeeting]);
+
+  useEffect(() => {
+    if (!meeting) return;
+    let users: Array<User>;
+    const createUsers = async () => {
+      users = await createDummyStreams();
+    };
+    void createUsers();
+    return () => {
+      users.forEach((user)=> removeMedia(user.id.toString()));
+    };
+  }, [meeting]);
+
 
   /**
    * Listens for currentUser to be set before
@@ -137,7 +152,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    */
   useEffect(() => {
     if (!meeting || !currentUser) return;
-    setupSocketListeners();
+    void setupSocketListeners();
     return () => {
       socketListeners.current.forEach((event) => socket.off(event));
     };
@@ -173,9 +188,9 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     });
     if (!currentUser) return;
     //* requests webcam access from end user
-    if (!initializeMediaStream) {
-      throw new Error('initializeMediaStream function missing');
-    }
+    // if (!initializeMediaStream) {
+    //   throw new Error('initializeMediaStream function missing');
+    // }
     const stream = await initializeMediaStream();
     if (!stream) throw new Error('Video Stream not received');
     changePeerStream(stream);
@@ -313,6 +328,8 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    * @param {string} newMeetingID the meeting to join
    */
   const joinMeeting = async (newMeetingID?:string) => {
+    // TODO remove in production
+    /* Create dummy stream for demo purposes*/
     console.log('join meeting called');
     await initPeerServerConnection();
     //* If a meeting ID is not provided and the user has a meeting stored,
@@ -330,7 +347,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     };
     socket.emit('JoinMeeting', meetingData);
     //* Push meeting to url parameter.
-    history.push('?room='+ foundMeeting?.id);
+    navigate('?room='+ foundMeeting?.id);
     enqueueSnackbar(
         `Joining meeting ${foundMeeting.title}`,
         {variant: 'info'},
@@ -397,7 +414,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     socket?.emit('LeaveRoom');
     setMeeting(null);
     setHasJoinedMeeting(false);
-    history.push('');
+    navigate('');
     clearExternalMedia();
     Object.values(peers.current).forEach((peer) => peer.close());
     if (peerConnection.current) {

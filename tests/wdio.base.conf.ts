@@ -24,6 +24,18 @@ export const chromeArgsTempProfile = [
   '--use-fake-ui-for-media-stream',
 ];
 
+export const videoA = '/Volumes/Macintosh-HD-Data/development/react' +
+    '/webstorm/WebRTC/tests/src/' +
+    'frontend-e2e/files/videos/videoA.y4m';
+
+export const videoB = '/Volumes/Macintosh-HD-Data/development/react' +
+    '/webstorm/WebRTC/tests/src/' +
+    'frontend-e2e/files/videos/videoB.y4m';
+
+export const videoC= '/Volumes/Macintosh-HD-Data/development/react' +
+    '/webstorm/WebRTC/tests/src/' +
+    'frontend-e2e/files/videos/daily.y4m';
+
 export const chromeArgs = [
   ...chromeArgsTempProfile,
   'user-data-dir=/Users/alexrogers/Library/Application Support/Google/Chrome/',

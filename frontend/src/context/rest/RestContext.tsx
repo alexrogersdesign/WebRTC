@@ -150,7 +150,7 @@ const RestContextProvider = ({children}: Props) => {
     formData.append('id', newId.toString());
     formData.append('firstName', firstName);
     formData.append('lastName', lastName);
-    formData.append('email', email);
+    formData.append('email', email.toLowerCase());
     formData.append('password', password);
     formData.append('icon', iconImage?? '');
     const response = await api.post('users', formData)

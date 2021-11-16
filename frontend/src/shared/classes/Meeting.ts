@@ -21,7 +21,7 @@ export default class Meeting {
      * @param {Date} start the start time of the meeting
      * @param {Date} end the end time of the meeting
      * @param {ObjectID} id an optional bson object ID
-     * @param {string} icon the meeting icon as image string
+     * @param {string} icon the meeting icon as image Buffer string
      */
     constructor(
         title: string,

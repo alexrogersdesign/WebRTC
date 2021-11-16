@@ -33,6 +33,7 @@ const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
       height: 'auto !important',
       borderRadius: 'inherit',
       position: 'relative',
+      objectFit: 'scale-down',
     },
     localVideo: {
       width: '100% !important',

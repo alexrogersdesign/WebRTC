@@ -1,4 +1,4 @@
-import {chromeArgs, chromeArgsTempProfile, config as baseConfig} from './wdio.base.conf';
+import {chromeArgs, chromeArgsTempProfile, config as baseConfig, videoA, videoB, videoC} from './wdio.base.conf';
 import {multiremote} from 'webdriverio';
 const debug = process.env.DEBUG;
 
@@ -15,10 +15,12 @@ export const config: WebdriverIO.Config = {
         // 'maxInstances': 1,
         'browserName': 'chrome',
         'acceptInsecureCerts': true,
-        // eslint-disable-next-line max-len
-        // 'chromedriverExecutableDir': '/Users/alexrogers/.nvm/versions/node/v16.8.0/lib/node_modules/webdriver-manager/selenium/chromedriver_95.0.4638.54',
         'goog:chromeOptions': {
-          args: chromeArgs,
+          args: [
+            ...chromeArgs,
+            `--use-fake-device-for-media-stream`,
+            `--use-file-for-fake-video-capture=${videoA}`,
+          ],
         },
       },
     },
@@ -29,7 +31,11 @@ export const config: WebdriverIO.Config = {
         'browserName': 'chrome',
         'acceptInsecureCerts': true,
         'goog:chromeOptions': {
-          args: chromeArgsTempProfile,
+          args: [
+            ...chromeArgsTempProfile,
+            `--use-fake-device-for-media-stream`,
+            `--use-file-for-fake-video-capture=${videoB}`,
+          ],
         },
       },
     },

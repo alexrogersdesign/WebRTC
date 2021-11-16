@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "tsc-watch --noClear -p ./tsconfig.json",
-    "test": "npx wdio run wdio.base.conf.ts"
+    "pretest": "rm -rf _results_ allure-report allure-results driver-logs",
+    "test": "npx wdio run wdio.single.conf.ts",
+    "test:multi": "npx wdio run wdio.multi.conf.ts"
   },
   "author": "",
   "license": "ISC",

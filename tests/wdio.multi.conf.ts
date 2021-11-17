@@ -19,7 +19,7 @@ export const config: WebdriverIO.Config = {
           args: [
             ...chromeArgs,
             `--use-fake-device-for-media-stream`,
-            `--use-file-for-fake-video-capture=${videoA}`,
+            // `--use-file-for-fake-video-capture=${videoA}`,
           ],
         },
       },
@@ -34,7 +34,7 @@ export const config: WebdriverIO.Config = {
           args: [
             ...chromeArgsTempProfile,
             `--use-fake-device-for-media-stream`,
-            `--use-file-for-fake-video-capture=${videoB}`,
+            // `--use-file-for-fake-video-capture=${videoB}`,
           ],
         },
       },

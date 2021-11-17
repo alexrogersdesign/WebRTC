@@ -1,6 +1,9 @@
-import {chromeArgs, chromeArgsTempProfile, config as baseConfig, videoA, videoB, videoC} from './wdio.base.conf';
-import {multiremote} from 'webdriverio';
-const debug = process.env.DEBUG;
+import {
+  chromeArgs,
+  chromeArgsTempProfile,
+  config as baseConfig,
+} from './wdio.base.conf';
+// const debug = process.env.DEBUG;
 
 export async function getMultiBrowser() {
   return browser as unknown as WebdriverIO.MultiRemoteBrowser;

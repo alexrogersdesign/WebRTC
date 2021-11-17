@@ -230,7 +230,7 @@ const RestContextProvider = ({children}: Props) => {
    */
   useEffect(() => {
     if (!token) return;
-    getMeetings();
+    void getMeetings();
   }, [token]);
 
   const getMeetings = async () => {

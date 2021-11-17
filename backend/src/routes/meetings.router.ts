@@ -1,21 +1,16 @@
 import express, { Request, Response } from "express";
 import ObjectID from 'bson-objectid';
-import getStream from 'get-stream'
 
 import Meeting from "../../../frontend/src/shared/classes/Meeting";
 import {MeetingModel} from "../database/models.js";
 import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
-import {
-    multerUploadGrid,
-    uploadGrid,
-    uploadFile,
-    uploadMemory, uploadDirect
-} from "../util/middleware/filesMiddleware.js";
+import {uploadFile, uploadMemory } from "../util/middleware/filesMiddleware.js";
 
 const meetingsRouter = express.Router();
 meetingsRouter.use(authRestricted);
 //* handle errors from token validation
 meetingsRouter.use(authErrorHandler)
+
 meetingsRouter.get("/", async (_req: Request, res: Response) => {
     try {
         const meetings = await MeetingModel

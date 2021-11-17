@@ -69,6 +69,13 @@ const sendMessageToDatabase = async (message: IReceivedMessage) : Promise<Messag
   }
 }
 
+/**
+ * Authentication middleware that retrieves the access token from the
+ * socket handshake parameters. The token is decoded and the user
+ * information is retrieved from the database.
+ * @param {Socket} socket The socket connection
+ * @return {User} user The user decoded from the token
+ */
 const authHandler = async (socket: Socket) => {
   //TODO test expired token refresh
   let { token = null } = socket.handshake.auth || {};
@@ -93,13 +100,18 @@ const authHandler = async (socket: Socket) => {
         throw error
       }
       console.log(error)
-      throw error
       socket.disconnect()
+      throw error
     }
   }
   socket.emit('error', 'Authentication Token Not Provided')
   socket.disconnect();
 };
+/**
+ * The websocket setup function. Creates socket listeners that implement
+ * the SocketIO functionality.
+ * @param {Server} io The SocketIO server
+ */
 const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
   const joinRoom = async (socket: Socket<DefaultEventsMap, DefaultEventsMap>, roomID:string) => {
       try {
@@ -108,17 +120,14 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
         socket.emit('ExistingMessages', messages )
       }
       catch (error){
-      /**/  console.log('Error when joining room: ', error)
+        console.log('Error when joining room: ', error)
         socket.emit('error', error)
       }
   };
   /*Setup socket connection behaviors*/
   io.on('connection', async (socket) => {
     try {
-
       const user = await authHandler(socket)
-      //* Send user id (not used)
-      socket.emit('CurrentUserID', user?.id.toString());
       let roomID: string | null = null
       ;
       //* Get room parameter from url.
@@ -128,16 +137,31 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
       /*Check if a room id parameter was supplied
          If so, join that meeting.*/
       if(roomID && roomID !== 'null') await joinRoom(socket, roomID);
+      /**
+       * Sets up a ChangeStream watcher.
+       * This is an event listener that listens for changes in the meeting collection
+       * When a change occurs, the socket client is notified.
+       * If an error occurs, the watcher is removed and the function is called recursively
+       * to restart the watcher.
+       */
+      (function watchMeetings() {
+        console.log('Staring Watcher')
+        const watcher = MeetingModel.watch()
+            .on('change', (change) => {
+              if (change.operationType ===  'delete') {
+                io.emit('MeetingDeleted', change._id.id)
+              }
+              if (change.operationType ===  'insert') {
+                io.emit('MeetingAdded', change._id)
+              }
+             })
+            .on('error', (error => {
+              console.error('Watcher error')
+              watcher.close();
+              watchMeetings()
+            }))
+      })()
 
-      /* watch for changes in meetings */
-        MeetingModel.watch().on('change', (change) => {
-        if (change.operationType ===  'delete'){
-          io.emit('MeetingDeleted', change._id.id)
-        }
-        if (change.operationType ===  'insert'){
-          io.emit('MeetingAdded', change._id)
-        }
-      })
 
       socket.on('JoinMeeting', (meetingData) => {
         ({roomID} = meetingData);
@@ -146,7 +170,6 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
         io.to(roomID).emit('NewUserConnected', user);
         joinRoom(socket, roomID);
         // TODO add user to meeting attendees
-        //* Inform attendees if a user disconnects
       });
       const leaveRoom = (id: string) => {
         socket.to(id).emit('UserDisconnected', user);
@@ -157,7 +180,6 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
         if (!roomID) return
         sendMessageToDatabase(message);
         io.in(roomID).emit('ReceivedMessage', message);
-        // socket.to(roomID).emit('ReceivedMessage', message);
       });
 
       socket.on('LeaveRoom', () => {

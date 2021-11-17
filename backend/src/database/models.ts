@@ -75,19 +75,7 @@ const meetingSchema = new Schema<Meeting>({
             ref: 'User'
         }
     ],
-    // attendees: {
-    //     type: [Schema.Types.ObjectId],
-    //     default: [],
-    //     ref: 'User'
-    // },
-    // attendees: [
-    //     {
-    //         type: Schema.Types.ObjectId,
-    //         ref: 'User'
-    //     }
-    // ],
 })
-// meetingSchema.loadClass(Meeting);
 meetingSchema.set('toObject', {
     transform: function (doc: Document, ret) {
         ret.id = ret._id

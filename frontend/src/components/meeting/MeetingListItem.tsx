@@ -39,7 +39,7 @@ const MeetingListItem = ({meeting}: Props) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const handleDelete = () => {
-    deleteMeeting(meeting.id.toString());
+    void deleteMeeting(meeting.id.toString());
   };
   const handleJoin = () => {
     joinMeeting(meeting.id.toString());

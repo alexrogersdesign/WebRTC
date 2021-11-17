@@ -1,4 +1,5 @@
 import faker from 'faker';
+import toTitleCase from './helpers/toTitleCase';
 
 export const correctEmail = 'test@test.com';
 export const correctPassword = 'test';
@@ -32,8 +33,7 @@ export class Meeting {
     start: Date
     end: Date
     constructor() {
-      const date = new Date();
-      this.title = faker.company.bs();
+      this.title = toTitleCase(faker.company.bs());
       this.description = faker.company.catchPhrase();
       this.start = faker.date.future(0);
       this.end = faker.date.future(0, this.start);

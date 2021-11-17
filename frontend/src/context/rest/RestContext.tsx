@@ -54,6 +54,7 @@ const RestContextProvider = ({children}: Props) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
+  const [meetingsLoading, setMeetingsLoading] = useState(false);
 
   const handleError = (error:any, message?: string) => {
     const newMessage = message?? error.message?? 'An error has occurred';
@@ -72,11 +73,6 @@ const RestContextProvider = ({children}: Props) => {
     currentUser,
     setCurrentUser,
     refreshToken,
-    // loginRequest,
-    // logoutRequest,
-    // findMeeting,
-    // getAllMeetingsRequest,
-    // deleteMeetingRequest,
   } = useRestApi(null, handleError);
 
   const checkIfLogged = async () => {
@@ -96,7 +92,7 @@ const RestContextProvider = ({children}: Props) => {
    * Check if currently logged in on first load.
    */
   useEffect(() => {
-    checkIfLogged();
+    void checkIfLogged();
   }, []);
 
   // /**
@@ -219,7 +215,7 @@ const RestContextProvider = ({children}: Props) => {
     setLogoutStorage(Date.now().toString());
     setLoggedIn(false);
     try {
-      api.get('/login/logout');
+      void api.get('/login/logout');
     } catch (e) {
       handleError(e, 'Error when logging out');
       console.log(e);
@@ -233,12 +229,17 @@ const RestContextProvider = ({children}: Props) => {
     void getMeetings();
   }, [token]);
 
+  /**
+   * Populates the meetingList state
+   */
   const getMeetings = async () => {
     try {
+      setMeetingsLoading(true);
       const response = await api.get('/meetings/');
       const parsedMeetings = response.data.map(
           (meeting:IReceivedMeeting) => parseMeeting(meeting),
       );
+      setMeetingsLoading(false);
       setMeetingList(parsedMeetings);
     } catch (error) {
       handleError(error);
@@ -323,6 +324,7 @@ const RestContextProvider = ({children}: Props) => {
         deleteMeeting,
         addMeetingToList,
         removeMeetingFromList,
+        meetingsLoading,
       }}
     >
       {children}
@@ -371,6 +373,7 @@ export interface IRestContext {
   deleteMeeting: (id:string) => Promise<boolean>;
   addMeetingToList: (meeting:Meeting) => void;
   removeMeetingFromList: (id:string) => void;
+  meetingsLoading: boolean;
 }
 
 RestContext.displayName = 'Rest Context';

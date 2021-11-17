@@ -13,6 +13,7 @@ import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import MeetingCardModal from './MeetingCardModal';
 import {toLocalStringMonth} from '../../util/timeHelper';
+import Avatar from '@material-ui/core/Avatar';
 
 interface Props {
   meeting: Meeting
@@ -28,6 +29,14 @@ const useStyles = makeStyles((theme: Theme) =>
       alignSelf: 'flex-start',
       color: '#f44336',
       fill: '#f44336',
+    },
+    logo: {
+      width: 48,
+      height: 48,
+      borderRadius: 5,
+    },
+    itemText: {
+      padding: theme.spacing(0, 1, 0),
     },
   }),
 );
@@ -55,9 +64,15 @@ const MeetingListItem = ({meeting}: Props) => {
         button
         disableRipple={true}
       >
+        <Avatar
+          className={classes.logo}
+          variant={'rounded'}
+          src={meeting.icon}
+        />
         <ListItemText
+          className={classes.itemText}
           primary={meetingPrimary}
-          primaryTypographyProps={{id: 'meeting-title'}}
+          primaryTypographyProps={{id: 'meeting-title', color: 'secondary'}}
           secondary={meetingSecondary}
           secondaryTypographyProps={{id: 'meeting-start'}}
         />

@@ -19,9 +19,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface Props {}
 
-const DemoPrompt = (props:Props) => {
+/**
+ * A component that displays the demo prompt message
+ * Demo can be enabled or disabled.
+ * @constructor
+ */
+const DemoPrompt = () => {
   const classes = useStyles();
   const {showDemo, setShowDemo} = useContext(MediaControlContext);
   const {meeting} = useContext(SocketIOContext);
@@ -60,15 +64,13 @@ const DemoPrompt = (props:Props) => {
         }
       />
       <Snackbar
-        open={showDemo}
+        open={showDemo && !!meeting}
         anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
         message={'A demo is now playing'}
         action={
-          <>
-            <Button color="secondary" onClick={handleHideDemo}>
-                Stop Demo
-            </Button>
-          </>
+          <Button color="secondary" onClick={handleHideDemo}>
+            Stop
+          </Button>
         }
       />
     </div>

@@ -26,9 +26,6 @@ const DemoPrompt = (props:Props) => {
   const {showDemo, setShowDemo} = useContext(MediaControlContext);
   const {meeting} = useContext(SocketIOContext);
   const [open, setOpen] = useState(false);
-  const toggleDemo = () => {
-    setShowDemo(!showDemo);
-  };
   const handleShowDemo = () => {
     setShowDemo(true);
     setOpen(false);
@@ -39,7 +36,9 @@ const DemoPrompt = (props:Props) => {
   };
   /* If meeting exists, show prompt */
   useEffect(() => {
-    meeting && setOpen(true);
+    if (meeting) {
+      setOpen(true);
+    }
   }, [meeting]);
 
 
@@ -56,6 +55,18 @@ const DemoPrompt = (props:Props) => {
             </Button>
             <Button color='secondary' onClick={handleHideDemo}>
               Hide
+            </Button>
+          </>
+        }
+      />
+      <Snackbar
+        open={showDemo}
+        anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+        message={'A demo is now playing'}
+        action={
+          <>
+            <Button color="secondary" onClick={handleHideDemo}>
+                Stop Demo
             </Button>
           </>
         }

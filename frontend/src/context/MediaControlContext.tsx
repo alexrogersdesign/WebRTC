@@ -49,7 +49,7 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
   //* Dummy video streams used for demonstrations purposes.
   const dummyVideoA = useRef(document.createElement('video'));
   const dummyVideoB = useRef(document.createElement('video'));
-  const [showDemo, setShowDemo] = useState(true);
+  const [showDemo, setShowDemo] = useState(false);
   const dummyStreams = useRef<User[]>([]);
 
   /**

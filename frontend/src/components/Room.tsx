@@ -14,6 +14,7 @@ import MeetingList from './meeting/MeetingList';
 import {RestContext} from '../context/rest/RestContext';
 import {MediaControlContext} from '../context/MediaControlContext';
 import DemoPrompt from './common/DemoPrompt';
+import {Alert} from '@material-ui/lab';
 interface Props {
 }
 
@@ -76,6 +77,12 @@ const Room = (props: Props) => {
             {meeting && videoReady && (<VideoPlayer local/>)}
           </div>
         </div>
+        {!loggedIn && (
+          <Alert icon={false} severity="success">
+              You are not logged in. Click the menu button above <br/>
+              An account doesnt not need to be created
+          </Alert>
+        )}
         <DemoPrompt/>
       </Container>
     </div>

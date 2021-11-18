@@ -26,6 +26,7 @@ import LoginForm from './forms/LoginForm';
 import JoinMeetingForm from './forms/JoinMeetingForm';
 import NewUserForm from './forms/NewUserForm';
 import NewMeetingForm from './forms/NewMeetingForm';
+import {Alert} from '@material-ui/lab';
 
 interface Props {
 
@@ -173,6 +174,9 @@ export const MenuDrawer = (props: Props) => {
       >
         <ListItemIcon> <FiberNewIcon /></ListItemIcon>
         <ListItemText primary={createAccountDialog} />
+        <Alert icon={false} severity="success">
+              An account can be created here
+        </Alert>
       </ListItem>
       <ListItem
         button
@@ -182,6 +186,9 @@ export const MenuDrawer = (props: Props) => {
       >
         <ListItemIcon> <ExitToAppIcon /></ListItemIcon>
         <ListItemText primary={loginDialog} />
+        <Alert icon={false} severity="success">
+            Demo account provided
+        </Alert>
       </ListItem>
     </>);
   };

@@ -11,6 +11,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
+import Snackbar from '@material-ui/core/Snackbar';
+import {Alert} from '@material-ui/lab';
 
 
 interface Props extends ChildrenProps {
@@ -66,8 +68,8 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const classes = useStyles();
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: 'test@test.com',
+      password: 'test',
     },
     validationSchema: validationSchema,
 
@@ -124,6 +126,9 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
           </Button>
         </form>
       </DialogContent>
+      <Alert icon={false} severity="success">
+            Press login to continue with demo profile or enter a created account
+      </Alert>
     </div>
   );
 });

@@ -68,8 +68,8 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const classes = useStyles();
   const formik = useFormik({
     initialValues: {
-      email: 'test@test.com',
-      password: 'test',
+      email: '',
+      password: '',
     },
     validationSchema: validationSchema,
 

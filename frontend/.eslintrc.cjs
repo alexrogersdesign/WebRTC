@@ -19,7 +19,8 @@ module.exports = {
     'react',
     '@typescript-eslint',
   ],
-  "ignorePatterns": ["**/*.js", "**/*.jsx"],
-  'rules': {
+  "rules": {
+    "react/prop-types": 0
   },
+  "ignorePatterns": ["**/*.js", "**/*.jsx"],
 };

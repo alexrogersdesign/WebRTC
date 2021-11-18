@@ -1,0 +1,17 @@
+{
+  "name": "@webrtc/monorepo",
+  "private": true,
+  "version": "0.0.1",
+  "workspaces": [
+    "./backend/*",
+    "./frontend/*",
+    "./tests/*"
+  ],
+  "scripts": {
+    "heroku-postbuild": "cd frontend && npm install && npm run build",
+    "start": "cd backend && npm start"
+  },
+  "devDependencies": {
+    "concurrently": "^6.4.0"
+  }
+}

@@ -12,6 +12,7 @@ import Peer, {MediaConnection} from 'peerjs';
 import {useSnackbar} from 'notistack';
 import EventEmitter from 'events';
 import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
+import env from 'react-dotenv';
 
 import Meeting from '../shared/classes/Meeting';
 import {
@@ -20,20 +21,22 @@ import {
   parseMeeting,
   parseUser} from '../util/classParser';
 import {MediaControlContext} from './MediaControlContext';
-import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
+// import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
 import {RestContext} from './rest/RestContext';
 import User from '../shared/classes/User';
 
-// const peerServer = env.PEER_SERVER;
+const peerServer = env.PEER_SERVER;
 // const peerServerPort = env.PEER_SERVER_PORT;
 
 interface Props extends ChildrenProps {
 
 }
 
-const peerConnectionOptions = {
+const peerConnectionOptions: Peer.PeerJSOption = {
   host: '/',
-  port: 5001,
+  path: '/peer/connect',
+  // port: 5001,
+  port: 3000,
   debug: 2,
 };
 //* Context item to be passed to app
@@ -78,7 +81,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
 
   // !URL of deployed server goes here
   //* SocketIO server instance
-  const connectionUrl = `http://localhost:5000?room=${roomParam}`;
+  const connectionUrl = `http://localhost:3000?room=${roomParam}`;
 
   // /* If a URL param for a room to join is provided, check if it is valid
   // * and join the room*/
@@ -270,7 +273,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
       try {
         peerConnection.current = new Peer(
             currentUser.id.toString(),
-            peerConnectionOptions,
+            // peerConnectionOptions,
         );
       } catch (error) {
         console.log(error);
@@ -445,7 +448,7 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
 };
 
 export interface ISocketIOContext {
-  socket: Socket<DefaultEventsMap, DefaultEventsMap>| null,
+  socket: Socket| null,
   setupSocketListeners: () => void,
   meeting: Meeting | null,
   peers: React.MutableRefObject<IPeers | null>,

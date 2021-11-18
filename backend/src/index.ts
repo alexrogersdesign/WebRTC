@@ -1,12 +1,21 @@
 
 import debugFactory from 'debug';
 const debug = debugFactory('WebRTC:server');
-
+import {ExpressPeerServer} from 'peer'
 import * as http from 'http';
 
 import app from './app.js';
 
 const server = http.createServer(app);
+
+/* host webRTC server */
+// const peerServer = ExpressPeerServer(server, {
+//   path: '/connect',
+//   proxied: true,
+// });
+//
+// app.use('/peer', peerServer)
+
 
 /**
  * Setup cors to allow all origins with GET, POST requests

@@ -1,5 +1,5 @@
 {
-  "name": "tests",
+  "name": "@webrtc/tests",
   "version": "1.0.0",
   "description": "Tests for WebRTC app",
   "main": "index.js",

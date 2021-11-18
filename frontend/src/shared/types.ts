@@ -2,8 +2,6 @@
 import React from 'react';
 import Peer, {MediaConnection} from 'peerjs';
 import User from './classes/User';
-import Meeting from './classes/Meeting';
-import Message from './classes/Message';
 
 export interface ChildrenProps {
    children?: JSX.Element;

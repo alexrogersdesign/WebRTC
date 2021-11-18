@@ -4,7 +4,7 @@ import ObjectID from 'bson-objectid';
 import Meeting from "../../../frontend/src/shared/classes/Meeting";
 import {MeetingModel} from "../database/models.js";
 import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
-import {uploadFile, uploadMemory } from "../util/middleware/filesMiddleware.js";
+import {uploadMemory} from "../util/middleware/filesMiddleware.js";
 
 const meetingsRouter = express.Router();
 meetingsRouter.use(authRestricted);
@@ -45,7 +45,7 @@ meetingsRouter.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-meetingsRouter.post('/icon', uploadFile)
+// meetingsRouter.post('/icon', uploadFile)
 
 meetingsRouter.post("/", uploadMemory.single('icon'), async (req: Request, res: Response) => {
     try {

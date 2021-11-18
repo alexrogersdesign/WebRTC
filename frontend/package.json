@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "@webrtc/frontend",
   "version": "0.1.0",
   "private": true,
   "main": "src/index.tsx",
@@ -61,6 +61,7 @@
   "scripts": {
     "start": "react-dotenv && react-scripts start",
     "build": "react-dotenv && react-scripts build",
+    "postbuild": "mv ",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -112,7 +113,8 @@
   },
   "react-dotenv": {
     "whitelist": [
-      "PEER_SERVER"
+      "PEER_SERVER",
+      "SERVER_PORT"
     ]
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, {forwardRef} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';

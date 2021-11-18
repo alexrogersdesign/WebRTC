@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars,max-len */
 // TODO add ability to attach files and emotes
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {useContext} from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
 import {
   ChatContainer,
   MessageList,
   MessageInput,
   MainContainer,
-  Message, Avatar, MessageSeparator,
+  Message as MessageElement, Avatar, MessageSeparator,
 } from '@chatscope/chat-ui-kit-react';
 import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
@@ -15,7 +15,7 @@ import {ChatContext} from '../../context/ChatContext';
 import {Paper} from '@material-ui/core';
 import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
-import MessageClass from '../../shared/classes/Message';
+import Message from '../../shared/classes/Message';
 import UserAvatar from '../common/UserAvatar';
 import Typography from '@material-ui/core/Typography';
 import {getMessageDirection} from '../../util/helpers';
@@ -83,7 +83,7 @@ const ChatBox = ({innerRef, isOpen}: Props) => {
   const handleSend = (contents:string) => {
     if (!currentUser) throw new Error('No user found');
     if (!meeting) throw new Error('Message sent outside of meeting');
-    const message = new MessageClass(meeting.id, currentUser, contents);
+    const message = new Message(meeting.id, currentUser, contents);
     sendMessage(message);
   };
 
@@ -96,7 +96,7 @@ const ChatBox = ({innerRef, isOpen}: Props) => {
       const direction = getMessageDirection(message, currentUser);
       const timeToDisplay = getMessageTimeDifference(message);
       return (
-        <Message
+        <MessageElement
           key={message.id.toString()}
           className={classes.message}
           model={{
@@ -107,17 +107,17 @@ const ChatBox = ({innerRef, isOpen}: Props) => {
           }}
           avatarPosition="tl"
         >
-          <Message.TextContent className={classes.messageText}>
+          <MessageElement.TextContent className={classes.messageText}>
             <Typography
               variant='body2'
             >
               {message.contents}
             </Typography>
-          </Message.TextContent>
-          <Message.Header
+          </MessageElement.TextContent>
+          <MessageElement.Header
             sender={message.user.fullName}
           />
-          <Message.Footer
+          <MessageElement.Footer
             sentTime={timeToDisplay}
           />
           {direction === 'incoming' && (
@@ -128,7 +128,7 @@ const ChatBox = ({innerRef, isOpen}: Props) => {
               <UserAvatar avatarSize={4} user={message.user} className={classes.avatar}/>
             </Avatar>
           )}
-        </Message>
+        </MessageElement>
       );
     });
   };

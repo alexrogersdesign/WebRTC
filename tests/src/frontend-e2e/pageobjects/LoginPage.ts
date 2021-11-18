@@ -38,8 +38,10 @@ class LoginPage extends Page {
     await this.menu.click();
     await this.loginButton.waitForClickable({timeout: menuWaitTime});
     await this.loginButton.click();
+    // await this.setValue(browser, await this.inputEmail, email);
     await this.inputEmail.setValue(email);
     await this.inputPassword.setValue(password);
+    // await this.setValue(browser, await this.inputPassword, password);
     await this.btnSubmit.waitForClickable();
     await this.btnSubmit.click();
   }
@@ -50,6 +52,7 @@ class LoginPage extends Page {
     const iconDir = '/Volumes/Macintosh-HD-Data/development/react' +
         '/webstorm/WebRTC/tests/src/frontend-e2e/files/user-icon';
     const files = fs.readdirSync(iconDir);
+    /* Select a random file*/
     const foundFile = files[Math.floor(Math.random()* files.length)];
     const filePath = path.join(iconDir, foundFile);
     await this.menu.click();

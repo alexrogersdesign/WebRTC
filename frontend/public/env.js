@@ -1,3 +1,4 @@
 window.env = {
-  "PEER_SERVER": "/\""
+  "PEER_SERVER": "/",
+  "SERVER_PORT": "5001"
 };

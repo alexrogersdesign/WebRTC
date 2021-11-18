@@ -2,6 +2,7 @@
 
 import red from '@material-ui/core/colors/red';
 import {createTheme} from '@material-ui/core/styles';
+import {baseTheme} from './base';
 
 declare module '@material-ui/core/styles/createPalette' {
   interface Palette {
@@ -15,10 +16,11 @@ declare module '@material-ui/core/styles/createPalette' {
     neutralGray: PaletteOptions['primary'];
   }
 }
-
 // A custom theme for this app
 const theme = createTheme({
+  ...baseTheme,
   palette: {
+    ...baseTheme.palette,
     primary: {
       main: '#90a4ae',
       light: '#c1d5e0',

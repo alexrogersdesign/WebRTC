@@ -48,11 +48,11 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     removeMedia,
     addExternalMedia,
     clearExternalMedia,
-    createDummyStreams,
+    setShowDemo,
   } = useContext(MediaControlContext);
   const {
     currentUser,
-    findMeeting: findMeeting,
+    findMeeting,
     token,
     refreshToken,
     addMeetingToList,
@@ -133,17 +133,10 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
     };
   }, [meeting, hasJoinedMeeting]);
 
-  useEffect(() => {
-    if (!meeting) return;
-    let users: Array<User>;
-    const createUsers = async () => {
-      users = await createDummyStreams();
-    };
-    void createUsers();
-    return () => {
-      users.forEach((user)=> removeMedia(user.id.toString()));
-    };
-  }, [meeting]);
+  // useEffect(() => {
+  //   if (!meeting) setShowDemo(false);
+  //   setShowDemo(true);
+  // }, [meeting]);
 
 
   /**
@@ -329,7 +322,6 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
    */
   const joinMeeting = async (newMeetingID?:string) => {
     // TODO remove in production
-    /* Create dummy stream for demo purposes*/
     console.log('join meeting called');
     await initPeerServerConnection();
     //* If a meeting ID is not provided and the user has a meeting stored,

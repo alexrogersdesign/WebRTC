@@ -50,6 +50,7 @@ const MeetingList = (props:Props) => {
         className={classes.title}
         variant='h4'
         align='center'
+        // color='textSecondary'
       >
           Meetings
       </Typography>

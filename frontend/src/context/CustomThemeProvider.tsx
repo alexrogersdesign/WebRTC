@@ -3,6 +3,7 @@ import {ThemeProvider} from '@material-ui/core/styles';
 import getTheme, {ThemeOption, themes} from '../util/theme/getTheme';
 
 import {ChildrenProps} from '../shared/types';
+import {FontLoader} from '../components/common/FontLoader';
 
 interface Props extends ChildrenProps {}
 interface ICustomThemeContext {
@@ -43,6 +44,7 @@ const CustomThemeProvider = ({children}: Props) :JSX.Element=> {
   return (
     <CustomThemeContext.Provider value={contextValue}>
       <ThemeProvider theme={theme}>
+        <FontLoader/>
         {children}
       </ThemeProvider>
     </CustomThemeContext.Provider>

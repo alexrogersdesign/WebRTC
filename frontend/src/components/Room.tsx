@@ -13,6 +13,7 @@ import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
 import {RestContext} from '../context/rest/RestContext';
 import {MediaControlContext} from '../context/MediaControlContext';
+import DemoPrompt from './common/DemoPrompt';
 interface Props {
 }
 
@@ -75,6 +76,7 @@ const Room = (props: Props) => {
             {meeting && videoReady && (<VideoPlayer local/>)}
           </div>
         </div>
+        <DemoPrompt/>
       </Container>
     </div>
   );

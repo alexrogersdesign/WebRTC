@@ -49,6 +49,8 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
   //* Dummy video streams used for demonstrations purposes.
   const dummyVideoA = useRef(document.createElement('video'));
   const dummyVideoB = useRef(document.createElement('video'));
+  const [showDemo, setShowDemo] = useState(true);
+  const dummyStreams = useRef<User[]>([]);
 
   /**
      * Listen for changes in media controls
@@ -111,19 +113,29 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
     }
   };
 
+  const removeDummyStreams = (users: User[]) => {
+    users.forEach((user)=> removeMedia(user.id.toString()));
+  };
+  useEffect(() => {
+    if (!showDemo) {
+      return removeDummyStreams(dummyStreams.current);
+    }
+    const createUsers = async () => {
+      dummyStreams.current = await createDummyStreams();
+    };
+    void createUsers();
+    return () => removeDummyStreams(dummyStreams.current);
+  }, [showDemo]);
+
   const createDummyStreams = async () => {
     const userA = new User('Jarrod', 'Carroll', 'jcarroll@gmail.com');
     const userB = new User('Cathrine', 'Stokes', 'cstokes@gmail.com');
     dummyVideoA.current.src = videoASrc;
     dummyVideoB.current.src = videoBSrc;
     dummyVideoA.current.load();
-    // dummyVideoA.current.playsInline= true;
-    // dummyVideoA.current.width= 360;
-    // dummyVideoA.current.width= 240;
     dummyVideoA.current.autoplay = true;
     dummyVideoA.current.loop = true;
     dummyVideoB.current.load();
-    // dummyVideoB.current.playsInline= true;
     dummyVideoB.current.autoplay = true;
     dummyVideoB.current.loop = true;
     console.log('type of', typeof iconA);
@@ -191,7 +203,8 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
         addExternalMedia,
         clearExternalMedia,
         localMedia,
-        createDummyStreams,
+        setShowDemo,
+        showDemo,
       }}
     >
       {children}
@@ -215,7 +228,8 @@ export interface IMediaControlContext {
   removeMedia: (id:string) => void
   addExternalMedia: (user:User, stream:MediaStream, data?:CallOption) => void,
   clearExternalMedia: () => void,
-  createDummyStreams: () => Promise<User[]>,
+  setShowDemo: (boolean:boolean) => void,
+  showDemo: boolean,
 }
 
 MediaControlContext.displayName = 'Media Control Context';

@@ -23,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
       display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
       flexShrink: 1,
     },
     delete: {
@@ -37,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     itemText: {
       padding: theme.spacing(0, 1, 0),
+    },
+    primaryText: {
+      marginBottom: -5,
     },
   }),
 );
@@ -72,9 +78,17 @@ const MeetingListItem = ({meeting}: Props) => {
         <ListItemText
           className={classes.itemText}
           primary={meetingPrimary}
-          primaryTypographyProps={{id: 'meeting-title', color: 'secondary'}}
+          primaryTypographyProps={{
+            id: 'meeting-title',
+            color: 'secondary',
+            variant: 'h6',
+            className: classes.primaryText,
+          }}
           secondary={meetingSecondary}
-          secondaryTypographyProps={{id: 'meeting-start'}}
+          secondaryTypographyProps={{
+            id: 'meeting-start',
+            variant: 'subtitle2',
+          }}
         />
         <ListItemSecondaryAction>
           <ToolTip title="Delete Meeting">

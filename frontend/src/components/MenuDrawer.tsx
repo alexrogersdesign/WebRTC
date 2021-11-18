@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
+import {Alert} from '@material-ui/lab';
 
 import MeetingMenuDisplay from './meeting/MeetingMenuDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
@@ -26,7 +27,7 @@ import LoginForm from './forms/LoginForm';
 import JoinMeetingForm from './forms/JoinMeetingForm';
 import NewUserForm from './forms/NewUserForm';
 import NewMeetingForm from './forms/NewMeetingForm';
-import {Alert} from '@material-ui/lab';
+import AccountInfo from './common/AccountInfo';
 
 interface Props {
 
@@ -192,6 +193,13 @@ export const MenuDrawer = (props: Props) => {
       </ListItem>
     </>);
   };
+  const RenderWhenLogged = () => {
+    return (
+      // <ListItem>
+      <AccountInfo/>
+      // </ListItem>
+    );
+  };
 
   const list = () => (
     <div
@@ -200,22 +208,24 @@ export const MenuDrawer = (props: Props) => {
       onClick={toggleDrawer( false)}
       onKeyDown={toggleDrawer( false)}
     >
+      {loggedIn && <RenderWhenLogged/>}
+      <Divider />
       <List>
         {(!meeting && loggedIn) && <RenderWhenNoMeeting/>}
         {(meeting && loggedIn) && <RenderWhenMeeting/>}
         {!loggedIn && <RenderWhenNotLogged/>}
       </List>
-      <Divider />
-      <List>
-        {items.map((text, index) => (
-          <ListItem button key={index}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+
+      {/* <List>*/}
+      {/*  {items.map((text, index) => (*/}
+      {/*    <ListItem button key={index}>*/}
+      {/*      <ListItemIcon>*/}
+      {/*        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}*/}
+      {/*      </ListItemIcon>*/}
+      {/*      <ListItemText primary={text} />*/}
+      {/*    </ListItem>*/}
+      {/*  ))}*/}
+      {/* </List>*/}
     </div>
   );
   const items:(JSX.Element | string)[] = [

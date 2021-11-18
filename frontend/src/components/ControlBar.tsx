@@ -18,7 +18,9 @@ const ControlBar = ({children, className, position}: Props) => {
   return (
     <AppBar className={className} position={position? position: 'static'}>
       <Toolbar>
-        <Typography>{currentUser?.fullName}</Typography>
+        {/* <Typography variant='subtitle1'>*/}
+        {/*  {currentUser?.fullName}*/}
+        {/* </Typography>*/}
         {children}
       </Toolbar>
     </AppBar>

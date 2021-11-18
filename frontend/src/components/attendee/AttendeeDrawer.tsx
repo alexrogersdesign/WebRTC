@@ -25,6 +25,7 @@ import ChatDrawer from '../chat/ChatDrawer';
 import AttendeeListItem from './AttendeeListItem';
 import User from '../../shared/classes/User';
 import Meeting from '../../shared/classes/Meeting';
+import AccountInfo from '../common/AccountInfo';
 
 interface Props {
    user: User| null,
@@ -142,7 +143,9 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
           [classes.appBarShift]: open,
         })}
       >
-        <Toolbar classes={{root: classes.toolbarItem}} >
+        <Toolbar
+          classes={{root: classes.toolbarItem}}
+        >
           <IconButton
             style={{display: meeting? 'flex': 'none'}}
             // color="inherit"
@@ -159,44 +162,42 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
             </Typography>
 
           </IconButton>
-          <Typography variant="h6" className={classes.userName}>
-            {user&& user.fullName}
-          </Typography>
           <MenuDrawer/>
         </Toolbar>
       </AppBar>
-      {meeting && (<Drawer
-        variant="permanent"
-        className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        })}
-        classes={{
-          paper: clsx({
+      {meeting && (
+        <Drawer
+          variant="permanent"
+          className={clsx(classes.drawer, {
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
-          }),
-        }}
-      >
-        <div className={classes.toolbar}>
-          <Typography variant='h6'>Attendees</Typography>
-          <IconButton onClick={handleDrawerClose}>
-            {
+          })}
+          classes={{
+            paper: clsx({
+              [classes.drawerOpen]: open,
+              [classes.drawerClose]: !open,
+            }),
+          }}
+        >
+          <div className={classes.toolbar}>
+            <Typography variant='h6'>Attendees</Typography>
+            <IconButton onClick={handleDrawerClose}>
+              {
             theme.direction === 'rtl' ?
              <ChevronRightIcon /> :
              <ChevronLeftIcon />
-            }
-          </IconButton>
-        </div>
-        <Divider />
-        <List className={classes.list} >
-          {users && users.map((user) => {
-            return (
-              <AttendeeListItem key={user.id.toString()} user={user}/>
-            );
-          })}
-        </List>
-      </Drawer>)}
+              }
+            </IconButton>
+          </div>
+          <Divider />
+          <List className={classes.list} >
+            {users && users.map((user) => {
+              return (
+                <AttendeeListItem key={user.id.toString()} user={user}/>
+              );
+            })}
+          </List>
+        </Drawer>)}
       <main className={classes.content}>
         <div className={classes.toolbar} />
       </main>

@@ -12,7 +12,6 @@ import Peer, {MediaConnection} from 'peerjs';
 import {useSnackbar} from 'notistack';
 import EventEmitter from 'events';
 import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
-import env from 'react-dotenv';
 
 import Meeting from '../shared/classes/Meeting';
 import {
@@ -24,21 +23,23 @@ import {MediaControlContext} from './MediaControlContext';
 // import {DefaultEventsMap} from 'socket.io-client/build/typed-events';
 import {RestContext} from './rest/RestContext';
 import User from '../shared/classes/User';
+import * as process from 'process';
 
-const peerServer = env.PEER_SERVER;
-// const peerServerPort = env.PEER_SERVER_PORT;
+// const peerServer = process.env.PEER_SERVER_PATH;
+// const peerServerPort = process.env.PEER_SERVER_PORT;
+// const peerServerHost = process.env.PEER_SERVER_HOST;
 
 interface Props extends ChildrenProps {
 
 }
 
-const peerConnectionOptions: Peer.PeerJSOption = {
-  host: '/',
-  path: '/peer/connect',
-  // port: 5001,
-  port: 3000,
-  debug: 2,
-};
+// const peerConnectionOptions: Peer.PeerJSOption = {
+//   host: peerServerHost?? '/',
+//   path: '/peer/connect',
+//   // port: 5001,
+//   port: 3000,
+//   debug: 2,
+// };
 //* Context item to be passed to app
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
 

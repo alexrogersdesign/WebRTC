@@ -1,7 +1,4 @@
 import mongoose from 'mongoose';
-import * as dotenv from "dotenv";
-
-dotenv.config();
 
 const MONGODB_URI = process.env.FULL_DB_CONN_STRING as string
 console.log('Connecting to', MONGODB_URI)

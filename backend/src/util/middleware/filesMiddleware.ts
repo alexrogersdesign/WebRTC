@@ -1,10 +1,9 @@
 import util from 'util';
 import multer, {FileFilterCallback} from 'multer';
 import {GridFsStorage} from "multer-gridfs-storage";
-import * as dotenv from "dotenv";
 import {Request, Response} from "express";
 import path from 'path'
-dotenv.config();
+
 
 const MONGODB_URI = process.env.FULL_DB_CONN_STRING as string
 

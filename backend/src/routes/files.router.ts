@@ -1,10 +1,6 @@
 import express  from "express";
-import * as dotenv from "dotenv";
-dotenv.config();
 
-import {UserModel} from "../database/models.js";
 import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
-// import {filesMiddleware} from "../util/middleware/filesMiddleware.js";
 
 
 

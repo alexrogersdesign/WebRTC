@@ -1,8 +1,6 @@
 import {Request, Response, ErrorRequestHandler, NextFunction} from "express";
 import expressJwt from 'express-jwt'
-import * as dotenv from "dotenv";
 import HttpException from "../HttpException";
-dotenv.config();
 
 const secretKey = process.env.SECRET_KEY
 const refreshKey = process.env.SECRET_KEY_REFRESH

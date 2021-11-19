@@ -1,8 +1,6 @@
 import express  from "express";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import * as dotenv from "dotenv";
-dotenv.config();
 const secretKey = process.env.SECRET_KEY
 const refreshSecretKey = process.env.SECRET_KEY_REFRESH
 const envTokenLife= process.env.TOKEN_LIFE || '900'

@@ -29,6 +29,7 @@ import NewUserForm from './forms/NewUserForm';
 import NewMeetingForm from './forms/NewMeetingForm';
 import AccountInfo from './common/AccountInfo';
 import TutorialPrompt from './common/TutorialPrompt';
+import EnableTutorial from './common/EnableTutorial';
 
 interface Props {
 
@@ -62,13 +63,19 @@ const useStyles = makeStyles((theme: Theme) =>
     drawerButton: {
       alignSelf: 'flex-end',
     },
+    topItems: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
   }),
 );
 
 export const MenuDrawer = (props: Props) => {
   const classes = useStyles();
-  const {meeting, leaveMeeting, startNewMeeting} = useContext(SocketIOContext);
-  const {loggedIn, logout} = useContext(RestContext);
+  const {meeting, leaveMeeting} = useContext(SocketIOContext);
+  const {logout, currentUser} = useContext(RestContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [joinMeetingModalOpen, setJoinMeetingModal] = useState(false);
   const [createAccountModalOpen, setCreateAccountModalOpen] = useState(false);
@@ -167,34 +174,30 @@ export const MenuDrawer = (props: Props) => {
   const RenderWhenNotLogged = () => {
     const loginDialog = 'Login';
     const createAccountDialog = 'Create Account';
-    return (<>
-      <ListItem
-        button
-        onClick={() => setCreateAccountModalOpen(true)}
-        id='create-account-button'
-        aria-label='create account button'
-      >
-        <ListItemIcon> <FiberNewIcon /></ListItemIcon>
-        <ListItemText primary={createAccountDialog} />
-        <Alert icon={false} severity="success">
-              An account can be created here
-        </Alert>
-      </ListItem>
-      <ListItem
-        button
-        onClick={() => setLoginModalOpen(true)}
-        id='login-button'
-        aria-label='login button'
-      >
-        <ListItemIcon> <ExitToAppIcon /></ListItemIcon>
-        <ListItemText primary={loginDialog} />
-        <Alert icon={false} severity="success">
-            Demo account provided
-        </Alert>
-      </ListItem>
-    </>);
+    return (
+      <>
+        <ListItem
+          button
+          onClick={() => setCreateAccountModalOpen(true)}
+          id='create-account-button'
+          aria-label='create account button'
+        >
+          <ListItemIcon> <FiberNewIcon /></ListItemIcon>
+          <ListItemText primary={createAccountDialog} />
+        </ListItem>
+        <ListItem
+          button
+          onClick={() => setLoginModalOpen(true)}
+          id='login-button'
+          aria-label='login button'
+        >
+          <ListItemIcon> <ExitToAppIcon /></ListItemIcon>
+          <ListItemText primary={loginDialog} />
+        </ListItem>
+      </>);
   };
   const RenderWhenLogged = () => {
+    if (!currentUser) return <></>;
     return (
       // <ListItem>
       <AccountInfo/>
@@ -202,13 +205,47 @@ export const MenuDrawer = (props: Props) => {
     );
   };
   const RenderTutorial = () => {
+    const homePrompt= 'You are not logged in.' +
+        ' Click the menu button to proceed.';
+    const loginMenuPrompt ='You can create an account' +
+        '\nor click Login to proceed with a demo account';
     return (
       <>
-        {!loggedIn && (
-          <TutorialPrompt
-            // synchronizeOpen={drawerOpen}
-            message={'You are not logged in. Click the menu button to proceed.'}
-          />
+        {(!currentUser && !loginModalOpen) && (
+          <>
+            <TutorialPrompt
+              // synchronizeOpen={drawerOpen}
+              defaultOpen={!drawerOpen}
+              synchronizeClose={drawerOpen}
+              message={homePrompt}
+              verticalOffset={'10%'}
+            />
+            <TutorialPrompt
+              defaultOpen={drawerOpen}
+              anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+              message={loginMenuPrompt}
+              verticalOffset={'20%'}
+            />
+          </>
+        )}
+        {(currentUser &&
+            !meeting &&
+            !joinMeetingModalOpen &&
+            !createMeetingModalOpen) &&(
+          <>
+            <TutorialPrompt
+              defaultOpen={!drawerOpen}
+              verticalOffset={'15%'}
+              horizontalOffset={'25%'}
+              message={'Click a meeting to join'}
+            />
+            <TutorialPrompt
+              defaultOpen={!drawerOpen}
+              verticalOffset={'5%'}
+              horizontalOffset={'70%'}
+              message={'Click Menu for more options.'}
+            />
+          </>
         )}
       </>
     );
@@ -221,12 +258,15 @@ export const MenuDrawer = (props: Props) => {
       onClick={toggleDrawer( false)}
       onKeyDown={toggleDrawer( false)}
     >
-      {loggedIn && <RenderWhenLogged/>}
+      <div className={classes.topItems}>
+        <EnableTutorial/>
+        <RenderWhenLogged/>
+      </div>
       <Divider />
       <List>
-        {(!meeting && loggedIn) && <RenderWhenNoMeeting/>}
-        {(meeting && loggedIn) && <RenderWhenMeeting/>}
-        {!loggedIn && <RenderWhenNotLogged/>}
+        {(!meeting && currentUser) && <RenderWhenNoMeeting/>}
+        {(meeting && currentUser) && <RenderWhenMeeting/>}
+        {!currentUser && <RenderWhenNotLogged/>}
       </List>
 
       {/* <List>*/}

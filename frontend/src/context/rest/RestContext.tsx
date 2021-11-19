@@ -84,6 +84,7 @@ const RestContextProvider = ({children}: Props) => {
       setLoggedIn(true);
     } catch (err) {
       setLoggedIn(false);
+      setCurrentUser(null);
       console.log('Not logged in');
     }
   };

@@ -19,7 +19,6 @@ import {
   formatDateForPicker,
 } from '../../util/timeHelper';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
-// import {MeetingIcon} from '../../shared/classes/MeetingIcon';
 
 interface Props extends ChildrenProps {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -37,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
       // display: 'flex',
       // flexDirection: 'column',
       minWidth: 1020,
+      // minWidth: 800,
     },
     titleItem: {
       padding: theme.spacing(1, 1, 0),

@@ -8,27 +8,30 @@ import NotificationProvider from './NotificationProvider';
 import CustomThemeProvider from './CustomThemeProvider';
 import {MediaControlContextProvider} from './MediaControlContext';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import {OptionsContextProvider} from './OptionsContext';
 
 interface Props extends ChildrenProps {};
 
 const AppContext = ({children}: Props) => {
   return (
     <>
-      <CustomThemeProvider>
-        <NotificationProvider>
-          <RestContextProvider>
-            <MediaControlContextProvider>
-              <SocketIOContextProvider>
-                <SegmentationContextProvider>
-                  <ChatContextProvider>
-                    {children}
-                  </ChatContextProvider>
-                </SegmentationContextProvider>
-              </SocketIOContextProvider>
-            </MediaControlContextProvider>
-          </RestContextProvider>
-        </NotificationProvider>
-      </CustomThemeProvider>
+      <OptionsContextProvider>
+        <CustomThemeProvider>
+          <NotificationProvider>
+            <RestContextProvider>
+              <MediaControlContextProvider>
+                <SocketIOContextProvider>
+                  <SegmentationContextProvider>
+                    <ChatContextProvider>
+                      {children}
+                    </ChatContextProvider>
+                  </SegmentationContextProvider>
+                </SocketIOContextProvider>
+              </MediaControlContextProvider>
+            </RestContextProvider>
+          </NotificationProvider>
+        </CustomThemeProvider>
+      </OptionsContextProvider>
       <CssBaseline/>
     </>
   );

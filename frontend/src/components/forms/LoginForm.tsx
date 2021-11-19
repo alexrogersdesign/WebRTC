@@ -139,6 +139,7 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
         message={'Login with demo account?'}
         buttonLabel={'login'}
         action={handleTest}
+        verticalOffset={'25%'}
       />
     </div>
   );

@@ -1,13 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 import Snackbar, {SnackbarOrigin} from '@material-ui/core/Snackbar';
-import {MediaControlContext} from '../../context/MediaControlContext';
 import Button from '@material-ui/core/Button';
-import {SocketIOContext} from '../../context/SocketIOContext';
-import {ChildrenProps} from '../../shared/types';
-import {Alert} from '@material-ui/lab';
+import {Alert, AlertTitle} from '@material-ui/lab';
+import {Portal} from '@material-ui/core';
+import {OptionsContext} from '../../context/OptionsContext';
+import AlertDialog from './AlertDialog';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -15,16 +14,37 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       'maxWidth': 600,
       '& > * + *': {
-        marginTop: theme.spacing(2),
+        'marginTop': theme.spacing(2),
+        // 'minHeight': 50,
+        // 'position': 'relative',
       },
+    },
+    snackbar: {
+      // 'minHeight': 50,
+    },
+    disable: {
+      padding: 0,
+      margin: 0,
+
+    },
+    disableText: {
+      color: theme.palette.neutralGray.dark,
+      fontSize: 10,
+      padding: 0,
+      margin: 0,
+      // border: '1px solid red',
+
     },
   }),
 );
 
 interface TutorialProps {
-    action?: () => void;
-    message: string;
-    buttonLabel?: string,
+    action?: () => void
+    message: string
+    defaultOpen?:boolean
+    verticalOffset?: number | string
+    horizontalOffset?: number | string
+    buttonLabel?: string
     anchorOrigin?: SnackbarOrigin | undefined
     synchronizeOpen?: boolean
     synchronizeClose?: boolean
@@ -48,38 +68,97 @@ const TutorialPrompt = (props: Props) => {
     buttonLabel='OK',
     anchorOrigin,
     synchronizeOpen,
+    synchronizeClose,
+    verticalOffset,
+    horizontalOffset,
+    defaultOpen=true,
   } = props;
   const classes = useStyles();
-  const [open, setOpen] = useState(true);
+  const {setTutorialEnabled, tutorialEnabled} = useContext(OptionsContext);
+  const [open, setOpen] = useState(defaultOpen);
+  const firstUpdate = useRef(true);
 
-  /* Synchronize external state */
+  /* Synchronize external state if not first render */
   useEffect(() => {
-    synchronizeOpen && setOpen(synchronizeOpen);
-  }, [synchronizeOpen]);
+    if (synchronizeOpen === true && !firstUpdate.current) {
+      setOpen(true);
+    }
+  }, [synchronizeOpen, firstUpdate]);
 
+  useEffect(() => {
+    if (synchronizeClose === false && !firstUpdate.current) {
+      setOpen(false);
+    }
+  }, [synchronizeClose, firstUpdate]);
 
+  /* Keep track of first render */
+  useEffect(() => {
+    if (firstUpdate.current) firstUpdate.current = false;
+  }, []);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const handleDisable = () => {
+    setTutorialEnabled(false);
+  };
+
+  if (!tutorialEnabled) return <></>;
   return (
-    <div className={classes.root}>
-      <Snackbar
-        open={open}
-        anchorOrigin={anchorOrigin?? {vertical: 'top', horizontal: 'center'}}
-      >
-        <Alert
-          icon={false}
-          severity='success'
-          onClose={()=> setOpen(false)}
-          action={
+    <Portal>
+      <div className={classes.root}>
+        <Snackbar
+          style={
+            {
+              height: verticalOffset? '5%': undefined,
+              top: verticalOffset? `${verticalOffset}` : undefined,
+              // width: horizontalOffset? '5%': undefined,
+              left: horizontalOffset? `${horizontalOffset}`: undefined,
+            }
+          }
+          className={classes.snackbar}
+          open={open}
+          anchorOrigin={
+            anchorOrigin?? {vertical: 'top', horizontal: 'center'}
+          }
+        >
+          <Alert
+            icon={false}
+            severity='success'
+            onClose={()=> setOpen(false)}
+            action={
             action? (
               <Button color="secondary" onClick={action}>
                 {buttonLabel}
               </Button>
             ): undefined
-          }
-        >
-          {message}
-        </Alert>
-      </Snackbar>
-    </div>
+            }
+          >
+            <AlertTitle>
+                Tutorial
+              <Button
+                // color="default"
+                variant='text'
+                onClick={()=> setAlertOpen(true)}
+                className={classes.disable}
+                size={'small'}
+                classes={{textSizeSmall: classes.disableText}}
+              >
+                Disable
+              </Button>
+            </AlertTitle>
+            {message}
+          </Alert>
+        </Snackbar>
+        <AlertDialog
+          open={alertOpen}
+          setOpen={setAlertOpen}
+          title={'Disable Tutorial?'}
+          dialog={'Tutorial can be enabled again in menu'}
+          action={handleDisable}
+          confirmLabel={'Disable'}
+          cancelLabel={'Cancel'}
+          warn
+        />
+      </div>
+    </Portal>
   );
 };
 

@@ -82,7 +82,7 @@
   "scripts": {
     "start": "react-dotenv && react-scripts start",
     "build": "react-dotenv && react-scripts build",
-    "postinstall": "tsc -p ./tsconfig.json",
+    "postinstall": "tsc -p ./tsconfig.webpack.json",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

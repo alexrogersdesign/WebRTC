@@ -82,7 +82,7 @@
   "scripts": {
     "start": "react-dotenv && react-scripts start",
     "build": "react-dotenv && react-scripts build",
-    "postbuild": "mv ",
+    "postinstall": "tsc -p ./tsconfig.json",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

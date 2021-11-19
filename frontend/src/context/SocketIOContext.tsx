@@ -81,8 +81,9 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
   // !URL of deployed server goes here
+  const socketLocation = process.env.SOCKET_LOCATION?? 'http://localhost:3000';
   //* SocketIO server instance
-  const connectionUrl = `http://localhost:3000?room=${roomParam}`;
+  const connectionUrl = `${socketLocation}?room=${roomParam}`;
 
   // /* If a URL param for a room to join is provided, check if it is valid
   // * and join the room*/

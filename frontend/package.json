@@ -87,11 +87,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prebuild": "tsc -p ./build-options/tsconfig.webpack.json",
     "build": "react-scripts build",
     "clean1": "cd ./src/components && find . -name \"*.js\" -type f -delete",
     "clean2": "cd ./src/context && find . -name \"*.js\" -type f -delete",
     "clean": "npm run clean1 && npm run clean2",
-    "postinstall": "tsc -p ./tsconfig.webpack.json",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

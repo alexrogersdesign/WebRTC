@@ -3,13 +3,15 @@ import _ from 'lodash';
 
 const result = dotenv.config();
 
-let envs;
+let envs: dotenv.DotenvParseOutput | { [key: string]: string };
+
+
 
 if (!('error' in result)) {
-    envs = result.parsed;
+    envs = result.parsed?? {};
 } else {
     envs = {};
-    _.each(process.env, (value, key) => envs[key] = value);
+    _.each(process.env, (value: any, key: string) => envs[key] = value);
 }
 
 module.exports = envs;

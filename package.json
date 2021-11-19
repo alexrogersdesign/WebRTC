@@ -2,6 +2,10 @@
   "name": "@webrtc/monorepo",
   "private": true,
   "version": "0.0.1",
+  "engines": {
+    "node": "16.x",
+    "npm": "6.x",
+  },
   "workspaces": [
     "./backend/*",
     "./frontend/*",
@@ -12,6 +16,7 @@
     "start": "cd backend && npm start"
   },
   "devDependencies": {
-    "concurrently": "^6.4.0"
+    "concurrently": "^6.4.0",
+    "typescript": "^4.5.2"
   }
 }

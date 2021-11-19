@@ -7,11 +7,10 @@
   "scripts": {
     "test": "echo \\\"Error: no ../frontend/src/test specified\\\" && exit 1",
     "startold": "nodemon --exec \"node --loader ts-node/esm src/index.ts\"",
-    "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./src/index.js\"",
+    "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node -r dotenv/config ./src/index.js\"",
     "prerun": "tsc -p ./tsconfig.json",
     "run": "node ./src/index.js",
     "start_inspect": "node  --inspect-brk  src/index.js",
-    "debugold": "DEBUG=socket.io:* nodemon --exec \"node --loader ts-node/esm src/index.ts\"",
     "debug": "DEBUG=socket.io:* && tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./src/index.js\"",
     "peer": "peerjs --port 5001"
   },

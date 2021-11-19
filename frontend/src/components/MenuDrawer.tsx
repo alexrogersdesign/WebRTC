@@ -28,6 +28,7 @@ import JoinMeetingForm from './forms/JoinMeetingForm';
 import NewUserForm from './forms/NewUserForm';
 import NewMeetingForm from './forms/NewMeetingForm';
 import AccountInfo from './common/AccountInfo';
+import TutorialPrompt from './common/TutorialPrompt';
 
 interface Props {
 
@@ -200,6 +201,18 @@ export const MenuDrawer = (props: Props) => {
       // </ListItem>
     );
   };
+  const RenderTutorial = () => {
+    return (
+      <>
+        {!loggedIn && (
+          <TutorialPrompt
+            // synchronizeOpen={drawerOpen}
+            message={'You are not logged in. Click the menu button to proceed.'}
+          />
+        )}
+      </>
+    );
+  };
 
   const list = () => (
     <div
@@ -234,7 +247,7 @@ export const MenuDrawer = (props: Props) => {
 
   return (
     <div className={classes.root}>
-      <React.Fragment>
+      <>
         <IconButton
           // className={classes.drawerButton}
           // color="inherit"
@@ -274,10 +287,8 @@ export const MenuDrawer = (props: Props) => {
           setOpen={setCreateMeetingModalOpen}
           Component={NewMeetingForm}
         />
-
-        {/* <LoginModal open={loginModalOpen} setOpen={setLoginModalOpen}/>*/}
-
-      </React.Fragment>
+        <RenderTutorial/>
+      </>
     </div>
   );
 };

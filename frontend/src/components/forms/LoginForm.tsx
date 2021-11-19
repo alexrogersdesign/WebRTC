@@ -13,6 +13,7 @@ import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
 import Snackbar from '@material-ui/core/Snackbar';
 import {Alert} from '@material-ui/lab';
+import TutorialPrompt from '../common/TutorialPrompt';
 
 
 interface Props extends ChildrenProps {
@@ -83,6 +84,14 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       }, 500);
     },
   });
+  const handleTest = async () => {
+    await formik.setFieldValue('email', 'test@test.com');
+    await formik.setFieldValue('password', 'test');
+    await formik.setFieldTouched('email', true);
+    await formik.setFieldTouched('password', true);
+    // await formik.va
+    await formik.submitForm();
+  };
   return (
     <div className={classes.paper} ref={ref}>
       <DialogTitle
@@ -126,9 +135,11 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
           </Button>
         </form>
       </DialogContent>
-      <Alert icon={false} severity="success">
-            Press login to continue with demo profile or enter a created account
-      </Alert>
+      <TutorialPrompt
+        message={'Login with demo account?'}
+        buttonLabel={'login'}
+        action={handleTest}
+      />
     </div>
   );
 });

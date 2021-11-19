@@ -86,8 +86,8 @@
     "typescript": "^4.4.4"
   },
   "scripts": {
-    "start": "react-dotenv && react-scripts start",
-    "build": "react-dotenv && react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "postinstall": "tsc -p ./tsconfig.webpack.json",
     "eject": "react-scripts eject"
   },

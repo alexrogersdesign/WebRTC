@@ -156,7 +156,7 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
               }
              })
             .on('error', (error => {
-              console.error('Watcher error')
+              console.error('Watcher error: ', error)
               watcher.close();
               watchMeetings()
             }))

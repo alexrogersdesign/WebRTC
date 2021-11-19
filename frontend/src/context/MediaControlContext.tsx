@@ -114,7 +114,8 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
   };
 
   const removeDummyStreams = (users: User[]) => {
-    users.forEach((user)=> removeMedia(user.id.toString()));
+    users?.forEach((user)=> removeMedia(user.id.toString()));
+    console.log('test log');
   };
   useEffect(() => {
     if (!showDemo) {

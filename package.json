@@ -12,7 +12,7 @@
     "./tests/*"
   ],
   "scripts": {
-    "heroku-postbuild": "cd frontend && npm install && tsc -tsc --project tsconfig.json && npm run build",
+    "heroku-postbuild": "cd frontend && npm install && tsc --project tsconfig.json && npm run build",
     "start": "cd backend && npm start"
   },
   "devDependencies": {

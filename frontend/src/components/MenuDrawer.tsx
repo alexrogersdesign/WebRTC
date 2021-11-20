@@ -211,7 +211,7 @@ export const MenuDrawer = (props: Props) => {
         '\nor click Login to proceed with a demo account';
     return (
       <>
-        {(!currentUser && !loginModalOpen) && (
+        {(!currentUser && !loginModalOpen && !createAccountModalOpen) && (
           <>
             <TutorialPrompt
               // synchronizeOpen={drawerOpen}

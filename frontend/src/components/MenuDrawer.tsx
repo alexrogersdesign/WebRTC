@@ -207,12 +207,14 @@ export const MenuDrawer = (props: Props) => {
         ' Click the menu button to proceed.';
     const loginMenuPrompt ='You can create an account' +
         '\nor click Login to proceed with a demo account';
+    const meetingListPrompt = 'Click a meeting below to join' +
+        ' or the menu icon for more options';
+    const joinedMeetingPrompt = '';
     return (
       <>
         {(!currentUser && !loginModalOpen && !createAccountModalOpen) && (
           <>
             <TutorialPrompt
-              // synchronizeOpen={drawerOpen}
               defaultOpen={!drawerOpen}
               synchronizeClose={drawerOpen}
               message={homePrompt}
@@ -230,21 +232,22 @@ export const MenuDrawer = (props: Props) => {
             !meeting &&
             !joinMeetingModalOpen &&
             !createMeetingModalOpen) &&(
-          <>
-            <TutorialPrompt
-              defaultOpen={!drawerOpen}
-              verticalOffset={'15%'}
-              horizontalOffset={'25%'}
-              message={'Click a meeting to join'}
-            />
-            <TutorialPrompt
-              defaultOpen={!drawerOpen}
-              verticalOffset={'5%'}
-              horizontalOffset={'70%'}
-              message={'Click Menu for more options.'}
-            />
-          </>
+          <TutorialPrompt
+            defaultOpen={!drawerOpen}
+            verticalOffset={'5%'}
+            horizontalOffset={'70%'}
+            message={meetingListPrompt}
+          />
         )}
+        {/* {(currentUser &&*/}
+        {/*    meeting) &&(*/}
+        {/*  <TutorialPrompt*/}
+        {/*    defaultOpen={!drawerOpen}*/}
+        {/*    verticalOffset={'5%'}*/}
+        {/*    horizontalOffset={'70%'}*/}
+        {/*    message={meetingListPrompt}*/}
+        {/*  />*/}
+        {/* )}*/}
       </>
     );
   };

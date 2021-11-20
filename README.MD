@@ -1,7 +1,7 @@
 # WebRTC Video Chat 
-[Try it here](https://ar-webrtc.herokuapp.com/)
 
-https://user-images.githubusercontent.com/51722825/142732847-9e8634c5-13ea-40d7-8326-1f8ada9c1638.mp4
+![img](https://custom-icon-badges.herokuapp.com/badge/WebRTC-Try%20It-blue.svg?label=WebRTC&logo=video-call&logoColor=white)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alexrogersdesign/WebRTC/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/alexrogersdesign/WebRTC/?branch=main)
 
 ## Features 
 - **Group Video Calls**

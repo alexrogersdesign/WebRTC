@@ -18,6 +18,7 @@ import {SocketIOContext} from '../../context/SocketIOContext';
 import {SegmentationContext} from '../../context/SegmentationContext';
 import theme from '../../util/theme/active';
 import {MediaControlContext} from '../../context/MediaControlContext';
+import TutorialWrapper from '../common/TutorialWrapper';
 
 interface Props {
    onClick?: (event:any) => void,
@@ -97,68 +98,72 @@ const WebcamControls = ({className}: Props) => {
 
 
   return (
-    <div className={className}>
-      <Paper className={classes.root} elevation={3}>
-        <ToolTip title="Mute Microphone">
-          <IconButton
-            style={
-              {color: micMuted? theme.palette.disabled.main :
+    <TutorialWrapper
+      message={'Webcam controls'}
+      tooltipProps={{placement: 'left-start'}}
+    >
+      <div className={className}>
+        <Paper className={classes.root} elevation={3}>
+          <ToolTip title="Mute Microphone">
+            <IconButton
+              style={
+                {color: micMuted? theme.palette.disabled.main :
                 theme.palette.neutral.light,
-              }}
-            className={classes.iconButton}
-            aria-label="mute microphone"
-            onClick={handleMuteMicrophone}
-          >
-            <VolumeOffTwoToneIcon/>
-          </IconButton>
-        </ToolTip>
-        <Divider className={classes.divider} orientation="vertical" />
-        <ToolTip title="Disable Video">
-          <IconButton
-            // eslint-disable-next-line max-len
-            style={
-              {color: videoDisabled? theme.palette.disabled.main :
+                }}
+              className={classes.iconButton}
+              aria-label="mute microphone"
+              onClick={handleMuteMicrophone}
+            >
+              <VolumeOffTwoToneIcon/>
+            </IconButton>
+          </ToolTip>
+          <Divider className={classes.divider} orientation="vertical" />
+          <ToolTip title="Disable Video">
+            <IconButton
+              style={
+                {color: videoDisabled? theme.palette.disabled.main :
                 theme.palette.neutral.light}
-            }
-            className={classes.iconButton}
-            aria-label="disable video"
-            onClick={handleDisableVideo}
-          >
-            <VideocamOffTwoToneIcon/>
-          </IconButton>
-        </ToolTip>
-        <Divider className={classes.divider} orientation="vertical" />
-        <ToolTip title="Share Screen">
-          <IconButton
-            style={
-              {color: screenSharing? theme.palette.success.main :
+              }
+              className={classes.iconButton}
+              aria-label="disable video"
+              onClick={handleDisableVideo}
+            >
+              <VideocamOffTwoToneIcon/>
+            </IconButton>
+          </ToolTip>
+          <Divider className={classes.divider} orientation="vertical" />
+          <ToolTip title="Share Screen">
+            <IconButton
+              style={
+                {color: screenSharing? theme.palette.success.main :
                 theme.palette.neutral.light,
-              }}
-            color="primary"
-            className={classes.iconButton}
-            aria-label="share screen"
-            onClick={handleShareScreen}
-          >
-            <ScreenShareTwoToneIcon/>
-          </IconButton>
-        </ToolTip>
-        <Divider className={classes.divider} orientation="vertical" />
-        <ToolTip title="Remove Background">
-          <IconButton
-            style={
-              {color: removeBackground? theme.palette.success.light :
+                }}
+              color="primary"
+              className={classes.iconButton}
+              aria-label="share screen"
+              onClick={handleShareScreen}
+            >
+              <ScreenShareTwoToneIcon/>
+            </IconButton>
+          </ToolTip>
+          <Divider className={classes.divider} orientation="vertical" />
+          <ToolTip title="Remove Background">
+            <IconButton
+              style={
+                {color: removeBackground? theme.palette.success.light :
                 theme.palette.neutral.main,
-              }}
-            className={classes.iconButton}
-            aria-label="remove background"
-            onClick={handleRemoveBackground}
-          >
-            <AccountBoxTwoToneIcon/>
-          </IconButton>
-        </ToolTip>
-        {/* <Divider className={classes.divider} orientation="vertical" /> */}
-      </Paper>
-    </div>
+                }}
+              className={classes.iconButton}
+              aria-label="remove background"
+              onClick={handleRemoveBackground}
+            >
+              <AccountBoxTwoToneIcon/>
+            </IconButton>
+          </ToolTip>
+          {/* <Divider className={classes.divider} orientation="vertical" /> */}
+        </Paper>
+      </div>
+    </TutorialWrapper>
   );
 };
 

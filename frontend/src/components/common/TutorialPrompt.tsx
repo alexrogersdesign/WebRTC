@@ -15,8 +15,6 @@ const useStyles = makeStyles((theme: Theme) =>
       'maxWidth': 600,
       '& > * + *': {
         'marginTop': theme.spacing(2),
-        // 'minHeight': 50,
-        // 'position': 'relative',
       },
     },
     snackbar: {
@@ -109,7 +107,6 @@ const TutorialPrompt = (props: Props) => {
             {
               height: verticalOffset? '5%': undefined,
               top: verticalOffset? `${verticalOffset}` : undefined,
-              // width: horizontalOffset? '5%': undefined,
               left: horizontalOffset? `${horizontalOffset}`: undefined,
             }
           }
@@ -134,7 +131,6 @@ const TutorialPrompt = (props: Props) => {
             <AlertTitle>
                 Tutorial
               <Button
-                // color="default"
                 variant='text'
                 onClick={()=> setAlertOpen(true)}
                 className={classes.disable}

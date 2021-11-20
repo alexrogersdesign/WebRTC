@@ -8,8 +8,6 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import CreateIcon from '@material-ui/icons/Create';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
@@ -17,7 +15,6 @@ import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
-import {Alert} from '@material-ui/lab';
 
 import MeetingMenuDisplay from './meeting/MeetingMenuDisplay';
 import {SocketIOContext} from '../context/SocketIOContext';
@@ -30,6 +27,9 @@ import NewMeetingForm from './forms/NewMeetingForm';
 import AccountInfo from './common/AccountInfo';
 import TutorialPrompt from './common/TutorialPrompt';
 import EnableTutorial from './common/EnableTutorial';
+import TutorialWrapper from './common/TutorialWrapper';
+import HelpButton from './common/HelpButton';
+import DemoPrompt from './common/DemoPrompt';
 
 interface Props {
 
@@ -209,7 +209,8 @@ export const MenuDrawer = (props: Props) => {
         '\nor click Login to proceed with a demo account';
     const meetingListPrompt = 'Click a meeting below to join' +
         ' or the menu icon for more options';
-    const joinedMeetingPrompt = '';
+    const joinedMeetingPrompt = 'Click and hold the help button at the top to' +
+        ' display the help menu. Double click to keep the help menu open ';
     return (
       <>
         {(!currentUser && !loginModalOpen && !createAccountModalOpen) && (
@@ -239,15 +240,15 @@ export const MenuDrawer = (props: Props) => {
             message={meetingListPrompt}
           />
         )}
-        {/* {(currentUser &&*/}
-        {/*    meeting) &&(*/}
-        {/*  <TutorialPrompt*/}
-        {/*    defaultOpen={!drawerOpen}*/}
-        {/*    verticalOffset={'5%'}*/}
-        {/*    horizontalOffset={'70%'}*/}
-        {/*    message={meetingListPrompt}*/}
-        {/*  />*/}
-        {/* )}*/}
+        {(currentUser &&
+            meeting) &&(
+          <TutorialPrompt
+            defaultOpen={!drawerOpen}
+            verticalOffset={'10%'}
+            horizontalOffset={'60%'}
+            message={joinedMeetingPrompt}
+          />
+        )}
       </>
     );
   };
@@ -269,37 +270,27 @@ export const MenuDrawer = (props: Props) => {
         {(meeting && currentUser) && <RenderWhenMeeting/>}
         {!currentUser && <RenderWhenNotLogged/>}
       </List>
-
-      {/* <List>*/}
-      {/*  {items.map((text, index) => (*/}
-      {/*    <ListItem button key={index}>*/}
-      {/*      <ListItemIcon>*/}
-      {/*        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}*/}
-      {/*      </ListItemIcon>*/}
-      {/*      <ListItemText primary={text} />*/}
-      {/*    </ListItem>*/}
-      {/*  ))}*/}
-      {/* </List>*/}
     </div>
   );
-  const items:(JSX.Element | string)[] = [
-
-  ];
 
   return (
     <div className={classes.root}>
       <>
+        <HelpButton/>
         <IconButton
-          // className={classes.drawerButton}
-          // color="inherit"
           onClick={toggleDrawer(true)}
           aria-label="open drawer"
           edge="end"
         >
           <ViewHeadlineIcon/>
-          <Typography variant="h6" noWrap id='menu-button' >
+          <TutorialWrapper
+            message={'Use the menu to leave the meeting'}
+            tooltipProps={{placement: 'bottom-end'}}
+          >
+            <Typography variant="h6" noWrap id='menu-button' >
            Menu
-          </Typography>
+            </Typography>
+          </TutorialWrapper>
         </IconButton>
         <Drawer
           className={classes.drawer}

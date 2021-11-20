@@ -26,6 +26,7 @@ import AttendeeListItem from './AttendeeListItem';
 import User from '../../shared/classes/User';
 import Meeting from '../../shared/classes/Meeting';
 import AccountInfo from '../common/AccountInfo';
+import TutorialWrapper from '../common/TutorialWrapper';
 
 interface Props {
    user: User| null,
@@ -134,6 +135,7 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
     setOpen(false);
   };
   const hideWhenOpen = {display: open? 'none': 'flex'};
+  const hideWhenClosed = {display: open? 'flex': 'none'};
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -157,47 +159,69 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
             })}
           >
             <PeopleAltIcon style={hideWhenOpen}/>
-            <Typography style={hideWhenOpen} variant="h6" >
+            <TutorialWrapper
+              style={hideWhenOpen}
+              message={'Expand attendees list for more information'}
+              tooltipProps={{placement: 'right'}}
+            >
+              <Typography style={hideWhenOpen} variant="h6" >
               Attendees
-            </Typography>
-
+              </Typography>
+            </TutorialWrapper>
           </IconButton>
           <MenuDrawer/>
         </Toolbar>
       </AppBar>
       {meeting && (
-        <Drawer
-          variant="permanent"
-          className={clsx(classes.drawer, {
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          })}
-          classes={{
-            paper: clsx({
+        <TutorialWrapper
+          message={users?.length?
+              'Click an user icon for more information':
+              'When a user joins, their icon is shown here'
+          }
+          tooltipProps={{placement: 'right-end'}}
+          watchItem={open}
+        >
+          <Drawer
+            variant="permanent"
+            className={clsx(classes.drawer, {
               [classes.drawerOpen]: open,
               [classes.drawerClose]: !open,
-            }),
-          }}
-        >
-          <div className={classes.toolbar}>
-            <Typography variant='h6'>Attendees</Typography>
-            <IconButton onClick={handleDrawerClose}>
-              {
+            })}
+            classes={{
+              paper: clsx({
+                [classes.drawerOpen]: open,
+                [classes.drawerClose]: !open,
+              }),
+            }}
+          >
+            <div className={classes.toolbar}>
+              <Typography variant='h6'>Attendees</Typography>
+              <TutorialWrapper
+                message={'Close attendees list'}
+                tooltipProps={{placement: 'bottom-end'}}
+                style={hideWhenClosed}
+                watchItem={open}
+              >
+                <IconButton onClick={handleDrawerClose}>
+                  {
             theme.direction === 'rtl' ?
              <ChevronRightIcon /> :
              <ChevronLeftIcon />
-              }
-            </IconButton>
-          </div>
-          <Divider />
-          <List className={classes.list} >
-            {users && users.map((user) => {
-              return (
-                <AttendeeListItem key={user.id.toString()} user={user}/>
-              );
-            })}
-          </List>
-        </Drawer>)}
+                  }
+                </IconButton>
+              </TutorialWrapper>
+            </div>
+            <Divider />
+            <List className={classes.list} >
+              {users && users.map((user) => {
+                return (
+                  <AttendeeListItem key={user.id.toString()} user={user}/>
+                );
+              })}
+            </List>
+          </Drawer>
+        </TutorialWrapper>
+      )}
       <main className={classes.content}>
         <div className={classes.toolbar} />
       </main>

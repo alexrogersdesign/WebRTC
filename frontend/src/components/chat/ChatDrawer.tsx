@@ -18,6 +18,8 @@ import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 import Meeting from '../../shared/classes/Meeting';
 
 import ChatBox from './ChatBox';
+import TutorialPrompt from '../common/TutorialPrompt';
+import TutorialWrapper from '../common/TutorialWrapper';
 
 interface Props {
    meeting: Meeting | undefined| null,
@@ -33,9 +35,6 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     },
     appBar: {
       float: 'right',
-      // right: 0,
-      // position: 'absolute',
-      // padding: theme.spacing(1),
       margin: theme.spacing(1),
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
@@ -99,42 +98,47 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
 );
 const ChatDrawer = ({meeting}: Props) => {
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const chatBoxRef = useRef<HTMLDivElement>();
   const classes = useStyles(chatBoxRef);
 
-  const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
+  const handleDrawerOpen = () => setDrawerOpen(true);
+  const handleDrawerClose = () => setDrawerOpen(false);
   const chatBottomRef = useRef<HTMLDivElement>(null!);
   const scrollToBottom = () => {
     chatBottomRef.current?.scrollIntoView({behavior: 'smooth'});
   };
   useEffect(() => {
-    if (open) scrollToBottom();
-  }, [open]);
+    if (drawerOpen) scrollToBottom();
+  }, [drawerOpen]);
   if (!meeting) return <></>;
   return (
     <div className={classes.root}>
-      <div
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
+      <TutorialWrapper
+        message={'Click here to view the meeting chat'}
+        tooltipProps={{placement: 'left-end'}}
       >
-        <Chip
-          className={classes.openIcon}
-          id={'open-chat-button'}
-          aria-label="open drawer"
-          color='secondary'
-          size='medium'
-          label='Chat'
-          clickable
-          onClick={handleDrawerOpen}
-          icon={<ChatBubbleTwoToneIcon/>}
-        />
-      </div>
+        <div
+          className={clsx(classes.appBar, {
+            [classes.appBarShift]: drawerOpen,
+          })}
+        >
+          <Chip
+            className={classes.openIcon}
+            id={'open-chat-button'}
+            aria-label="open drawer"
+            color='secondary'
+            size='medium'
+            label='Chat'
+            clickable
+            onClick={handleDrawerOpen}
+            icon={<ChatBubbleTwoToneIcon/>}
+          />
+        </div>
+      </TutorialWrapper>
       <main
         className={clsx(classes.content, {
-          [classes.contentShift]: open,
+          [classes.contentShift]: drawerOpen,
         })}
       >
         <div className={classes.drawerHeader} />
@@ -143,22 +147,27 @@ const ChatDrawer = ({meeting}: Props) => {
         className={classes.drawer}
         variant="persistent"
         anchor="right"
-        open={open}
+        open={drawerOpen}
         classes={{
           paper: classes.drawerPaper,
         }}
       >
         <div className={classes.drawerHeader}>
-          <IconButton
-            id={'close-chat-button'}
-            className={classes.iconButton}
-            onClick={handleDrawerClose}
-            size='small'
+          <TutorialWrapper
+            message={'Close the meeting chat'}
+            tooltipProps={{placement: 'left-end'}}
           >
-            {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+            <IconButton
+              id={'close-chat-button'}
+              className={classes.iconButton}
+              onClick={handleDrawerClose}
+              size='small'
+            >
+              {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </TutorialWrapper>
         </div>
-        <ChatBox innerRef={chatBoxRef} isOpen={open}/>
+        <ChatBox innerRef={chatBoxRef} isOpen={drawerOpen}/>
         <div ref={chatBottomRef}/>
       </Drawer>
     </div>

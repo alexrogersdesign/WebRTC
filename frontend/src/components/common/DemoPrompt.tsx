@@ -62,6 +62,12 @@ const DemoPrompt = () => {
             </Button>
           </>
         }
+        style={
+          {
+            height: '5%',
+            top: '25%',
+          }
+        }
       />
       <Snackbar
         open={showDemo && !!meeting}
@@ -72,6 +78,7 @@ const DemoPrompt = () => {
             Stop
           </Button>
         }
+
       />
     </div>
   );

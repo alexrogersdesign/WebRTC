@@ -21,6 +21,7 @@ import Typography from '@material-ui/core/Typography';
 import {getMessageDirection} from '../../util/helpers';
 import {getMessageTimeDifference} from '../../util/timeHelper';
 import {ScrollToBottom} from '../common/ScrollToBottom';
+import TutorialWrapper from '../common/TutorialWrapper';
 
 
 interface Props {

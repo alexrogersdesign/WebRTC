@@ -21,7 +21,6 @@ declare module '@material-ui/core/styles/createPalette' {
 const theme = createTheme({
   ...baseTheme,
   palette: {
-    ...baseTheme.palette,
     primary: {
       main: '#42a5f5',
       light: '#80d6ff',
@@ -52,6 +51,12 @@ const theme = createTheme({
     background: {
       default: '#E0E3E1',
       // default: '#F5F5F6',
+    },
+    help: {
+      main: '#ffee58',
+      light: '#ffff8b',
+      dark: '#c9bc1f',
+      contrastText: '#fff',
     },
   },
 });

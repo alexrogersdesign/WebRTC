@@ -12,12 +12,15 @@ interface Props extends ChildrenProps {}
 const OptionsContextProvider : React.FC<Props> = ({children}) => {
   // const {enqueueSnackbar} = useSnackbar();
   const [tutorialEnabled, setTutorialEnabled] = useState(true);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   return (
     <OptionsContext.Provider
       value={{
         tutorialEnabled,
         setTutorialEnabled,
+        helpOpen,
+        setHelpOpen,
       }}
     >
       {children}
@@ -28,6 +31,8 @@ const OptionsContextProvider : React.FC<Props> = ({children}) => {
 export interface IOptionsContext {
   tutorialEnabled: boolean
   setTutorialEnabled: (boolean:boolean)=>void
+  helpOpen: boolean
+  setHelpOpen: (boolean:boolean)=>void
 }
 
 

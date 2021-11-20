@@ -12,19 +12,20 @@
   - A centeral server handles text chat and app communications 
 - Security Focused
   - HTTP Only Cookies
-  - JWT Token
+  - JWT
   - Refresh Tokens
   - Token are shared and validated between both websocket and HTTP endpoints 
 - Text Chat
   - Messages can be sent between call participants
+  - Messages are persisted in database and a users can view messages sent when they were not on the call
 - User Accounts / Profiles
   - Users can upload profile images
   - User information is communicated between users
 - Meeting Creation 
   - Meetings can have icon images
-  - Meeting start and end dates
+  - Meetings can be scheduled 
 - End to End Testing
-  - Multi browser simultaneous tests 
+  - Multi browser simultaneous tests verifies that multiple users can interact as required. 
     - Signalling between multiple users in a the same call
     - Video call streams between users
     - Chat functionality

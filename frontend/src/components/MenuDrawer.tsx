@@ -199,9 +199,7 @@ export const MenuDrawer = (props: Props) => {
   const RenderWhenLogged = () => {
     if (!currentUser) return <></>;
     return (
-      // <ListItem>
       <AccountInfo/>
-      // </ListItem>
     );
   };
   const RenderTutorial = () => {

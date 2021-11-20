@@ -81,7 +81,8 @@ const SocketIOContextProvider: React.FC<Props> = ({children}) => {
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
   // !URL of deployed server goes here
-  const socketLocation = process.env.SOCKET_LOCATION?? 'http://localhost:3000';
+  const socketLocation = 'https://ar-webrtc.herokuapp.com/';
+  // if (process.env.NODE_ENV !== 'production') socketLocation = 'http://localhost:3000';
   //* SocketIO server instance
   const connectionUrl = `${socketLocation}?room=${roomParam}`;
 

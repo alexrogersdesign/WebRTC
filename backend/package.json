@@ -9,7 +9,7 @@
     "startold": "nodemon --exec \"node --loader ts-node/esm src/index.ts\"",
     "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node -r dotenv/config ./src/index.js\"",
     "prerun": "tsc -p ./tsconfig.json",
-    "run": "node ./src/index.js",
+    "run": "node -r dotenv/config ./src/index.js",
     "start_inspect": "node  --inspect-brk  src/index.js",
     "debug": "DEBUG=socket.io:* && tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./src/index.js\"",
     "peer": "peerjs --port 5001"

@@ -27,6 +27,7 @@ import User from '../../shared/classes/User';
 import Meeting from '../../shared/classes/Meeting';
 import AccountInfo from '../common/AccountInfo';
 import TutorialWrapper from '../common/TutorialWrapper';
+import Button from '@material-ui/core/Button';
 
 interface Props {
    user: User| null,
@@ -148,12 +149,12 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
         <Toolbar
           classes={{root: classes.toolbarItem}}
         >
-          <IconButton
+          <Button
             style={{display: meeting? 'flex': 'none'}}
             // color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
-            edge="start"
+            // edge="start"
             className={clsx(classes.menuButton, {
               [classes.hide]: open,
             })}
@@ -164,11 +165,11 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
               message={'Expand attendees list for more information'}
               tooltipProps={{placement: 'right'}}
             >
-              <Typography style={hideWhenOpen} variant="h6" >
+              <Typography style={hideWhenOpen} variant="subtitle2" >
               Attendees
               </Typography>
             </TutorialWrapper>
-          </IconButton>
+          </Button>
           <MenuDrawer/>
         </Toolbar>
       </AppBar>

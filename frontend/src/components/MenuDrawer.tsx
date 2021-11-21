@@ -29,11 +29,7 @@ import TutorialPrompt from './common/TutorialPrompt';
 import EnableTutorial from './common/EnableTutorial';
 import TutorialWrapper from './common/TutorialWrapper';
 import HelpButton from './common/HelpButton';
-import DemoPrompt from './common/DemoPrompt';
-
-interface Props {
-
-}
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -44,7 +40,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       alignContent: 'flex-end',
       width: '100%',
-      // borderWidth: 20,
     },
     list: {
       // width: '60%',
@@ -53,11 +48,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 'auto',
     },
     drawer: {
-      // width: '60% !important',
       backgroundColor: 'rgb(255,255,255,.6)',
     },
     red: {
-      // fill: 'red',
       color: '#f44336',
     },
     drawerButton: {
@@ -72,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const MenuDrawer = (props: Props) => {
+export const MenuDrawer = () => {
   const classes = useStyles();
   const {meeting, leaveMeeting} = useContext(SocketIOContext);
   const {logout, currentUser} = useContext(RestContext);
@@ -81,7 +74,6 @@ export const MenuDrawer = (props: Props) => {
   const [createAccountModalOpen, setCreateAccountModalOpen] = useState(false);
   const [createMeetingModalOpen, setCreateMeetingModalOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-
 
   const toggleDrawer = (open:boolean) => (event:any) => {
     if (event.type === 'keydown' &&
@@ -93,7 +85,7 @@ export const MenuDrawer = (props: Props) => {
 
   /**
      * The components to render when no meeting is joined
-     * @return {React.jsx} The React components
+     * @return {React.FC} The React components
      */
   const RenderWhenNoMeeting = () => {
     const joinDialog = 'Join an existing meeting';
@@ -169,7 +161,7 @@ export const MenuDrawer = (props: Props) => {
   };
   /**
      * The components to render when not logged in
-     * @return {React.jsx} The React components
+     * @return {React.FC} The React components
      */
   const RenderWhenNotLogged = () => {
     const loginDialog = 'Login';
@@ -277,21 +269,21 @@ export const MenuDrawer = (props: Props) => {
     <div className={classes.root}>
       <>
         <HelpButton/>
-        <IconButton
+        <Button
           onClick={toggleDrawer(true)}
           aria-label="open drawer"
-          edge="end"
+          // edge="end"
         >
-          <ViewHeadlineIcon/>
+          <ViewHeadlineIcon />
           <TutorialWrapper
             message={'Use the menu to leave the meeting'}
             tooltipProps={{placement: 'bottom-end'}}
           >
-            <Typography variant="h6" noWrap id='menu-button' >
+            <Typography variant="subtitle1" id='menu-button' >
            Menu
             </Typography>
           </TutorialWrapper>
-        </IconButton>
+        </Button>
         <Drawer
           className={classes.drawer}
           anchor='top'

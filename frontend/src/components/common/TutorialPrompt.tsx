@@ -96,7 +96,13 @@ const TutorialPrompt = (props: Props) => {
   const [alertOpen, setAlertOpen] = useState(false);
   const handleDisable = () => {
     setTutorialEnabled(false);
+    setOpen(false);
   };
+
+  useEffect(() => {
+    setOpen(tutorialEnabled);
+  }, [tutorialEnabled]);
+
 
   if (!tutorialEnabled) return <></>;
   return (

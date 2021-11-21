@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext, useMemo} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
@@ -30,6 +30,8 @@ import EnableTutorial from './common/EnableTutorial';
 import TutorialWrapper from './common/TutorialWrapper';
 import HelpButton from './common/HelpButton';
 import Button from '@material-ui/core/Button';
+import {Paper} from '@material-ui/core';
+import UserAvatar from './common/UserAvatar';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -194,7 +196,7 @@ export const MenuDrawer = () => {
       <AccountInfo/>
     );
   };
-  const RenderTutorial = () => {
+  const RenderTutorial = useMemo(() => {
     const homePrompt= 'You are not logged in.' +
         ' Click the menu button to proceed.';
     const loginMenuPrompt ='You can create an account' +
@@ -222,9 +224,9 @@ export const MenuDrawer = () => {
           </>
         )}
         {(currentUser &&
-            !meeting &&
-            !joinMeetingModalOpen &&
-            !createMeetingModalOpen) &&(
+                !meeting &&
+                !joinMeetingModalOpen &&
+                !createMeetingModalOpen) &&(
           <TutorialPrompt
             defaultOpen={!drawerOpen}
             verticalOffset={'5%'}
@@ -233,7 +235,7 @@ export const MenuDrawer = () => {
           />
         )}
         {(currentUser &&
-            meeting) &&(
+                meeting) &&(
           <TutorialPrompt
             defaultOpen={!drawerOpen}
             verticalOffset={'10%'}
@@ -243,7 +245,7 @@ export const MenuDrawer = () => {
         )}
       </>
     );
-  };
+  }, []);
 
   const list = () => (
     <div
@@ -272,14 +274,13 @@ export const MenuDrawer = () => {
         <Button
           onClick={toggleDrawer(true)}
           aria-label="open drawer"
-          // edge="end"
         >
           <ViewHeadlineIcon />
           <TutorialWrapper
             message={'Use the menu to leave the meeting'}
             tooltipProps={{placement: 'bottom-end'}}
           >
-            <Typography variant="subtitle1" id='menu-button' >
+            <Typography variant="subtitle2" id='menu-button' >
            Menu
             </Typography>
           </TutorialWrapper>
@@ -311,7 +312,7 @@ export const MenuDrawer = () => {
           setOpen={setCreateMeetingModalOpen}
           Component={NewMeetingForm}
         />
-        <RenderTutorial/>
+        {RenderTutorial}
       </>
     </div>
   );

@@ -6,6 +6,7 @@ module.exports = {
   'extends': [
     'plugin:react/recommended',
     'google',
+     'plugin:jsdoc/recommended',
   ],
   'parser': '@typescript-eslint/parser',
   'parserOptions': {
@@ -18,6 +19,7 @@ module.exports = {
   'plugins': [
     'react',
     '@typescript-eslint',
+    "jsdoc"
   ],
   "rules": {
     "react/prop-types": 0

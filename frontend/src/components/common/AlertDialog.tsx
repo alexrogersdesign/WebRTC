@@ -30,6 +30,10 @@ interface Props {
     warn?: boolean
 }
 
+/**
+ * @param {Props} props
+ * @class
+ */
 const AlertDialog = (props:Props) => {
   const {
     open,

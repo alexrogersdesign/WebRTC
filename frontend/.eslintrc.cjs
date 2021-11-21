@@ -6,7 +6,7 @@ module.exports = {
   'extends': [
     'plugin:react/recommended',
     'google',
-     'plugin:jsdoc/recommended',
+     // 'plugin:jsdoc/recommended',
   ],
   'parser': '@typescript-eslint/parser',
   'parserOptions': {
@@ -22,7 +22,8 @@ module.exports = {
     "jsdoc"
   ],
   "rules": {
-    "react/prop-types": 0
+    "react/prop-types": 0,
+    "jsdoc/check-syntax": 1,
   },
   "ignorePatterns": ["**/*.js", "**/*.jsx"],
 };

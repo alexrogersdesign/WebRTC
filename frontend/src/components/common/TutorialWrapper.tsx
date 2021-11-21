@@ -1,20 +1,14 @@
-/* eslint-disable no-unused-vars */
-import React, {Component, useContext, useEffect, useState} from 'react';
-import {makeStyles,
-  Theme,
-  createStyles,
-  useTheme} from '@material-ui/core/styles';
+import React, {useContext, useEffect} from 'react';
+import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import ToolTip, {TooltipProps} from '@material-ui/core/Tooltip';
 import Fade from '@material-ui/core/Fade';
 import {OptionsContext} from '../../context/OptionsContext';
 import {ChildrenPropsMandatory} from '../../shared/types';
-import {deepOrange, deepPurple} from '@material-ui/core/colors';
 
 type StyleProps = React.CSSProperties
 
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => {
   const borderStyle = `${theme.palette.text.secondary} 1px solid`;
-
   return createStyles({
     tooltip: (props) => ({
       display: props.display,
@@ -36,7 +30,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => {
 },
 );
 
-
 interface Props extends ChildrenPropsMandatory{
     message: string,
     tooltipProps?: Omit<TooltipProps, 'children' | 'title'>,
@@ -45,10 +38,8 @@ interface Props extends ChildrenPropsMandatory{
     style?:React.CSSProperties
     watchItem?: any,
 }
-
 /**
- * @component
- * A high order component that wraps provided children and with a help prompt.
+ * A component that wraps provided children and displays a help prompt.
  * @param {React.FC} children A component to wrap as a tutorial.
  * @param {string} message The tutorial message to display.
  * @param {TooltipProps} tooltipProps An object containing props to pass to the
@@ -78,10 +69,10 @@ const TutorialWrapper= ({
   * that is not actually used*/
   const forceUpdate = React.useCallback(
       () => updateDummyState(!dummyState), [watchItem]);
+  /** Force component to update when watchItem changes */
   useEffect(() => {
     setTimeout(()=>forceUpdate(), 250);
   }, [watchItem]);
-
 
   return (
     <ToolTip
@@ -98,10 +89,10 @@ const TutorialWrapper= ({
       TransitionComponent={Fade}
       TransitionProps={{timeout: 600}}
       open={helpOpen}
+      title={message}
       disableFocusListener
       disableHoverListener
       disableTouchListener
-      title={message}
       arrow
       {...tooltipProps}
     >

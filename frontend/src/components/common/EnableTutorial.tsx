@@ -1,14 +1,10 @@
-/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import Typography from '@material-ui/core/Typography';
-import {RestContext} from '../../context/rest/RestContext';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import {OptionsContext} from '../../context/OptionsContext';
 import {ButtonBase} from '@material-ui/core';
 
 
-interface Props {}
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -21,7 +17,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-const EnableTutorial = (props: Props) => {
+/**
+ * A component that provides a button to enable the tutorial.
+ * If the tutorial is not enabled, and empty fragment is returned.
+ * @return {JSX.Element | React.Fragment}
+ * @function
+ */
+const EnableTutorial = () => {
   const classes = useStyles();
   const {setTutorialEnabled, tutorialEnabled} = useContext(OptionsContext);
   if (tutorialEnabled) return <></>;

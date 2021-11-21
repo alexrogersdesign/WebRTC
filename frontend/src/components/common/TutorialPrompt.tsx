@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Snackbar, {SnackbarOrigin} from '@material-ui/core/Snackbar';
@@ -30,8 +29,6 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: 10,
       padding: 0,
       margin: 0,
-      // border: '1px solid red',
-
     },
   }),
 );
@@ -43,7 +40,7 @@ interface TutorialProps {
     verticalOffset?: number | string
     horizontalOffset?: number | string
     buttonLabel?: string
-    anchorOrigin?: SnackbarOrigin | undefined
+    anchorOrigin?: SnackbarOrigin
     synchronizeOpen?: boolean
     synchronizeClose?: boolean
 }
@@ -56,21 +53,41 @@ type Props = TutorialProps | (TutorialProps & ExternalStateProps)
 
 /**
  * A component that displays a tutorial prompt message
- * @param {Props} props the props to pass the the component
- * @constructor
+ * @param {function} action The action to be called if the tutorial
+ * button is pressed.
+ * @param {string} message The message to display in the tutorial.
+ * @param {string} buttonLabel The label for the button.
+ * @param {SnackbarOrigin | undefined} anchorOrigin The anchorOrigin props that
+ * define the placement of the tutorial on the screen.
+ * @param {any} synchronizeOpen The tutorials open state is synchronized to
+ * the provided parameter. If the parameter is truthy, the tutorial will open.
+ * If the parameter is falsy, no change happens.
+ * @param {any} synchronizeClose The tutorials close state is synchronized to
+ * the provided parameter. If the parameter is falsy, the tutorial will close.
+ * If the parameter is truthy, no change happens.
+ * @param {string | number} verticalOffset The css offset to be applied to
+ * the element. It is applied as a "Top" css rule i.e: {Top: verticalOffset}.
+ * If a string is provided, it must be a valid parameter to the css rule.
+ * i.e: "10%".
+ * @param {string | number} horizontalOffset The css offset to be applied to
+ * the element. It is applied as a "Left" css rule i.e: {Left: horizontalOffset}
+ * . If a string is provided, it must be a valid parameter to the css rule.
+ * i.e: "10%".
+ * @param {boolean} defaultOpen The default state of the tutorial.
+ * @function
+ * @return {React.FC}
  */
-const TutorialPrompt = (props: Props) => {
-  const {
-    action,
-    message,
-    buttonLabel='OK',
-    anchorOrigin,
-    synchronizeOpen,
-    synchronizeClose,
-    verticalOffset,
-    horizontalOffset,
-    defaultOpen=true,
-  } = props;
+const TutorialPrompt = ({
+  action,
+  message,
+  buttonLabel='OK',
+  anchorOrigin,
+  synchronizeOpen,
+  synchronizeClose,
+  verticalOffset,
+  horizontalOffset,
+  defaultOpen=true,
+}: Props) => {
   const classes = useStyles();
   const {setTutorialEnabled, tutorialEnabled} = useContext(OptionsContext);
   const [open, setOpen] = useState(defaultOpen);
@@ -82,14 +99,12 @@ const TutorialPrompt = (props: Props) => {
       setOpen(true);
     }
   }, [synchronizeOpen, firstUpdate]);
-
   useEffect(() => {
     if (synchronizeClose === false && !firstUpdate.current) {
       setOpen(false);
     }
   }, [synchronizeClose, firstUpdate]);
-
-  /* Keep track of first render */
+  /** Keep track of first render */
   useEffect(() => {
     if (firstUpdate.current) firstUpdate.current = false;
   }, []);
@@ -99,6 +114,8 @@ const TutorialPrompt = (props: Props) => {
     setOpen(false);
   };
 
+  /** Reopens tutorial if the tutorial state change from false to true
+   * i.e when the user re-enables tutorials */
   useEffect(() => {
     setOpen(tutorialEnabled);
   }, [tutorialEnabled]);

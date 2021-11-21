@@ -19,13 +19,11 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 
-import MenuDrawer from '../MenuDrawer';
-import ChatDrawer from '../chat/ChatDrawer';
+import Menu from '../menu/Menu';
 
 import AttendeeListItem from './AttendeeListItem';
 import User from '../../shared/classes/User';
 import Meeting from '../../shared/classes/Meeting';
-import AccountInfo from '../common/AccountInfo';
 import TutorialWrapper from '../common/TutorialWrapper';
 import Button from '@material-ui/core/Button';
 
@@ -170,7 +168,7 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
               </Typography>
             </TutorialWrapper>
           </Button>
-          <MenuDrawer/>
+          <Menu/>
         </Toolbar>
       </AppBar>
       {meeting && (
@@ -214,9 +212,9 @@ export const AttendeeDrawer = ({user, users, meeting}: Props) => {
             </div>
             <Divider />
             <List className={classes.list} >
-              {users && users.map((user) => {
+              {users && users.map((item) => {
                 return (
-                  <AttendeeListItem key={user.id.toString()} user={user}/>
+                  <AttendeeListItem key={item.id.toString()} user={item}/>
                 );
               })}
             </List>

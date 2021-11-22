@@ -7,7 +7,7 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import VideoPlayer from './video/VideoPlayer';
 import VideoArray from './video/VideoArray';
 import {SocketIOContext} from '../context/SocketIOContext';
-import {AttendeeDrawer} from './attendee/AttendeeDrawer';
+import {ControlBar} from './ControlBar';
 import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
@@ -67,7 +67,7 @@ const Room = (props: Props) => {
   return (
     <div >
       <div>
-        <AttendeeDrawer user={currentUser} users={users} meeting={meeting}/>
+        <ControlBar meeting={meeting}/>
         <ChatDrawer meeting={meeting}/>
       </div>
       <Container className={classes.container}>

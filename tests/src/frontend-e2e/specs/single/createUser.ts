@@ -1,4 +1,4 @@
-import {loginPageCreator} from '../../pageobjects/LoginPage';
+import {loginPageCreator} from '@e2ePage/LoginPage';
 import {User} from '@e2e/constants';
 
 describe('Create User', () => {
@@ -12,6 +12,6 @@ describe('Create User', () => {
     await loginPage.createUser(user);
     await expect(loginPage.notification).toBeExisting();
     await expect(loginPage.notification).toHaveTextContaining(
-        `Account for ${user.email}`);
+        `Account for ${user.email.toLowerCase()}`);
   });
 });

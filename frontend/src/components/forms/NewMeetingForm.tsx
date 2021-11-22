@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext, forwardRef, useState, useEffect} from 'react';
+import React, {useContext, forwardRef} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
@@ -8,10 +8,9 @@ import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import {Container, Fade, Popper, Typography} from '@material-ui/core';
+import {Container} from '@material-ui/core';
 
 import {RestContext} from '../../context/rest/RestContext';
-import {ChildrenProps} from '../../shared/types';
 import UploadImage from '../common/UploadImage';
 import {
   addMinutes,
@@ -19,10 +18,7 @@ import {
   formatDateForPicker,
 } from '../../util/timeHelper';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
-
-interface Props extends ChildrenProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-}
+import {FormProps} from '../common/ModalWrapper';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -120,11 +116,20 @@ const validationSchema = yup.object({
           (value) => !value || SUPPORTED_FORMATS.includes(value.type),
       ),
 });
-
-const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
-  const {setOpen} = props;
+/**
+ * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
+ *     & React.RefAttributes<HTMLDivElement>>}
+ */
+const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
+  setOpen,
+  setDrawerOpen,
+}, ref) => {
   const {createMeeting} = useContext(RestContext);
   const classes = useStyles();
+  const handleClose = () => {
+    setOpen(false);
+    setDrawerOpen(false);
+  };
   const defaultStartTime = formatDateForPicker(dateRoundedToQuarterHour);
   const defaultEndTime = formatDateForPicker(
       addMinutes(dateRoundedToQuarterHour, 30),
@@ -149,7 +154,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       setTimeout(async () => {
         if (!createMeeting) return;
         createMeeting(newMeeting).then( (result) => {
-          if (result) setOpen(false);
+          if (result) handleClose();
           setSubmitting(false);
         });
       }, 500);

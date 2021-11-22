@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext, forwardRef, useEffect} from 'react';
+import React, {useContext, forwardRef} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
@@ -8,17 +8,11 @@ import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 
 import {RestContext} from '../../context/rest/RestContext';
-import {ChildrenProps} from '../../shared/types';
-import {useSnackbar} from 'notistack';
 import UploadImage from '../common/UploadImage';
-import Typography from '@material-ui/core/Typography';
 import {Container, DialogContent, DialogTitle} from '@material-ui/core';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
+import {FormProps} from '../common/ModalWrapper';
 
-
-interface Props extends ChildrenProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-}
 
 const validationSchema = yup.object({
   email: yup
@@ -114,12 +108,20 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
-
-const NewUserForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
-  const {setOpen} = props;
+/**
+ * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
+ *     & React.RefAttributes<HTMLDivElement>>}
+ */
+const NewUserForm = forwardRef<HTMLDivElement, FormProps>(({
+  setOpen,
+  setDrawerOpen,
+}, ref) => {
   const {createUser} = useContext(RestContext);
   const classes = useStyles();
-
+  const handleClose = () => {
+    setOpen(false);
+    setDrawerOpen(false);
+  };
   const formik = useFormik({
     initialValues: {
       email: 'test@test.com',
@@ -132,9 +134,8 @@ const NewUserForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
     onSubmit: (values, {setSubmitting}) => {
       setTimeout(async () => {
-        if (!createUser) return;
         createUser(values).then( (result) => {
-          if (result) setOpen(false);
+          if (result) handleClose();
           setSubmitting(false);
         });
       }, 500);

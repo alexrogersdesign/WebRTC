@@ -23,7 +23,7 @@ const HelpButton= () => {
         aria-label="Help"
       >
         <HelpOutlineOutlinedIcon fontSize={'small'}/>
-        <Typography variant="subtitle2" id='menu-button'>
+        <Typography variant="subtitle2" id='help-button'>
           Help
         </Typography>
       </Button>

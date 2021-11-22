@@ -58,6 +58,10 @@ class PreMeetingPage extends LoginPage {
   async joinFirstMeeting() {
     const meetingList = await this.meetingList;
     const meeting = await meetingList.$('#meeting-title');
+    await meeting.waitForClickable({
+      timeout: 15000,
+      timeoutMsg: 'Meeting list not loaded in time',
+    });
     const meetingText = await meeting.getText();
     await this.joinMeeting(meeting);
     return meetingText;

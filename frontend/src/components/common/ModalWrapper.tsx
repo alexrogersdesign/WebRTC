@@ -8,6 +8,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Dialog from '@material-ui/core/Dialog';
+import User from '../../shared/classes/User';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,6 +32,7 @@ export interface ModalProps {
 // interface PassedProps<T> {
 //     data: T;
 // }
+
 
 interface Props <T> extends ModalProps{
     Component: React.ComponentType<T & ModalProps>,
@@ -86,3 +88,7 @@ const ModalWrapper= <T, >({
 };
 
 export default ModalWrapper;
+
+export interface FormProps extends ModalProps{
+    setDrawerOpen: (open: boolean) => void,
+}

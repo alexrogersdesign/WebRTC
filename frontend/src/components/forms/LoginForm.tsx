@@ -10,15 +10,9 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {RestContext} from '../../context/rest/RestContext';
-import {ChildrenProps} from '../../shared/types';
-import Snackbar from '@material-ui/core/Snackbar';
-import {Alert} from '@material-ui/lab';
 import TutorialPrompt from '../Tutorial/TutorialPrompt';
+import {FormProps} from '../common/ModalWrapper';
 
-
-interface Props extends ChildrenProps {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-}
 
 const validationSchema = yup.object({
   email: yup
@@ -27,7 +21,6 @@ const validationSchema = yup.object({
       .defined('Email is required'),
   password: yup
       .string()
-      // .min(2, 'Password should be of minimum 8 characters length')
       .defined('Password is required'),
 });
 
@@ -62,11 +55,20 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 
 );
-
-const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
-  const {setOpen} = props;
+/**
+ * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
+ *     & React.RefAttributes<HTMLDivElement>>}
+ */
+const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
+  setOpen,
+  setDrawerOpen,
+}, ref) => {
   const {login} = useContext(RestContext);
   const classes = useStyles();
+  const handleClose = () => {
+    setOpen(false);
+    setDrawerOpen(false);
+  };
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -78,7 +80,7 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
       setTimeout(async () => {
         if (!login) return;
         login(values).then( (result) => {
-          if (result) setOpen(false);
+          if (result) handleClose();
           setSubmitting(false);
         });
       }, 500);
@@ -89,14 +91,12 @@ const LoginForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
     await formik.setFieldValue('password', 'test');
     await formik.setFieldTouched('email', true);
     await formik.setFieldTouched('password', true);
-    // await formik.va
     await formik.submitForm();
   };
   return (
     <div className={classes.paper} ref={ref}>
       <DialogTitle
         className={classes.titleItem}
-        // variant='h5'
         id="create-account-title"
       >
             Login

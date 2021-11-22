@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
 
-import ModalWrapper from '../common/ModalWrapper';
+import ModalWrapper, {FormProps} from '../common/ModalWrapper';
 import LoginForm from '../forms/LoginForm';
 import JoinMeetingForm from '../forms/JoinMeetingForm';
 import NewUserForm from '../forms/NewUserForm';
@@ -52,20 +52,23 @@ export const Menu = () => {
         open={joinMeetingModalOpen}
         setOpen={setJoinMeetingModal}
       />
-      <ModalWrapper
+      <ModalWrapper<FormProps>
         open={loginModalOpen}
         setOpen={setLoginModalOpen}
         Component={LoginForm}
+        {...{setDrawerOpen}}
       />
-      <ModalWrapper
+      <ModalWrapper<FormProps>
         open={createAccountModalOpen}
         setOpen={setCreateAccountModalOpen}
         Component={NewUserForm}
+        {...{setDrawerOpen}}
       />
-      <ModalWrapper
+      <ModalWrapper<FormProps>
         open={createMeetingModalOpen}
         setOpen={setCreateMeetingModalOpen}
         Component={NewMeetingForm}
+        {...{setDrawerOpen}}
       />
       <RenderTutorial
         {...{

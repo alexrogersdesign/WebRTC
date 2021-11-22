@@ -49,7 +49,8 @@ export const MenuDrawer = ({
 }:Props) => {
   const classes = useStyles();
   const toggleDrawer = (open:boolean) => (event:any) => {
-    /** Prevent key presses from closing drawer */
+    /** Allow keyboard navigation and prevent the drawer from closing
+     * if a shift or tab key is pressed */
     const tabOrShift = (event.key === 'Tab' || event.key === 'Shift');
     const keydown = event.type === 'keydown';
     if (keydown && tabOrShift) return;

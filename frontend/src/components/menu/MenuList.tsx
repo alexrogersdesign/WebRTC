@@ -1,4 +1,4 @@
-import EnableTutorial from '../common/EnableTutorial';
+import EnableTutorial from '../Tutorial/EnableTutorial';
 import RenderWhenLogged from './RenderWhenLogged';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';

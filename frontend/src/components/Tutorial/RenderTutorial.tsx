@@ -1,5 +1,5 @@
 import React, {useContext, useMemo} from 'react';
-import TutorialPrompt from '../common/TutorialPrompt';
+import TutorialPrompt from './TutorialPrompt';
 import {RestContext} from '../../context/rest/RestContext';
 import {SocketIOContext} from '../../context/SocketIOContext';
 

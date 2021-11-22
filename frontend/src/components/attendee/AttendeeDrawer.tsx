@@ -14,7 +14,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 
-import TutorialWrapper from '../common/TutorialWrapper';
+import TutorialWrapper from '../Tutorial/TutorialWrapper';
 import AttendeeListItem from './AttendeeListItem';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import {MediaControlContext} from '../../context/MediaControlContext';

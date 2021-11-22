@@ -13,9 +13,9 @@ import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
 import {RestContext} from '../context/rest/RestContext';
 import {MediaControlContext} from '../context/MediaControlContext';
-import DemoPrompt from './common/DemoPrompt';
+import DemoPrompt from './Tutorial/DemoPrompt';
 import {Alert} from '@material-ui/lab';
-import TutorialPrompt from './common/TutorialPrompt';
+import TutorialPrompt from './Tutorial/TutorialPrompt';
 interface Props {
 }
 

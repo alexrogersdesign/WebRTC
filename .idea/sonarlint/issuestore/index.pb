@@ -23,8 +23,6 @@ a
 -frontend/src/components/menu/LogoutButton.tsx,9/1/9147ba512fcc9533b56ac853fd7be7fa35d2c622
 b
 2frontend/src/components/menu/RenderWhenMeeting.tsx,1/7/1796959d7eddc23e4cea62cfde133447cdc47136
-c
-3frontend/src/components/Tutorial/RenderTutorial.tsx,b/8/b875eb9d2522a85b60e3078026864593b08b444a
 Y
 )frontend/src/components/menu/MenuList.tsx,7/d/7df0371344c0572cfaa8bfff42294ba2b60765bf
 ^

@@ -18,7 +18,7 @@ import {SocketIOContext} from '../../context/SocketIOContext';
 import {SegmentationContext} from '../../context/SegmentationContext';
 import theme from '../../util/theme/active';
 import {MediaControlContext} from '../../context/MediaControlContext';
-import TutorialWrapper from '../common/TutorialWrapper';
+import TutorialWrapper from '../Tutorial/TutorialWrapper';
 
 interface Props {
    onClick?: (event:any) => void,

@@ -18,8 +18,8 @@ import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 import Meeting from '../../shared/classes/Meeting';
 
 import ChatBox from './ChatBox';
-import TutorialPrompt from '../common/TutorialPrompt';
-import TutorialWrapper from '../common/TutorialWrapper';
+import TutorialPrompt from '../Tutorial/TutorialPrompt';
+import TutorialWrapper from '../Tutorial/TutorialWrapper';
 
 interface Props {
    meeting: Meeting | undefined| null,

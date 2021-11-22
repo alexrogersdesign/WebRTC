@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import {Alert, AlertTitle} from '@material-ui/lab';
 import {Portal} from '@material-ui/core';
 import {OptionsContext} from '../../context/OptionsContext';
-import AlertDialog from './AlertDialog';
+import AlertDialog from '../common/AlertDialog';
 
 
 const useStyles = makeStyles((theme: Theme) =>

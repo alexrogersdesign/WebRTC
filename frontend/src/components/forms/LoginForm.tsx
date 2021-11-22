@@ -13,7 +13,7 @@ import {RestContext} from '../../context/rest/RestContext';
 import {ChildrenProps} from '../../shared/types';
 import Snackbar from '@material-ui/core/Snackbar';
 import {Alert} from '@material-ui/lab';
-import TutorialPrompt from '../common/TutorialPrompt';
+import TutorialPrompt from '../Tutorial/TutorialPrompt';
 
 
 interface Props extends ChildrenProps {

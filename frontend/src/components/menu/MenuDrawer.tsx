@@ -5,8 +5,8 @@ import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import Button from '@material-ui/core/Button';
 
-import TutorialWrapper from '../common/TutorialWrapper';
-import HelpButton from '../common/HelpButton';
+import TutorialWrapper from '../Tutorial/TutorialWrapper';
+import HelpButton from '../Tutorial/HelpButton';
 import MenuList from './MenuList';
 import {MenuStateProps} from './Menu';
 

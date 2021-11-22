@@ -63,14 +63,16 @@ const RenderTutorial = ({
                 message={homePrompt}
                 verticalOffset={'10%'}
               />)}
-            <TutorialPrompt
-              defaultOpen={drawerOpen}
-              synchronizeClose={drawerOpen}
-              synchronizeOpen={drawerOpen}
-              anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-              message={loginMenuPrompt}
-              verticalOffset={'20%'}
-            />
+            {drawerOpen && (
+              <TutorialPrompt
+                defaultOpen={drawerOpen}
+                synchronizeClose={drawerOpen}
+                synchronizeOpen={drawerOpen}
+                anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
+                message={loginMenuPrompt}
+                verticalOffset={'20%'}
+              />
+            )}
           </>
         )}
         {preMeetingPage &&(

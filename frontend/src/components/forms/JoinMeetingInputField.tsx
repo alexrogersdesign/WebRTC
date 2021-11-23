@@ -4,14 +4,14 @@ import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-// import MenuIcon from '@material-ui/icons/Menu';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ToolTip from '@material-ui/core/Tooltip';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 
-import {SocketIOContext} from '../../context/SocketIOContext';
+import {RestContext} from '../../context/rest/RestContext';
+import {AppStateContext} from '../../context/AppStateContext';
 
 interface Props {
    className?: string | undefined,
@@ -41,7 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 const JoinMeetingInputField = ({placeholder}: Props) => {
   const classes = useStyles();
-  const {joinMeeting, meeting} = useContext(SocketIOContext);
+  const {joinMeeting} = useContext(AppStateContext);
+  const {meeting} = useContext(RestContext);
   const [field, setField] = useState('');
   const [copied, setCopied] = useState(false);
 

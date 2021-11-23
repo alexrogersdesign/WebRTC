@@ -16,8 +16,8 @@ import List from '@material-ui/core/List';
 
 import TutorialWrapper from '../Tutorial/TutorialWrapper';
 import AttendeeListItem from './AttendeeListItem';
-import {SocketIOContext} from '../../context/SocketIOContext';
 import {MediaControlContext} from '../../context/MediaControlContext';
+import {RestContext} from '../../context/rest/RestContext';
 
 interface StyleProps {drawerWidth: number}
 
@@ -78,7 +78,7 @@ export default function AttendeeDrawer({
   const classes = useStyles({drawerWidth});
   const theme = useTheme();
 
-  const {meeting} = useContext(SocketIOContext);
+  const {meeting} = useContext(RestContext);
   const {externalMedia} = useContext(MediaControlContext);
   const users = externalMedia?.map(({user}) => user);
 

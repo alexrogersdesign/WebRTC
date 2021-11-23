@@ -14,14 +14,12 @@ import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import {ChatContext} from '../../context/ChatContext';
 import {Paper} from '@material-ui/core';
 import {RestContext} from '../../context/rest/RestContext';
-import {SocketIOContext} from '../../context/SocketIOContext';
 import Message from '../../shared/classes/Message';
 import UserAvatar from '../common/UserAvatar';
 import Typography from '@material-ui/core/Typography';
 import {getMessageDirection} from '../../util/helpers';
 import {getMessageTimeDifference} from '../../util/timeHelper';
 import {ScrollToBottom} from '../common/ScrollToBottom';
-import TutorialWrapper from '../Tutorial/TutorialWrapper';
 
 
 interface Props {
@@ -79,8 +77,7 @@ const useStyles = makeStyles(({palette, spacing}) =>
 const ChatBox = ({innerRef, isOpen}: Props) => {
   const classes = useStyles();
   const {messageList, sendMessage} = useContext(ChatContext);
-  const {currentUser} = useContext(RestContext);
-  const {meeting} = useContext(SocketIOContext);
+  const {currentUser, meeting} = useContext(RestContext);
   const handleSend = (contents:string) => {
     if (!currentUser) throw new Error('No user found');
     if (!meeting) throw new Error('Message sent outside of meeting');

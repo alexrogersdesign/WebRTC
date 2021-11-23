@@ -6,6 +6,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import {MediaControlContext} from '../../context/MediaControlContext';
 import Button from '@material-ui/core/Button';
 import {SocketIOContext} from '../../context/SocketIOContext';
+import {RestContext} from '../../context/rest/RestContext';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -28,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const DemoPrompt = () => {
   const classes = useStyles();
   const {showDemo, setShowDemo} = useContext(MediaControlContext);
-  const {meeting} = useContext(SocketIOContext);
+  const {meeting} = useContext(RestContext);
   const [open, setOpen] = useState(false);
   const handleShowDemo = () => {
     setShowDemo(true);

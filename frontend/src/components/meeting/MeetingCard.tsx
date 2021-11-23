@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // TODO fix issue where join meeting button moves on screen size change
-import React, {useEffect, useContext, forwardRef, Children} from 'react';
+import React, {useEffect, useContext, forwardRef} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import Box from '@material-ui/core/Box';
@@ -14,14 +14,13 @@ import CalendarTodayTwoToneIcon from '@material-ui/icons/CalendarTodayTwoTone';
 import ScheduleTwoToneIcon from '@material-ui/icons/ScheduleTwoTone';
 
 import Meeting from '../../shared/classes/Meeting';
-import {SocketIOContext} from '../../context/SocketIOContext';
 import CopyButtonIcon from '../common/CopyButtonIcon';
 import PropTypes from 'prop-types';
 import {ChildrenProps} from '../../shared/types';
 import {getTimeDiffMinutes, toLocalStringMonth} from '../../util/timeHelper';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Chip from '@material-ui/core/Chip';
+import {AppStateContext} from '../../context/AppStateContext';
 
 
 interface Props extends ChildrenProps{
@@ -114,7 +113,7 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(
         end,
       }= meeting;
       const classes = useStyles();
-      const {joinMeeting} = useContext(SocketIOContext);
+      const {joinMeeting} = useContext(AppStateContext);
       return (
         <div className={classes.root} ref={ref}>
           <Column className={classes.card}>

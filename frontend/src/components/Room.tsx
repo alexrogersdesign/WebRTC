@@ -52,8 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Room = (props: Props) => {
   const classes = useStyles();
-  const {meeting} = useContext(SocketIOContext);
-  const {token, currentUser} = useContext(RestContext);
+  const {token, currentUser, meeting} = useContext(RestContext);
   const {externalMedia, videoReady} = useContext(MediaControlContext);
   const {setTheme} = useContext(CustomThemeContext);
   const {loggedIn} = useContext(RestContext);

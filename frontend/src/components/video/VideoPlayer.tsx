@@ -79,7 +79,7 @@ const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
 );
 
 const VideoPlayer = ({local, stream, user}: Props)=> {
-  const {localVideoRef} = useContext(MediaControlContext);
+  const {localVideoRef, localMedia} = useContext(MediaControlContext);
   const {
     canvasRef,
     removeBackground,
@@ -142,7 +142,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
         </div>
       </Paper>
     </div>
-  ), [localVideoRef?.current, showBackground]);
+  ), [localVideoRef?.current, showBackground, localMedia]);
 
   return (
     <>

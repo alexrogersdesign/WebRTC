@@ -22,7 +22,6 @@ interface Props {
     open: boolean,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>,
     meeting: Meeting,
-    action: () => void,
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -65,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const MeetingCardModal = ({open, setOpen, meeting, action}: Props) => {
+const MeetingCardModal = ({open, setOpen, meeting}: Props) => {
   const classes = useStyles();
   const handleClose = () => setOpen(false);
 

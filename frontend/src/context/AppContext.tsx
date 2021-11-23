@@ -9,6 +9,8 @@ import CustomThemeProvider from './CustomThemeProvider';
 import {MediaControlContextProvider} from './MediaControlContext';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {OptionsContextProvider} from './OptionsContext';
+import {PeerConnectionContextProvider} from './PeerConnectionContext';
+import {AppStateContextProvider} from './AppStateContext';
 
 interface Props extends ChildrenProps {};
 
@@ -20,13 +22,17 @@ const AppContext = ({children}: Props) => {
           <NotificationProvider>
             <RestContextProvider>
               <MediaControlContextProvider>
-                <SocketIOContextProvider>
-                  <SegmentationContextProvider>
-                    <ChatContextProvider>
-                      {children}
-                    </ChatContextProvider>
-                  </SegmentationContextProvider>
-                </SocketIOContextProvider>
+                <PeerConnectionContextProvider>
+                  <SocketIOContextProvider>
+                    <SegmentationContextProvider>
+                      <ChatContextProvider>
+                        <AppStateContextProvider>
+                          {children}
+                        </AppStateContextProvider>
+                      </ChatContextProvider>
+                    </SegmentationContextProvider>
+                  </SocketIOContextProvider>
+                </PeerConnectionContextProvider>
               </MediaControlContextProvider>
             </RestContextProvider>
           </NotificationProvider>

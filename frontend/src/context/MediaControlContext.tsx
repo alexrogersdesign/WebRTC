@@ -44,7 +44,7 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
 
   //* The stream being media stream being transmitted to peers;
   const outgoingMedia = useRef<MediaStream>();
-  const {currentUser} = useContext(RestContext);
+  const {currentUser, meeting} = useContext(RestContext);
 
   //* Dummy video streams used for demonstrations purposes.
   const dummyVideoA = useRef(document.createElement('video'));
@@ -67,11 +67,15 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
      * is called to handle the change.
      */
   useEffect( () => {
-    void initializeMediaStream();
+    meeting && void initializeMediaStream();
   }, [screenSharing]);
 
   const screenStream = useRef<MediaStream>();
 
+  /**
+   * If the user stops the screen sharing process via the browser API
+   * then set screen sharing state to be false.
+   */
   useEffect(() => {
     if (!screenStream.current) setScreenSharing(false);
   }, [screenStream.current]);
@@ -112,6 +116,11 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
       if (err instanceof DOMException) setScreenSharing(false);
     }
   };
+  /** Cleans up the webcam stream  */
+  const stopWebcamStream = () => {
+    localMedia?.getTracks().forEach((track) => track.stop());
+  };
+
 
   const removeDummyStreams = (users: User[]) => {
     users?.forEach((user)=> removeMedia(user.id.toString()));
@@ -206,6 +215,7 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
         localMedia,
         setShowDemo,
         showDemo,
+        stopWebcamStream,
       }}
     >
       {children}
@@ -231,6 +241,7 @@ export interface IMediaControlContext {
   clearExternalMedia: () => void,
   setShowDemo: (boolean:boolean) => void,
   showDemo: boolean,
+  stopWebcamStream: () => void,
 }
 
 MediaControlContext.displayName = 'Media Control Context';

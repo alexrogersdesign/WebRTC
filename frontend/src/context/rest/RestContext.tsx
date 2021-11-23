@@ -17,7 +17,7 @@ import {
 } from '../../util/classParser';
 import Meeting from '../../shared/classes/Meeting';
 import useLocalStorage from 'react-use-localstorage';
-import {useRestApi} from './useRestApi';
+import {RefreshResponse, useRestApi} from './useRestApi';
 import {MeetingIcon} from '../../shared/classes/MeetingIcon';
 
 // const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
@@ -55,6 +55,9 @@ const RestContextProvider = ({children}: Props) => {
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
   const [meetingsLoading, setMeetingsLoading] = useState(false);
+  //* The current meeting being attended
+  const [meeting, setMeeting] = useState<Meeting | null>(null);
+
 
   const handleError = (error:any, message?: string) => {
     const newMessage = message?? error.message?? 'An error has occurred';
@@ -326,6 +329,8 @@ const RestContextProvider = ({children}: Props) => {
         addMeetingToList,
         removeMeetingFromList,
         meetingsLoading,
+        meeting,
+        setMeeting,
       }}
     >
       {children}
@@ -361,7 +366,7 @@ const snackbarInfoOptions :OptionsObject = {
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
   logout: () => void,
-  refreshToken: () => void,
+  refreshToken: () => Promise<RefreshResponse>,
   loggedIn: boolean,
   createUser: (newUser: INewUser) => Promise<User| undefined>,
   createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
@@ -375,6 +380,8 @@ export interface IRestContext {
   addMeetingToList: (meeting:Meeting) => void;
   removeMeetingFromList: (id:string) => void;
   meetingsLoading: boolean;
+  meeting:Meeting | null;
+  setMeeting: (meeting:Meeting| null) => void;
 }
 
 RestContext.displayName = 'Rest Context';

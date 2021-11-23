@@ -1,7 +1,6 @@
 import React, {useContext, useMemo} from 'react';
 import TutorialPrompt from './TutorialPrompt';
 import {RestContext} from '../../context/rest/RestContext';
-import {SocketIOContext} from '../../context/SocketIOContext';
 
 interface Props {
   drawerOpen: boolean
@@ -30,8 +29,7 @@ const RenderTutorial = ({
   createMeetingModalOpen,
   joinMeetingModalOpen,
 }:Props) => {
-  const {currentUser} = useContext(RestContext);
-  const {meeting} = useContext(SocketIOContext);
+  const {currentUser, meeting} = useContext(RestContext);
   const homePrompt= 'You are not logged in.' +
       ' Click the menu button to proceed.';
   const loginMenuPrompt ='You can create an account' +

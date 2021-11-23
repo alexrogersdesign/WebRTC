@@ -10,7 +10,6 @@ import AlertDialog from '../common/AlertDialog';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {RestContext} from '../../context/rest/RestContext';
-import {SocketIOContext} from '../../context/SocketIOContext';
 import MeetingCardModal from './MeetingCardModal';
 import {toLocalStringMonth} from '../../util/timeHelper';
 import Avatar from '@material-ui/core/Avatar';
@@ -50,15 +49,12 @@ const useStyles = makeStyles((theme: Theme) =>
 const MeetingListItem = ({meeting}: Props) => {
   const classes = useStyles();
   const {deleteMeeting} = useContext(RestContext);
-  const {joinMeeting} = useContext(SocketIOContext);
   const [alertOpen, setAlertOpen] = useState(false);
   const [joinModalOpen, setJoinModalOpen] = useState(false);
   const handleDelete = () => {
     void deleteMeeting(meeting.id.toString());
   };
-  const handleJoin = () => {
-    joinMeeting(meeting.id.toString());
-  };
+
   const meetingPrimary = `${meeting?.title}`;
   const meetingSecondary = toLocalStringMonth(meeting?.start);
   return (
@@ -116,7 +112,6 @@ const MeetingListItem = ({meeting}: Props) => {
         open={joinModalOpen}
         setOpen={setJoinModalOpen}
         meeting={meeting}
-        action={handleJoin}
       />
     </>
   );

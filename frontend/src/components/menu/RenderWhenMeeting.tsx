@@ -4,9 +4,9 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import NoMeetingRoomIcon from '@material-ui/icons/NoMeetingRoom';
 import ListItemText from '@material-ui/core/ListItemText';
 import React, {useContext} from 'react';
-import {SocketIOContext} from '../../context/SocketIOContext';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {RestContext} from '../../context/rest/RestContext';
+import {AppStateContext} from '../../context/AppStateContext';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -23,8 +23,8 @@ const useStyles = makeStyles(() =>
  */
 export default function RenderWhenMeeting() {
   const classes = useStyles();
-  const {meeting, leaveMeeting} = useContext(SocketIOContext);
-  const {currentUser} = useContext(RestContext);
+  const {leaveMeeting} = useContext(AppStateContext);
+  const {currentUser, meeting} = useContext(RestContext);
   const leaveDialog = 'Leave meeting';
   if (meeting && currentUser) {
     return (

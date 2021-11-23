@@ -12,6 +12,7 @@ tf.getBackend();
 import {ISegmentationContext, ChildrenProps} from '../shared/types';
 import {MediaControlContext} from './MediaControlContext';
 import {SocketIOContext} from './SocketIOContext';
+import {RestContext} from './rest/RestContext';
 
 interface Props extends ChildrenProps {}
 
@@ -25,7 +26,7 @@ const SegmentationContextProvider: React.FC<Props> = ({
     outgoingMedia,
     videoDisabled,
   } = useContext(MediaControlContext);
-  const {meeting} = useContext(SocketIOContext);
+  const {meeting} = useContext(RestContext);
   const {changePeerStream} = useContext(SocketIOContext);
   //* Used to indicate when segmenting animation should stop
   const segmentingStopped = useRef(false);

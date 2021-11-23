@@ -14,8 +14,8 @@ const ChatContext = createContext<IChatContext>(undefined!);
 interface Props extends ChildrenProps {}
 
 const ChatContextProvider : React.FC<Props> = ({children}) => {
-  const {socket, meeting} = useContext(SocketIOContext);
-  const {currentUser} = useContext(RestContext);
+  const {socket} = useContext(SocketIOContext);
+  const {currentUser, meeting} = useContext(RestContext);
   const {enqueueSnackbar} = useSnackbar();
   //* The array of messages in the chat
   const [messageList, setMessageList] = useState<Message[]>([]);
@@ -33,26 +33,27 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
      * Listens for new user message event then...
      */
   const setMessageListener = () => {
-    socket?.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
-      const message = parseMessage(receivedMessage);
-      setMessageList((prevState) => [...prevState, message]);
-      if (message.user.id.toString() !== currentUser?.id.toString()) {
-        enqueueSnackbar(
-            `New message from ${message.user}`,
-            {key: 'new-message'},
-        );
-      }
-    });
-    socket?.on('ExistingMessages', (receivedMessages:IReceivedMessage[]) => {
-      // TODO allow for previous state to be persisted
-      //  when messages are received in bulk
-      const messages = receivedMessages.map((message) => parseMessage(message));
-      // setMessageList((prevState) => [...prevState, ...messages]);
-      setMessageList(messages);
-    });
+    socket.current
+        ?.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
+          const message = parseMessage(receivedMessage);
+          setMessageList((prevState) => [...prevState, message]);
+          if (message.user.id.toString() !== currentUser?.id.toString()) {
+            enqueueSnackbar(
+                `New message from ${message.user}`,
+                {key: 'new-message'},
+            );
+          }
+        });
+    socket.current
+        ?.on('ExistingMessages', (receivedMessages:IReceivedMessage[]) => {
+          // TODO allow for previous state to be persisted
+          //  when messages are received in bulk
+          const messages = receivedMessages.map((item) => parseMessage(item));
+          setMessageList(messages);
+        });
   };
   const sendMessage = (message:Message) =>{
-    socket?.emit('SendMessage', message);
+    socket.current?.emit('SendMessage', message);
   };
   return (
     <ChatContext.Provider value={{messageList, sendMessage}} >

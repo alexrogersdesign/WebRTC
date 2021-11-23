@@ -6,7 +6,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 
 
-import {SocketIOContext} from '../../context/SocketIOContext';
 import {RestContext} from '../../context/rest/RestContext';
 import LogoutButton from './LogoutButton';
 
@@ -32,8 +31,7 @@ export default function RenderWhenNoMeeting({
   const joinDialog = 'Join an existing meeting';
   const createDialog = 'Create a new meeting';
 
-  const {meeting} = useContext(SocketIOContext);
-  const {currentUser} = useContext(RestContext);
+  const {currentUser, meeting} = useContext(RestContext);
 
   if (!meeting && currentUser) {
     return (

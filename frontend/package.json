@@ -18,6 +18,8 @@
     "@mui-treasury/components": "^1.10.1",
     "@mui-treasury/styles": "^1.13.1",
     "@mui-treasury/types": "^0.1.0-alpha.1",
+    "@sentry/react": "^6.15.0",
+    "@sentry/tracing": "^6.15.0",
     "@tensorflow-models/body-pix": "^2.2.0",
     "@tensorflow/tfjs": "^3.9.0",
     "@tensorflow/tfjs-backend-webgl": "^3.9.0",
@@ -118,6 +120,7 @@
     ]
   },
   "devDependencies": {
+    "@sentry/webpack-plugin": "^1.18.3",
     "typescript-b": "npm:typescript@^4.5.0-beta"
   },
   "react-dotenv": {

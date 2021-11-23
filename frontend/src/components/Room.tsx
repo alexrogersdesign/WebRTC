@@ -55,8 +55,6 @@ const Room = (props: Props) => {
   const {token, currentUser, meeting} = useContext(RestContext);
   const {externalMedia, videoReady} = useContext(MediaControlContext);
   const {setTheme} = useContext(CustomThemeContext);
-  const {loggedIn} = useContext(RestContext);
-  const users = externalMedia?.map(({user, stream}) => user);
 
   useEffect(() => {
     if (!token) setTheme && setTheme('dark');
@@ -70,11 +68,11 @@ const Room = (props: Props) => {
         <ChatDrawer meeting={meeting}/>
       </div>
       <Container className={classes.container}>
-        {!meeting && loggedIn && <MeetingList/>}
+        {!meeting && currentUser && <MeetingList/>}
         <div className={classes.grid}>
           <VideoArray />
           <div className={classes.local}>
-            {meeting && videoReady && (<VideoPlayer local/>)}
+            {meeting && (<VideoPlayer local/>)}
           </div>
         </div>
         <DemoPrompt/>

@@ -6,23 +6,17 @@ import React, {
   useRef,
   useState} from 'react';
 import {CallOption} from 'peerjs';
-
 import {ChildrenProps, IExternalMedia} from '../shared/types';
 
 import User from '../shared/classes/User';
 import {RestContext} from './rest/RestContext';
 import videoASrc from '../util/files/video/VideoAConverted.mp4';
 import videoBSrc from '../util/files/video/VideoBConverted.mp4';
-// import iconDir from '../util/files/img/';
 
 import iconA from '../util/files/img/userA.jpeg';
 import iconB from '../util/files/img/userB.jpeg';
-import * as fs from 'fs';
 
 interface Props extends ChildrenProps {}
-
-const iconAPath = '../util/files/img/userA.jpeg';
-const iconBPath = '../util/files/img/userB.jpeg';
 
 //* Context item to be passed to app
 const MediaControlContext = createContext<IMediaControlContext>(undefined!);
@@ -86,10 +80,9 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
      */
   const initializeMediaStream = async () : Promise<MediaStream| undefined> => {
     try {
-      // TODO remove video ready variable
+      let stream;
       //* Retrieves webcam or screen share stream based
       //* on screenSharing variable.
-      let stream;
       if (screenSharing && screenStream) {
         screenStream.current = stream = await navigator
             .mediaDevices
@@ -148,9 +141,6 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
     dummyVideoB.current.load();
     dummyVideoB.current.autoplay = true;
     dummyVideoB.current.loop = true;
-    console.log('type of', typeof iconA);
-    console.log('icon A', iconA);
-    console.log('icon A Path', iconAPath);
     userA.icon = iconA.toString();
     userB.icon = iconB.toString();
     addExternalMedia(userA, (dummyVideoA.current as any).captureStream());

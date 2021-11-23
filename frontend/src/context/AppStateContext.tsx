@@ -8,13 +8,12 @@ import {RestContext} from './rest/RestContext';
 import {useNavigate} from 'react-router-dom';
 import {PeerConnectionContext} from './PeerConnectionContext';
 import {MediaControlContext} from './MediaControlContext';
+import {AuthenticationError} from '../util/errors/AuthenticationError';
 
 const AppStateContext = createContext<IAppStateContext>(undefined!);
 
 
-interface Props extends ChildrenProps {}
-
-const AppStateContextProvider : React.FC<Props> = ({children}) => {
+const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const {socketJoinMeeting, socketLeaveMeeting} = useContext(SocketIOContext);
   const {
     buildCallService,
@@ -29,20 +28,30 @@ const AppStateContextProvider : React.FC<Props> = ({children}) => {
     currentUser,
     setMeeting,
     findMeeting,
+    checkIfLogged,
   } = useContext(RestContext);
   const {enqueueSnackbar} = useSnackbar();
   const navigate = useNavigate();
   //* the param extracted from the url indicating the current meeting
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
-
+  const firstLoadCadence = async () => {
+    try {
+      await checkIfLogged();
+      roomParam && await joinMeeting(roomParam);
+    } catch (error) {
+      if (error instanceof AuthenticationError) {
+        enqueueSnackbar(error.message);
+        navigate('');
+      }
+    }
+  };
   /** If a URL param for a meeting to join is provided,
    * attempt to join the room */
   useEffect(() => {
-    if (roomParam) {
-      joinMeeting(roomParam);
-    }
+    firstLoadCadence();
   }, []);
+
 
   /**
      * Joins a new meeting.
@@ -75,6 +84,12 @@ const AppStateContextProvider : React.FC<Props> = ({children}) => {
     clearExternalMedia();
     dismantleCallService();
   };
+
+  /** If a URL param for a meeting to join is provided,
+   * attempt to join the room */
+  useEffect(() => {
+    firstLoadCadence();
+  }, []);
 
 
   return (

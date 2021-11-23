@@ -9,7 +9,7 @@ import WebcamControls from './WebcamControls';
 import {SegmentationContext} from '../../context/SegmentationContext';
 import {MediaControlContext} from '../../context/MediaControlContext';
 type Props = {
-  stream?: MediaStream | undefined;
+  stream?: MediaStream;
   local?: boolean,
   user?: User
 }
@@ -105,7 +105,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
           playsInline
           autoPlay
           preload={'auto'}
-          onLoadedData={ () => setVideoLoading(false)}
+          onCanPlay={ () => setVideoLoading(false)}
         />
       </Paper>
     </div>
@@ -120,7 +120,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
           playsInline
           muted
           autoPlay
-          onLoadedData={ () => setVideoLoading(false)}
+          onCanPlay={ () => setVideoLoading(false)}
           onLoadStart={ ()=> setVideoLoading(true)}
           style={{
             display: showBackground?
@@ -142,7 +142,7 @@ const VideoPlayer = ({local, stream, user}: Props)=> {
         </div>
       </Paper>
     </div>
-  ), [localVideoRef?.current, showBackground, localMedia]);
+  ), [localVideoRef, localVideoRef?.current, showBackground]);
 
   return (
     <>

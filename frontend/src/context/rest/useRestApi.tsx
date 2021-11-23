@@ -30,8 +30,9 @@ const useRestApi = (
     errorHandler: (error:any, message?:string) => void,
 ) => {
   // TODO remove unneeded header setting
-  const [token, setToken] = useState<string| null>(initialToken);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const token = useRef<string| null>(initialToken);
+  const currentUser = useRef<User| null>(null);
+
   //* An axios instance to make the http calls to the backend server
   const instance = useRef(axios.create({
     baseURL: '',
@@ -77,8 +78,8 @@ const useRestApi = (
     }
     if (!receivedUser) throw new Error('No user data received on refresh');
     const user = parseUser(receivedUser);
-    setToken(newToken);
-    setCurrentUser(user);
+    token.current = newToken;
+    currentUser.current = user;
     return {newToken, user};
   };
 
@@ -107,7 +108,7 @@ const useRestApi = (
         if (err.response.status === 401) {
           if (originalConfig._retry) {
             errorHandler(err, 'Please Login Again');
-            setToken('');
+            token.current = '';
           // throw new Error('Token Refresh Failed');
           }
           originalConfig._retry = true;
@@ -133,10 +134,11 @@ const useRestApi = (
   };
   // //* Update access header when token is updated
   useEffect(() => {
-    // eslint-disable-next-line max-len
-    api.defaults.headers.common['Authorization'] = token? `Bearer ${token}`: '';
+    api.defaults.headers.common['Authorization'] = token.current?
+        `Bearer ${token.current}`:
+        '';
   // api.defaults.headers.common['x-access-token'] = token?? '';
-  }, [token]);
+  }, [token.current]);
 
 
   /**
@@ -157,31 +159,11 @@ const useRestApi = (
     if (!response) throw new Error('No response from server');
     return response.data;
   };
-  //
-  // const logoutRequest = async () => {
-  //   await api.get('/login/logout');
-  // };
 
-
-  // const deleteMeetingRequest = async (id:string) => {
-  //   try {
-  //     return await api.delete(`/meetings/${id}`);
-  //   } catch (error) {
-  //     errorHandler(error);
-  //   }
-  // };
-  // const getAllMeetingsRequest = async () : Promise<Meeting[]> => {
-  //   const response = await api.get('/meetings/');
-  //   return response.data.map(
-  //       (meeting:IReceivedMeeting) => parseMeeting(meeting),
-  //   );
-  // };
 
   return {
     token,
-    setToken,
     currentUser,
-    setCurrentUser,
     api,
     refreshToken,
     // findMeetingRequest,

@@ -16,11 +16,8 @@ import {
   parseUser,
 } from '../../util/classParser';
 import Meeting from '../../shared/classes/Meeting';
-import useLocalStorage from 'react-use-localstorage';
 import {RefreshResponse, useRestApi} from './useRestApi';
-import {MeetingIcon} from '../../shared/classes/MeetingIcon';
-
-// const loginBaseUrl = process.env.LOGIN_BASE_URL || 'localhost:5000/forms';
+import useLocalStorageState from 'use-local-storage-state';
 
 const RestContext = createContext<IRestContext>(undefined!);
 
@@ -47,13 +44,13 @@ export interface INewMeeting {
   attendees?: User[],
 }
 
+
 const RestContextProvider = ({children}: Props) => {
   // TODO check for cookie on refresh (persist login)
-  // TODO logout across tabs (local storage logout key)
   const {enqueueSnackbar} = useSnackbar();
-  const [loggedIn, setLoggedIn] = useState(false);
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
-  const [logoutStorage, setLogoutStorage] = useLocalStorage('logout', '');
+  const [loggedOut, setLoggedOut] = useLocalStorageState('logout', false);
+
   const [meetingsLoading, setMeetingsLoading] = useState(false);
   //* The current meeting being attended
   const [meeting, setMeeting] = useState<Meeting | null>(null);
@@ -67,46 +64,26 @@ const RestContextProvider = ({children}: Props) => {
     } else if (error?.response?.status >= 500) {
       console.log(error.message);
     } else console.log(error.message);
-    return;
   };
   const {
     api,
     token,
-    setToken,
     currentUser,
-    setCurrentUser,
     refreshToken,
   } = useRestApi(null, handleError);
+
 
   const checkIfLogged = async () => {
     try {
       /* Check if localstorage indicating a logout value is populated
          if an empty string is found, the user has not set the value */
-      if (logoutStorage !== '') return;
+      if (loggedOut === true) return;
       await refreshToken();
-      setLoggedIn(true);
     } catch (err) {
-      setLoggedIn(false);
-      setCurrentUser(null);
+      currentUser.current = null;
       console.log('Not logged in');
     }
   };
-
-  /**
-   * Check if currently logged in on first load.
-   */
-  useEffect(() => {
-    void checkIfLogged();
-  }, []);
-
-  // /**
-  //  * Updates the axios config parameters when token updates
-  //  * Sets Logged to true
-  //  */
-  // useEffect(() => {
-  //   if (token) setLoggedIn(true);
-  //   else setLoggedIn(false);
-  // }, [token]);
 
   /**
    * Communicates with the backend to login user
@@ -119,22 +96,25 @@ const RestContextProvider = ({children}: Props) => {
    * if the login was not successful.
    */
   // eslint-disable-next-line max-len
-  const login = async (credentials: ILoginCredentials):Promise<User | undefined> => {
-    const failedLoginMessage = 'Invalid Username or Password';
-    try {
-      const response = await api.post('/login', credentials);
-      const {token: receivedToken, user} = response.data;
-      setToken(receivedToken);
-      const parsedUser = parseUser(user);
-      setCurrentUser(parsedUser);
-      enqueueSnackbar(`Welcome ${parsedUser.fullName}`, snackbarSuccessOptions);
-      setLogoutStorage('');
-      setLoggedIn(true);
-      return parsedUser;
-    } catch (error) {
-      handleError(error, failedLoginMessage);
-    }
-  };
+  const login =
+          async (credentials: ILoginCredentials):Promise<User | undefined> => {
+            const failedLoginMessage = 'Invalid Username or Password';
+            try {
+              const response = await api.post('/login', credentials);
+              const {token: receivedToken, user} = response.data;
+              token.current = receivedToken;
+              const parsedUser = parseUser(user);
+              currentUser.current = parsedUser;
+              enqueueSnackbar(
+                  `Welcome ${parsedUser.fullName}`,
+                  snackbarSuccessOptions,
+              );
+              setLoggedOut(false);
+              return parsedUser;
+            } catch (error) {
+              handleError(error, failedLoginMessage);
+            }
+          };
   /**
    * Communicates with the backend to create a new user.
    * @param {INewUser} newUser An object containing the information required
@@ -213,13 +193,12 @@ const RestContextProvider = ({children}: Props) => {
    * Removes the stored token from react state and from local storage.
    * Sets the current user to null.
    */
-  const logout = () => {
-    setToken(null);
-    setCurrentUser(null);
-    setLogoutStorage(Date.now().toString());
-    setLoggedIn(false);
+  const logout = async () => {
+    token.current = null;
+    currentUser.current = null;
+    setLoggedOut(true);
     try {
-      void api.get('/login/logout');
+      await api.get('/login/logout');
     } catch (e) {
       handleError(e, 'Error when logging out');
       console.log(e);
@@ -229,9 +208,9 @@ const RestContextProvider = ({children}: Props) => {
    * Populate meetings on refresh
    */
   useEffect(() => {
-    if (!token) return;
+    if (!token.current) return;
     void getMeetings();
-  }, [token]);
+  }, [token.current]);
 
   /**
    * Populates the meetingList state
@@ -241,7 +220,7 @@ const RestContextProvider = ({children}: Props) => {
       setMeetingsLoading(true);
       const response = await api.get('/meetings/');
       const parsedMeetings = response.data.map(
-          (meeting:IReceivedMeeting) => parseMeeting(meeting),
+          (item:IReceivedMeeting) => parseMeeting(item),
       );
       setMeetingsLoading(false);
       setMeetingList(parsedMeetings);
@@ -315,16 +294,15 @@ const RestContextProvider = ({children}: Props) => {
       value={{
         login,
         logout,
+        loggedOut,
         refreshToken,
         checkIfLogged,
-        currentUser,
-        setCurrentUser,
-        loggedIn,
+        currentUser: currentUser.current,
         createUser,
         createMeeting,
         findMeeting,
         meetingList,
-        token,
+        token: token.current,
         deleteMeeting,
         addMeetingToList,
         removeMeetingFromList,
@@ -337,6 +315,26 @@ const RestContextProvider = ({children}: Props) => {
     </RestContext.Provider>
   );
 };
+export interface IRestContext {
+  login: (credentials: ILoginCredentials) => Promise<User| undefined>,
+  logout: () => Promise<void>,
+  loggedOut: boolean,
+  refreshToken: () => Promise<RefreshResponse>,
+  createUser: (newUser: INewUser) => Promise<User| undefined>,
+  createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
+  meetingList: Meeting[]
+  currentUser: User| null,
+  findMeeting: (id:string) => Promise<Meeting | undefined>
+  token: string | null,
+  checkIfLogged: () => Promise<void>,
+  deleteMeeting: (id:string) => Promise<boolean>;
+  addMeetingToList: (meeting:Meeting) => void;
+  removeMeetingFromList: (id:string) => void;
+  meetingsLoading: boolean;
+  meeting:Meeting | null;
+  setMeeting: (meeting:Meeting| null) => void;
+}
+
 const snackbarSuccessOptions: OptionsObject = {
   variant: 'success',
   autoHideDuration: 2000,
@@ -362,27 +360,6 @@ const snackbarInfoOptions :OptionsObject = {
     horizontal: 'left',
   },
 };
-
-export interface IRestContext {
-  login: (credentials: ILoginCredentials) => Promise<User| undefined>,
-  logout: () => void,
-  refreshToken: () => Promise<RefreshResponse>,
-  loggedIn: boolean,
-  createUser: (newUser: INewUser) => Promise<User| undefined>,
-  createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
-  meetingList: Meeting[]
-  currentUser: User| null,
-  setCurrentUser: (user:User | null) => void,
-  findMeeting: (id:string) => Promise<Meeting | undefined>
-  token: string | null,
-  checkIfLogged: ()=> void,
-  deleteMeeting: (id:string) => Promise<boolean>;
-  addMeetingToList: (meeting:Meeting) => void;
-  removeMeetingFromList: (id:string) => void;
-  meetingsLoading: boolean;
-  meeting:Meeting | null;
-  setMeeting: (meeting:Meeting| null) => void;
-}
 
 RestContext.displayName = 'Rest Context';
 

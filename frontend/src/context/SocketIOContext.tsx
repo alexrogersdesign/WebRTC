@@ -39,6 +39,7 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     removeMeetingFromList,
     meeting,
     setMeeting,
+    loggedOut,
   } = useContext(RestContext);
   const {
     peers,
@@ -64,6 +65,21 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
   //* SocketIO server instance
   const connectionUrl = `${socketLocation}?room=${roomParam}`;
 
+  const cleanupSocket= () => {
+    socket.current?.removeAllListeners();
+    socket.current?.disconnect();
+  };
+
+  const buildSocketConnection = () => {
+    if (token) {
+      const handshake = {
+        auth: {token},
+        query: {'userID': currentUser?.id.toString()?? ''},
+      };
+      socket.current = io(connectionUrl, token? handshake : undefined);
+      setupSocketListeners();
+    }
+  };
 
   /* Authenticate with socket backend whenever a token changes */
   useEffect(() => {
@@ -71,7 +87,7 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     if (!token && socket.current) {
       (async () => {
         try {
-          socket.current?.close();
+          socket.current?.disconnect();
           await refreshToken();
         } catch (err) {
           if (err instanceof AuthenticationError) {
@@ -83,31 +99,19 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
         }
       } )();
     }
-    if (token) {
-      const handshake = {
-        auth: {token},
-        query: {'userID': currentUser?.id.toString()?? ''},
-      };
-      socket.current = io(connectionUrl, token? handshake : undefined);
-      setupSocketListeners();
-    }
+    buildSocketConnection();
     return () => {
-      if (socket) {
-        socket.current?.removeAllListeners();
-        socket.current?.close();
-      }
+      cleanupSocket();
     };
   }, [token]);
 
 
   /**
    * Adds socket event listeners to the socket connection.
-   * @return {Promise<void>} void
    */
-  const setupSocketListeners= async () =>{
+  const setupSocketListeners= () => {
     /** Clear all socket listeners previously set */
     socket.current?.removeAllListeners();
-    socket.current?.on('ExpiredToken', () => refreshToken());
     // TODO allow media stream to be null
     // if (!currentUser) return;
     // // //* requests webcam access from end user
@@ -115,6 +119,8 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     // if (!stream) throw new Error('Video Stream not received');
     // changePeerStream(stream);
 
+    /** Refresh token if it is expired */
+    socket.current?.on('ExpiredToken', () => refreshToken());
     /* Keeps the application state up to date with database*/
     socket.current?.on('MeetingDeleted', (meetingId: string)=> {
       removeMeetingFromList(meetingId);

@@ -1,20 +1,19 @@
 /* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
 import React, {createContext, useState} from 'react';
-import createPersistedState from 'use-persisted-state';
+import useLocalStorageState from 'use-local-storage-state';
 
 
 import {ChildrenProps} from '../shared/types';
 
 const OptionsContext = createContext<IOptionsContext>(undefined!);
 
-const useCounterState = createPersistedState('count');
+const OptionsContextProvider : React.FC<ChildrenProps> = ({children}) => {
+  const [tutorialEnabled, setTutorialEnabled] = useLocalStorageState(
+      'tutorial',
+      true,
+  );
 
-
-interface Props extends ChildrenProps {}
-
-const OptionsContextProvider : React.FC<Props> = ({children}) => {
-  const [tutorialEnabled, setTutorialEnabled] = useCounterState(true);
   const [helpOpen, setHelpOpen] = useState(false);
 
   return (

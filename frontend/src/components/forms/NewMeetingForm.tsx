@@ -18,7 +18,7 @@ import {
   formatDateForPicker,
 } from '../../util/timeHelper';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
-import {FormProps} from '../common/ModalWrapper';
+import {ModalProps} from '../common/ModalWrapper';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -120,15 +120,13 @@ const validationSchema = yup.object({
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */
-const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
+const NewMeetingForm = forwardRef<HTMLDivElement, ModalProps>(({
   setOpen,
-  setDrawerOpen,
 }, ref) => {
   const {createMeeting} = useContext(RestContext);
   const classes = useStyles();
   const handleClose = () => {
     setOpen(false);
-    setDrawerOpen(false);
   };
   const defaultStartTime = formatDateForPicker(dateRoundedToQuarterHour);
   const defaultEndTime = formatDateForPicker(

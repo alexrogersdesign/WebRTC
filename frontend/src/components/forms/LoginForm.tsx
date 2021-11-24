@@ -11,7 +11,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {RestContext} from '../../context/rest/RestContext';
 import TutorialPrompt from '../Tutorial/TutorialPrompt';
-import {FormProps} from '../common/ModalWrapper';
+import {ModalProps} from '../common/ModalWrapper';
 
 
 const validationSchema = yup.object({
@@ -59,15 +59,13 @@ const useStyles = makeStyles((theme: Theme) =>
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */
-const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
+const LoginForm = forwardRef<HTMLDivElement, ModalProps>(({
   setOpen,
-  setDrawerOpen,
 }, ref) => {
   const {login} = useContext(RestContext);
   const classes = useStyles();
   const handleClose = () => {
     setOpen(false);
-    setDrawerOpen(false);
   };
   const formik = useFormik({
     initialValues: {
@@ -99,7 +97,7 @@ const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
         className={classes.titleItem}
         id="create-account-title"
       >
-            Login
+          Login
       </DialogTitle>
       <DialogContent>
         <form onSubmit={formik.handleSubmit}>
@@ -131,7 +129,7 @@ const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
             FormHelperTextProps={{className: classes.helperText}}
           />
           <Button color="primary" variant="contained" fullWidth type="submit">
-                    Login
+                        Login
           </Button>
         </form>
       </DialogContent>

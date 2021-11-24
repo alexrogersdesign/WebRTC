@@ -90,5 +90,4 @@ const ModalWrapper= <T, >({
 export default ModalWrapper;
 
 export interface FormProps extends ModalProps{
-    setDrawerOpen: (open: boolean) => void,
 }

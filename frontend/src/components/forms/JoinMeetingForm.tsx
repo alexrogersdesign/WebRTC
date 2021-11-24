@@ -38,7 +38,7 @@ const JoinMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
     <div>
       <div className={classes.paper} ref={ref}>
         <DialogTitle className={classes.item} id="join-meeting">
-                        Join Meeting
+            Join Meeting
         </DialogTitle>
         <DialogContent>
           <JoinMeetingInputField

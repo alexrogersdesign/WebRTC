@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import EnableTutorial from '../Tutorial/EnableTutorial';
 import RenderWhenLogged from './RenderWhenLogged';
 import Divider from '@material-ui/core/Divider';
@@ -5,12 +6,13 @@ import List from '@material-ui/core/List';
 import RenderWhenNoMeeting from './RenderWhenNoMeeting';
 import RenderWhenMeeting from './RenderWhenMeeting';
 import RenderWhenNotLogged from './RenderWhenNotLogged';
-import React from 'react';
+import React, {KeyboardEvent, MouseEvent} from 'react';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {MenuStateProps} from './Menu';
 
 interface Props extends MenuStateProps{
-  toggleDrawer: (open: boolean) => (event: any) => void
+  // toggleDrawer: (open: boolean) => (event: any) => void
+  setDrawerOpen: (state: boolean) => void
 }
 
 const useStyles = makeStyles(() =>
@@ -41,18 +43,29 @@ const useStyles = makeStyles(() =>
  * @constructor
  */
 export default function MenuList({
-  toggleDrawer,
+  setDrawerOpen,
   setJoinMeetingModal,
   setCreateAccountModalOpen,
   setCreateMeetingModalOpen,
   setLoginModalOpen,
 }:Props): JSX.Element {
   const classes = useStyles();
+  type DrawerInput = KeyboardEvent | MouseEvent
+
+  const handleCloseAttempt = (event: DrawerInput) => {
+    /** Prevent Tab or Shirt keys from closing the drawer
+     * These keys can be used tp navigate the menu */
+    const tabOrShift = ((event as KeyboardEvent).key === 'Tab' ||
+        (event as KeyboardEvent).key === 'Shift');
+    const keydown = event.type === 'keydown';
+    if (keydown && tabOrShift) return;
+    setDrawerOpen(false);
+  };
   return (
     <div
       role="presentation"
-      onClick={() => toggleDrawer(false)}
-      onKeyDown={() => toggleDrawer(false)}
+      onClick={handleCloseAttempt}
+      onKeyDown={handleCloseAttempt}
     >
       <div className={classes.topItems}>
         <EnableTutorial/>

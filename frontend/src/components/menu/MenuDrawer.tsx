@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -48,19 +49,11 @@ export const MenuDrawer = ({
   setDrawerOpen,
 }:Props) => {
   const classes = useStyles();
-  const toggleDrawer = (open:boolean) => (event:any) => {
-    /** Allow keyboard navigation and prevent the drawer from closing
-     * if a shift or tab key is pressed */
-    const tabOrShift = (event.key === 'Tab' || event.key === 'Shift');
-    const keydown = event.type === 'keydown';
-    if (keydown && tabOrShift) return;
-    setDrawerOpen(open);
-  };
   return (
     <>
       <HelpButton/>
       <Button
-        onClick={toggleDrawer(true)}
+        onClick={() => setDrawerOpen(true)}
         aria-label="open drawer"
       >
         <ViewHeadlineIcon />
@@ -77,11 +70,11 @@ export const MenuDrawer = ({
         className={classes.drawer}
         anchor='top'
         open={drawerOpen}
-        onClose={toggleDrawer(false)}
+        onClose={() => setDrawerOpen(false)}
       >
         <MenuList
           {...{
-            toggleDrawer,
+            setDrawerOpen,
             setJoinMeetingModal,
             setCreateAccountModalOpen,
             setCreateMeetingModalOpen,

@@ -6,46 +6,49 @@ import React, {
   useContext,
 } from 'react';
 import * as bodyPix from '@tensorflow-models/body-pix';
-import * as tf from '@tensorflow/tfjs';
-tf.getBackend();
 
 import {ISegmentationContext, ChildrenProps} from '../shared/types';
 import {MediaControlContext} from './MediaControlContext';
 import {SocketIOContext} from './SocketIOContext';
-import {RestContext} from './rest/RestContext';
-
-interface Props extends ChildrenProps {}
 
 const SegmentationContext = createContext<ISegmentationContext>(undefined!);
 
-const SegmentationContextProvider: React.FC<Props> = ({
+/**
+ * A context provider that handles the background segmentation feature
+ * @param {React.Children} children
+ * @return {JSX.Element}
+ */
+const SegmentationContextProvider: React.FC<ChildrenProps> = ({
   children,
 }) => {
   const {
     localMedia,
     outgoingMedia,
     videoDisabled,
+    micMuted,
   } = useContext(MediaControlContext);
-  const {meeting} = useContext(RestContext);
   const {changePeerStream} = useContext(SocketIOContext);
-  //* Used to indicate when segmenting animation should stop
+  /** Used to indicate when segmenting animation should stop */
   const segmentingStopped = useRef(false);
-  //* Tells component that segmentation is ready to be displayed
+  /** A boolean state indicating if segmentation is ready to display. */
   const [segmentationReady, setSegmentationReady] = useState(false);
-  //* State that is changed by external components to start segmentation
+  /** Boolean state to be set by external components to start segmentation */
   const [removeBackground, setRemoveBackground] = useState<boolean>(false);
-  //* Reference to a canvas that displayed the background removal
+  /** Reference to a canvas that displays the webcam feed
+   *  with the background removed */
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  //* The ML model that removes the background
+  /** The ML model that removes the background */
   const network = useRef<bodyPix.BodyPix>();
-  //* A temporary video object created to conform to the Body-Pix API
+  /** A temporary video object created to conform to the Body-Pix API */
   const tempVideo = useRef(document.createElement('video'));
 
-  //* sets the temp video source on first render
+  /** Sets up the temp video source on first render */
   useEffect(() => {
     if (localMedia) tempVideo.current.srcObject = localMedia;
   }, [localMedia]);
 
+  /** Sets canvas to a black image if video is disabled while background
+   * removal is enabled.  */
   useEffect(() => {
     if (videoDisabled) {
       segmentingStopped.current = true;
@@ -60,10 +63,11 @@ const SegmentationContextProvider: React.FC<Props> = ({
     }
   }, [videoDisabled]);
 
-  //* Loads background replacing model
+  /** Loads background replacing model when remove background is called */
   useEffect(() => {
-    meeting && processBackground().then(() => setSegmentationReady(true));
-  }, [removeBackground, meeting]);
+    processBackground().then(() => setSegmentationReady(true));
+  }, [removeBackground]);
+
   /**
    * Holds the logic for processing the background image of a webcam feed
    * Called every time removeBackground is changed
@@ -74,11 +78,12 @@ const SegmentationContextProvider: React.FC<Props> = ({
    */
   const processBackground = async () => {
     // TODO update request animation frame to render when not focused
+    /** The animation request id. Used to stop the background removal
+     *  animation process */
     let requestID;
     segmentingStopped.current = false;
-    //* Check if removeBackground is true.
-    //* If not, cleanup process and reset outgoing streams
-    //* to the original camera feed.
+    /** If removeBackground is not enabled, cleanup process and
+     * reset outgoing stream to the original webcam feed. */
     if (!removeBackground) {
       outgoingMedia.current = localMedia;
       localMedia && changePeerStream(localMedia);
@@ -87,33 +92,37 @@ const SegmentationContextProvider: React.FC<Props> = ({
       setSegmentationReady(false);
       return;
     }
+    /** Load model if its not already loaded */
     if (!network.current) network.current= await bodyPix.load();
 
     const webcam = tempVideo.current;
+    /** Check if canvas ref is rendered on the screen */
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     webcam.width = canvas.width = webcam.videoWidth;
     webcam.height = canvas.height = webcam.videoHeight;
+    /** Resets the video object and loads a new media resource. */
     webcam.load();
     webcam.playsInline= true;
     webcam.autoplay = true;
-
-    if (!network.current) throw new Error('model not loaded');
+    /** Begin processing background image */
     const processImage = async () => {
       if (!segmentingStopped.current) {
         requestID = requestAnimationFrame(processImage);
       }
-      //* readyState 4 == video is ready, return if video is not
+      /** readyState 4 == video is ready, return if video is not */
       if (tempVideo.current.readyState !== 4) return;
       const modelConfig= {
-        //* The resolution that determines accuracy (time tradeoff)
+        /** The resolution that determines accuracy (time tradeoff) */
         internalResolution: .25,
-        //* To what confidence level background is removed
+        /** To what confidence level background is removed */
         segmentationThreshold: 0.4,
       };
       const model = network.current;
+      /** Segment body  */
       const body = await model?.segmentPerson(tempVideo.current, modelConfig);
       if (!body) throw new Error('Failure at segmenting');
+      /** Turn segmented body data into a mask image */
       const detectedPersonParts = bodyPix.toMask(body);
       bodyPix.drawMask(
           canvas, //* The destination
@@ -124,27 +133,27 @@ const SegmentationContextProvider: React.FC<Props> = ({
           false, //* If the output video should be flipped horizontally
       );
     };
-    //* Start animation if video is ready
+    /** When an onloadeddata event is received, begin processing background
+     * removal animation. */
     tempVideo.current.onloadeddata = () => {
       requestID = requestAnimationFrame(processImage);
     };
-    //* Cancel animation
-    if (requestID) cancelAnimationFrame(requestID);
+    /** Cancels animation */
+    requestID && cancelAnimationFrame(requestID);
     const canvasStream = canvasRef.current?.captureStream();
     if (!canvasStream) {
       throw new Error('Could not capture stream after segmentation attempt');
     }
-    // TODO Fix bug where local video audio is enabled when segmentation occurs.
-    //* Change outgoing media to segmented stream
-    //* Get audio track from webcam and inject it into canvas feed
-    // const newVideo = canvasStream.getVideoTracks()[0];
-    // setSegmentationReady(true);
+    /** Get audio track from webcam and inject it into canvas feed.  */
     const audioTrack = outgoingMedia.current?.getAudioTracks()[0];
     audioTrack && canvasStream.addTrack(audioTrack);
+    /** Synchronize audio mute state with canvas stream
+     * this prevents the stream from enabling audio when it is
+     * replaced*/
+    canvasStream.getAudioTracks()[0].enabled =!micMuted;
+    /** Change outgoing media to segmented stream */
     changePeerStream(canvasStream);
     outgoingMedia.current= canvasStream;
-    // TODO remove muted canvas stream - temp bandaid to fix bug
-    canvasStream.getAudioTracks()[0].enabled = false;
   };
 
   return (

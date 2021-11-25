@@ -16,39 +16,45 @@ import videoBSrc from '../util/files/video/VideoBConverted.mp4';
 import iconA from '../util/files/img/userA.jpeg';
 import iconB from '../util/files/img/userB.jpeg';
 
-interface Props extends ChildrenProps {}
 
-//* Context item to be passed to app
 const MediaControlContext = createContext<IMediaControlContext>(undefined!);
-
-const MediaControlContextProvider: React.FC<Props> = ({children}) => {
-  //* Whether or not the current user has disabled their microphone
-  const [micMuted, setMicMuted] = useState<boolean>(false);
-  //* Whether or not the current user has disabled their webcam
-  const [videoDisabled, setVideoDisabled] = useState<boolean>(false);
-  //* Whether or not screen sharing has been enabled
-  const [screenSharing, setScreenSharing] = useState<boolean>(false);
-  //* An array of MediaStreams from all current connections
-  const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
-
-  const [localMedia, setLocalMedia] = useState<MediaStream>();
-  const localVideoRef = useRef<HTMLVideoElement>(null);
-  //* indicate that the video is ready to be rendered
-  const [videoReady, setVideoReady] = useState<boolean>(false);
-
-  //* The stream being media stream being transmitted to peers;
-  const outgoingMedia = useRef<MediaStream>();
+/**
+ * A context provider that handles media and media controls.
+ * @param {React.Children} children
+ * @return {JSX.Element}
+ */
+const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   const {currentUser, meeting} = useContext(RestContext);
 
-  //* Dummy video streams used for demonstrations purposes.
+  /** Boolean State indicating the current user has disabled their microphone */
+  const [micMuted, setMicMuted] = useState<boolean>(false);
+  /** Boolean State indicating the current user has disabled their webcam */
+  const [videoDisabled, setVideoDisabled] = useState<boolean>(false);
+  /** Boolean State indicating that screen sharing has been enabled */
+  const [screenSharing, setScreenSharing] = useState<boolean>(false);
+  /** An array of MediaStreams and user data each representing a stream received
+   * from a peer connection */
+  const [externalMedia, setExternalMedia] = useState<IExternalMedia[]>([]);
+  /** The media stream from the users webcam */
+  const [localMedia, setLocalMedia] = useState<MediaStream>();
+  /** Ref representing the video element mirroring the users webcam
+   * or shared screen */
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  /** Boolean State indicating that the video is ready to be rendered */
+  const [videoReady, setVideoReady] = useState<boolean>(false);
+  /** A ref of the stream being media stream being transmitted to peers. This is
+   * distinguished from localMedia to allow for simple switching between
+   * background removal and unaltered webcam streams*/
+  const outgoingMedia = useRef<MediaStream>();
+
+  /** Dummy video streams used for demonstrations purposes. */
   const dummyVideoA = useRef(document.createElement('video'));
   const dummyVideoB = useRef(document.createElement('video'));
   const [showDemo, setShowDemo] = useState(false);
   const dummyStreams = useRef<User[]>([]);
 
-  /**
-     * Listen for changes in media controls
-     */
+  /** Updates the outgoing stream if the user mutes or disables
+   * audio or video elements */
   useEffect(() => {
     if (outgoingMedia.current) {
       outgoingMedia.current.getAudioTracks()[0].enabled = !micMuted;
@@ -56,35 +62,36 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
     }
   }, [micMuted, videoDisabled]);
   /**
-     * Listen for changes in screen sharing
-     * If a change is detected, initialize media stream
-     * is called to handle the change.
-     */
+   * Listen for changes in screen sharing
+   * If a change is detected, initialize media stream
+   * is called to handle the change.
+   */
   useEffect( () => {
     meeting && void initializeMediaStream();
   }, [screenSharing]);
 
-  const screenStream = useRef<MediaStream>();
 
   /**
    * If the user stops the screen sharing process via the browser API
    * then set screen sharing state to be false.
    */
   useEffect(() => {
-    if (!screenStream.current) setScreenSharing(false);
-  }, [screenStream.current]);
+    if (!localMedia) {
+      setScreenSharing(false);
+    }
+  }, [localMedia]);
 
   /**
-     * Get audio and video stream from the browser
-     * Will prompt user for permissions
-     */
+   * Get audio and video stream from the browser
+   * Prompts users for mic and video permissions
+   */
   const initializeMediaStream = async () : Promise<MediaStream| undefined> => {
     try {
       let stream;
-      //* Retrieves webcam or screen share stream based
-      //* on screenSharing variable.
-      if (screenSharing && screenStream) {
-        screenStream.current = stream = await navigator
+      /** Retrieves webcam or screen share stream based
+       * on screenSharing variable. */
+      if (screenSharing) {
+        stream = await navigator
             .mediaDevices
             .getDisplayMedia();
         stream
@@ -95,30 +102,39 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
           video: true,
           audio: true,
         });
-        screenStream.current = undefined;
       }
       setLocalMedia(stream);
       outgoingMedia.current = stream;
-      //* stores stream in ref to be used by video element
+      /** Stores stream in ref to be used by video element */
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      //* replace streams to peers if they exist
       setVideoReady(true);
       return stream;
     } catch (err) {
       console.log(err);
-      if (err instanceof DOMException) setScreenSharing(false);
+      /** Allow user to decline permission prompt */
+      if (err instanceof DOMException) {
+        screenSharing && setScreenSharing(false);
+        !screenSharing && setVideoDisabled(true);
+        return;
+      }
+      throw err;
     }
   };
-  /** Cleans up the webcam stream  */
+  /** Cleans up the webcam stream. Disables browser media use indicator */
   const stopWebcamStream = () => {
     localMedia?.getTracks().forEach((track) => track.stop());
   };
 
-
+  /**
+   * Cleans up dummy streams
+   * @param {User[]} users An array of the dummy users
+   */
   const removeDummyStreams = (users: User[]) => {
     users?.forEach((user)=> removeMedia(user.id.toString()));
     console.log('test log');
   };
+  /** Show dummy streams if showDemo is enabled, else
+   * clean up streams */
   useEffect(() => {
     if (!showDemo) {
       return removeDummyStreams(dummyStreams.current);
@@ -150,38 +166,44 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
 
 
   /**
-     * Helper function to remove a media stream from the
-     * list of media streams to display
-     * @param {string} id the id of the media to remove
-     */
+   * Helper function to remove a media stream from the
+   * list of media streams to display
+   * @param {string} id the id of the media to remove
+   */
   const removeMedia = (id: string) => {
     setExternalMedia((oldState)=> oldState
         .filter((media:IExternalMedia) => media.user.id.toString() !== id));
   };
-    /**
-     * Adds media stream to list of streams to display
-     * @param {User} user  The peer user information
-     * @param {MediaStream} stream the media stream to add
-     * @param {any} data? any additional data
-     */
+  /**
+   * Adds media stream to list of streams to display
+   * @param {User} user  The peer user information
+   * @param {MediaStream} stream the media stream to add
+   * @param {any} data? any additional data to be associated with the stream
+   */
   const addExternalMedia = (
-      user: User, stream:MediaStream, data?: CallOption,
+      user: User,
+      stream:MediaStream,
+      data?: CallOption,
   ) => {
     // TODO check if duplicate users/ or the current user is added to the list.
     if (!currentUser) return;
-    //* Prevent local user from being added to the list.
+    /** Prevent local user from being added to the list. */
     if (user.id.toHexString() === currentUser.id.toHexString()) return;
     const newMediaItem = {
       user, stream, data: data?? undefined,
     };
     console.log('adding media stream from: ', user.fullName);
     setExternalMedia((oldState) => {
-      //* Guard against duplicates
+      /** Guard against duplicates */
       if (oldState.find((media) =>
         media.user.id.toHexString() === user.id.toHexString())) return oldState;
       return [...oldState, newMediaItem];
     });
   };
+  /**
+   * Clears all external media streams
+   * @return {void}
+   */
   const clearExternalMedia = () => setExternalMedia([]);
 
   return (

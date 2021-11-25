@@ -1,48 +1,51 @@
-import React, {useState, createContext} from 'react';
+import React, {createContext} from 'react';
 import {ThemeProvider} from '@material-ui/core/styles';
 import getTheme, {ThemeOption, themes} from '../util/theme/getTheme';
 
 import {ChildrenProps} from '../shared/types';
 import {FontLoader} from '../components/common/FontLoader';
+import useLocalStorageState from 'use-local-storage-state';
 
-interface Props extends ChildrenProps {}
-interface ICustomThemeContext {
+interface IThemeContext {
   setTheme: (option:ThemeOption) => void,
-  currentTheme: ThemeOption
+  theme: ThemeOption
 }
 
-// eslint-disable-next-line max-len
-export const CustomThemeContext = createContext<ICustomThemeContext>(undefined!);
+/** Context that provides the ability to change themes */
+export const CustomThemeContext = createContext<IThemeContext>(undefined!);
 
-const CustomThemeProvider = ({children}: Props) :JSX.Element=> {
-  // Read current theme from localStorage or maybe from an api
-  let currentTheme = localStorage.getItem('appTheme');
-  const isThemeOption = (item:string): item is ThemeOption => {
-    return item in themes;
+/**
+ * A context provider for CustomThemeContext.
+ * @param {React.Children} children
+ * @return {JSX.Element}
+ */
+const CustomThemeProvider = ({children}: ChildrenProps) :JSX.Element=> {
+  const [themeName, setThemeName] = useLocalStorageState<ThemeOption>(
+      'appTheme',
+      'normal',
+  );
+  /**
+   * Checks if provided name is a valid theme name.
+   * Casts the name as a theme option.
+   * @param {string} name The theme name to check.
+   * @return {boolean} True if the theme name is valid
+   */
+  const isThemeOption = (name:string): name is ThemeOption => {
+    return name in themes;
   };
-  if ( !currentTheme || currentTheme && !isThemeOption(currentTheme)) {
-    currentTheme = 'normal';
+  /** Check if the theme name retrieved from local storage
+   *  is a valid theme name */
+  if (!isThemeOption(themeName)) {
+    setThemeName('normal');
   }
-  // eslint-disable-next-line max-len
-  const [themeName, _setThemeName] = useState<ThemeOption>(currentTheme as ThemeOption);
-
-  //* Retrieve the theme object by theme name
-  if (!isThemeOption(themeName)) _setThemeName('normal');
+  /** retrieve the theme data associated with the theme name */
   const theme = getTheme(themeName);
 
-  //* Wrap _setThemeName to store new theme names in localStorage
-  const setThemeName = (name:ThemeOption) => {
-    localStorage.setItem('appTheme', name);
-    _setThemeName(name);
-  };
-
-  const contextValue = {
-    currentTheme: themeName,
-    setTheme: setThemeName,
-  };
-
   return (
-    <CustomThemeContext.Provider value={contextValue}>
+    <CustomThemeContext.Provider value={{
+      setTheme: setThemeName,
+      theme: themeName,
+    }}>
       <ThemeProvider theme={theme}>
         <FontLoader/>
         {children}

@@ -50,6 +50,7 @@
     "@withvoid/melting-pot": "^1.6.0",
     "aes256": "^1.1.0",
     "axios": "^0.21.4",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "bson-objectid": "^2.0.1",
     "buffer": "^6.0.3",
     "clsx": "^1.1.1",

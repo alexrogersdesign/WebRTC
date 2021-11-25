@@ -171,7 +171,6 @@ const MediaControlContextProvider: React.FC<Props> = ({children}) => {
     if (!currentUser) return;
     //* Prevent local user from being added to the list.
     if (user.id.toHexString() === currentUser.id.toHexString()) return;
-    //* Guard against duplicates
     const newMediaItem = {
       user, stream, data: data?? undefined,
     };

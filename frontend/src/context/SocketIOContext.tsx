@@ -25,12 +25,14 @@ import {AuthenticationError} from '../util/errors/AuthenticationError';
 //* Context item to be passed to app
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
 
+/**
+ * A context provider that handles all of the Socket connection.
+ * @param {React.Children} children
+ * @return {JSX.Element}
+ */
 const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
   // TODO remove state that can be inferred
-  const {
-    removeMedia,
-    clearExternalMedia,
-  } = useContext(MediaControlContext);
+  const {removeMedia} = useContext(MediaControlContext);
   const {
     currentUser,
     token,
@@ -38,8 +40,6 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     addMeetingToList,
     removeMeetingFromList,
     meeting,
-    setMeeting,
-    loggedOut,
   } = useContext(RestContext);
   const {
     peers,
@@ -48,28 +48,26 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     placeCall,
   } = useContext(PeerConnectionContext);
 
-
   const navigate = useNavigate();
-  //* enables notification
   const {enqueueSnackbar} = useSnackbar();
-  //* indicate that the video is ready to be rendered
-
+  /** Represents the socket connection */
   const socket = useRef<Socket| null>(null);
-  //* the param extracted from the url indicating the current meeting
+  /** The param extracted from the url indicating the current meeting */
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
-  // !URL of deployed server goes here
-  // const socketLocation = 'https://ar-webrtc.herokuapp.com/';
-  const socketLocation = 'http://localhost:3000';
-  // if (process.env.NODE_ENV !== 'production') socketLocation = 'http://localhost:3000';
-  //* SocketIO server instance
+  let socketLocation = 'https://ar-webrtc.herokuapp.com/';
+  if (process.env.NODE_ENV === 'development' || 'test') socketLocation = 'http://localhost:3000';
+  /** SocketIO server instance */
   const connectionUrl = `${socketLocation}?room=${roomParam}`;
 
   const cleanupSocket= () => {
     socket.current?.removeAllListeners();
     socket.current?.disconnect();
   };
-
+  /**
+   * Creates a socket connection using the token and current user ID and
+   * stores it in the socket ref object.
+   */
   const buildSocketConnection = () => {
     if (token) {
       const handshake = {
@@ -80,24 +78,31 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
       setupSocketListeners();
     }
   };
+  /**
+   * Handles an expired token event by disconnecting from the socket and
+   * issuing a refresh token request via the rest API.
+   * @return {Promise<void>}
+   */
+  const handleExpiredToken = async () => {
+    try {
+      socket.current?.disconnect();
+      await refreshToken();
+    } catch (err) {
+      if (err instanceof AuthenticationError) {
+        navigate('/');
+        enqueueSnackbar('Please login again');
+      } else {
+        console.error(err);
+      }
+    }
+  };
 
-  /* Authenticate with socket backend whenever a token changes */
+  /** Listens for changes in the token variable and reissues a
+   * new socket connection */
   useEffect(() => {
-    // if (!token && socket) socket.current?.disconnect();
     if (!token && socket.current) {
-      (async () => {
-        try {
-          socket.current?.disconnect();
-          await refreshToken();
-        } catch (err) {
-          if (err instanceof AuthenticationError) {
-            navigate('/');
-            enqueueSnackbar('Please login again');
-          } else {
-            console.error(err);
-          }
-        }
-      } )();
+      handleExpiredToken();
+      return;
     }
     buildSocketConnection();
     return () => {
@@ -112,15 +117,8 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
   const setupSocketListeners= () => {
     /** Clear all socket listeners previously set */
     socket.current?.removeAllListeners();
-    // TODO allow media stream to be null
-    // if (!currentUser) return;
-    // // //* requests webcam access from end user
-    // const stream = await initializeMediaStream();
-    // if (!stream) throw new Error('Video Stream not received');
-    // changePeerStream(stream);
-
     /** Refresh token if it is expired */
-    socket.current?.on('ExpiredToken', () => refreshToken());
+    socket.current?.on('ExpiredToken', () => handleExpiredToken());
     /* Keeps the application state up to date with database*/
     socket.current?.on('MeetingDeleted', (meetingId: string)=> {
       removeMeetingFromList(meetingId);
@@ -174,13 +172,11 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     socket.current?.emit('JoinMeeting', meetingData);
   };
 
-
+  /**
+   * Informs the socket connection that it is leaving the meeting.
+   */
   const socketLeaveMeeting = () => {
-    enqueueSnackbar(`Leaving meeting`);
     socket?.current?.emit('LeaveRoom');
-    setMeeting(null);
-    navigate('');
-    clearExternalMedia();
   };
 
   /**

@@ -13,6 +13,11 @@ import {AuthenticationError} from '../util/errors/AuthenticationError';
 const AppStateContext = createContext<IAppStateContext>(undefined!);
 
 
+/**
+ * A context provider that handles the Application state.
+ * @param {React.Children} children
+ * @return {JSX.Element}
+ */
 const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const {socketJoinMeeting, socketLeaveMeeting} = useContext(SocketIOContext);
   const {
@@ -32,9 +37,13 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
   } = useContext(RestContext);
   const {enqueueSnackbar} = useSnackbar();
   const navigate = useNavigate();
-  //* the param extracted from the url indicating the current meeting
+  /** The param extracted from the url indicating the current meeting.*/
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
+  /**
+   * The cadence to be called on the application's first load.
+   * @return {Promise<void>}
+   */
   const firstLoadCadence = async () => {
     try {
       await checkIfLogged();
@@ -46,13 +55,9 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
       }
     }
   };
-  /** If a URL param for a meeting to join is provided,
-   * attempt to join the room */
   useEffect(() => {
     firstLoadCadence();
   }, []);
-
-
   /**
      * Joins a new meeting.
      * Tells backend server that it would like to join the specified meeting
@@ -74,7 +79,9 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
         {variant: 'info'},
     );
   };
-
+  /**
+   * Calls the sequence of events to leave a meeting.
+   */
   const leaveMeeting = () => {
     socketLeaveMeeting();
     enqueueSnackbar(`Leaving meeting`);
@@ -84,13 +91,6 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
     clearExternalMedia();
     dismantleCallService();
   };
-
-  /** If a URL param for a meeting to join is provided,
-   * attempt to join the room */
-  useEffect(() => {
-    firstLoadCadence();
-  }, []);
-
 
   return (
     <AppStateContext.Provider value={{joinMeeting, leaveMeeting}} >

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import EnableTutorial from '../Tutorial/EnableTutorial';
+import EnableTutorial from '../tutorial/EnableTutorial';
 import RenderWhenLogged from './RenderWhenLogged';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';

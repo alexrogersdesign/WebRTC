@@ -10,7 +10,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import {RestContext} from '../../context/RestContext';
-import TutorialPrompt from '../Tutorial/TutorialPrompt';
+import TutorialPrompt from '../tutorial/TutorialPrompt';
 import {ModalProps} from '../common/ModalWrapper';
 
 

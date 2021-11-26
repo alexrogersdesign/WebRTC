@@ -169,8 +169,8 @@ const TutorialPrompt = ({
         <AlertDialog
           open={alertOpen}
           setOpen={setAlertOpen}
-          title={'Disable Tutorial?'}
-          dialog={'Tutorial can be enabled again in menu'}
+          title={'Disable tutorial?'}
+          dialog={'tutorial can be enabled again in menu'}
           action={handleDisable}
           confirmLabel={'Disable'}
           cancelLabel={'Cancel'}

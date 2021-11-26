@@ -6,7 +6,7 @@ import LoginForm from '../forms/LoginForm';
 import JoinMeetingForm from '../forms/JoinMeetingForm';
 import NewUserForm from '../forms/NewUserForm';
 import NewMeetingForm from '../forms/NewMeetingForm';
-import RenderTutorial from '../Tutorial/RenderTutorial';
+import RenderTutorial from '../tutorial/RenderTutorial';
 import MenuDrawer from './MenuDrawer';
 
 const useStyles = makeStyles(() =>

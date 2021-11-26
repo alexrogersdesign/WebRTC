@@ -1,4 +1,4 @@
 
-jtypescript:S4782"NConsider removing 'undefined' type or '?' specifier, one of them is redundant.(Ğœ 
 etypescript:S1533"DReplace this "Boolean" wrapper object with primitive type "boolean".(µ¢åˆüÿÿÿÿ
+`typescript:S1854R"8Remove this useless assignment to variable "localMedia".(€µÍşÿÿÿÿ8«Í÷ñÔ/
 9typescript:S125t"Remove this commented out code.(…Ôîc

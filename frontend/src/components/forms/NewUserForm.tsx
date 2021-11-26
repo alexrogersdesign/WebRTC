@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import {RestContext} from '../../context/RestContext';
 import UploadImage from '../common/UploadImage';
 import {Container, DialogContent, DialogTitle} from '@material-ui/core';
-import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
+import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {ModalProps} from '../common/ModalWrapper';
 
 

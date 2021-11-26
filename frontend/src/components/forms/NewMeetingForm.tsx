@@ -17,7 +17,7 @@ import {
   dateRoundedToQuarterHour,
   formatDateForPicker,
 } from '../../util/timeHelper';
-import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';
+import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {ModalProps} from '../common/ModalWrapper';
 
 const useStyles = makeStyles((theme: Theme) =>

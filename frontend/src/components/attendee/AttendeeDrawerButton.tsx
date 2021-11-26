@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
-import TutorialWrapper from '../Tutorial/TutorialWrapper';
+import TutorialWrapper from '../tutorial/TutorialWrapper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import React from 'react';

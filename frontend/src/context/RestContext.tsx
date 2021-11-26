@@ -7,17 +7,17 @@ import React, {
 import {OptionsObject, useSnackbar} from 'notistack';
 import ObjectID from 'bson-objectid';
 
-import {ChildrenProps} from '../../shared/types';
-import User from '../../shared/classes/User.js';
+import {ChildrenProps} from '../shared/types';
+import User from '../shared/classes/User.js';
 import {
   IReceivedMeeting,
   parseMeeting,
   parseUser,
-} from '../../util/classParser';
-import Meeting from '../../shared/classes/Meeting';
-import {RefreshResponse, useRestApi} from './useRestApi';
+} from '../util/classParser';
+import Meeting from '../shared/classes/Meeting';
+import {RefreshResponse, useRestApi} from '../hooks/useRestApi';
 import useLocalStorageState from 'use-local-storage-state';
-import {AuthenticationError} from '../../util/errors/AuthenticationError';
+import {AuthenticationError} from '../util/errors/AuthenticationError';
 
 /** Context for making HTTP Calls */
 const RestContext = createContext<IRestContext>(undefined!);
@@ -28,13 +28,12 @@ const RestContext = createContext<IRestContext>(undefined!);
  * @return {JSX.Element}
  */
 const RestContextProvider = ({children}: ChildrenProps) => {
-  // TODO check for cookie on refresh (persist login)
   const {enqueueSnackbar} = useSnackbar();
   /** An array of meetings that can be joined. */
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   /** Local storage boolean that indicates whether the user has chosen
    * to log out. */
-  const [loggedOut, setLoggedOut] = useLocalStorageState('logout', false);
+  const [isLoggedOut, setIsLoggedOut] = useLocalStorageState('logout', false);
   /** Boolean state that indicates if the meeting get request is loading */
   const [meetingsLoading, setMeetingsLoading] = useState(false);
   /** The current meeting that has been joined */
@@ -60,7 +59,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
     setToken,
     currentUser,
     setCurrentUser,
-    refreshToken,
+    loginWithRefreshToken,
   } = useRestApi(null, handleError);
   /**
    * Check if a local storage event has been registered indicating that the user
@@ -70,11 +69,11 @@ const RestContextProvider = ({children}: ChildrenProps) => {
    */
   const checkIfLogged = async () => {
     try {
-      if (loggedOut === true) return;
-      await refreshToken();
+      if (isLoggedOut === true) return;
+      await loginWithRefreshToken();
     } catch (error) {
       if (error instanceof AuthenticationError) {
-        currentUser;
+        setCurrentUser(null);
         console.log('Not logged in');
       } else throw error;
     }
@@ -104,7 +103,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
           `Welcome ${parsedUser.fullName}`,
           snackbarSuccessOptions,
       );
-      setLoggedOut(false);
+      setIsLoggedOut(false);
       return parsedUser;
     } catch (error) {
       handleError(error, failedLoginMessage);
@@ -173,13 +172,13 @@ const RestContextProvider = ({children}: ChildrenProps) => {
   };
   /**
    * Logs the user out
-   * Removes the stored token from react state and from local storage.
+   * Removes the stored token from react state
    * Sets the current user to null.
    */
   const logout = async () => {
     setToken(null);
     setCurrentUser(null);
-    setLoggedOut(true);
+    setIsLoggedOut(true);
     try {
       await api.get('/login/logout');
     } catch (error) {
@@ -192,7 +191,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
    */
   useEffect(() => {
     if (!token) return;
-    void getMeetings();
+    getMeetings();
   }, [token]);
 
   /**
@@ -248,8 +247,8 @@ const RestContextProvider = ({children}: ChildrenProps) => {
   const addMeetingToList = (addedMeeting:Meeting, notify =true) => {
     setMeetingList((oldState) => {
       /* Guard against duplicates*/
-      const meetingFound = oldState.find((meeting) =>
-        addedMeeting.id.toHexString() === meeting.id.toHexString());
+      const meetingFound = oldState.find((item) =>
+        addedMeeting.id.toHexString() === item.id.toHexString());
       if (meetingFound) {
         return oldState;
       }
@@ -260,15 +259,16 @@ const RestContextProvider = ({children}: ChildrenProps) => {
     });
   };
   /**
-   * Removes the provided meeting from meeting list and updates state
+   * Removes the provided meeting from meeting list and updates state.
+   * Does not delete the meeting from the database.
    * @param {String} id The id of the meeting to remove
-   * @param {boolean } notify Whether or not a notification should appear
-   * indicating the change. Defaults to true.
+   * @param {boolean } notify An optional parameter indicating whether
+   * a notification should be shown confirming the removal. Defaults to true.
    */
   const removeMeetingFromList = (id:string, notify =true) => {
     setMeetingList((oldState) => {
-      const meetingIndex = oldState.findIndex((meeting) =>
-        id === meeting.id.toHexString());
+      const meetingIndex = oldState.findIndex((item) =>
+        id === item.id.toHexString());
       if (meetingIndex > -1) {
         notify && enqueueSnackbar(
             `Meeting titled \"${oldState[meetingIndex].title}\" 
@@ -286,8 +286,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
       value={{
         login,
         logout,
-        loggedOut,
-        refreshToken,
+        loginWithRefreshToken,
         checkIfLogged,
         currentUser,
         createUser,
@@ -310,8 +309,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
 export interface IRestContext {
   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
   logout: () => Promise<void>,
-  loggedOut: boolean,
-  refreshToken: () => Promise<RefreshResponse>,
+  loginWithRefreshToken: () => Promise<RefreshResponse>,
   createUser: (newUser: INewUser) => Promise<User| undefined>,
   createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
   meetingList: Meeting[]

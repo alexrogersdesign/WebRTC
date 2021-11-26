@@ -6,12 +6,7 @@ import {ChildrenProps} from '../shared/types';
 import {FontLoader} from '../components/common/FontLoader';
 import useLocalStorageState from 'use-local-storage-state';
 
-interface IThemeContext {
-  setTheme: (option:ThemeOption) => void,
-  theme: ThemeOption
-}
-
-/** Context that provides the ability to change themes */
+/** Context that handles changing themes */
 export const CustomThemeContext = createContext<IThemeContext>(undefined!);
 
 /**
@@ -53,6 +48,11 @@ const CustomThemeProvider = ({children}: ChildrenProps) :JSX.Element=> {
     </CustomThemeContext.Provider>
   );
 };
+
+export interface IThemeContext {
+  setTheme: (option:ThemeOption) => void,
+  theme: ThemeOption
+}
 
 CustomThemeContext.displayName = 'Custom Theme Context';
 

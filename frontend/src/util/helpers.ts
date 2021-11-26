@@ -37,3 +37,4 @@ export function getMessageDirection(message: Message, user: User) {
       'outgoing':
       'incoming';
 }
+

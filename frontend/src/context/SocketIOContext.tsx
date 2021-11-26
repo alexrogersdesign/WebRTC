@@ -21,12 +21,11 @@ import {RestContext} from './rest/RestContext';
 import {PeerConnectionContext} from './PeerConnectionContext';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
 
-
-//* Context item to be passed to app
+/** The context that handles all the Socket connection. */
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
 
 /**
- * A context provider that handles all of the Socket connection.
+ * A context provider for SocketIOContext.
  * @param {React.Children} children
  * @return {JSX.Element}
  */

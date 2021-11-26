@@ -6,8 +6,14 @@ import useLocalStorageState from 'use-local-storage-state';
 
 import {ChildrenProps} from '../shared/types';
 
+/** The context for app options */
 const OptionsContext = createContext<IOptionsContext>(undefined!);
 
+/**
+ * A context provider for OptionsContext.
+ * @param {React.Children} children
+ * @return {JSX.Element}
+ */
 const OptionsContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const [tutorialEnabled, setTutorialEnabled] = useLocalStorageState(
       'tutorial',

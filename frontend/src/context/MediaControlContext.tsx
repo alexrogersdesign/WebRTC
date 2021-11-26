@@ -12,14 +12,13 @@ import User from '../shared/classes/User';
 import {RestContext} from './rest/RestContext';
 import videoASrc from '../util/files/video/VideoAConverted.mp4';
 import videoBSrc from '../util/files/video/VideoBConverted.mp4';
-
 import iconA from '../util/files/img/userA.jpeg';
 import iconB from '../util/files/img/userB.jpeg';
 
-
+/** The Context that handles media and media controls. */
 const MediaControlContext = createContext<IMediaControlContext>(undefined!);
 /**
- * A context provider that handles media and media controls.
+ * A context provider for MediaControlContext
  * @param {React.Children} children
  * @return {JSX.Element}
  */
@@ -188,7 +187,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
     // TODO check if duplicate users/ or the current user is added to the list.
     if (!currentUser) return;
     /** Prevent local user from being added to the list. */
-    if (user.id.toHexString() === currentUser.id.toHexString()) return;
+    if (user.id.toHexString() === currentUser?.id.toHexString()) return;
     const newMediaItem = {
       user, stream, data: data?? undefined,
     };

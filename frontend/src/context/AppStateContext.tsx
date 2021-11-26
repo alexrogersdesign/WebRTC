@@ -12,7 +12,6 @@ import {AuthenticationError} from '../util/errors/AuthenticationError';
 
 const AppStateContext = createContext<IAppStateContext>(undefined!);
 
-
 /**
  * A context provider that handles the Application state.
  * @param {React.Children} children
@@ -30,7 +29,6 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
     stopWebcamStream,
   } = useContext(MediaControlContext);
   const {
-    currentUser,
     setMeeting,
     findMeeting,
     checkIfLogged,
@@ -65,7 +63,6 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
      * @param {string} newMeetingID the meeting to join
      */
   const joinMeeting = async (newMeetingID:string) => {
-    if (!currentUser) return navigate('');
     const foundMeeting = await findMeeting(newMeetingID);
     if (!foundMeeting) throw new Error('Unable to find meeting');
     socketJoinMeeting(foundMeeting);
@@ -91,6 +88,7 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
     clearExternalMedia();
     dismantleCallService();
   };
+
 
   return (
     <AppStateContext.Provider value={{joinMeeting, leaveMeeting}} >

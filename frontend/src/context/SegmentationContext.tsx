@@ -10,11 +10,11 @@ import * as bodyPix from '@tensorflow-models/body-pix';
 import {ISegmentationContext, ChildrenProps} from '../shared/types';
 import {MediaControlContext} from './MediaControlContext';
 import {SocketIOContext} from './SocketIOContext';
-
+/** The context that handles the background segmentation feature */
 const SegmentationContext = createContext<ISegmentationContext>(undefined!);
 
 /**
- * A context provider that handles the background segmentation feature
+ * A context provider for the segmentation Context
  * @param {React.Children} children
  * @return {JSX.Element}
  */

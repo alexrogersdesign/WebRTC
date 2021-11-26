@@ -10,7 +10,7 @@ const refreshTokenLife = typeof envRefreshTokenLife === 'string'? parseInt(envRe
 
 import jwtDecode from "jwt-decode";
 import {UserModel} from "../database/models.js";
-import {authErrorHandler, authNonRestricted} from "../util/middleware/authMiddleware.js";
+import {authErrorHandler, authNonRestricted, authRefresh} from '../util/middleware/authMiddleware.js';
 type TokenItem = {
     status: string,
     token: string,
@@ -72,7 +72,7 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
     }
 })
 
-loginRouter.post('/refresh', async (req,res) => {
+loginRouter.post('/refresh', authRefresh, async (req,res) => {
     //TODO! verify token
     const {refreshToken} = req.cookies
     //* Decode token to retrieve email information.

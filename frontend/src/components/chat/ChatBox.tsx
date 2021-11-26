@@ -79,8 +79,8 @@ const ChatBox = ({innerRef, isOpen}: Props) => {
   const {messageList, sendMessage} = useContext(ChatContext);
   const {currentUser, meeting} = useContext(RestContext);
   const handleSend = (contents:string) => {
-    if (!currentUser) throw new Error('No user found');
     if (!meeting) throw new Error('Message sent outside of meeting');
+    if (!currentUser) throw new Error('Attempted to send message when not logged in');
     const message = new Message(meeting.id, currentUser, contents);
     sendMessage(message);
   };

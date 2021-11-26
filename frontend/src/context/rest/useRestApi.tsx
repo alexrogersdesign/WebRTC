@@ -4,12 +4,9 @@ import axios, {AxiosError} from 'axios';
 
 import User from '../../shared/classes/User';
 import {
-  IReceivedMeeting,
   IReceivedUser,
-  parseMeeting,
   parseUser} from '../../util/classParser';
 import {ILoginCredentials} from './RestContext';
-import Meeting from '../../shared/classes/Meeting';
 import {AuthenticationError} from 'src/util/errors/AuthenticationError';
 
 // const api = axios.create({
@@ -30,8 +27,8 @@ const useRestApi = (
     errorHandler: (error:any, message?:string) => void,
 ) => {
   // TODO remove unneeded header setting
-  const token = useRef<string| null>(initialToken);
-  const currentUser = useRef<User| null>(null);
+  const [token, setToken] = useState<string| null>(null);
+  const [currentUser, setCurrentUser] = useState<User| null>(null);
 
   //* An axios instance to make the http calls to the backend server
   const instance = useRef(axios.create({
@@ -78,8 +75,10 @@ const useRestApi = (
     }
     if (!receivedUser) throw new Error('No user data received on refresh');
     const user = parseUser(receivedUser);
-    token.current = newToken;
-    currentUser.current = user;
+    setToken(newToken);
+    setCurrentUser(user);
+    console.log('token', token);
+    console.log('user', user);
     return {newToken, user};
   };
 
@@ -108,7 +107,7 @@ const useRestApi = (
         if (err.response.status === 401) {
           if (originalConfig._retry) {
             errorHandler(err, 'Please Login Again');
-            token.current = '';
+            setToken(null);
           // throw new Error('Token Refresh Failed');
           }
           originalConfig._retry = true;
@@ -134,11 +133,11 @@ const useRestApi = (
   };
   // //* Update access header when token is updated
   useEffect(() => {
-    api.defaults.headers.common['Authorization'] = token.current?
-        `Bearer ${token.current}`:
+    api.defaults.headers.common['Authorization'] = token?
+        `Bearer ${token}`:
         '';
   // api.defaults.headers.common['x-access-token'] = token?? '';
-  }, [token.current]);
+  }, [token]);
 
 
   /**
@@ -163,7 +162,9 @@ const useRestApi = (
 
   return {
     token,
+    setToken,
     currentUser,
+    setCurrentUser,
     api,
     refreshToken,
     // findMeetingRequest,

@@ -68,7 +68,7 @@ const Room = (props: Props) => {
         <ChatDrawer meeting={meeting}/>
       </div>
       <Container className={classes.container}>
-        {!meeting && currentUser && <MeetingList/>}
+        {(!meeting && currentUser) && <MeetingList/>}
         <div className={classes.grid}>
           <VideoArray />
           <div className={classes.local}>

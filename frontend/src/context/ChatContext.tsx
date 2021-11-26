@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, {createContext, useEffect, useState, useContext} from 'react';
 import {useSnackbar} from 'notistack';
 
@@ -8,12 +7,15 @@ import {IReceivedMessage, parseMessage} from '../util/classParser';
 import {SocketIOContext} from './SocketIOContext';
 import {RestContext} from './rest/RestContext';
 
+/** The context that handles all of the chat implementation. */
 const ChatContext = createContext<IChatContext>(undefined!);
 
-
-interface Props extends ChildrenProps {}
-
-const ChatContextProvider : React.FC<Props> = ({children}) => {
+/**
+ * A context provider for ChatContext.
+ * @param {React.Children} children
+ * @return {JSX.Element}
+ */
+const ChatContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const {socket} = useContext(SocketIOContext);
   const {currentUser, meeting} = useContext(RestContext);
   const {enqueueSnackbar} = useSnackbar();
@@ -36,8 +38,9 @@ const ChatContextProvider : React.FC<Props> = ({children}) => {
     socket.current
         ?.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
           const message = parseMessage(receivedMessage);
+          const userId = currentUser?.id.toString();
           setMessageList((prevState) => [...prevState, message]);
-          if (message.user.id.toString() !== currentUser?.id.toString()) {
+          if (message.user.id.toString() !== userId) {
             enqueueSnackbar(
                 `New message from ${message.user}`,
                 {key: 'new-message'},

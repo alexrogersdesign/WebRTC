@@ -20,11 +20,11 @@ import User from '../shared/classes/User';
 //   debug: 2,
 // };
 
-
+/** The Context that handles all of the Peer to Peer communication. */
 const PeerConnectionContext = createContext<IPeerConnectionContext>(undefined!);
 
 /**
- * A context provider that handles all of the Peer to Peer communication.
+ * A context provider for PeerConnectionContext.
  * @param {React.Children} children
  * @return {JSX.Element}
  */
@@ -206,7 +206,9 @@ const PeerConnectionContextProvider : React.FC<ChildrenProps> = ({
     if (!currentUser) {
       throw new Error('Attempted to place call when not logged in');
     }
-    const callOption: PeerCallMetadata = {metadata: {user: currentUser}};
+    const callOption: PeerCallMetadata = {
+      metadata: {user: currentUser},
+    };
     if (!peerConnection.current) throw new Error('Missing peer connection');
     if (!outgoingMedia.current) throw new Error('Missing webcam stream');
     /** Place a call to the external user */

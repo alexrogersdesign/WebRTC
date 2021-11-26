@@ -43,6 +43,8 @@ const DemoPrompt = () => {
   useEffect(() => {
     if (meeting) {
       setOpen(true);
+    } else {
+      setOpen(false);
     }
   }, [meeting]);
 

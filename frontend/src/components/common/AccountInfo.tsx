@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import Typography from '@material-ui/core/Typography';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 

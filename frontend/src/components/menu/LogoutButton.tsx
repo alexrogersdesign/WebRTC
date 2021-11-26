@@ -3,7 +3,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListItemText from '@material-ui/core/ListItemText';
 import React, {useContext} from 'react';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 
 const useStyles = makeStyles(() =>

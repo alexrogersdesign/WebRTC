@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import UploadImage from '../common/UploadImage';
 import {Container, DialogContent, DialogTitle} from '@material-ui/core';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/Constants';

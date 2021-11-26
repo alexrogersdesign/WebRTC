@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, {
-  createContext, MutableRefObject,
+  createContext,
   useContext,
   useEffect,
-  useRef,
+  useRef, useState,
 } from 'react';
 import {useNavigate} from 'react-router-dom';
 import {io, Socket} from 'socket.io-client';
@@ -17,7 +17,7 @@ import {
   parseMeeting,
   parseUser} from '../util/classParser';
 import {MediaControlContext} from './MediaControlContext';
-import {RestContext} from './rest/RestContext';
+import {RestContext} from './RestContext';
 import {PeerConnectionContext} from './PeerConnectionContext';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
 
@@ -30,19 +30,17 @@ const SocketIOContext = createContext<ISocketIOContext>(undefined!);
  * @return {JSX.Element}
  */
 const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
-  // TODO remove state that can be inferred
   const {removeMedia} = useContext(MediaControlContext);
   const {
     currentUser,
     token,
-    refreshToken,
+    loginWithRefreshToken,
     addMeetingToList,
     removeMeetingFromList,
     meeting,
   } = useContext(RestContext);
   const {
     peers,
-    changePeerStream,
     removePeer,
     placeCall,
   } = useContext(PeerConnectionContext);
@@ -50,7 +48,7 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
   const navigate = useNavigate();
   const {enqueueSnackbar} = useSnackbar();
   /** Represents the socket connection */
-  const socket = useRef<Socket| null>(null);
+  const [socket, setSocket] = useState<Socket|null>(null);
   /** The param extracted from the url indicating the current meeting */
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
@@ -59,13 +57,15 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
   /** SocketIO server instance */
   const connectionUrl = `${socketLocation}?room=${roomParam}`;
 
-  const cleanupSocket= () => {
-    socket.current?.removeAllListeners();
-    socket.current?.disconnect();
+  const cleanupSocket= (newSocket?: Socket) => {
+    const socketToAlter = newSocket?? socket;
+    socketToAlter?.removeAllListeners();
+    socketToAlter?.disconnect();
   };
   /**
    * Creates a socket connection using the token and current user ID and
    * stores it in the socket ref object.
+   * @return {Socket} The new socket connection.
    */
   const buildSocketConnection = () => {
     if (token) {
@@ -73,8 +73,10 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
         auth: {token},
         query: {'userID': currentUser?.id.toString()?? ''},
       };
-      socket.current = io(connectionUrl, token? handshake : undefined);
-      setupSocketListeners();
+      const newSocket = io(connectionUrl, token? handshake : undefined);
+      setSocket(newSocket);
+      setupSocketListeners(newSocket);
+      return newSocket;
     }
   };
   /**
@@ -84,8 +86,8 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
    */
   const handleExpiredToken = async () => {
     try {
-      socket.current?.disconnect();
-      await refreshToken();
+      socket?.disconnect();
+      await loginWithRefreshToken();
     } catch (err) {
       if (err instanceof AuthenticationError) {
         navigate('/');
@@ -99,30 +101,38 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
   /** Listens for changes in the token variable and reissues a
    * new socket connection */
   useEffect(() => {
-    if (!token && socket.current) {
+    if (!token && socket) {
       handleExpiredToken();
       return;
     }
-    buildSocketConnection();
+    const newSocket = buildSocketConnection();
     return () => {
-      cleanupSocket();
+      cleanupSocket(newSocket);
     };
   }, [token]);
 
 
   /**
    * Adds socket event listeners to the socket connection.
+   * @param {Socket} newSocket An optional socket connection to
+   * add the even listeners to. Used when the socket event listeners
+   * need to be added before waiting for the next render cycle and the
+   * useState hook to finish updating.
    */
-  const setupSocketListeners= () => {
+  const setupSocketListeners= (newSocket?: Socket) => {
+    socket?.removeAllListeners();
+    const socketToAlter = newSocket?? socket;
     /** Clear all socket listeners previously set */
-    socket.current?.removeAllListeners();
+    socketToAlter?.removeAllListeners();
     /** Refresh token if it is expired */
-    socket.current?.on('ExpiredToken', () => handleExpiredToken());
+    socketToAlter?.on('ExpiredToken', () => {
+      return handleExpiredToken();
+    });
     /* Keeps the application state up to date with database*/
-    socket.current?.on('MeetingDeleted', (meetingId: string)=> {
+    socketToAlter?.on('MeetingDeleted', (meetingId: string)=> {
       removeMeetingFromList(meetingId);
     });
-    socket.current?.on('MeetingAdded', (receivedMeeting: IReceivedMeeting)=> {
+    socketToAlter?.on('MeetingAdded', (receivedMeeting: IReceivedMeeting)=> {
       addMeetingToList(parseMeeting(receivedMeeting));
     });
 
@@ -130,7 +140,7 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
      * Listens for new user connected event then places a call to the user
      * Cleans up connection on error or if far side closes connection.
      */
-    socket.current?.on('NewUserConnected', (receivedUser: IReceivedUser) => {
+    socketToAlter?.on('NewUserConnected', (receivedUser: IReceivedUser) => {
       console.log('io - NewUserConnected');
       const user = parseUser(receivedUser);
       /** Prevent local user from being added. */
@@ -140,10 +150,10 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     });
 
     /**
-     * Disconnects from peer WebRTC stream,
+     * When a user disconnects closes the peer WebRTC stream,
      * removes information from peer list and removes media stream.
      */
-    socket.current?.on('UserDisconnected', (receivedUser: IReceivedUser) => {
+    socketToAlter?.on('UserDisconnected', (receivedUser: IReceivedUser) => {
       const user = parseUser(receivedUser);
       console.log('io - user disconnected', user.id );
       if (user.id.toString() in peers.current) {
@@ -153,8 +163,14 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
       removePeer(user.id.toString());
       removeMedia(user.id.toString());
     });
-    socket.current?.on('error', (error) => {
+    socketToAlter?.on('error', (error) => {
       console.log('Socket Responded With Error: ', error);
+    });
+    /** Reconnect if the server ended the connection */
+    socketToAlter?.on('disconnect', (reason) => {
+      if (reason === 'io server disconnect') {
+        socketToAlter?.connect();
+      }
     });
   };
 
@@ -168,32 +184,22 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
       userID: currentUser?.id.toString(),
       roomID: newMeeting.id.toString(),
     };
-    socket.current?.emit('JoinMeeting', meetingData);
+    socket?.emit('JoinMeeting', meetingData);
   };
 
   /**
    * Informs the socket connection that it is leaving the meeting.
    */
   const socketLeaveMeeting = () => {
-    socket?.current?.emit('LeaveRoom');
+    socket?.emit('LeaveRoom');
   };
 
-  /**
-   * Cleans up media streams and connections
-   */
-  const endConnection = () => {
-    console.log('disconnecting socket');
-    socket?.current?.disconnect();
-  };
   return (
 
     <SocketIOContext.Provider
       value={{
         socket,
-        changePeerStream,
-        setupSocketListeners,
         meeting,
-        endConnection,
         socketJoinMeeting,
         socketLeaveMeeting,
       }}
@@ -204,13 +210,10 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
 };
 
 export interface ISocketIOContext {
-  socket:MutableRefObject<Socket | null>,
-  setupSocketListeners: () => void,
+  socket: Socket | null,
   meeting: Meeting | null,
-  endConnection: () => void,
   socketJoinMeeting: (newMeeting: Meeting) => void,
   socketLeaveMeeting: () => void,
-  changePeerStream: (stream: MediaStream) => void,
 }
 SocketIOContext.displayName = 'SocketIO Context';
 

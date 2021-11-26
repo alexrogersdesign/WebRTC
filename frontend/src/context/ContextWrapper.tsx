@@ -1,7 +1,7 @@
 import React from 'react';
 import {SegmentationContextProvider} from './SegmentationContext';
 import {ChatContextProvider} from './ChatContext';
-import {RestContextProvider} from './rest/RestContext';
+import {RestContextProvider} from './RestContext';
 import {ChildrenProps} from '../shared/types';
 import {SocketIOContextProvider} from './SocketIOContext';
 import NotificationProvider from './NotificationProvider';
@@ -12,9 +12,7 @@ import {OptionsContextProvider} from './OptionsContext';
 import {PeerConnectionContextProvider} from './PeerConnectionContext';
 import {AppStateContextProvider} from './AppStateContext';
 
-interface Props extends ChildrenProps {};
-
-const AppContext = ({children}: Props) => {
+const ContextWrapper = ({children}:ChildrenProps) => {
   return (
     <>
       <OptionsContextProvider>
@@ -43,4 +41,4 @@ const AppContext = ({children}: Props) => {
   );
 };
 
-export default AppContext;
+export default ContextWrapper;

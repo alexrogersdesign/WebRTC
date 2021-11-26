@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 
 
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import LogoutButton from './LogoutButton';
 
 

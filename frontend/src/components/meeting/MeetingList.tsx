@@ -6,7 +6,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {Paper, Typography} from '@material-ui/core';
 
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import MeetingListItem from './MeetingListItem';
 
 interface Props {

@@ -51,7 +51,5 @@ _
 /frontend/src/components/meeting/MeetingCard.tsx,e/e/ee009e81f82a89cf6c7469f8a5bffed86573fefa
 d
 4frontend/src/components/meeting/MeetingCardModal.tsx,a/9/a934b0d01e39127505e9c0915c31dd00c74183ec
-H
-backend/src/websocket.ts,d/5/d5e3a1a4e9b84ce04d0310721c543d3f83eb6534
 ]
 -frontend/src/components/video/VideoPlayer.tsx,8/0/80d17832745e3271b5c09ec4623c9c09f9f1390f

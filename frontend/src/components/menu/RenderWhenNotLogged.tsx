@@ -4,7 +4,7 @@ import FiberNewIcon from '@material-ui/icons/FiberNew';
 import ListItemText from '@material-ui/core/ListItemText';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import React, {useContext} from 'react';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 
 
 interface Props {

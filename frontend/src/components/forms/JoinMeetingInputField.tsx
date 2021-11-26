@@ -10,7 +10,7 @@ import ToolTip from '@material-ui/core/Tooltip';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import {AppStateContext} from '../../context/AppStateContext';
 
 interface Props {

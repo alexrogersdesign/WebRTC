@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, {
   createContext,
   useContext,
@@ -9,7 +8,7 @@ import {CallOption} from 'peerjs';
 import {ChildrenProps, IExternalMedia} from '../shared/types';
 
 import User from '../shared/classes/User';
-import {RestContext} from './rest/RestContext';
+import {RestContext} from './RestContext';
 import videoASrc from '../util/files/video/VideoAConverted.mp4';
 import videoBSrc from '../util/files/video/VideoBConverted.mp4';
 import iconA from '../util/files/img/userA.jpeg';
@@ -66,7 +65,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    * is called to handle the change.
    */
   useEffect( () => {
-    meeting && void initializeMediaStream();
+    meeting && initializeMediaStream();
   }, [screenSharing]);
 
 
@@ -141,7 +140,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
     const createUsers = async () => {
       dummyStreams.current = await createDummyStreams();
     };
-    void createUsers();
+    createUsers();
     return () => removeDummyStreams(dummyStreams.current);
   }, [showDemo]);
 
@@ -184,7 +183,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       stream:MediaStream,
       data?: CallOption,
   ) => {
-    // TODO check if duplicate users/ or the current user is added to the list.
     if (!currentUser) return;
     /** Prevent local user from being added to the list. */
     if (user.id.toHexString() === currentUser?.id.toHexString()) return;

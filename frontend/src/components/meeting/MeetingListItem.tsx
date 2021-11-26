@@ -9,7 +9,7 @@ import Meeting from '../../shared/classes/Meeting';
 import AlertDialog from '../common/AlertDialog';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import MeetingCardModal from './MeetingCardModal';
 import {toLocalStringMonth} from '../../util/timeHelper';
 import Avatar from '@material-ui/core/Avatar';

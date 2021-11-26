@@ -3,11 +3,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 const secretKey = process.env.SECRET_KEY
 const refreshSecretKey = process.env.SECRET_KEY_REFRESH
-const envTokenLife= process.env.TOKEN_LIFE || '900'
-const envRefreshTokenLife= process.env.REFRESH_TOKEN_LIFE || '86400'
+/** 12 hours */
+const envTokenLife = process.env.TOKEN_LIFE || 43_200_000
+/** 30 days */
+const envRefreshTokenLife = process.env.REFRESH_TOKEN_LIFE || 1_728_000_000
 const tokenLife = typeof envTokenLife === 'string'? parseInt(envTokenLife): envRefreshTokenLife
 const refreshTokenLife = typeof envRefreshTokenLife === 'string'? parseInt(envRefreshTokenLife): envRefreshTokenLife
-
 import jwtDecode from "jwt-decode";
 import {UserModel} from "../database/models.js";
 import {authErrorHandler, authNonRestricted, authRefresh} from '../util/middleware/authMiddleware.js';
@@ -26,7 +27,7 @@ export type DecodedToken = {
 const tokenList: TokenList = {}
 const refreshTokenOptions = {
     httpOnly:true,
-    expires:new Date(Date.now() + refreshTokenLife * 1000)
+    expires:new Date(Date.now() + refreshTokenLife)
 }
 
 const loginRouter = express.Router();

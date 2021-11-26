@@ -9,7 +9,7 @@ import * as bodyPix from '@tensorflow-models/body-pix';
 
 import {ISegmentationContext, ChildrenProps} from '../shared/types';
 import {MediaControlContext} from './MediaControlContext';
-import {SocketIOContext} from './SocketIOContext';
+import {PeerConnectionContext} from './PeerConnectionContext';
 /** The context that handles the background segmentation feature */
 const SegmentationContext = createContext<ISegmentationContext>(undefined!);
 
@@ -27,7 +27,7 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     videoDisabled,
     micMuted,
   } = useContext(MediaControlContext);
-  const {changePeerStream} = useContext(SocketIOContext);
+  const {changePeerStream} = useContext(PeerConnectionContext);
   /** Used to indicate when segmenting animation should stop */
   const segmentingStopped = useRef(false);
   /** A boolean state indicating if segmentation is ready to display. */

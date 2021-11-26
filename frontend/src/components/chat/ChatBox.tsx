@@ -13,7 +13,7 @@ import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
 import {ChatContext} from '../../context/ChatContext';
 import {Paper} from '@material-ui/core';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import Message from '../../shared/classes/Message';
 import UserAvatar from '../common/UserAvatar';
 import Typography from '@material-ui/core/Typography';

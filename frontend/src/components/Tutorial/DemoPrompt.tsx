@@ -6,7 +6,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import {MediaControlContext} from '../../context/MediaControlContext';
 import Button from '@material-ui/core/Button';
 import {SocketIOContext} from '../../context/SocketIOContext';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 
 
 const useStyles = makeStyles((theme: Theme) =>

@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 import TutorialPrompt from '../Tutorial/TutorialPrompt';
 import {ModalProps} from '../common/ModalWrapper';
 

@@ -17,7 +17,7 @@ import List from '@material-ui/core/List';
 import TutorialWrapper from '../Tutorial/TutorialWrapper';
 import AttendeeListItem from './AttendeeListItem';
 import {MediaControlContext} from '../../context/MediaControlContext';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 
 interface StyleProps {drawerWidth: number}
 

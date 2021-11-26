@@ -1,6 +1,6 @@
 import React, {useContext, useMemo} from 'react';
 import TutorialPrompt from './TutorialPrompt';
-import {RestContext} from '../../context/rest/RestContext';
+import {RestContext} from '../../context/RestContext';
 
 interface Props {
   drawerOpen: boolean

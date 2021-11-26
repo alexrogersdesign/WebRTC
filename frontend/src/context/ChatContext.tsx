@@ -5,7 +5,7 @@ import {ChildrenProps} from '../shared/types';
 import Message from '../shared/classes/Message';
 import {IReceivedMessage, parseMessage} from '../util/classParser';
 import {SocketIOContext} from './SocketIOContext';
-import {RestContext} from './rest/RestContext';
+import {RestContext} from './RestContext';
 
 /** The context that handles all of the chat implementation. */
 const ChatContext = createContext<IChatContext>(undefined!);
@@ -19,11 +19,11 @@ const ChatContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const {socket} = useContext(SocketIOContext);
   const {currentUser, meeting} = useContext(RestContext);
   const {enqueueSnackbar} = useSnackbar();
-  //* The array of messages in the chat
+  /** The array of messages in the chat */
   const [messageList, setMessageList] = useState<Message[]>([]);
 
   useEffect(() => {
-    setMessageListener();
+    socket && setMessageListener();
   }, [socket]);
 
   /* Reset message list when a new meeting is joined*/
@@ -32,10 +32,12 @@ const ChatContextProvider : React.FC<ChildrenProps> = ({children}) => {
   }, [meeting]);
 
   /**
-     * Listens for new user message event then...
-     */
+  * Adds event listeners to the socket connection to handle
+  * incoming messages.
+  */
   const setMessageListener = () => {
-    socket.current
+    /** An event that indicates a new message has been received. */
+    socket
         ?.on('ReceivedMessage', (receivedMessage:IReceivedMessage) => {
           const message = parseMessage(receivedMessage);
           const userId = currentUser?.id.toString();
@@ -47,16 +49,22 @@ const ChatContextProvider : React.FC<ChildrenProps> = ({children}) => {
             );
           }
         });
-    socket.current
+    /** An event that indicates existing messages have been sent.
+         * This occurs when a user joins an existing meeting where
+         * there are existing messages. The message list is replaced
+         * with the received messages.*/
+    socket
         ?.on('ExistingMessages', (receivedMessages:IReceivedMessage[]) => {
-          // TODO allow for previous state to be persisted
-          //  when messages are received in bulk
           const messages = receivedMessages.map((item) => parseMessage(item));
           setMessageList(messages);
         });
   };
+    /**
+     * Sends a message to the meeting chat.
+     * @param {Message} message The Message object to send.
+     */
   const sendMessage = (message:Message) =>{
-    socket.current?.emit('SendMessage', message);
+    socket?.emit('SendMessage', message);
   };
   return (
     <ChatContext.Provider value={{messageList, sendMessage}} >

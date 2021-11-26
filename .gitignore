@@ -6,3 +6,5 @@ node_modules
 */src/**/*.js.map
 */src/**/*.*.js
 */src/**/*.*.js.map
+/.idea/sonarlint/issuestore/
+.env

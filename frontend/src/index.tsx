@@ -5,7 +5,7 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import {Integrations} from '@sentry/tracing';
 import App from './App';
-import AppContext from './context/AppContext';
+import ContextWrapper from './context/ContextWrapper';
 const dsn = process.env.REACT_APP_SENTRY_DSN;
 Sentry.init({
   dsn: dsn,
@@ -21,9 +21,9 @@ Sentry.init({
 ReactDOM.render(
     <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
       <Router>
-        <AppContext>
+        <ContextWrapper>
           <App />
-        </AppContext>
+        </ContextWrapper>
       </Router>
     </Sentry.ErrorBoundary>,
     document.getElementById('root'),

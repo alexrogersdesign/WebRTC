@@ -11,7 +11,7 @@ import {ControlBar} from './ControlBar';
 import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
-import {RestContext} from '../context/rest/RestContext';
+import {RestContext} from '../context/RestContext';
 import {MediaControlContext} from '../context/MediaControlContext';
 import DemoPrompt from './Tutorial/DemoPrompt';
 import {Alert} from '@material-ui/lab';

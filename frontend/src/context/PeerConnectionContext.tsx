@@ -2,23 +2,12 @@
 import React, {createContext, useContext, useEffect, useRef} from 'react';
 
 import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
-import {RestContext} from './rest/RestContext';
+import {RestContext} from './RestContext';
 import Peer, {MediaConnection} from 'peerjs';
 import EventEmitter from 'events';
 import {parseUser} from '../util/classParser';
 import {MediaControlContext} from './MediaControlContext';
 import User from '../shared/classes/User';
-
-// const peerServer = process.env.PEER_SERVER_PATH;
-// const peerServerPort = process.env.PEER_SERVER_PORT;
-// const peerServerHost = process.env.PEER_SERVER_HOST;
-// const peerConnectionOptions: Peer.PeerJSOption = {
-//   host: peerServerHost?? '/',
-//   path: '/peer/connect',
-//   // port: 5001,
-//   port: 3000,
-//   debug: 2,
-// };
 
 /** The Context that handles all of the Peer to Peer communication. */
 const PeerConnectionContext = createContext<IPeerConnectionContext>(undefined!);

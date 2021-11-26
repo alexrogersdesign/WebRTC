@@ -4,12 +4,15 @@ import {useSnackbar} from 'notistack';
 
 import {ChildrenProps} from '../shared/types';
 import {SocketIOContext} from './SocketIOContext';
-import {RestContext} from './rest/RestContext';
+import {RestContext} from './RestContext';
 import {useNavigate} from 'react-router-dom';
 import {PeerConnectionContext} from './PeerConnectionContext';
 import {MediaControlContext} from './MediaControlContext';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
 
+/**
+ * The context that handles the application state changes
+ */
 const AppStateContext = createContext<IAppStateContext>(undefined!);
 
 /**

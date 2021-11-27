@@ -5,7 +5,7 @@ import User from '../shared/classes/User';
 import {
   IReceivedUser,
   parseUser} from '../util/classParser';
-import {AuthenticationError} from 'src/util/errors/AuthenticationError';
+import {AuthenticationError} from '../util/errors/AuthenticationError';
 
 export type RefreshResponse = {
   newToken: string,

@@ -1,55 +1,56 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext, useState, useEffect, useMemo} from 'react';
-import {Paper} from '@material-ui/core';
+import React, {useState} from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import User from '../../shared/classes/User';
-import UserAvatar from '../common/UserAvatar';
-import WebcamControls from './WebcamControls';
-import {SegmentationContext} from '../../context/SegmentationContext';
-import {MediaControlContext} from '../../context/MediaControlContext';
-type Props = {
-  stream?: MediaStream;
-  local?: boolean,
-  user?: User
+import {MemoizedExternalVideo} from './ExternalVideo';
+import {MemoizedLocalVideo} from './LocalVideo';
+import {LOCAL_VIDEO_WIDTH} from '../../util/constants';
+
+interface StyleProps {
+    videoLoading: boolean;
 }
 
-const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
+const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
-    paper: (videoReady) => ({
+    container: {
+      display: 'inline-block',
+      borderRadius: '10px',
+      flexWrap: 'nowrap',
+      [theme.breakpoints.down('xs')]: {
+        width: '80%',
+      },
+    },
+    localContainer: {
+      padding: '5%',
+      width: '30em !important',
+    },
+    paper: ({videoLoading}) => ({
       padding: 3,
       borderRadius: 'inherit',
       display: 'flex',
+      flexGrow: -1,
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.palette.neutralGray.light,
-      position: 'relative',
       boxShadow: theme.shadows[2],
-      opacity: videoReady? 0: 1,
+      opacity: videoLoading? 0: 1,
+      width: 'max-content',
+      height: 'max-content',
     }),
     video: {
-      width: '100% !important',
-      height: 'auto !important',
       borderRadius: 'inherit',
-      position: 'relative',
+    },
+    externalVideo: {
       objectFit: 'scale-down',
     },
     localVideo: {
-      width: '100% !important',
-      height: 'auto !important',
-      borderRadius: 'inherit',
-      position: 'relative',
       transform: 'rotateY(180deg)',
-    },
-    externalContainer: {
-      position: 'relative',
-      borderRadius: '10px',
-      // flex: '0 2 auto',
-      flexWrap: 'nowrap',
-
+      width: `${LOCAL_VIDEO_WIDTH} !important`,
+      height: 'auto !important',
       [theme.breakpoints.down('xs')]: {
-        // width: '40%',
+        display: 'none',
       },
     },
     externalAvatar: {
@@ -57,103 +58,79 @@ const useStyles = makeStyles<Theme, Boolean>((theme: Theme) =>
       top: '5%',
       left: '5%',
       zIndex: 98,
-    },
-    localContainer: {
-      position: 'relative',
-      padding: '5%',
-      width: '30em !important',
-      borderRadius: '10px',
-
       [theme.breakpoints.down('xs')]: {
-        // width: '30%',
+        display: 'none',
       },
     },
     controls: {
       zIndex: 99,
       borderRadius: '10',
-      marginTop: '-12.75%',
+      // marginTop: '-12.75%',
+      marginTop: '-14%',
       width: '100%',
       height: '100%',
+      [theme.breakpoints.down('xs')]: {
+        display: 'none',
+      },
+    },
+    progress: {
+      position: 'absolute',
+      top: '40%',
+      left: '40%',
+      zIndex: 9999,
+      animationDuration: '750ms',
+    },
+    circle: {
+      strokeLinecap: 'round',
     },
   }),
 );
+ interface PlayerProps {
+    className?: string;
+ }
+ interface ExternalProps {local?: false; stream: MediaStream; user:User}
+ interface LocalProps {local: true; stream?:never; user?: never}
+ type Props = PlayerProps & (ExternalProps | LocalProps);
 
-const VideoPlayer = ({local, stream, user}: Props)=> {
-  const {localVideoRef, localMedia} = useContext(MediaControlContext);
-  const {
-    canvasRef,
-    removeBackground,
-    segmentationReady,
-  } = useContext(SegmentationContext);
-  const [videoLoading, setVideoLoading] = useState(true);
-  const classes = useStyles(videoLoading);
-  const [showBackground, setShowBackground] = useState(true);
-  useEffect(() => {
-    if (removeBackground && segmentationReady) setShowBackground(false);
-    else setShowBackground(true);
-  }, [removeBackground, segmentationReady]);
-
-  const renderExternalVideo = useMemo(() => (
-    <div className={classes.externalContainer}>
-      <Paper className={classes.paper} elevation={3} variant="outlined" >
-        <UserAvatar className={classes.externalAvatar} user={user}/>
-        <video
-          className={classes.video}
-          ref={(video) => {
-            if (video && stream) video.srcObject = stream;
-          }}
-          playsInline
-          autoPlay
-          preload={'auto'}
-          onCanPlay={ () => setVideoLoading(false)}
-        />
-      </Paper>
-    </div>
-  ), [stream]);
-  const renderLocalVideo = useMemo(() => (
-    <div className={classes.localContainer}>
-      <Paper className={classes.paper} elevation={3} variant="outlined" >
-        {/* {videoLoading && <CircularProgress/>} */}
-        <video
-          className={classes.localVideo}
-          ref={localVideoRef}
-          playsInline
-          muted
-          autoPlay
-          onCanPlay={ () => setVideoLoading(false)}
-          onLoadStart={ ()=> setVideoLoading(true)}
-          style={{
-            display: showBackground?
-                'block' :
-                'none',
-          }}
-        />
-        <canvas
-          className={classes.localVideo}
-          ref={canvasRef}
-          style={{
-            display: !showBackground?
-                 'block':
-                 'none',
-          }}
-        />
-        <div className={classes.controls}>
-          <WebcamControls />
-        </div>
-      </Paper>
-    </div>
-  ), [localVideoRef, localVideoRef?.current, showBackground]);
+const VideoPlayer = ({local, stream, user, className}: Props)=> {
+  const [videoLoading, setVideoLoading] = useState(false);
+  const classes = useStyles({videoLoading});
 
   return (
-    <>
-      {
-        local && renderLocalVideo
+    <div className={className}>
+      { local?(
+        <MemoizedLocalVideo
+          propClasses={classes}
+          {...{videoLoading, setVideoLoading}}
+        />
+      ):
+      (
+        <MemoizedExternalVideo
+          propClasses={classes}
+          user={user!}
+          stream={stream!}
+          {...{videoLoading, setVideoLoading}}
+        />
+      )
       }
-      {
-        !local && renderExternalVideo
-      }
-    </>
+    </div>
   );
 };
 
 export default VideoPlayer;
+
+export interface VideoProps {
+    videoLoading: boolean;
+    setVideoLoading: (value: boolean) => void;
+}
+
+export interface VideoClasses {
+    container?: string;
+    video?: string;
+    paper?: string;
+    controls?: string;
+    progress?: string;
+    circle?: string;
+}
+
+

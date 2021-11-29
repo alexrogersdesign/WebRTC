@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {
   useEffect,
   useState,
@@ -6,6 +7,12 @@ import React, {
   useContext,
 } from 'react';
 import * as bodyPix from '@tensorflow-models/body-pix';
+
+import * as tf from '@tensorflow/tfjs';
+/** Calling tf.getBackend() is a workaround for a bug where the following
+ *  unhandled exemption is thrown:
+ *  Unhandled Rejection (Error): No backend found in registry.*/
+tf.getBackend();
 
 import {ISegmentationContext, ChildrenProps} from '../shared/types';
 import {MediaControlContext} from './MediaControlContext';
@@ -23,6 +30,7 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
 }) => {
   const {
     localMedia,
+    localVideoRef,
     outgoingMedia,
     videoDisabled,
     micMuted,
@@ -154,6 +162,9 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     /** Change outgoing media to segmented stream */
     changePeerStream(canvasStream);
     outgoingMedia.current= canvasStream;
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = canvasStream;
+    }
   };
 
   return (

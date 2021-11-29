@@ -1,30 +1,28 @@
 /* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import {
+  makeStyles,
+  Theme,
+  createStyles,
+  useTheme,
+} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ToolTip from '@material-ui/core/Tooltip';
 import ScreenShareTwoToneIcon from '@material-ui/icons/ScreenShareTwoTone';
-// eslint-disable-next-line max-len
-import StopScreenShareTwoToneIcon from '@material-ui/icons/StopScreenShareTwoTone';
 import VolumeOffTwoToneIcon from '@material-ui/icons/VolumeOffTwoTone';
-import VolumeUpTwoToneIcon from '@material-ui/icons/VolumeUpTwoTone';
-import VideocamTwoToneIcon from '@material-ui/icons/VideocamTwoTone';
 import VideocamOffTwoToneIcon from '@material-ui/icons/VideocamOffTwoTone';
 import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 
-import {SocketIOContext} from '../../context/SocketIOContext';
 import {SegmentationContext} from '../../context/SegmentationContext';
-import theme from '../../util/theme/active';
 import {MediaControlContext} from '../../context/MediaControlContext';
-import TutorialWrapper from '../tutorial/TutorialWrapper';
+import clsx from 'clsx';
+import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
 interface Props {
-   onClick?: (event:any) => void,
-   field?: string,
-   setField?: React.Dispatch<React.SetStateAction<string>>,
-   className?: string | undefined
+   className?: string;
+   isolated?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -36,12 +34,14 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'space-around',
       width: 'auto',
       zIndex: 99,
+      backgroundColor: 'rgb(255,255,255, 0)',
+    },
+    rootAttached: {
       borderBottomLeftRadius: 10,
       borderBottomRightRadius: 10,
       borderTopLeftRadius: 3,
       borderTopRightRadius: 3,
       backgroundColor: 'rgb(255,255,255, .4)',
-
     },
     input: {
       marginLeft: theme.spacing(1),
@@ -62,11 +62,20 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.neutral.main,
       opacity: .5,
       width: 1,
-
     },
   }),
 );
-const WebcamControls = ({className}: Props) => {
+/**
+ * Renders the webcam controls panel with a help prompt.
+ * @param {string | undefined} className The Css classname to be assigned to
+ * the root element below the help display.
+ * @param {boolean | undefined} isolated A boolean value indicating whether the
+ * controls are displayed isolated of a VideoPlayer component. If isolated,
+ * the styling is changed to display the controls on the bottom of the screen.
+ * Defaults to false.
+ * @return {JSX.Element}
+ */
+const WebcamControls = ({className, isolated}: Props) => {
   const classes = useStyles();
   const {
     setMicMuted,
@@ -83,27 +92,28 @@ const WebcamControls = ({className}: Props) => {
   } = useContext(SegmentationContext);
 
 
-  const handleMuteMicrophone = (event: any) => {
-    setMicMuted && setMicMuted(!micMuted);
+  const toggleMuteMicrophone = () => {
+    setMicMuted(!micMuted);
   };
-  const handleDisableVideo = (event: any) => {
-    setVideoDisabled && setVideoDisabled(!videoDisabled);
+  const toggleDisableVideo = () => {
+    setVideoDisabled(!videoDisabled);
   };
-  const handleShareScreen = (event: any) => {
-    setScreenSharing && setScreenSharing(!screenSharing);
+  const toggleShareScreen = () => {
+    setScreenSharing(!screenSharing);
   };
-  const handleRemoveBackground = (event: any) => {
-    setRemoveBackground && setRemoveBackground(!removeBackground);
+  const toggleRemoveBackground = () => {
+    setRemoveBackground(!removeBackground);
   };
 
-
+  const rootClass = clsx(!isolated && classes.rootAttached, classes.root);
+  const theme = useTheme();
   return (
-    <TutorialWrapper
-      message={'Webcam controls'}
-      tooltipProps={{placement: 'left-start'}}
+    <MemoizedHelpWrapper
+      message={'Webcam controls, hover over buttons for more information'}
+      tooltipProps={{placement: 'top'}}
     >
       <div className={className}>
-        <Paper className={classes.root} elevation={3}>
+        <Paper className={rootClass} elevation={3}>
           <ToolTip title="Mute Microphone">
             <IconButton
               style={
@@ -112,7 +122,7 @@ const WebcamControls = ({className}: Props) => {
                 }}
               className={classes.iconButton}
               aria-label="mute microphone"
-              onClick={handleMuteMicrophone}
+              onClick={toggleMuteMicrophone}
             >
               <VolumeOffTwoToneIcon/>
             </IconButton>
@@ -126,7 +136,7 @@ const WebcamControls = ({className}: Props) => {
               }
               className={classes.iconButton}
               aria-label="disable video"
-              onClick={handleDisableVideo}
+              onClick={toggleDisableVideo}
             >
               <VideocamOffTwoToneIcon/>
             </IconButton>
@@ -141,21 +151,21 @@ const WebcamControls = ({className}: Props) => {
               color="primary"
               className={classes.iconButton}
               aria-label="share screen"
-              onClick={handleShareScreen}
+              onClick={toggleShareScreen}
             >
               <ScreenShareTwoToneIcon/>
             </IconButton>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
-          <ToolTip title="Remove Background">
+          <ToolTip title="Hide Background">
             <IconButton
               style={
                 {color: removeBackground? theme.palette.success.light :
                 theme.palette.neutral.main,
                 }}
               className={classes.iconButton}
-              aria-label="remove background"
-              onClick={handleRemoveBackground}
+              aria-label="hide background"
+              onClick={toggleRemoveBackground}
             >
               <AccountBoxTwoToneIcon/>
             </IconButton>
@@ -163,7 +173,7 @@ const WebcamControls = ({className}: Props) => {
           {/* <Divider className={classes.divider} orientation="vertical" /> */}
         </Paper>
       </div>
-    </TutorialWrapper>
+    </MemoizedHelpWrapper>
   );
 };
 

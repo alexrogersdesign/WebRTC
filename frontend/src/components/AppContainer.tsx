@@ -85,7 +85,7 @@ const AppContainer = () => {
             {(meeting && !xs) && (<VideoPlayer local/>)}
           </div>
         </div>
-        {xs && (
+        {(meeting && xs) && (
           <>
             <VideoDrawer/>
             <VideoControlBar/>

@@ -3,7 +3,7 @@ import React from 'react';
 // import PropTypes from 'prop-types';
 import Box from '@material-ui/core/Box';
 
-import Room from './components/Room';
+import AppContainer from './components/AppContainer';
 /**
  * App
  * @return {JSX.Element}
@@ -11,7 +11,7 @@ import Room from './components/Room';
 export default function App() {
   return (
     <Box >
-      <Room/>
+      <AppContainer/>
     </Box>
   );
 }

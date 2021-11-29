@@ -1,5 +1,12 @@
 // eslint-disable-next-line no-unused-vars
-import React, {createContext, useContext, useEffect} from 'react';
+import React, {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import {useSnackbar} from 'notistack';
 
 import {ChildrenProps} from '../shared/types';
@@ -9,6 +16,8 @@ import {useNavigate} from 'react-router-dom';
 import {PeerConnectionContext} from './PeerConnectionContext';
 import {MediaControlContext} from './MediaControlContext';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
+import {useTheme} from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 /**
  * The context that handles the application state changes
@@ -40,6 +49,14 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const navigate = useNavigate();
   /** The param extracted from the url indicating the current meeting.*/
   const roomParam = new URLSearchParams(window.location.search).get('room');
+
+  const [attendeeDrawerOpen, setAttendeeDrawerOpen] = useState(false);
+  const [videoDrawerOpen, setVideoDrawerOpen] = useState(false);
+
+  const theme = useTheme();
+  const xs = useMediaQuery(theme.breakpoints.down('xs'));
+  const sm = useMediaQuery(theme.breakpoints.down('sm'));
+
 
   /**
    * The cadence to be called on the application's first load.
@@ -94,7 +111,17 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
 
 
   return (
-    <AppStateContext.Provider value={{joinMeeting, leaveMeeting}} >
+    <AppStateContext.Provider value={{
+      joinMeeting,
+      leaveMeeting,
+      attendeeDrawerOpen,
+      setAttendeeDrawerOpen,
+      videoDrawerOpen,
+      setVideoDrawerOpen,
+      xs,
+      sm,
+    }}
+    >
       {children}
     </AppStateContext.Provider>
   );
@@ -103,7 +130,13 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
 export interface IAppStateContext {
    joinMeeting: (newMeetingID:string) => void
    leaveMeeting: () => void;
- }
+   attendeeDrawerOpen: boolean;
+   setAttendeeDrawerOpen: Dispatch<SetStateAction<boolean>>;
+   videoDrawerOpen: boolean;
+   setVideoDrawerOpen: Dispatch<SetStateAction<boolean>>;
+   xs: boolean;
+   sm: boolean;
+}
 
 
 AppStateContext.displayName = 'App State Context';

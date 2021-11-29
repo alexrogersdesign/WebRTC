@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {
   createContext,
   useContext,
@@ -105,7 +106,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       outgoingMedia.current = stream;
       /** Stores stream in ref to be used by video element */
       if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      setVideoReady(true);
+      // setVideoReady(true);
       return stream;
     } catch (err) {
       console.log(err);
@@ -147,6 +148,8 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   const createDummyStreams = async () => {
     const userA = new User('Jarrod', 'Carroll', 'jcarroll@gmail.com');
     const userB = new User('Cathrine', 'Stokes', 'cstokes@gmail.com');
+    const userC = new User('Cathrine', 'Stokes', 'cstokes@gmail.com');
+    const userD = new User('Cathrine', 'Stokes', 'cstokes@gmail.com');
     dummyVideoA.current.src = videoASrc;
     dummyVideoB.current.src = videoBSrc;
     dummyVideoA.current.load();
@@ -159,8 +162,27 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
     userB.icon = iconB.toString();
     addExternalMedia(userA, (dummyVideoA.current as any).captureStream());
     addExternalMedia(userB, (dummyVideoB.current as any).captureStream());
-    return [userA, userB];
+    addExternalMedia(userC, (dummyVideoB.current as any).captureStream());
+    addExternalMedia(userD, (dummyVideoB.current as any).captureStream());
+    return [userA, userB, userC, userD];
   };
+  // const createDummyStreams = async () => {
+  //  const userA = new User('Jarrod', 'Carroll', 'jcarroll@gmail.com');
+  //  const userB = new User('Cathrine', 'Stokes', 'cstokes@gmail.com');
+  //  dummyVideoA.current.src = videoASrc;
+  //  dummyVideoB.current.src = videoBSrc;
+  //  dummyVideoA.current.load();
+  //  dummyVideoA.current.autoplay = true;
+  //  dummyVideoA.current.loop = true;
+  //  dummyVideoB.current.load();
+  //  dummyVideoB.current.autoplay = true;
+  //  dummyVideoB.current.loop = true;
+  //  userA.icon = iconA.toString();
+  //  userB.icon = iconB.toString();
+  //  addExternalMedia(userA, (dummyVideoA.current as any).captureStream());
+  //  addExternalMedia(userB, (dummyVideoB.current as any).captureStream());
+  //  return [userA, userB];
+  // };
 
 
   /**

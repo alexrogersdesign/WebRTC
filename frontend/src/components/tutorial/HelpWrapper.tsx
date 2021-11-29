@@ -1,9 +1,15 @@
-import React, {useContext, useEffect} from 'react';
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import React, {useContext, useEffect, useState} from 'react';
+import {
+  makeStyles,
+  Theme,
+  createStyles,
+  useTheme,
+} from '@material-ui/core/styles';
 import ToolTip, {TooltipProps} from '@material-ui/core/Tooltip';
 import Fade from '@material-ui/core/Fade';
 import {OptionsContext} from '../../context/OptionsContext';
 import {ChildrenPropsMandatory} from '../../shared/types';
+import clsx from 'clsx';
 
 type StyleProps = React.CSSProperties
 
@@ -37,23 +43,26 @@ interface Props extends ChildrenPropsMandatory{
     ariaDescribedBy?: string
     style?:React.CSSProperties
     watchItem?: any,
+    tooltipClass?: string
 }
 /**
  * A component that wraps provided children and displays a help prompt.
  * @param {React.FC} children A component to wrap as a tutorial.
  * @param {string} message The tutorial message to display.
  * @param {TooltipProps} tooltipProps An object containing props to pass to the
- * tooltip component
+ * internal tooltip component
  * @param {React.CSSProperties} style Styles to pass to the Tooltip component
  * @param {string} ariaDescribedBy string for aria-describedby
  * @param {string} ariaLabeledBy string for aria-describedby
  * @param {any} watchItem An item to watch. If the provided item changes,
+ * @param {string} tooltipClass A Css classname to apply to the
+ * internal tooltip.
  * the component will rerender. This is helpful to update the location
  * of the tutorial message the component its wrapping has changed
  * its position.
  * @return {React.FC}
  */
-const TutorialWrapper= ({
+export function HelpWrapper({
   children,
   message,
   tooltipProps,
@@ -61,9 +70,14 @@ const TutorialWrapper= ({
   ariaDescribedBy,
   ariaLabeledBy,
   watchItem,
-}: Props) => {
+  tooltipClass,
+}: Props) {
   const classes = useStyles(style?? {});
+  const theme = useTheme();
   const {helpOpen} = useContext(OptionsContext);
+  /** Used to override the display state of the component */
+  const [closeOverride, setCloseOverride] = useState(false);
+  /** An unused state property used to force the component to rerender */
   const [dummyState, updateDummyState] = React.useState(false);
   /* force a component to update (rerender) by changing dummy state
   * that is not actually used*/
@@ -71,7 +85,11 @@ const TutorialWrapper= ({
       () => updateDummyState(!dummyState), [watchItem]);
   /** Force component to update when watchItem changes */
   useEffect(() => {
-    setTimeout(()=>forceUpdate(), 250);
+    setCloseOverride(true);
+    setTimeout(()=> {
+      forceUpdate();
+      setCloseOverride(false);
+    }, 500);
   }, [watchItem]);
 
   return (
@@ -80,15 +98,25 @@ const TutorialWrapper= ({
       aria-labelledby={ariaLabeledBy?? undefined}
       PopperProps={{
         disablePortal: true,
+        popperOptions: {
+          modifiers: {
+            keepTogether: {
+              enabled: true,
+            },
+          },
+        },
       }}
       classes={{
-        tooltipArrow: classes.tooltip,
+        tooltipArrow: clsx(tooltipClass, classes.tooltip),
         arrow: classes.arrow,
         popper: classes.popper,
       }}
       TransitionComponent={Fade}
-      TransitionProps={{timeout: 600}}
-      open={helpOpen}
+      TransitionProps={{timeout: {
+        enter: theme.transitions.duration.enteringScreen,
+        exit: closeOverride? 0 : 600,
+      }}}
+      open={helpOpen && !closeOverride}
       title={message}
       disableFocusListener
       disableHoverListener
@@ -99,6 +127,6 @@ const TutorialWrapper= ({
       {children}
     </ToolTip>
   );
-};
+}
 
-export default TutorialWrapper;
+export const MemoizedHelpWrapper = React.memo(HelpWrapper);

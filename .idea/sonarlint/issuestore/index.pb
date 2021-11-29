@@ -19,12 +19,6 @@ N
 frontend/src/util/Constants.ts,c/9/c9d6c29e1c8818a91e864b40b0483d32cefd3094
 S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
-i
-9frontend/src/components/attendee/AttendeeDrawerButton.tsx,1/1/1170da50a83a898b8acb42feba46f0345097cc7c
-V
-&frontend/src/components/ControlBar.tsx,d/2/d27651a4a404f47355de7fffbd9d999ec92bec74
-E
-frontend/package.json,3/7/37083060967a471c011a16651e22bdc2ade41759
 f
 6frontend/src/components/attendee/AttendeeInfoModal.tsx,0/b/0b22a89b52b97a6cc8c7cfcc88773b408161959f
 ]
@@ -47,9 +41,5 @@ _
 /frontend/src/util/errors/AuthenticationError.ts,f/2/f28fbf58ec7443431a311ce78fe34ae16a6c4fd1
 c
 3frontend/src/components/meeting/MeetingListItem.tsx,8/3/83558c0f0a11f6c4995f22d1f87159873dd46a04
-_
-/frontend/src/components/meeting/MeetingCard.tsx,e/e/ee009e81f82a89cf6c7469f8a5bffed86573fefa
 d
 4frontend/src/components/meeting/MeetingCardModal.tsx,a/9/a934b0d01e39127505e9c0915c31dd00c74183ec
-]
--frontend/src/components/video/VideoPlayer.tsx,8/0/80d17832745e3271b5c09ec4623c9c09f9f1390f

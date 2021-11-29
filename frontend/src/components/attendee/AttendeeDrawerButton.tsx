@@ -1,11 +1,11 @@
 import clsx from 'clsx';
 import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
-import TutorialWrapper from '../tutorial/TutorialWrapper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import React from 'react';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import Meeting from '../../shared/classes/Meeting';
+import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -14,6 +14,10 @@ const useStyles = makeStyles(() =>
     },
     hide: {
       display: 'none',
+    },
+    tooltip: {
+      overflowWrap: 'break-word',
+      width: '9em',
     },
   }),
 );
@@ -37,24 +41,26 @@ export default function AttendeeDrawerButton({setOpen, meeting, open}:Props) {
 
   const hideWhenOpen = {display: open? 'none': 'flex'};
   return (
-    <Button
-      style={{display: meeting? 'flex': 'none'}}
-      aria-label="open drawer"
-      onClick={() => setOpen(true)}
-      className={clsx(classes.menuButton, {
-        [classes.hide]: open,
-      })}
+    <MemoizedHelpWrapper
+      style={hideWhenOpen}
+      message={'Expand the attendees list'}
+      tooltipProps={{placement: 'right-end'}}
+      tooltipClass={classes.tooltip}
+      watchItem={open}
     >
-      <PeopleAltIcon style={hideWhenOpen}/>
-      <TutorialWrapper
-        style={hideWhenOpen}
-        message={'Expand attendees list for more information'}
-        tooltipProps={{placement: 'right'}}
+      <Button
+        style={{display: meeting? 'flex': 'none'}}
+        aria-label="open drawer"
+        onClick={() => setOpen(true)}
+        className={clsx(classes.menuButton, {
+          [classes.hide]: open,
+        })}
       >
+        <PeopleAltIcon style={hideWhenOpen}/>
         <Typography style={hideWhenOpen} variant="subtitle2" >
                     Attendees
         </Typography>
-      </TutorialWrapper>
-    </Button>
+      </Button>
+    </MemoizedHelpWrapper>
   );
 }

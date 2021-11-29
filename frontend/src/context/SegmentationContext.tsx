@@ -14,9 +14,10 @@ import * as tf from '@tensorflow/tfjs';
  *  Unhandled Rejection (Error): No backend found in registry.*/
 tf.getBackend();
 
-import {ISegmentationContext, ChildrenProps} from '../shared/types';
+import {ChildrenProps} from '../shared/types';
 import {MediaControlContext} from './MediaControlContext';
 import {PeerConnectionContext} from './PeerConnectionContext';
+import createCanvasContext from 'canvas-context';
 /** The context that handles the background segmentation feature */
 const SegmentationContext = createContext<ISegmentationContext>(undefined!);
 
@@ -73,7 +74,13 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
 
   /** Loads background replacing model when remove background is called */
   useEffect(() => {
-    processBackground().then(() => setSegmentationReady(true));
+    if (removeBackground) {
+      processBackground().then(() => setSegmentationReady(true));
+    } else {
+      if (localVideoRef.current && localMedia) {
+        localVideoRef.current.srcObject = localMedia;
+      }
+    }
   }, [removeBackground]);
 
   /**
@@ -102,13 +109,21 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     }
     /** Load model if its not already loaded */
     if (!network.current) network.current= await bodyPix.load();
-
     const webcam = tempVideo.current;
+    const {videoWidth, videoHeight} = webcam;
     /** Check if canvas ref is rendered on the screen */
-    if (!canvasRef.current) return;
+    if (!canvasRef.current) {
+      const {canvas: newCanvas} = createCanvasContext('2d',
+          {
+            width: videoWidth,
+            height: videoHeight,
+            offscreen: false,
+          });
+      canvasRef.current = newCanvas;
+    }
     const canvas = canvasRef.current;
-    webcam.width = canvas.width = webcam.videoWidth;
-    webcam.height = canvas.height = webcam.videoHeight;
+    webcam.width = videoWidth;
+    webcam.height = videoHeight;
     /** Resets the video object and loads a new media resource. */
     webcam.load();
     webcam.playsInline= true;
@@ -148,7 +163,7 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     };
     /** Cancels animation */
     requestID && cancelAnimationFrame(requestID);
-    const canvasStream = canvasRef.current?.captureStream();
+    const canvasStream = canvas?.captureStream();
     if (!canvasStream) {
       throw new Error('Could not capture stream after segmentation attempt');
     }
@@ -173,7 +188,6 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
         segmentationReady,
         removeBackground,
         setRemoveBackground,
-        tempVideo,
         canvasRef,
       }}
     >
@@ -185,3 +199,9 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
 SegmentationContext.displayName = 'Segmentation Context';
 
 export {SegmentationContext, SegmentationContextProvider};
+export interface ISegmentationContext {
+  segmentationReady: boolean,
+  removeBackground: boolean,
+  setRemoveBackground: React.Dispatch<React.SetStateAction<boolean>>,
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>,
+}

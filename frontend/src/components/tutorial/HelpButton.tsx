@@ -1,20 +1,35 @@
-/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
 
 import {OptionsContext} from '../../context/OptionsContext';
 import Typography from '@material-ui/core/Typography';
-import {IconButton} from '@material-ui/core';
-import TutorialWrapper from './TutorialWrapper';
 import Button from '@material-ui/core/Button';
+import {createStyles, makeStyles} from '@material-ui/core/styles';
+import {AppStateContext} from '../../context/AppStateContext';
+import {MemoizedHelpWrapper} from './HelpWrapper';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    tooltip: {
+      overflowWrap: 'break-word',
+      width: '10em',
+      margin: '0 0',
+    },
+  }),
+);
+
 
 const HelpButton= () => {
   const {helpOpen, setHelpOpen} = useContext(OptionsContext);
+  const {attendeeDrawerOpen} = useContext(AppStateContext);
+  const classes = useStyles();
   const toggleHelp = () => setHelpOpen(!helpOpen);
   return (
-    <TutorialWrapper
-      message={'Double click to keep open'}
+    <MemoizedHelpWrapper
+      message={'Double click to keep the help display open'}
       tooltipProps={{placement: 'left'}}
+      tooltipClass={classes.tooltip}
+      watchItem={attendeeDrawerOpen}
     >
       <Button
         onMouseDown={()=> setHelpOpen(true)}
@@ -27,7 +42,7 @@ const HelpButton= () => {
           Help
         </Typography>
       </Button>
-    </TutorialWrapper>
+    </MemoizedHelpWrapper>
   );
 };
 

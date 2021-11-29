@@ -18,8 +18,7 @@ import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 import Meeting from '../../shared/classes/Meeting';
 
 import ChatBox from './ChatBox';
-import TutorialPrompt from '../tutorial/TutorialPrompt';
-import TutorialWrapper from '../tutorial/TutorialWrapper';
+import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
 interface Props {
    meeting: Meeting | undefined| null,
@@ -31,18 +30,17 @@ const drawerWidth = 340;
 const offset = 90;
 const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
   createStyles({
-    root: {
-    },
-    appBar: {
+    drawerButton: {
+      position: 'fixed',
+      top: '15%',
+      right: '0',
       float: 'right',
-      margin: theme.spacing(1),
       transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
     },
-    appBarShift: (props) => ({
-      //
+    drawerButtonOpen: (props) => ({
       display: 'none',
       width: `calc(50% - ${props.current?.offsetWidth}px)`,
       transition: theme.transitions.create(['margin', 'width'], {
@@ -53,6 +51,7 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     }),
     openIcon: {
       padding: theme.spacing(1),
+      margin: theme.spacing(1),
     },
     hide: {
       display: 'none',
@@ -61,20 +60,19 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
       width: props.current?.offsetWidth,
       flexShrink: 0,
     }),
-    drawerPaper: (props) =>({
+    drawerPaper: {
       top: offset,
-      // width: props.current?.offsetWidth,
       backgroundColor: 'rgba(255,255,255,0)',
       outline: 0,
       borderWidth: 0,
-    }),
+    },
     drawerHeader: {
       display: 'flex',
       alignItems: 'center',
       padding: theme.spacing(0, 1),
       justifyContent: 'flex-start',
     },
-    iconButton: {
+    closeIcon: {
       backgroundColor: theme.palette.secondary.light,
       margin: theme.spacing(1),
     },
@@ -87,21 +85,37 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
       }),
       marginRight: props.current?.offsetWidth? -props.current?.offsetWidth : drawerWidth,
     }),
-    contentShift: {
+    contentOpen: {
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
       }),
       marginRight: 0,
     },
+    openTooltip: {
+      overflowWrap: 'break-word',
+      transform: 'translate(-20px, 0)',
+    },
+    closeTooltip: {
+      overflowWrap: 'break-word',
+      margin: '10px 0',
+    },
   }),
 );
+/**
+ * Renders the chat drawer component which is a collapsable display
+ * that contains a chat box which displays the meeting messages.
+ * The component is only displayed if a meeting is passed to it.
+ * @param {Meeting | undefined | null} meeting The meeting used to
+ * decide whether or not to render the component.
+ * @return {JSX.Element}
+ * @constructor
+ */
 const ChatDrawer = ({meeting}: Props) => {
   const theme = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const chatBoxRef = useRef<HTMLDivElement>();
   const classes = useStyles(chatBoxRef);
-
   const handleDrawerOpen = () => setDrawerOpen(true);
   const handleDrawerClose = () => setDrawerOpen(false);
   const chatBottomRef = useRef<HTMLDivElement>(null!);
@@ -113,15 +127,16 @@ const ChatDrawer = ({meeting}: Props) => {
   }, [drawerOpen]);
   if (!meeting) return <></>;
   return (
-    <div className={classes.root}>
-      <TutorialWrapper
-        message={'Click here to view the meeting chat'}
-        tooltipProps={{placement: 'left-end'}}
+    <div>
+      <div
+        className={clsx(classes.drawerButton, {
+          [classes.drawerButtonOpen]: drawerOpen,
+        })}
       >
-        <div
-          className={clsx(classes.appBar, {
-            [classes.appBarShift]: drawerOpen,
-          })}
+        <MemoizedHelpWrapper
+          message={'Open the chat'}
+          tooltipProps={{placement: 'bottom-start'}}
+          tooltipClass={classes.openTooltip}
         >
           <Chip
             className={classes.openIcon}
@@ -134,11 +149,11 @@ const ChatDrawer = ({meeting}: Props) => {
             onClick={handleDrawerOpen}
             icon={<ChatBubbleTwoToneIcon/>}
           />
-        </div>
-      </TutorialWrapper>
+        </MemoizedHelpWrapper>
+      </div>
       <main
         className={clsx(classes.content, {
-          [classes.contentShift]: drawerOpen,
+          [classes.contentOpen]: drawerOpen,
         })}
       >
         <div className={classes.drawerHeader} />
@@ -153,19 +168,20 @@ const ChatDrawer = ({meeting}: Props) => {
         }}
       >
         <div className={classes.drawerHeader}>
-          <TutorialWrapper
+          <MemoizedHelpWrapper
             message={'Close the meeting chat'}
-            tooltipProps={{placement: 'left-end'}}
+            tooltipProps={{placement: 'bottom-end'}}
+            tooltipClass={classes.closeTooltip}
           >
             <IconButton
               id={'close-chat-button'}
-              className={classes.iconButton}
+              className={classes.closeButton}
               onClick={handleDrawerClose}
               size='small'
             >
               {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
             </IconButton>
-          </TutorialWrapper>
+          </MemoizedHelpWrapper>
         </div>
         <ChatBox innerRef={chatBoxRef} isOpen={drawerOpen}/>
         <div ref={chatBottomRef}/>
@@ -174,5 +190,4 @@ const ChatDrawer = ({meeting}: Props) => {
   );
 };
 
-export default ChatDrawer
-;
+export default ChatDrawer;

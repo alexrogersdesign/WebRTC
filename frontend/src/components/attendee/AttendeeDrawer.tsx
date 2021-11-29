@@ -14,12 +14,17 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 
-import TutorialWrapper from '../tutorial/TutorialWrapper';
 import AttendeeListItem from './AttendeeListItem';
 import {MediaControlContext} from '../../context/MediaControlContext';
 import {RestContext} from '../../context/RestContext';
+import {AppStateContext} from '../../context/AppStateContext';
+import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
-interface StyleProps {drawerWidth: number}
+interface StyleProps {
+  drawerWidth: number,
+  localVideoRef: React.RefObject<HTMLVideoElement>,
+  videoDrawerOpen: boolean,
+}
 
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
@@ -27,6 +32,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       width: props.drawerWidth,
       flexShrink: 0,
       whiteSpace: 'nowrap',
+      // height: '70%',
     }),
     drawerOpen: (props) => ({
       width: props.drawerWidth,
@@ -34,6 +40,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),
+
     }),
     drawerClose: {
       transition: theme.transitions.create('width', {
@@ -45,6 +52,18 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         width: theme.spacing(9) + 12,
       },
+    },
+    heightShift: (props) => ({
+      [theme.breakpoints.down('xs')]: {
+        height: `calc(90% - ${props.localVideoRef.current?.offsetHeight}px)`,
+        borderBottomRightRadius: theme.shape.borderRadius,
+      },
+    }),
+    tooltip: {
+      overflowWrap: 'break-word',
+      width: '10em',
+      transform: 'translate(0, 200px)',
+      // margin: '10px 0',
     },
   }),
 );
@@ -75,40 +94,43 @@ export default function AttendeeDrawer({
   drawerWidth,
   toolbarStyle,
 }:Props) {
-  const classes = useStyles({drawerWidth});
-  const theme = useTheme();
-
   const {meeting} = useContext(RestContext);
-  const {externalMedia} = useContext(MediaControlContext);
+  const {externalMedia, localVideoRef} = useContext(MediaControlContext);
+  const {videoDrawerOpen} = useContext(AppStateContext);
+  const classes = useStyles({drawerWidth, localVideoRef, videoDrawerOpen});
+  const theme = useTheme();
   const users = externalMedia?.map(({user}) => user);
 
   const hideWhenClosed = {display: open? 'flex': 'none'};
   if (meeting) {
     return (
-      <TutorialWrapper
+      <MemoizedHelpWrapper
         message={users?.length?
                 'Click an user icon for more information':
                 'When a user joins, their icon is shown here'
         }
-        tooltipProps={{placement: 'right-end'}}
+        tooltipProps={{placement: 'right'}}
         watchItem={open}
+        tooltipClass={classes.tooltip}
       >
         <Drawer
           variant="permanent"
           className={clsx(classes.drawer, {
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
+            [classes.heightShift]: videoDrawerOpen,
           })}
           classes={{
             paper: clsx({
               [classes.drawerOpen]: open,
               [classes.drawerClose]: !open,
+              [classes.heightShift]: videoDrawerOpen,
             }),
           }}
         >
           <div className={toolbarStyle}>
             <Typography variant='h6'>Attendees</Typography>
-            <TutorialWrapper
+            <MemoizedHelpWrapper
               message={'Close attendees list'}
               tooltipProps={{placement: 'bottom-end'}}
               style={hideWhenClosed}
@@ -121,7 +143,7 @@ export default function AttendeeDrawer({
                       <ChevronLeftIcon />
                 }
               </IconButton>
-            </TutorialWrapper>
+            </MemoizedHelpWrapper>
           </div>
           <Divider />
           <List >
@@ -132,7 +154,7 @@ export default function AttendeeDrawer({
             })}
           </List>
         </Drawer>
-      </TutorialWrapper>
+      </MemoizedHelpWrapper>
     );
   } else return <></>;
 }

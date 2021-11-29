@@ -53,6 +53,7 @@
     "babel-plugin-transform-remove-console": "^6.9.4",
     "bson-objectid": "^2.0.1",
     "buffer": "^6.0.3",
+    "canvas-context": "^3.1.0",
     "clsx": "^1.1.1",
     "eslint": "^7.32.0",
     "eslint-config-google": "^0.14.0",
@@ -95,6 +96,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "styleguide": "styleguidist server",
+    "styleguide:build": "styleguidist build",
     "prebuild": "tsc -p ./build-options/tsconfig.webpack.json",
     "build": "react-scripts build",
     "clean1": "cd ./src/components && find . -name \"*.js\" -type f -delete",

@@ -1,26 +1,30 @@
 /* eslint-disable no-unused-vars */
 import React, {useContext, useEffect} from 'react';
 import Container from '@material-ui/core/Container';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-
+import {
+  createStyles,
+  makeStyles,
+  Theme,
+  useTheme,
+} from '@material-ui/core/styles';
 
 import VideoPlayer from './video/VideoPlayer';
-import VideoArray from './video/VideoArray';
-import {SocketIOContext} from '../context/SocketIOContext';
 import {ControlBar} from './ControlBar';
 import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
 import {RestContext} from '../context/RestContext';
-import {MediaControlContext} from '../context/MediaControlContext';
 import DemoPrompt from './tutorial/DemoPrompt';
-import {Alert} from '@material-ui/lab';
-import TutorialPrompt from './tutorial/TutorialPrompt';
-interface Props {
-}
+import {VideoControlBar} from './video/VideoControlBar';
+import {AppStateContext} from '../context/AppStateContext';
+import VideoDrawer from './video/VideoDrawer';
+import VideoGrid from './video/VideoGrid';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      overflow: 'hidden',
+    },
     container: {
       display: 'flex',
       flexDirection: 'column',
@@ -30,13 +34,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '2%',
     },
     grid: {
-      height: '50%',
-      flexWrap: 'wrap',
-      padding: 20,
-      borderWidth: 40,
-      [theme.breakpoints.down('xs')]: {
-        width: '250px',
-      },
     },
     form: {
       padding: 5,
@@ -46,23 +43,36 @@ const useStyles = makeStyles((theme: Theme) =>
       float: 'right',
       right: 0,
       bottom: 0,
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+        width: '100%',
+        zIndex: theme.zIndex.drawer +1,
+        bottom: 50,
+      },
     },
   }),
 );
 
-const Room = (props: Props) => {
+/**
+ * The AppContainer component is where all visible elements of the
+ * application are rendered
+ * @return {JSX.Element}
+ * @constructor
+ */
+const AppContainer = () => {
   const classes = useStyles();
   const {token, currentUser, meeting} = useContext(RestContext);
-  const {externalMedia, videoReady} = useContext(MediaControlContext);
   const {setTheme} = useContext(CustomThemeContext);
+  const {xs} = useContext(AppStateContext);
 
+  /** Render a different theme on login */
   useEffect(() => {
-    if (!token) setTheme && setTheme('dark');
-    if (token) setTheme && setTheme('normal');
+    if (!token) setTheme('dark');
+    if (token) setTheme('normal');
   }, [meeting, token]);
 
   return (
-    <div >
+    <div className={classes.root}>
       <div>
         <ControlBar meeting={meeting}/>
         <ChatDrawer meeting={meeting}/>
@@ -70,15 +80,21 @@ const Room = (props: Props) => {
       <Container className={classes.container}>
         {(!meeting && currentUser) && <MeetingList/>}
         <div className={classes.grid}>
-          <VideoArray />
+          <VideoGrid />
           <div className={classes.local}>
-            {meeting && (<VideoPlayer local/>)}
+            {(meeting && !xs) && (<VideoPlayer local/>)}
           </div>
         </div>
+        {xs && (
+          <>
+            <VideoDrawer/>
+            <VideoControlBar/>
+          </>
+        )}
         <DemoPrompt/>
       </Container>
     </div>
   );
 };
 
-export default Room;
+export default AppContainer;

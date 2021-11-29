@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, {useContext} from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 import ViewHeadlineIcon from '@material-ui/icons/ViewHeadline';
 import Button from '@material-ui/core/Button';
 
-import TutorialWrapper from '../tutorial/TutorialWrapper';
 import HelpButton from '../tutorial/HelpButton';
 import MenuList from './MenuList';
 import {MenuStateProps} from './Menu';
+import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
+import {AppStateContext} from '../../context/AppStateContext';
 
 export interface Props extends MenuStateProps{
     drawerOpen: boolean;
@@ -21,6 +22,11 @@ const useStyles = makeStyles(() =>
     drawer: {
       backgroundColor: 'rgb(255,255,255,.6)',
     },
+    tooltip: {
+      whiteSpace: 'nowrap',
+      transform: 'translate(0, -10px)',
+
+    },
   }),
 );
 
@@ -30,7 +36,8 @@ const useStyles = makeStyles(() =>
  * @return {void}
  */
 /**
- * The menu drawer element.
+ * Renders the menu drawer component which is a drop down menu
+ * control element attached to the top of the page.
  * @param {useState} setJoinMeetingModal
  * @param {useState} setCreateAccountModalOpen
  * @param {useState} setCreateMeetingModalOpen
@@ -49,23 +56,27 @@ export const MenuDrawer = ({
   setDrawerOpen,
 }:Props) => {
   const classes = useStyles();
+  const {attendeeDrawerOpen} = useContext(AppStateContext);
   return (
     <>
       <HelpButton/>
-      <Button
-        onClick={() => setDrawerOpen(true)}
-        aria-label="open drawer"
+      <MemoizedHelpWrapper
+        message={'Access the menu'}
+        tooltipProps={{placement: 'bottom-end'}}
+        tooltipClass={classes.tooltip}
+        watchItem={attendeeDrawerOpen}
       >
-        <ViewHeadlineIcon />
-        <TutorialWrapper
-          message={'Use the menu to leave the meeting'}
-          tooltipProps={{placement: 'bottom-end'}}
+        <Button
+          onClick={() => setDrawerOpen(true)}
+          aria-label="open drawer"
         >
+          <ViewHeadlineIcon />
+
           <Typography variant="subtitle2" id='menu-button' >
-                        Menu
+              Menu
           </Typography>
-        </TutorialWrapper>
-      </Button>
+        </Button>
+      </MemoizedHelpWrapper>
       <Drawer
         className={classes.drawer}
         anchor='top'

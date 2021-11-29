@@ -47,8 +47,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
     },
     localVideo: {
       transform: 'rotateY(180deg)',
-      width: `${LOCAL_VIDEO_WIDTH} !important`,
-      height: 'auto !important',
       [theme.breakpoints.down('xs')]: {
         display: 'none',
       },

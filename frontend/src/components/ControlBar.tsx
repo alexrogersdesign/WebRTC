@@ -1,5 +1,5 @@
 // TODO refactor application bar so the AttendeeDrawer logic is seperated
-import React, {useState} from 'react';
+import React, {useContext} from 'react';
 import clsx from 'clsx';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -10,6 +10,7 @@ import Menu from './menu/Menu';
 import Meeting from '../shared/classes/Meeting';
 import AttendeeDrawer from './attendee/AttendeeDrawer';
 import AttendeeDrawerButton from './attendee/AttendeeDrawerButton';
+import {AppStateContext} from '../context/AppStateContext';
 
 interface Props {
    meeting: Meeting | undefined| null,
@@ -68,7 +69,10 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 export const ControlBar = ({meeting}: Props) => {
   const classes = useStyles();
-  const [attendeeDrawerOpen, setAttendeeDrawerOpen] = useState(false);
+  const {
+    attendeeDrawerOpen,
+    setAttendeeDrawerOpen,
+  } = useContext(AppStateContext);
 
   return (
     <div className={classes.root}>

@@ -2,21 +2,14 @@
 import React, {useState} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
-import CloseIcon from '@material-ui/icons/Close';
+
 
 import Meeting from '../../shared/classes/Meeting';
 
-import {DialogContent, Grid, IconButton} from '@material-ui/core';
-import CopyButtonIcon from '../common/CopyButtonIcon';
-import Button from '@material-ui/core/Button';
 import MeetingCard from './MeetingCard';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop';
+import DialogContent from '@material-ui/core/DialogContent';
 
 interface Props {
     open: boolean,
@@ -82,9 +75,11 @@ const MeetingCardModal = ({open, setOpen, meeting}: Props) => {
           timeout: 500,
         }}
       >
-        <Fade in={open} timeout={{enter: 750, exit: 250}}>
-          <MeetingCard meeting={meeting}/>
-        </Fade>
+        <>
+          <Fade in={open} timeout={{enter: 750, exit: 250}}>
+            <MeetingCard meeting={meeting}/>
+          </Fade>
+        </>
       </Modal>
     </div>
   );

@@ -89,8 +89,8 @@ const useRestApi = (
     const originalConfig = err.config as AxiosRequestConfigRetry;
     if (originalConfig?._hasRetried) {
       errorHandler(err, 'Please Login Again');
-      // setToken(null);
-      // setCurrentUser(null);
+      setToken(null);
+      setCurrentUser(null);
       return Promise.reject(err);
     }
     /** Mark that a retry is being attempted */

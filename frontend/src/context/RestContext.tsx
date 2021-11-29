@@ -68,9 +68,10 @@ const RestContextProvider = ({children}: ChildrenProps) => {
    * @return {Promise<void>}
    */
   const checkIfLogged = async () => {
+    if (isLoggedOut === true) return;
     try {
-      if (isLoggedOut === true) return;
       await loginWithRefreshToken();
+      setIsLoggedOut(false);
     } catch (error) {
       if (error instanceof AuthenticationError) {
         setCurrentUser(null);
@@ -89,7 +90,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
    * a user object reflecting the new logged in user or undefined
    * if the login was not successful.
    */
-  const login = async (
+  const loginRequest = async (
       credentials: ILoginCredentials,
   ):Promise<User | undefined> => {
     const failedLoginMessage = 'Invalid Username or Password';
@@ -107,6 +108,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
       return parsedUser;
     } catch (error) {
       handleError(error, failedLoginMessage);
+      throw (error);
     }
   };
   /**
@@ -175,10 +177,10 @@ const RestContextProvider = ({children}: ChildrenProps) => {
    * Removes the stored token from react state
    * Sets the current user to null.
    */
-  const logout = async () => {
+  const logoutRequest = async () => {
+    setIsLoggedOut(true);
     setToken(null);
     setCurrentUser(null);
-    setIsLoggedOut(true);
     try {
       await api.get('/login/logout');
     } catch (error) {
@@ -284,8 +286,8 @@ const RestContextProvider = ({children}: ChildrenProps) => {
   return (
     <RestContext.Provider
       value={{
-        login,
-        logout,
+        loginRequest,
+        logoutRequest,
         loginWithRefreshToken,
         checkIfLogged,
         currentUser,
@@ -300,6 +302,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
         meetingsLoading,
         meeting,
         setMeeting,
+        isLoggedOut,
       }}
     >
       {children}
@@ -307,8 +310,8 @@ const RestContextProvider = ({children}: ChildrenProps) => {
   );
 };
 export interface IRestContext {
-  login: (credentials: ILoginCredentials) => Promise<User| undefined>,
-  logout: () => Promise<void>,
+  loginRequest: (credentials: ILoginCredentials) => Promise<User| undefined>,
+  logoutRequest: () => Promise<void>,
   loginWithRefreshToken: () => Promise<RefreshResponse>,
   createUser: (newUser: INewUser) => Promise<User| undefined>,
   createMeeting: (newMeeting: INewMeeting) => Promise<Meeting | undefined>
@@ -323,6 +326,7 @@ export interface IRestContext {
   meetingsLoading: boolean;
   meeting:Meeting | null;
   setMeeting: (meeting:Meeting| null) => void;
+  isLoggedOut: boolean
 }
 
 const snackbarSuccessOptions: OptionsObject = {

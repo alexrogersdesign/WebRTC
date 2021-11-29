@@ -19,12 +19,13 @@ Sentry.init({
 
 
 ReactDOM.render(
-    <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
-      <Router>
-        <ContextWrapper>
-          <App />
-        </ContextWrapper>
-      </Router>
-    </Sentry.ErrorBoundary>,
+    // <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
+    <Router>
+      <ContextWrapper>
+        <App />
+      </ContextWrapper>
+    </Router>
+    // </Sentry.ErrorBoundary>,
+    ,
     document.getElementById('root'),
 );

@@ -9,9 +9,9 @@ import PropTypes from 'prop-types';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-import {RestContext} from '../../context/RestContext';
 import TutorialPrompt from '../tutorial/TutorialPrompt';
 import {ModalProps} from '../common/ModalWrapper';
+import {AppStateContext} from '../../context/AppStateContext';
 
 
 const validationSchema = yup.object({
@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const LoginForm = forwardRef<HTMLDivElement, ModalProps>(({
   setOpen,
 }, ref) => {
-  const {login} = useContext(RestContext);
+  const {login} = useContext(AppStateContext);
   const classes = useStyles();
   const handleClose = () => {
     setOpen(false);

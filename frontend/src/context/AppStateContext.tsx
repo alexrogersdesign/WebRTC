@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // eslint-disable-next-line no-unused-vars
 import React, {
   createContext,
@@ -11,13 +12,14 @@ import {useSnackbar} from 'notistack';
 
 import {ChildrenProps} from '../shared/types';
 import {SocketIOContext} from './SocketIOContext';
-import {RestContext} from './RestContext';
+import {ILoginCredentials, RestContext} from './RestContext';
 import {useNavigate} from 'react-router-dom';
 import {PeerConnectionContext} from './PeerConnectionContext';
 import {MediaControlContext} from './MediaControlContext';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import User from '../shared/classes/User';
 
 /**
  * The context that handles the application state changes
@@ -30,7 +32,11 @@ const AppStateContext = createContext<IAppStateContext>(undefined!);
  * @return {JSX.Element}
  */
 const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
-  const {socketJoinMeeting, socketLeaveMeeting} = useContext(SocketIOContext);
+  const {
+    socketJoinMeeting,
+    socketLeaveMeeting,
+    cleanupSocket,
+  } = useContext(SocketIOContext);
   const {
     buildCallService,
     dismantleCallService,
@@ -44,6 +50,8 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
     setMeeting,
     findMeeting,
     checkIfLogged,
+    loginRequest,
+    logoutRequest,
   } = useContext(RestContext);
   const {enqueueSnackbar} = useSnackbar();
   const navigate = useNavigate();
@@ -77,11 +85,37 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
     firstLoadCadence();
   }, []);
   /**
-     * Joins a new meeting.
-     * Tells backend server that it would like to join the specified meeting
-     * Pushes joined meeting to Url. Enables call service.
-     * @param {string} newMeetingID the meeting to join
-     */
+   * Calls on rest API to make a login request.
+   * @param {ILoginCredentials} credentials The login credentials
+   * @return {Promise<void>}
+   */
+  const login = async (credentials: ILoginCredentials) => {
+    try {
+      return await loginRequest(credentials);
+    } catch (error) {
+      error instanceof Error && console.error(error.message);
+    }
+  };
+  /**
+   * Calls on rest API to make a logout request
+   * Cleans up socket connection.
+   * @return {Promise<void>}
+   */
+  const logout = async () => {
+    try {
+      cleanupSocket();
+      await logoutRequest();
+    } catch (error) {
+      error instanceof Error && console.error(error.message);
+    }
+  };
+
+  /**
+   * Joins a new meeting.
+   * Tells backend server that it would like to join the specified meeting
+   * Pushes joined meeting to Url. Enables call service.
+   * @param {string} newMeetingID the meeting to join
+   */
   const joinMeeting = async (newMeetingID:string) => {
     const foundMeeting = await findMeeting(newMeetingID);
     if (!foundMeeting) throw new Error('Unable to find meeting');
@@ -112,6 +146,8 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
 
   return (
     <AppStateContext.Provider value={{
+      login,
+      logout,
       joinMeeting,
       leaveMeeting,
       attendeeDrawerOpen,
@@ -128,6 +164,8 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
 };
 
 export interface IAppStateContext {
+   login: (credentials: ILoginCredentials) => Promise<User| undefined>,
+   logout: () => Promise<void>,
    joinMeeting: (newMeetingID:string) => void
    leaveMeeting: () => void;
    attendeeDrawerOpen: boolean;

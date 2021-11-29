@@ -61,6 +61,7 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     const socketToAlter = newSocket?? socket;
     socketToAlter?.removeAllListeners();
     socketToAlter?.disconnect();
+    setSocket(null);
   };
   /**
    * Creates a socket connection using the token and current user ID and
@@ -199,6 +200,7 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     <SocketIOContext.Provider
       value={{
         socket,
+        cleanupSocket,
         meeting,
         socketJoinMeeting,
         socketLeaveMeeting,
@@ -211,6 +213,7 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
 
 export interface ISocketIOContext {
   socket: Socket | null,
+  cleanupSocket: (newSocket?: Socket) => void
   meeting: Meeting | null,
   socketJoinMeeting: (newMeeting: Meeting) => void,
   socketLeaveMeeting: () => void,

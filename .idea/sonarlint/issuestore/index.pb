@@ -9,8 +9,6 @@ F
 frontend/.eslintrc.cjs,8/4/84231099d9a06b2d88c9279cd7ff80b7f1c1072b
 M
 frontend/styleguide.config.js,6/2/628a509789988f335cf62038828e9f74c51f0cd0
-]
--frontend/src/components/menu/LogoutButton.tsx,9/1/9147ba512fcc9533b56ac853fd7be7fa35d2c622
 ^
 .frontend/src/components/common/AlertDialog.tsx,9/5/9532e4da47cf5fb360e47d34226392a8cf0c1b95
 ^

@@ -39,5 +39,3 @@ _
 /frontend/src/util/errors/AuthenticationError.ts,f/2/f28fbf58ec7443431a311ce78fe34ae16a6c4fd1
 c
 3frontend/src/components/meeting/MeetingListItem.tsx,8/3/83558c0f0a11f6c4995f22d1f87159873dd46a04
-d
-4frontend/src/components/meeting/MeetingCardModal.tsx,a/9/a934b0d01e39127505e9c0915c31dd00c74183ec

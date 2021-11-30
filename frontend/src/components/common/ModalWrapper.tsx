@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {Component} from 'react';
+import React from 'react';
 import {makeStyles,
   Theme,
   createStyles,
@@ -43,12 +43,9 @@ const ModalWrapper= <T, >({
   ariaLabeledBy,
   ...remainingProps
 }: Props<T>) => {
-  // TODO investigate double rendering
-  // TODO implement aria label and described
   const classes = useStyles();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const handleClose = () => setOpen(false);
+
   return (
     <>
       <Dialog
@@ -59,7 +56,6 @@ const ModalWrapper= <T, >({
         fullWidth
         aria-labelledby={ariaLabeledBy}
         aria-describedby={ariaDescribedBy}
-        // fullScreen={fullScreen}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -68,7 +64,7 @@ const ModalWrapper= <T, >({
       >
         <Fade in={open} timeout={{enter: 750, exit: 250}}>
           <div className={classes.dialogContent}>
-            <Component
+            <PropComponent
               setOpen={setOpen}
               open={open}
               {...(remainingProps as T)}

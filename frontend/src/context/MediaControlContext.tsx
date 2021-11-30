@@ -39,8 +39,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   /** Ref representing the video element mirroring the users webcam
    * or shared screen */
   const localVideoRef = useRef<HTMLVideoElement>(null);
-  /** Boolean State indicating that the video is ready to be rendered */
-  const [videoReady, setVideoReady] = useState<boolean>(false);
   /** A ref of the stream being media stream being transmitted to peers. This is
    * distinguished from localMedia to allow for simple switching between
    * background removal and unaltered webcam streams*/
@@ -52,13 +50,19 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   const [showDemo, setShowDemo] = useState(false);
   const dummyStreams = useRef<User[]>([]);
 
-  /** Updates the outgoing stream if the user mutes or disables
-   * audio or video elements */
-  useEffect(() => {
+  /** Updates the outgoing stream tracks to match the state of the media
+   * control parameters */
+  const updateStreamMutes = () => {
     if (outgoingMedia.current) {
       outgoingMedia.current.getAudioTracks()[0].enabled = !micMuted;
       outgoingMedia.current.getVideoTracks()[0].enabled = !videoDisabled;
     }
+  };
+
+  /** Calls updateStreamMutes() if the state of the media control parameters
+   * changes */
+  useEffect(() => {
+    updateStreamMutes();
   }, [micMuted, videoDisabled]);
   /**
    * Listen for changes in screen sharing
@@ -68,7 +72,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   useEffect( () => {
     meeting && initializeMediaStream();
   }, [screenSharing]);
-
 
   /**
    * If the user stops the screen sharing process via the browser API
@@ -105,8 +108,9 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       setLocalMedia(stream);
       outgoingMedia.current = stream;
       /** Stores stream in ref to be used by video element */
-      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-      // setVideoReady(true);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = outgoingMedia.current;
+      }
       return stream;
     } catch (err) {
       console.log(err);
@@ -236,7 +240,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         micMuted,
         videoDisabled,
         screenSharing,
-        videoReady,
         outgoingMedia,
         removeMedia,
         addExternalMedia,
@@ -245,6 +248,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         setShowDemo,
         showDemo,
         stopWebcamStream,
+        updateStreamMutes,
       }}
     >
       {children}
@@ -264,13 +268,13 @@ export interface IMediaControlContext {
   screenSharing: boolean,
   localMedia: MediaStream | undefined,
   outgoingMedia: React.MutableRefObject<MediaStream | undefined>,
-  videoReady: boolean,
   removeMedia: (id:string) => void
   addExternalMedia: (user:User, stream:MediaStream, data?:CallOption) => void,
   clearExternalMedia: () => void,
   setShowDemo: (boolean:boolean) => void,
   showDemo: boolean,
   stopWebcamStream: () => void,
+  updateStreamMutes: () => void,
 }
 
 MediaControlContext.displayName = 'Media Control Context';

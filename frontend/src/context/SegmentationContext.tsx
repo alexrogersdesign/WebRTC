@@ -35,6 +35,7 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     outgoingMedia,
     videoDisabled,
     micMuted,
+    updateStreamMutes,
   } = useContext(MediaControlContext);
   const {changePeerStream} = useContext(PeerConnectionContext);
   /** Used to indicate when segmenting animation should stop */
@@ -72,15 +73,19 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     }
   }, [videoDisabled]);
 
-  /** Loads background replacing model when remove background is called */
+  /** Sets and unsets the background removal process when removeBackground state
+   * changes. */
   useEffect(() => {
     if (removeBackground) {
       processBackground().then(() => setSegmentationReady(true));
     } else {
       if (localVideoRef.current && localMedia) {
-        localVideoRef.current.srcObject = localMedia;
+        outgoingMedia.current = localMedia;
+        localVideoRef.current.srcObject = outgoingMedia.current;
       }
     }
+    /** Resynchronize the audio and video mutes */
+    updateStreamMutes();
   }, [removeBackground]);
 
   /**
@@ -170,15 +175,15 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     /** Get audio track from webcam and inject it into canvas feed.  */
     const audioTrack = outgoingMedia.current?.getAudioTracks()[0];
     audioTrack && canvasStream.addTrack(audioTrack);
-    /** Synchronize audio mute state with canvas stream
-     * this prevents the stream from enabling audio when it is
-     * replaced*/
-    canvasStream.getAudioTracks()[0].enabled =!micMuted;
+    // /** Synchronize audio mute state with canvas stream
+    // * this prevents the stream from enabling audio when it is
+    // * replaced*/
+    // canvasStream.getAudioTracks()[0].enabled =!micMuted;
     /** Change outgoing media to segmented stream */
-    changePeerStream(canvasStream);
     outgoingMedia.current= canvasStream;
+    changePeerStream(canvasStream);
     if (localVideoRef.current) {
-      localVideoRef.current.srcObject = canvasStream;
+      localVideoRef.current.srcObject = outgoingMedia.current;
     }
   };
 

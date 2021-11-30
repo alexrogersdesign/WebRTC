@@ -156,6 +156,16 @@ const validationSchema = yup.object({
       ),
 });
 /**
+ * A forward reference exotic component that renders new meeting form.
+ * The component is intended to be rendered inside of a Modal.
+ * A ref is forwarded through the component from it's props to a
+ * div element wrapping DialogTitle and DialogContent. The forward ref allows
+ * the form to be rendered in a Modal component transparently without
+ * breaking any of the functionality of the Modal or introducing
+ * accessibility issues.
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setOpen A function
+ * that sets the state of a boolean variable representing whether the
+ * modal should open.
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */

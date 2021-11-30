@@ -47,8 +47,6 @@ const validationSchema = yup.object({
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      // overflow: 'hidden',
-
     },
     paper: {
       backgroundColor: theme.palette.background.paper,
@@ -81,15 +79,12 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
       alignItems: 'center',
       flexWrap: 'nowrap',
-
-      // justifyContent: 'center',
       alignContent: 'center',
       width: '100%',
       [theme.breakpoints.down('sm')]: {
         width: '90%',
         alignContent: 'center',
         justifyContent: 'center',
-        // overflow: 'hidden',
       },
     },
     formItem: {
@@ -127,7 +122,6 @@ const useStyles = makeStyles((theme: Theme) =>
         justifyContent: 'center',
         alignContent: 'center',
         alignItems: 'center',
-        // margin: theme.spacing(1, 0, 2),
       },
     },
     helperText: {
@@ -140,6 +134,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 /**
+ * A forward reference exotic component that renders new user form.
+ * The component is intended to be rendered inside of a Modal.
+ * A ref is forwarded through the component from it's props to a
+ * div element wrapping DialogTitle and DialogContent. The forward ref allows
+ * the form to be rendered in a Modal component transparently without
+ * breaking any of the functionality of the Modal or introducing
+ * accessibility issues.
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setOpen A function
+ * that sets the state of a boolean variable representing whether the
+ * modal should open.
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */
@@ -175,12 +179,11 @@ const NewUserForm = forwardRef<HTMLDivElement, ModalProps>(({
     <div className={classes.paper} ref={ref}>
       <DialogTitle
         className={classes.titleItem}
-        // variant='h5'
         id="create-account-title"
       >
-              Create Account
+          Create Account
       </DialogTitle>
-      <DialogContent className={classes.root} >
+      <DialogContent >
         <Container className={classes.formContainer}>
           <form onSubmit={formik.handleSubmit}>
             <Container className={classes.nameContainer}>

@@ -108,7 +108,7 @@ const UserAvatar = ({
             <ModalWrapper<AttendeeInfoProps>
               open={modalOpen}
               setOpen={setModalOpen}
-              Component={AttendeeInfo}
+              PropComponent={AttendeeInfo}
               {...{user}}
             />
             {/* <AttendeeInfoModal*/}

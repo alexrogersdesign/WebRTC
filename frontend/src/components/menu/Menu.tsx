@@ -48,26 +48,26 @@ export const Menu = () => {
         }}
       />
       <ModalWrapper
-        Component={JoinMeetingForm}
+        PropComponent={JoinMeetingForm}
         open={joinMeetingModalOpen}
         setOpen={setJoinMeetingModal}
       />
       <ModalWrapper<FormProps>
         open={loginModalOpen}
         setOpen={setLoginModalOpen}
-        Component={LoginForm}
+        PropComponent={LoginForm}
         {...{setDrawerOpen}}
       />
       <ModalWrapper<FormProps>
         open={createAccountModalOpen}
         setOpen={setCreateAccountModalOpen}
-        Component={NewUserForm}
+        PropComponent={NewUserForm}
         {...{setDrawerOpen}}
       />
       <ModalWrapper<FormProps>
         open={createMeetingModalOpen}
         setOpen={setCreateMeetingModalOpen}
-        Component={NewMeetingForm}
+        PropComponent={NewMeetingForm}
         {...{setDrawerOpen}}
       />
       <RenderTutorial

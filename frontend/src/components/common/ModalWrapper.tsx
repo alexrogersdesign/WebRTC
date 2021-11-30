@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {Component, useRef} from 'react';
+import React, {Component} from 'react';
 import {makeStyles,
   Theme,
   createStyles,
@@ -8,7 +8,6 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Dialog from '@material-ui/core/Dialog';
-import User from '../../shared/classes/User';
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -29,23 +28,17 @@ export interface ModalProps {
     open: boolean,
     setOpen: (open: boolean) => void,
 }
-// interface PassedProps<T> {
-//     data: T;
-// }
-
 
 interface Props <T> extends ModalProps{
-    Component: React.ComponentType<T & ModalProps>,
+    PropComponent: React.ComponentType<T & ModalProps>,
     ariaLabeledBy?: string,
     ariaDescribedBy?: string
 }
-// const displayName =
-//     Component.displayName || Component.name || 'Component';
 
 const ModalWrapper= <T, >({
   open,
   setOpen,
-  Component,
+  PropComponent,
   ariaDescribedBy,
   ariaLabeledBy,
   ...remainingProps

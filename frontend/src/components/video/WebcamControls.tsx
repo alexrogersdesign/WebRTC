@@ -166,6 +166,7 @@ const WebcamControls = ({className, isolated}: Props) => {
               className={classes.iconButton}
               aria-label="hide background"
               onClick={toggleRemoveBackground}
+              disabled={videoDisabled}
             >
               <AccountBoxTwoToneIcon/>
             </IconButton>

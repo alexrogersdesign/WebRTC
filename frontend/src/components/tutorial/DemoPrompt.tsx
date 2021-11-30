@@ -32,7 +32,7 @@ const DemoPrompt = () => {
   const classes = useStyles();
   const {showDemo, setShowDemo} = useContext(MediaControlContext);
   const {meeting} = useContext(RestContext);
-  const {xs} = useContext(AppStateContext);
+  const {sm} = useContext(AppStateContext);
   const [open, setOpen] = useState(false);
   const handleShowDemo = () => {
     setShowDemo(true);
@@ -69,12 +69,17 @@ const DemoPrompt = () => {
             </Button>
           </>
         }
-        style={
+        style={sm?
           {
             height: '5%',
             top: '10%',
-            left: '20%',
-          }
+            left: '40%',
+          }:
+            {
+              height: '5%',
+              top: '10%',
+              left: '20%',
+            }
         }
       />
       <Snackbar
@@ -87,10 +92,15 @@ const DemoPrompt = () => {
             Stop
           </Button>
         }
-        style={
+        style={sm?
+            {
+              height: '5%',
+              top: '8%',
+              left: '40%',
+            }:
           {
             height: '5%',
-            top: '5%',
+            top: '8%',
             left: '20%',
           }
         }

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {useEffect} from 'react';
-import Button from '@material-ui/core/Button';
+import Button, {ButtonProps} from '@material-ui/core/Button';
 import {Container} from '@material-ui/core';
 import {FormikProps} from 'formik';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
@@ -39,6 +39,7 @@ interface ImageValue {
 
 interface Props {
     formik: FormikProps<any>
+    buttonProps?: ButtonProps
 }
 
 const snackbarErrorOptions :OptionsObject = {
@@ -50,7 +51,7 @@ const snackbarErrorOptions :OptionsObject = {
   },
 };
 
-const UploadImage = ({formik}: Props)=> {
+const UploadImage = ({formik, buttonProps}: Props)=> {
   const {enqueueSnackbar} = useSnackbar();
   const classes = useStyles();
   /* Send notification if error occurs in iconImage */
@@ -67,7 +68,7 @@ const UploadImage = ({formik}: Props)=> {
         className={classes.input}
         style={{display: 'none'}}
         id="input-file-upload"
-        multiple
+        //multiple
         type='file'
         onChange={(event)=>{
           if (!event?.currentTarget?.files) return;
@@ -83,9 +84,10 @@ const UploadImage = ({formik}: Props)=> {
               variant="text"
               component="span"
               className={classes.button}
-              onBlur={formik.handleBlur}
+              //onBlur={formik.handleBlur}
+              {...buttonProps}
             >
-                            Upload Icon
+                Upload Icon
             </Button>
           </>
         )}
@@ -97,7 +99,7 @@ const UploadImage = ({formik}: Props)=> {
             className={classes.button}
             onClick={()=> formik.setFieldValue('iconImage', undefined)}
           >
-                        Remove
+              Remove
           </Button>
           <img
             className={classes.imagePreview}

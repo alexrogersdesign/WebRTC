@@ -12,6 +12,7 @@ import UploadImage from '../common/UploadImage';
 import {Container, DialogContent, DialogTitle} from '@material-ui/core';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {ModalProps} from '../common/ModalWrapper';
+import {AppStateContext} from '../../context/AppStateContext';
 
 
 const validationSchema = yup.object({
@@ -45,17 +46,24 @@ const validationSchema = yup.object({
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      // overflow: 'hidden',
+
+    },
     paper: {
       backgroundColor: theme.palette.background.paper,
-      border: '2px solid #000',
-      borderRadius: 5,
+      border: '1px solid #000',
+      borderRadius: theme.shape.borderRadius,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
       zIndex: 99,
       display: 'flex',
       flexDirection: 'column',
-      // width: '50%',
-      // margin: theme.spacing(2),
+      overflow: 'hidden',
+      [theme.breakpoints.down('sm')]: {
+        height: '70%',
+        padding: theme.spacing(2, 0, 1),
+      },
     },
     title: {
       display: 'flex',
@@ -65,6 +73,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     titleItem: {
       padding: theme.spacing(1, 1, 0),
+      [theme.breakpoints.down('sm')]: {
+        alignSelf: 'center',
+      },
     },
     formContainer: {
       flexDirection: 'column',
@@ -74,37 +85,57 @@ const useStyles = makeStyles((theme: Theme) =>
       // justifyContent: 'center',
       alignContent: 'center',
       width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        width: '90%',
+        alignContent: 'center',
+        justifyContent: 'center',
+        // overflow: 'hidden',
+      },
     },
     formItem: {
       margin: theme.spacing(1, 0, 2),
-      // padding: theme.spacing(2, 0, 2),
-      // margin: theme.spacing(.5, 0, .5),
-      // flexGrow: 1,
       flexShrink: 1,
       flexWrap: 'nowrap',
       width: '70%',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        alignContent: 'center',
+        justifyContent: 'center',
+        padding: theme.spacing(1, 0, 1),
+      },
     },
     nameItem: {
-      // padding: theme.spacing(1, 1, 2),
       margin: theme.spacing(1, 1, 1),
-
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 0, 1),
+      },
       flexShrink: 1,
       width: '100%',
     },
     nameContainer: {
-      // width: '100%',
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
       justifyContent: 'space-around',
       alignItems: 'center',
       alignContent: 'space-between',
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column-reverse',
+        padding: theme.spacing(0),
+        flexWrap: 'nowrap',
+        width: '100%',
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignItems: 'center',
+        // margin: theme.spacing(1, 0, 2),
+      },
     },
     helperText: {
-      // padding: 0,
-      // margin: 0,
       position: 'absolute',
       bottom: -20,
+    },
+    upload: {
+      boxShadow: theme.shadows[1],
     },
   }),
 );
@@ -116,6 +147,7 @@ const NewUserForm = forwardRef<HTMLDivElement, ModalProps>(({
   setOpen,
 }, ref) => {
   const {createUser} = useContext(RestContext);
+  const {sm} = useContext(AppStateContext);
   const classes = useStyles();
   const handleClose = () => {
     setOpen(false);
@@ -148,80 +180,93 @@ const NewUserForm = forwardRef<HTMLDivElement, ModalProps>(({
       >
               Create Account
       </DialogTitle>
-      <DialogContent className={classes.formContainer}>
-        <form onSubmit={formik.handleSubmit}>
-          <Container className={classes.nameContainer}>
-            <TextField
-              className={classes.nameItem}
-              variant="outlined"
-              id="firstName"
-              name="firstName"
-              label="First Name"
-              value={formik.values.firstName}
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              error={
-                formik.touched.firstName &&
+      <DialogContent className={classes.root} >
+        <Container className={classes.formContainer}>
+          <form onSubmit={formik.handleSubmit}>
+            <Container className={classes.nameContainer}>
+              <TextField
+                fullWidth={sm?? false}
+                className={classes.nameItem}
+                variant="outlined"
+                id="firstName"
+                name="firstName"
+                label="First Name"
+                value={formik.values.firstName}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.firstName &&
               Boolean(formik.errors.firstName)
-              }
-              helperText={formik.touched.firstName && formik.errors.firstName}
-              FormHelperTextProps={{className: classes.helperText}}
-            />
+                }
+                helperText={formik.touched.firstName && formik.errors.firstName}
+                FormHelperTextProps={{className: classes.helperText}}
+              />
+              <TextField
+                fullWidth={sm?? false}
+                className={classes.nameItem}
+                variant="outlined"
+                id="lastName"
+                name="lastName"
+                label="Last Name"
+                value={formik.values.lastName}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                error={formik.touched.lastName &&
+                  Boolean(formik.errors.lastName,
+                  )}
+                helperText={formik.touched.lastName && formik.errors.lastName}
+                FormHelperTextProps={{className: classes.helperText}}
+              />
+              <UploadImage
+                formik={formik}
+                buttonProps={{
+                  variant: sm? 'contained': 'text',
+                  disableElevation: true,
+                  className: classes.upload,
+                }}
+              />
+            </Container>
             <TextField
-              className={classes.nameItem}
+              className={classes.formItem}
+              fullWidth
               variant="outlined"
-              id="lastName"
-              name="lastName"
-              label="Last Name"
-              value={formik.values.lastName}
+              id="email"
+              name="email"
+              label="Email"
+              value={formik.values.email}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-              helperText={formik.touched.lastName && formik.errors.lastName}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+              FormHelperTextProps={{className: classes.helperText}}
+
+            />
+            <TextField
+              className={classes.formItem}
+              fullWidth
+              variant="outlined"
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              value={formik.values.password}
+              onBlur={formik.handleBlur}
+              onChange={formik.handleChange}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
               FormHelperTextProps={{className: classes.helperText}}
             />
-            <UploadImage formik={formik}/>
-          </Container>
-          <TextField
-            className={classes.formItem}
-            fullWidth
-            variant="outlined"
-            id="email"
-            name="email"
-            label="Email"
-            value={formik.values.email}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-            FormHelperTextProps={{className: classes.helperText}}
-
-          />
-          <TextField
-            className={classes.formItem}
-            fullWidth
-            variant="outlined"
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            value={formik.values.password}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-            FormHelperTextProps={{className: classes.helperText}}
-          />
-          <Button
-            className={classes.formItem}
-            color="primary"
-            variant="contained"
-            fullWidth
-            type="submit"
-          >
+            <Button
+              className={classes.formItem}
+              color="primary"
+              variant="contained"
+              fullWidth
+              type="submit"
+            >
                     Submit
-          </Button>
-        </form>
+            </Button>
+          </form>
+        </Container>
       </DialogContent>
     </div>
   );

@@ -19,13 +19,14 @@ import {
 } from '../../util/timeHelper';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {ModalProps} from '../common/ModalWrapper';
+import {AppStateContext} from '../../context/AppStateContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
       backgroundColor: theme.palette.background.paper,
-      border: '2px solid #000',
-      borderRadius: 5,
+      border: '1px solid #000',
+      borderRadius: theme.shape.borderRadius,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
       zIndex: 99,
@@ -33,37 +34,59 @@ const useStyles = makeStyles((theme: Theme) =>
       // flexDirection: 'column',
       minWidth: 1020,
       // minWidth: 800,
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden',
+      [theme.breakpoints.down('sm')]: {
+        minWidth: 600,
+        // width: '70%',
+        padding: theme.spacing(2, 0, 1),
+      },
     },
     titleItem: {
       padding: theme.spacing(1, 1, 0),
+      [theme.breakpoints.down('sm')]: {
+        alignSelf: 'center',
+      },
     },
     formContainer: {
-      // flexDirection: 'column',
-      // alignItems: 'center',
-      // flexWrap: 'nowrap',
-      // alignContent: 'center',
-      // width: '100%',
+      flexDirection: 'column',
+      alignItems: 'center',
+      flexWrap: 'nowrap',
+      alignContent: 'center',
+      width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        width: '80%',
+        alignContent: 'center',
+        justifyContent: 'center',
+        // overflow: 'hidden',
+      },
+    },
+    dialogContent: {
+      // width: '70%',
     },
     formItem: {
       margin: theme.spacing(1, 0, 3),
       flexShrink: 1,
       flexWrap: 'nowrap',
       width: '70%',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        alignContent: 'center',
+        justifyContent: 'center',
+        padding: theme.spacing(1, 0, 1),
+        margin: theme.spacing(1, 0, 2),
+
+      },
     },
     nameItem: {
       // padding: theme.spacing(1, 1, 2),
       margin: theme.spacing(1, 1, 1),
       flexShrink: 1,
       width: '100%',
-    },
-    nameContainer: {
-      // width: '100%',
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-      alignContent: 'space-between',
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 0, 1),
+      },
     },
     helperText: {
       position: 'absolute',
@@ -71,9 +94,12 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     dateField: {
       margin: theme.spacing(1, 2, 1),
-      // flexShrink: 1,
       minWidth: 220,
       width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 0, 1),
+        margin: theme.spacing(1, 0, 2),
+      },
     },
     dateContainer: {
       display: 'flex',
@@ -82,6 +108,19 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'space-around',
       alignItems: 'center',
       alignContent: 'space-between',
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column-reverse',
+        padding: theme.spacing(0),
+        flexWrap: 'nowrap',
+        width: '100%',
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignItems: 'center',
+        // margin: theme.spacing(1, 0, 2),
+      },
+    },
+    upload: {
+      boxShadow: theme.shadows[1],
     },
 
   }),
@@ -124,6 +163,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, ModalProps>(({
   setOpen,
 }, ref) => {
   const {createMeeting} = useContext(RestContext);
+  const {sm} = useContext(AppStateContext);
   const classes = useStyles();
   const handleClose = () => {
     setOpen(false);
@@ -164,94 +204,106 @@ const NewMeetingForm = forwardRef<HTMLDivElement, ModalProps>(({
         className={classes.titleItem}
         id="new-meeting-form-title"
       >
-              New Meeting
+          New Meeting
       </DialogTitle>
-      <DialogContent className={classes.formContainer}>
-        <form onSubmit={formik.handleSubmit}>
-          <Container className={classes.dateContainer}>
+      <DialogContent className={classes.dialogContent}>
+        <Container className={classes.formContainer}>
+          <form onSubmit={formik.handleSubmit}>
+            <Container className={classes.dateContainer}>
+              <TextField
+                fullWidth={sm?? false}
+                id="start"
+                label="Meeting start"
+                type="datetime-local"
+                variant="outlined"
+                className={classes.dateField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={formik.values.start}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange('start')}
+                error={
+                  formik.touched.start && Boolean(formik.errors.start)
+                }
+                helperText={formik.touched.start && formik.errors.start}
+                FormHelperTextProps={{className: classes.helperText}}
+              />
+              <TextField
+                fullWidth={sm?? false}
+                id="end"
+                label="Meeting end"
+                type="datetime-local"
+                variant="outlined"
+                className={classes.dateField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={formik.values.end}
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange('end')}
+                error={
+                  formik.touched.end && Boolean(formik.errors.end)
+                }
+                helperText={formik.touched.end && formik.errors.end}
+              />
+              <UploadImage
+                formik={formik}
+                buttonProps={{
+                  variant: sm? 'contained': 'text',
+                  disableElevation: true,
+                  className: classes.upload,
+                }}
+              />
+            </Container>
             <TextField
-              id="start"
-              label="Meeting start"
-              type="datetime-local"
+              fullWidth
+              className={classes.formItem}
+              autoComplete='off'
               variant="outlined"
-              // defaultValue={defaultTime}
-              className={classes.dateField}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={formik.values.start}
+              id="title"
+              name="title"
+              label="Meeting Title"
+              value={formik.values.title}
               onBlur={formik.handleBlur}
-              onChange={formik.handleChange('start')}
-              error={
-                formik.touched.start && Boolean(formik.errors.start)
-              }
-              helperText={formik.touched.start && formik.errors.start}
+              onChange={formik.handleChange}
+              error={formik.touched.title && Boolean(formik.errors.title)}
+              helperText={formik.touched.title && formik.errors.title}
               FormHelperTextProps={{className: classes.helperText}}
             />
             <TextField
-              id="end"
-              label="Meeting end"
-              type="datetime-local"
+              fullWidth
+              multiline
+              maxRows={4}
+              className={classes.formItem}
+              autoComplete='off'
               variant="outlined"
-              // defaultValue={defaultTime}
-              className={classes.dateField}
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={formik.values.end}
+              id="description"
+              name="description"
+              label="Meeting Description"
+              value={formik.values.description}
               onBlur={formik.handleBlur}
-              onChange={formik.handleChange('end')}
+              onChange={formik.handleChange}
               error={
-                formik.touched.end && Boolean(formik.errors.end)
+                formik.touched.description && Boolean(formik.errors.description)
               }
-              helperText={formik.touched.end && formik.errors.end}
+              helperText={
+                formik.touched.description &&
+                formik.errors.description
+              }
+              FormHelperTextProps={{className: classes.helperText}}
             />
-            <UploadImage formik={formik}/>
-          </Container>
-          <TextField
-            fullWidth
-            className={classes.formItem}
-            autoComplete='off'
-            variant="outlined"
-            id="title"
-            name="title"
-            label="Meeting Title"
-            value={formik.values.title}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-            error={formik.touched.title && Boolean(formik.errors.title)}
-            helperText={formik.touched.title && formik.errors.title}
-            FormHelperTextProps={{className: classes.helperText}}
-          />
-          <TextField
-            fullWidth
-            multiline
-            maxRows={4}
-            className={classes.formItem}
-            autoComplete='off'
-            variant="outlined"
-            id="description"
-            name="description"
-            label="Meeting Description"
-            value={formik.values.description}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-            error={
-              formik.touched.description && Boolean(formik.errors.description)
-            }
-            helperText={formik.touched.description && formik.errors.description}
-            FormHelperTextProps={{className: classes.helperText}}
-          />
-          <Button
-            className={classes.formItem}
-            color="primary"
-            variant="contained"
-            fullWidth
-            type="submit"
-          >
+            <Button
+              className={classes.formItem}
+              color="primary"
+              variant="contained"
+              fullWidth
+              type="submit"
+            >
                     Submit
-          </Button>
-        </form>
+            </Button>
+          </form>
+        </Container>
       </DialogContent>
     </div>
   );

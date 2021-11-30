@@ -7,7 +7,6 @@ import clsx from 'clsx';
 import User from '../../shared/classes/User';
 import {
   EXTERNAL_VIDEO_HEIGHT,
-  EXTERNAL_VIDEO_WIDTH,
 } from '../../util/constants';
 
 interface ExternalVideoClasses extends VideoClasses {
@@ -73,7 +72,7 @@ export function ExternalVideo({
             }
           }}
           height={EXTERNAL_VIDEO_HEIGHT}
-          width={EXTERNAL_VIDEO_WIDTH}
+          width={'auto'}
           playsInline
           autoPlay
           preload={'auto'}

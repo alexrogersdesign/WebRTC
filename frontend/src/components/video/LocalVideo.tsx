@@ -8,7 +8,6 @@ import {VideoClasses, VideoProps} from './VideoPlayer';
 import clsx from 'clsx';
 import {AppStateContext} from 'src/context/AppStateContext';
 import {LOCAL_VIDEO_WIDTH} from '../../util/constants';
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 interface LocalVideoClasses extends VideoClasses {
   localContainer?: string;
@@ -83,7 +82,7 @@ export function LocalVideo({
           width={LOCAL_VIDEO_WIDTH}
           autoPlay
           onCanPlay={() => setVideoLoading(false)}
-          onLoadStart={() => setVideoLoading(true)}
+          // onLoadStart={() => setVideoLoading(true)}
         />
         <div className={propClasses.controls}>
           <WebcamControls />

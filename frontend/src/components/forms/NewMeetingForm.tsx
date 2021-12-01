@@ -25,21 +25,15 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
       backgroundColor: theme.palette.background.paper,
-      border: '1px solid #000',
       borderRadius: theme.shape.borderRadius,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
-      zIndex: 99,
-      // display: 'flex',
-      // flexDirection: 'column',
       minWidth: 1020,
-      // minWidth: 800,
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
       [theme.breakpoints.down('sm')]: {
         minWidth: 600,
-        // width: '70%',
         padding: theme.spacing(2, 0, 1),
       },
     },

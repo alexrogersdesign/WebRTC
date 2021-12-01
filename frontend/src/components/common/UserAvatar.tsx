@@ -111,11 +111,6 @@ const UserAvatar = ({
               PropComponent={AttendeeInfo}
               {...{user}}
             />
-            {/* <AttendeeInfoModal*/}
-            {/*  open={modalOpen}*/}
-            {/*  setOpen={setModalOpen}*/}
-            {/*  user={user}*/}
-            {/* />*/}
           </>
         )}
         {!user && (

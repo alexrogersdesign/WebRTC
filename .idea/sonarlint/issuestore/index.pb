@@ -17,8 +17,6 @@ S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
 f
 6frontend/src/components/attendee/AttendeeInfoModal.tsx,0/b/0b22a89b52b97a6cc8c7cfcc88773b408161959f
-]
--frontend/src/components/common/UserAvatar.tsx,1/a/1ab36bf5abd62b6099d151ae7983ba57146a5aec
 a
 1frontend/src/components/attendee/AttendeeInfo.tsx,d/4/d411730e57c6fd48f5ad60762fdb031bd58d14d0
 d

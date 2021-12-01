@@ -46,15 +46,11 @@ const validationSchema = yup.object({
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-    },
     paper: {
       backgroundColor: theme.palette.background.paper,
-      border: '1px solid #000',
       borderRadius: theme.shape.borderRadius,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
-      zIndex: 99,
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',

@@ -52,7 +52,6 @@ const useStyles = makeStyles((theme: Theme) =>
       // color: '#e0e0e0',
       marginLeft: theme.spacing(2),
       marginRight: theme.spacing(2),
-
     },
     divider: {
       height: 28,

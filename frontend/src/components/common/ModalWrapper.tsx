@@ -3,10 +3,9 @@ import React from 'react';
 import {makeStyles,
   Theme,
   createStyles,
-  useTheme} from '@material-ui/core/styles';
+} from '@material-ui/core/styles';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import Dialog from '@material-ui/core/Dialog';
 
 

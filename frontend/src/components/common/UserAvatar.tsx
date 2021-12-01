@@ -76,8 +76,6 @@ const UserAvatar = ({
   className,
   avatarSize,
   clickDisabled,
-  Component,
-  componentProps,
 }: Props) => {
   const classes = useStyles({avatarSize: avatarSize?? 5});
   const [modalOpen, setModalOpen] = useState(false);
@@ -106,10 +104,14 @@ const UserAvatar = ({
               <AvatarIcon user={user} className={classes.avatar}/>
             )}
             <ModalWrapper<AttendeeInfoProps>
-              open={modalOpen}
-              setOpen={setModalOpen}
-              PropComponent={AttendeeInfo}
-              {...{user}}
+              modalOpen={modalOpen}
+              setModalOpen={setModalOpen}
+              WrappedComponent={AttendeeInfo}
+              componentProps={{
+                open: modalOpen,
+                setOpen: setModalOpen,
+                user,
+              }}
             />
           </>
         )}

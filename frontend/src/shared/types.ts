@@ -29,6 +29,10 @@ export interface IPeers {
    [key: string]: MediaConnection
  }
 
+export interface FormProps {
+    setOpen: (open: boolean) => void
+ }
+
 
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
     Pick<T, Exclude<keyof T, Keys>>

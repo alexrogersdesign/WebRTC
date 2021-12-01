@@ -11,8 +11,8 @@ import {RestContext} from '../../context/RestContext';
 import UploadImage from '../common/UploadImage';
 import {Container, DialogContent, DialogTitle} from '@material-ui/core';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
-import {ModalProps} from '../common/ModalWrapper';
 import {AppStateContext} from '../../context/AppStateContext';
+import {FormProps} from '../../shared/types';
 
 
 const validationSchema = yup.object({
@@ -143,7 +143,7 @@ const useStyles = makeStyles((theme: Theme) =>
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */
-const NewUserForm = forwardRef<HTMLDivElement, ModalProps>(({
+const NewUserForm = forwardRef<HTMLDivElement, FormProps>(({
   setOpen,
 }, ref) => {
   const {createUser} = useContext(RestContext);

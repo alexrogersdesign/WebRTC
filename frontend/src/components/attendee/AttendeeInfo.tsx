@@ -14,10 +14,11 @@ import User from '../../shared/classes/User';
 import UserAvatar from '../common/UserAvatar';
 import {IconButton} from '@material-ui/core';
 import PropTypes from 'prop-types';
-import {ModalProps} from '../common/ModalWrapper';
 
-export interface AttendeeInfoProps extends ModalProps{
+export interface AttendeeInfoProps{
    user: User,
+   setOpen: (open: boolean) => void,
+   open: boolean,
 }
 
 const useStyles = makeStyles((theme: Theme) =>

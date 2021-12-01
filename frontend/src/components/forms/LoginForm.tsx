@@ -12,6 +12,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TutorialPrompt from '../tutorial/TutorialPrompt';
 import {ModalProps} from '../common/ModalWrapper';
 import {AppStateContext} from '../../context/AppStateContext';
+import {FormProps} from '../../shared/types';
 
 
 const validationSchema = yup.object({
@@ -52,12 +53,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 
+
 );
 /**
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */
-const LoginForm = forwardRef<HTMLDivElement, ModalProps>(({
+const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
   setOpen,
 }, ref) => {
   const {login} = useContext(AppStateContext);

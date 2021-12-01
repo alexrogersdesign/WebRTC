@@ -17,8 +17,6 @@ S
 #.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
 f
 6frontend/src/components/attendee/AttendeeInfoModal.tsx,0/b/0b22a89b52b97a6cc8c7cfcc88773b408161959f
-a
-1frontend/src/components/attendee/AttendeeInfo.tsx,d/4/d411730e57c6fd48f5ad60762fdb031bd58d14d0
 d
 4tests/src/frontend-e2e/specs/single/createMeeting.ts,f/6/f6adce90e92e1b0721b266377c02df92a03deb5c
 _

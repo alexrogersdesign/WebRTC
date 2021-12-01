@@ -18,8 +18,8 @@ import {
   formatDateForPicker,
 } from '../../util/timeHelper';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
-import {ModalProps} from '../common/ModalWrapper';
 import {AppStateContext} from '../../context/AppStateContext';
+import {FormProps} from '../../shared/types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -163,7 +163,7 @@ const validationSchema = yup.object({
  * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */
-const NewMeetingForm = forwardRef<HTMLDivElement, ModalProps>(({
+const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
   setOpen,
 }, ref) => {
   const {createMeeting} = useContext(RestContext);

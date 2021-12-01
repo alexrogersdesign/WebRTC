@@ -1,13 +1,14 @@
-import React, {useState} from 'react';
+import React, {RefAttributes, useState} from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
 
-import ModalWrapper, {FormProps} from '../common/ModalWrapper';
+import ModalWrapper from '../common/ModalWrapper';
 import LoginForm from '../forms/LoginForm';
 import JoinMeetingForm from '../forms/JoinMeetingForm';
 import NewUserForm from '../forms/NewUserForm';
 import NewMeetingForm from '../forms/NewMeetingForm';
 import RenderTutorial from '../tutorial/RenderTutorial';
 import MenuDrawer from './MenuDrawer';
+import {FormProps} from '../../shared/types';
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -48,28 +49,37 @@ export const Menu = () => {
           drawerOpen,
         }}
       />
-      <ModalWrapper
-        PropComponent={JoinMeetingForm}
-        open={joinMeetingModalOpen}
-        setOpen={setJoinMeetingModal}
+      <ModalWrapper<FormProps, RefAttributes<HTMLDivElement>>
+        WrappedComponent={JoinMeetingForm}
+        componentProps={{
+          setOpen: setJoinMeetingModal,
+        }}
+        modalOpen={joinMeetingModalOpen}
+        setModalOpen={setJoinMeetingModal}
       />
-      <ModalWrapper<FormProps>
-        open={loginModalOpen}
-        setOpen={setLoginModalOpen}
-        PropComponent={LoginForm}
-        {...{setDrawerOpen}}
+      <ModalWrapper<FormProps, RefAttributes<HTMLDivElement>>
+        modalOpen={loginModalOpen}
+        setModalOpen={setLoginModalOpen}
+        WrappedComponent={LoginForm}
+        componentProps={{
+          setOpen: setLoginModalOpen,
+        }}
       />
-      <ModalWrapper<FormProps>
-        open={createAccountModalOpen}
-        setOpen={setCreateAccountModalOpen}
-        PropComponent={NewUserForm}
-        {...{setDrawerOpen}}
+      <ModalWrapper<FormProps, RefAttributes<HTMLDivElement>>
+        modalOpen={createAccountModalOpen}
+        setModalOpen={setCreateAccountModalOpen}
+        WrappedComponent={NewUserForm}
+        componentProps={{
+          setOpen: setCreateAccountModalOpen,
+        }}
       />
-      <ModalWrapper<FormProps>
-        open={createMeetingModalOpen}
-        setOpen={setCreateMeetingModalOpen}
-        PropComponent={NewMeetingForm}
-        {...{setDrawerOpen}}
+      <ModalWrapper<FormProps, RefAttributes<HTMLDivElement>>
+        modalOpen={createMeetingModalOpen}
+        setModalOpen={setCreateMeetingModalOpen}
+        WrappedComponent={NewMeetingForm}
+        componentProps={{
+          setOpen: setCreateMeetingModalOpen,
+        }}
       />
       <RenderTutorial
         {...{

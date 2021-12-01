@@ -6,10 +6,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import JoinMeetingInputField from './JoinMeetingInputField';
 import PropTypes from 'prop-types';
+import {FormProps} from '../../shared/types';
 
-interface Props {
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const JoinMeetingForm = forwardRef<HTMLDivElement, Props>((props, ref) => {
+const JoinMeetingForm = forwardRef<HTMLDivElement, FormProps>((props, ref) => {
   const classes = useStyles();
   return (
     <div>

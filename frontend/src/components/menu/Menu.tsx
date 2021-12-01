@@ -24,6 +24,7 @@ const useStyles = makeStyles(() =>
 /**
  * The main menu component which contains the elements that create the apps
  * menu functionality.
+ * TODO add to docs
  * @return {JSX.Element}
  * @function
  */

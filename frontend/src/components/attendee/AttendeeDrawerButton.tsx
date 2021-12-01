@@ -4,7 +4,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import React from 'react';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
-import Meeting from '../../shared/classes/Meeting';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
 const useStyles = makeStyles(() =>
@@ -25,7 +24,6 @@ const useStyles = makeStyles(() =>
 interface Props {
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     open: boolean
-    meeting: Meeting | undefined| null,
 }
 
 /**
@@ -36,7 +34,7 @@ interface Props {
  * @return {JSX.Element}
  * @constructor
  */
-export default function AttendeeDrawerButton({setOpen, meeting, open}:Props) {
+export default function AttendeeDrawerButton({setOpen, open}:Props) {
   const classes = useStyles();
 
   const hideWhenOpen = {display: open? 'none': 'flex'};
@@ -49,7 +47,6 @@ export default function AttendeeDrawerButton({setOpen, meeting, open}:Props) {
       watchItem={open}
     >
       <Button
-        style={{display: meeting? 'flex': 'none'}}
         aria-label="open drawer"
         onClick={() => setOpen(true)}
         className={clsx(classes.menuButton, {
@@ -58,7 +55,7 @@ export default function AttendeeDrawerButton({setOpen, meeting, open}:Props) {
       >
         <PeopleAltIcon style={hideWhenOpen}/>
         <Typography style={hideWhenOpen} variant="subtitle2" >
-                    Attendees
+          Attendees
         </Typography>
       </Button>
     </MemoizedHelpWrapper>

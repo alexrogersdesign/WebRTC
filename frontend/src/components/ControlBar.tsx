@@ -86,20 +86,23 @@ export const ControlBar = ({meeting}: Props) => {
         <Toolbar
           classes={{root: classes.toolbarItem}}
         >
-          <AttendeeDrawerButton
-            setOpen={setAttendeeDrawerOpen}
-            open={attendeeDrawerOpen}
-            meeting={meeting}
-          />
+          {meeting &&(
+            <AttendeeDrawerButton
+              setOpen={setAttendeeDrawerOpen}
+              open={attendeeDrawerOpen}
+            />
+          )}
           <Menu/>
         </Toolbar>
       </AppBar>
-      <AttendeeDrawer
-        toolbarStyle={classes.toolbar}
-        setOpen={setAttendeeDrawerOpen}
-        open={attendeeDrawerOpen}
-        drawerWidth={drawerWidth}
-      />
+      {meeting &&(
+        <AttendeeDrawer
+          toolbarStyle={classes.toolbar}
+          setOpen={setAttendeeDrawerOpen}
+          open={attendeeDrawerOpen}
+          drawerWidth={drawerWidth}
+        />
+      )}
       <main className={classes.content}>
         <div className={classes.toolbar} />
       </main>

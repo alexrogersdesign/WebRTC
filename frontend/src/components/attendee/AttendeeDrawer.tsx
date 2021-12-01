@@ -16,7 +16,6 @@ import List from '@material-ui/core/List';
 
 import AttendeeListItem from './AttendeeListItem';
 import {MediaControlContext} from '../../context/MediaControlContext';
-import {RestContext} from '../../context/RestContext';
 import {AppStateContext} from '../../context/AppStateContext';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
@@ -94,7 +93,6 @@ export default function AttendeeDrawer({
   drawerWidth,
   toolbarStyle,
 }:Props) {
-  const {meeting} = useContext(RestContext);
   const {externalMedia, localVideoRef} = useContext(MediaControlContext);
   const {videoDrawerOpen} = useContext(AppStateContext);
   const classes = useStyles({drawerWidth, localVideoRef, videoDrawerOpen});
@@ -102,59 +100,57 @@ export default function AttendeeDrawer({
   const users = externalMedia?.map(({user}) => user);
 
   const hideWhenClosed = {display: open? 'flex': 'none'};
-  if (meeting) {
-    return (
-      <MemoizedHelpWrapper
-        message={users?.length?
+  return (
+    <MemoizedHelpWrapper
+      message={users?.length?
                 'Click an user icon for more information':
                 'When a user joins, their icon is shown here'
-        }
-        tooltipProps={{placement: 'right'}}
-        watchItem={open}
-        tooltipClass={classes.tooltip}
-      >
-        <Drawer
-          variant="permanent"
-          className={clsx(classes.drawer, {
+      }
+      tooltipProps={{placement: 'right'}}
+      watchItem={open}
+      tooltipClass={classes.tooltip}
+    >
+      <Drawer
+        variant="permanent"
+        className={clsx(classes.drawer, {
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+          [classes.heightShift]: videoDrawerOpen,
+        })}
+        classes={{
+          paper: clsx({
             [classes.drawerOpen]: open,
             [classes.drawerClose]: !open,
             [classes.heightShift]: videoDrawerOpen,
-          })}
-          classes={{
-            paper: clsx({
-              [classes.drawerOpen]: open,
-              [classes.drawerClose]: !open,
-              [classes.heightShift]: videoDrawerOpen,
-            }),
-          }}
-        >
-          <div className={toolbarStyle}>
-            <Typography variant='h6'>Attendees</Typography>
-            <MemoizedHelpWrapper
-              message={'Close attendees list'}
-              tooltipProps={{placement: 'bottom-end'}}
-              style={hideWhenClosed}
-              watchItem={open}
-            >
-              <IconButton onClick={()=> setOpen(false)}>
-                {
+          }),
+        }}
+      >
+        <div className={toolbarStyle}>
+          <Typography variant='h6'>Attendees</Typography>
+          <MemoizedHelpWrapper
+            message={'Close attendees list'}
+            tooltipProps={{placement: 'bottom-end'}}
+            style={hideWhenClosed}
+            watchItem={open}
+          >
+            <IconButton onClick={()=> setOpen(false)}>
+              {
                   theme.direction === 'rtl' ?
                       <ChevronRightIcon /> :
                       <ChevronLeftIcon />
-                }
-              </IconButton>
-            </MemoizedHelpWrapper>
-          </div>
-          <Divider />
-          <List >
-            {users.map((item) => {
-              return (
-                <AttendeeListItem key={item.id.toString()} user={item}/>
-              );
-            })}
-          </List>
-        </Drawer>
-      </MemoizedHelpWrapper>
-    );
-  } else return <></>;
+              }
+            </IconButton>
+          </MemoizedHelpWrapper>
+        </div>
+        <Divider />
+        <List >
+          {users.map((item) => {
+            return (
+              <AttendeeListItem key={item.id.toString()} user={item}/>
+            );
+          })}
+        </List>
+      </Drawer>
+    </MemoizedHelpWrapper>
+  );
 }

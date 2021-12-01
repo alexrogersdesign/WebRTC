@@ -26,7 +26,7 @@ interface Props {
     innerRef: React.MutableRefObject<any>
     isOpen: boolean
 }
-const useStyles = makeStyles(({palette, spacing}) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     paper: {
       width: '100%',
@@ -38,6 +38,8 @@ const useStyles = makeStyles(({palette, spacing}) =>
     },
     container: {
       ...styles,
+      borderRadius: theme.shape.borderRadius,
+      boxShadow: theme.shadows[0],
     },
     chatContainer: {
       width: '28vw',
@@ -48,28 +50,22 @@ const useStyles = makeStyles(({palette, spacing}) =>
       height: 'calc( 20% - 10px )',
     },
     messageText: {
-      itemColor: palette.primary.dark,
+      itemColor: theme.palette.primary.dark,
     },
     avatarWrapper: {
       display: 'flex',
       flexDirection: 'row',
       alignContent: 'stretch',
       alignItems: 'center',
-      padding: spacing(0, 0, 0),
+      padding: theme.spacing(0, 0, 0),
     },
     avatar: {
-      padding: spacing(0, 1, 0),
+      padding: theme.spacing(0, 1, 0),
     },
     input: {
       width: '90%',
       height: '90%',
-      margin: spacing(.5, .5, .5),
-    },
-    content: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignContent: 'stretch',
-      alignItems: 'center',
+      margin: theme.spacing(.5, .5, .5),
     },
   }),
 );

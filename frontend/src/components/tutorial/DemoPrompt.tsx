@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     snackbar: {
-      width: '50%',
-      zIndex: theme.zIndex.drawer - 1,
+      width: '40%',
+      zIndex: theme.zIndex.drawer,
     },
   }),
 );
@@ -74,7 +74,7 @@ const DemoPrompt = () => {
           {
             height: '5%',
             top: '14%',
-            left: '40%',
+            left: '30%',
           }:
             {
               height: '5%',
@@ -97,7 +97,7 @@ const DemoPrompt = () => {
             {
               height: '5%',
               top: '10%',
-              left: '40%',
+              left: '30%',
             }:
           {
             height: '5%',

@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import {OptionsObject, useSnackbar} from 'notistack';
+import {useSnackbar} from 'notistack';
 import ObjectID from 'bson-objectid';
 
 import {ChildrenProps} from '../shared/types';
@@ -18,6 +18,13 @@ import Meeting from '../shared/classes/Meeting';
 import {RefreshResponse, useRestApi} from '../hooks/useRestApi';
 import useLocalStorageState from 'use-local-storage-state';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
+import {
+  snackbarInfoOptions,
+  snackbarSuccessOptions,
+  snackbarWarnOptions,
+} from './NotificationProvider';
+import {useTheme} from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 /** Context for making HTTP Calls */
 const RestContext = createContext<IRestContext>(undefined!);
@@ -29,6 +36,9 @@ const RestContext = createContext<IRestContext>(undefined!);
  */
 const RestContextProvider = ({children}: ChildrenProps) => {
   const {enqueueSnackbar} = useSnackbar();
+  const theme = useTheme();
+  const sm = useMediaQuery(theme.breakpoints.down('sm'));
+
   /** An array of meetings that can be joined. */
   const [meetingList, setMeetingList] = useState<Meeting[]>([]);
   /** Local storage boolean that indicates whether the user has chosen
@@ -47,7 +57,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
   const handleError = (error:any, message?: string) => {
     const newMessage = message?? error.message?? 'An error has occurred';
     if (error?.response?.status === 401) {
-      enqueueSnackbar(newMessage, snackbarWarnOptions);
+      enqueueSnackbar(newMessage, snackbarWarnOptions(sm));
     } else if (error?.response?.status >= 500) {
       console.error(error.message);
     } else console.error(error.message);
@@ -102,7 +112,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
       setCurrentUser(parsedUser);
       enqueueSnackbar(
           `Welcome ${parsedUser.fullName}`,
-          snackbarSuccessOptions,
+          snackbarSuccessOptions(sm),
       );
       setIsLoggedOut(false);
       return parsedUser;
@@ -135,7 +145,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
     const parsedUser = parseUser(user);
     enqueueSnackbar(
         `Account for ${parsedUser.email} created`,
-        snackbarSuccessOptions,
+        snackbarSuccessOptions(sm),
     );
     return parsedUser;
   };
@@ -169,7 +179,8 @@ const RestContextProvider = ({children}: ChildrenProps) => {
     setMeetingList((oldState) => [...oldState, parsedMeeting]);
     enqueueSnackbar(
         `Meeting titled \"${parsedMeeting?.title}\" was created`,
-        snackbarSuccessOptions);
+        snackbarSuccessOptions(sm),
+    );
     return parsedMeeting;
   };
   /**
@@ -232,7 +243,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
     try {
       await api.delete(`/meetings/${id}`);
       removeMeetingFromList(id, false);
-      enqueueSnackbar(`Meeting Deleted`, snackbarInfoOptions);
+      enqueueSnackbar(`Meeting Deleted`, snackbarInfoOptions(sm));
       return true;
     } catch (error) {
       handleError(error);
@@ -256,7 +267,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
       }
       notify && enqueueSnackbar(
           `New meeting titled \"${addedMeeting?.title}\" available`,
-          snackbarInfoOptions);
+          snackbarInfoOptions(sm));
       return [...oldState, addedMeeting];
     });
   };
@@ -274,7 +285,7 @@ const RestContextProvider = ({children}: ChildrenProps) => {
       if (meetingIndex > -1) {
         notify && enqueueSnackbar(
             `Meeting titled \"${oldState[meetingIndex].title}\" 
-            no long available`, snackbarInfoOptions);
+            no long available`, snackbarInfoOptions(sm));
         const newState= [...oldState];
         newState.splice(meetingIndex, 1);
         return newState;
@@ -329,31 +340,6 @@ export interface IRestContext {
   isLoggedOut: boolean
 }
 
-const snackbarSuccessOptions: OptionsObject = {
-  variant: 'success',
-  autoHideDuration: 2000,
-  anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'center',
-  },
-};
-
-const snackbarWarnOptions :OptionsObject = {
-  variant: 'warning',
-  autoHideDuration: 2000,
-  anchorOrigin: {
-    vertical: 'top',
-    horizontal: 'center',
-  },
-};
-const snackbarInfoOptions :OptionsObject = {
-  variant: 'info',
-  autoHideDuration: 2000,
-  anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'left',
-  },
-};
 
 export interface ILoginCredentials {
   email: string,

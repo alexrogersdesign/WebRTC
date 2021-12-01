@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-// eslint-disable-next-line no-unused-vars
 import React, {
   createContext,
   Dispatch,
@@ -20,6 +19,10 @@ import {AuthenticationError} from '../util/errors/AuthenticationError';
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import User from '../shared/classes/User';
+import {
+  snackbarErrorOptions,
+  snackbarInfoOptions,
+} from './NotificationProvider';
 
 /**
  * The context that handles the application state changes
@@ -76,7 +79,7 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
       roomParam && await joinMeeting(roomParam);
     } catch (error) {
       if (error instanceof AuthenticationError) {
-        enqueueSnackbar(error.message);
+        enqueueSnackbar(error.message, snackbarErrorOptions(sm));
         navigate('');
       }
     }
@@ -127,7 +130,7 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
     navigate('?room='+ foundMeeting?.id);
     enqueueSnackbar(
         `Joining meeting ${foundMeeting.title}`,
-        {variant: 'info'},
+        snackbarInfoOptions(sm),
     );
   };
   /**
@@ -135,7 +138,7 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
    */
   const leaveMeeting = () => {
     socketLeaveMeeting();
-    enqueueSnackbar(`Leaving meeting`);
+    enqueueSnackbar(`Leaving meeting`, snackbarInfoOptions(sm));
     setMeeting(null);
     stopWebcamStream();
     navigate('');

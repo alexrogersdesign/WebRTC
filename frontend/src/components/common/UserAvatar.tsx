@@ -15,24 +15,16 @@ interface StyleProps {avatarSize: number}
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
     root: {
-      'display': 'flex',
+      // 'display': 'flex',
       '& > *': {
-        // margin: theme.spacing(1),
       },
     },
     fab: (props) => ({
       width: theme.spacing(props.avatarSize + .5),
       height: theme.spacing(props.avatarSize + .5),
       flexShrink: 0,
-      // margin: 2,
-      // opacity: .9,
       zindex: 99,
     }),
-    absolute: {
-      position: 'absolute',
-      // bottom: theme.spacing(2),
-      // right: theme.spacing(3),
-    },
     orange: {
       color: theme.palette.getContrastText(deepOrange[500]),
       backgroundColor: deepOrange[500],

@@ -42,7 +42,7 @@ const VideoGrid = () => {
   const videoList = () => externalMedia?.map(({user, stream}) => {
     return (
       <Grid item key={user.id.toString()} >
-        <VideoPlayer stream={stream} user={user} className={classes.video} />
+        <VideoPlayer stream={stream} user={user} />
       </Grid>);
   });
   return (

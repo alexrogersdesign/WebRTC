@@ -10,11 +10,13 @@ interface StyleProps {
     videoLoading: boolean;
 }
 
+const outerBorderRadius = 10;
+const innerPadding = 1;
+const innerBorderRadius = outerBorderRadius - innerPadding;
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
     container: {
-      display: 'inline-block',
-      borderRadius: '10px',
+      position: 'relative',
       flexWrap: 'nowrap',
       [theme.breakpoints.down('xs')]: {
         width: '80%',
@@ -25,21 +27,22 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       width: '30em !important',
     },
     paper: ({videoLoading}) => ({
-      padding: 3,
-      borderRadius: 'inherit',
+      padding: innerPadding,
+      borderRadius: outerBorderRadius,
       display: 'flex',
       flexGrow: -1,
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: theme.palette.neutralGray.light,
-      boxShadow: theme.shadows[2],
+      backgroundColor: theme.palette.neutralGray.dark,
+      boxShadow: theme.shadows[4],
+      // boxShadow: theme.shadows[2],
       opacity: videoLoading? 0: 1,
       width: 'max-content',
       height: 'max-content',
     }),
     video: {
-      borderRadius: 'inherit',
+      borderRadius: innerBorderRadius,
     },
     externalVideo: {
       objectFit: 'scale-down',
@@ -60,8 +63,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       },
     },
     controls: {
+      display: 'absolute',
       zIndex: 99,
-      borderRadius: '10',
+      borderRadius: innerBorderRadius,
       // marginTop: '-12.75%',
       marginTop: '-14%',
       width: '100%',

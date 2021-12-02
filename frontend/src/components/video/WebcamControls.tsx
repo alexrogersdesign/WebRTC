@@ -79,7 +79,7 @@ const WebcamControls = ({className, isolated}: Props) => {
   const {
     setMicMuted,
     setVideoDisabled,
-    setScreenSharing,
+    attemptScreenShare,
     micMuted,
     videoDisabled,
     screenSharing,
@@ -144,7 +144,7 @@ const WebcamControls = ({className, isolated}: Props) => {
               }}
               className={classes.iconButton}
               aria-label="share screen"
-              onClick={()=>setScreenSharing(!screenSharing)}
+              onClick={attemptScreenShare}
             >
               <ScreenShareTwoToneIcon/>
             </IconButton>

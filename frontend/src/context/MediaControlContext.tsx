@@ -14,6 +14,10 @@ import videoASrc from '../util/files/video/VideoAConverted.mp4';
 import videoBSrc from '../util/files/video/VideoBConverted.mp4';
 import iconA from '../util/files/img/userA.jpeg';
 import iconB from '../util/files/img/userB.jpeg';
+import {useSnackbar} from 'notistack';
+import {snackbarWarnOptions} from './NotificationProvider';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import useTheme from '@material-ui/core/styles/useTheme';
 
 /** The Context that handles media and media controls. */
 const MediaControlContext = createContext<IMediaControlContext>(undefined!);
@@ -23,8 +27,9 @@ const MediaControlContext = createContext<IMediaControlContext>(undefined!);
  * @return {JSX.Element}
  */
 const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
-  const {currentUser, meeting} = useContext(RestContext);
-
+  const {currentUser} = useContext(RestContext);
+  const {enqueueSnackbar} = useSnackbar();
+  const sm = useMediaQuery(useTheme().breakpoints.down('sm'));
   /** Boolean State indicating the current user has disabled their microphone */
   const [micMuted, setMicMuted] = useState<boolean>(false);
   /** Boolean State indicating the current user has disabled their webcam */
@@ -54,8 +59,10 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    * control parameters */
   const updateStreamMutes = () => {
     if (outgoingMedia.current) {
-      outgoingMedia.current.getAudioTracks()[0].enabled = !micMuted;
-      outgoingMedia.current.getVideoTracks()[0].enabled = !videoDisabled;
+      const audioTracks = outgoingMedia.current.getAudioTracks();
+      const videoTracks = outgoingMedia.current.getVideoTracks();
+      audioTracks.forEach((track)=> track.enabled = !micMuted);
+      videoTracks.forEach((track)=> track.enabled = !videoDisabled);
     }
   };
 
@@ -64,67 +71,117 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   useEffect(() => {
     updateStreamMutes();
   }, [micMuted, videoDisabled]);
-  /**
-   * Listen for changes in screen sharing
-   * If a change is detected, initialize media stream
-   * is called to handle the change.
-   */
-  useEffect( () => {
-    meeting && initializeMediaStream();
-  }, [screenSharing]);
+
 
   /**
-   * If the user stops the screen sharing process via the browser API
-   * then set screen sharing state to be false.
+   * Toggles the screen sharing feature.
+   * If screen sharing currently enabled, it is disabled and
+   * the video feed is re-initialized with the webcam as the source.
+   * Else the video feed is re-initialized with the screen as the source
+   * @return {Promise<void>}
    */
-  useEffect(() => {
-    if (!localMedia) {
+  const attemptScreenShare = async () => {
+    if (screenSharing) {
+      stopLocalMediaStream();
       setScreenSharing(false);
+      await initializeMediaStream();
+    } else {
+      const success = await initializeMediaStream('screen');
+      success && setScreenSharing(true);
     }
-  }, [localMedia]);
+  };
+
+  /**
+   * Attempts to retrieve the webcam media from the browser.
+   * Asks the end user for permission.
+   * Adds an event listener to the stream that sets the videoDisabled
+   * variable to true if the user stops the stream via the browser API and
+   * not the application.
+   * @return {Promise<MediaStream>} The webcam stream
+   */
+  const getWebcamMedia = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia( {
+        video: true,
+        audio: true,
+      });
+      stream
+          .getVideoTracks()[0]
+          .addEventListener('ended', () => setVideoDisabled(true));
+      return stream;
+    } catch (err) {
+      /** Allow user to decline permission prompt */
+      if (err instanceof DOMException) {
+        setVideoDisabled(true);
+        return;
+      } else {
+        throw err;
+      }
+    }
+  };
+  /**
+   * Attempts to retrieve the screen display media (screen sharing)
+   * from the browser. Asks the user for permission.
+   * Adds an event listener to the stream that sets the screenSharing
+   * variable to false if the user stops the stream via the browser API and
+   * not the application.
+   * @return {Promise<MediaStream>} The screen display media stream
+   */
+  const getScreenShareMedia = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia();
+      stream
+          .getVideoTracks()[0]
+          .addEventListener('ended', () => setScreenSharing(false));
+      return stream;
+    } catch (err) {
+      /** Allow user to decline permission prompt */
+      if (err instanceof DOMException) {
+        setScreenSharing(false);
+        return;
+      } else {
+        throw err;
+      }
+    }
+  };
+  type StreamTarget = 'webcam' | 'screen'
 
   /**
    * Get audio and video stream from the browser
    * Prompts users for mic and video permissions
+   * @param {StreamTarget} target An optional target of where the stream
+   * should be retrieved from. Either 'webcam' or 'screen'. Defaults to
+   * 'webcam'
+   * @return {Promise<MediaStream>} The retrieved media stream
    */
-  const initializeMediaStream = async () : Promise<MediaStream| undefined> => {
+  const initializeMediaStream = async (target:StreamTarget ='webcam') => {
     try {
-      let stream;
       /** Retrieves webcam or screen share stream based
        * on screenSharing variable. */
-      if (screenSharing) {
-        stream = await navigator
-            .mediaDevices
-            .getDisplayMedia();
-        stream
-            .getVideoTracks()[0]
-            .addEventListener('ended', () => setScreenSharing(false));
-      } else {
-        stream = await navigator.mediaDevices.getUserMedia( {
-          video: true,
-          audio: true,
-        });
+      const stream = target === 'screen' ?
+          await getScreenShareMedia() :
+          await getWebcamMedia();
+      if (!stream) {
+        enqueueSnackbar(
+            'User declined permission',
+            snackbarWarnOptions(sm),
+        );
+        return;
       }
       setLocalMedia(stream);
       outgoingMedia.current = stream;
-      /** Stores stream in ref to be used by video element */
+      /** Set the webcam preview video element to display the outgoing stream */
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = outgoingMedia.current;
       }
       return stream;
     } catch (err) {
       console.log(err);
-      /** Allow user to decline permission prompt */
-      if (err instanceof DOMException) {
-        screenSharing && setScreenSharing(false);
-        !screenSharing && setVideoDisabled(true);
-        return;
-      }
       throw err;
     }
   };
   /** Cleans up the webcam stream. Disables browser media use indicator */
-  const stopWebcamStream = () => {
+  const stopLocalMediaStream = () => {
     localMedia?.getTracks().forEach((track) => track.stop());
   };
 
@@ -236,7 +293,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         initializeMediaStream,
         setMicMuted,
         setVideoDisabled,
-        setScreenSharing,
+        attemptScreenShare,
         micMuted,
         videoDisabled,
         screenSharing,
@@ -247,7 +304,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         localMedia,
         setShowDemo,
         showDemo,
-        stopWebcamStream,
+        stopWebcamStream: stopLocalMediaStream,
         updateStreamMutes,
       }}
     >
@@ -262,7 +319,7 @@ export interface IMediaControlContext {
   initializeMediaStream: () => Promise<MediaStream| undefined>,
   setMicMuted: (boolean: boolean) => void,
   setVideoDisabled: (boolean: boolean) => void,
-  setScreenSharing: (boolean: boolean) => void,
+  attemptScreenShare: () => Promise<void>,
   micMuted: boolean,
   videoDisabled: boolean,
   screenSharing: boolean,

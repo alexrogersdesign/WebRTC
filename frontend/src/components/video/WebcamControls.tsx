@@ -37,11 +37,11 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'rgb(255,255,255, 0)',
     },
     rootAttached: {
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10,
+      borderBottomLeftRadius: 9,
+      borderBottomRightRadius: 9,
       borderTopLeftRadius: 3,
       borderTopRightRadius: 3,
-      backgroundColor: 'rgb(255,255,255, .4)',
+      backgroundColor: 'rgb(255,255,255, .5)',
     },
     input: {
       marginLeft: theme.spacing(1),
@@ -90,22 +90,20 @@ const WebcamControls = ({className, isolated}: Props) => {
     removeBackground,
   } = useContext(SegmentationContext);
 
-
-  const toggleMuteMicrophone = () => {
-    setMicMuted(!micMuted);
-  };
-  const toggleDisableVideo = () => {
-    setVideoDisabled(!videoDisabled);
-  };
-  const toggleShareScreen = () => {
-    setScreenSharing(!screenSharing);
-  };
-  const toggleRemoveBackground = () => {
-    setRemoveBackground(!removeBackground);
-  };
-
   const rootClass = clsx(!isolated && classes.rootAttached, classes.root);
-  const theme = useTheme();
+  const {palette} = useTheme();
+  const effectEngagedColor = palette.success.light;
+  const actionDisabledColor = palette.action.disabled;
+  const disableEngagedColor= palette.disabled.main;
+  const effectDisengagedColor = screenSharing?
+       palette.neutral.contrastText:
+       palette.neutral.light;
+  const hideBackgroundStyle = () : React.CSSProperties => {
+    let color = removeBackground? effectEngagedColor: effectDisengagedColor;
+    if (videoDisabled) color = actionDisabledColor;
+    return {color};
+  };
+
   return (
     <MemoizedHelpWrapper
       message={'Webcam controls, hover over buttons for more information'}
@@ -115,13 +113,12 @@ const WebcamControls = ({className, isolated}: Props) => {
         <Paper className={rootClass} elevation={3}>
           <ToolTip title="Mute Microphone">
             <IconButton
-              style={
-                {color: micMuted? theme.palette.disabled.main :
-                theme.palette.neutral.light,
-                }}
+              style={{
+                color: micMuted? disableEngagedColor:effectDisengagedColor,
+              }}
               className={classes.iconButton}
               aria-label="mute microphone"
-              onClick={toggleMuteMicrophone}
+              onClick={() => setMicMuted(!micMuted)}
             >
               <VolumeOffTwoToneIcon/>
             </IconButton>
@@ -129,13 +126,12 @@ const WebcamControls = ({className, isolated}: Props) => {
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip title="Disable Video">
             <IconButton
-              style={
-                {color: videoDisabled? theme.palette.disabled.main :
-                theme.palette.neutral.light}
-              }
+              style={{
+                color: videoDisabled? disableEngagedColor:effectDisengagedColor,
+              }}
               className={classes.iconButton}
               aria-label="disable video"
-              onClick={toggleDisableVideo}
+              onClick={()=> setVideoDisabled(!videoDisabled)}
             >
               <VideocamOffTwoToneIcon/>
             </IconButton>
@@ -143,32 +139,29 @@ const WebcamControls = ({className, isolated}: Props) => {
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip title="Share Screen">
             <IconButton
-              style={
-                {color: screenSharing? theme.palette.success.main :
-                theme.palette.neutral.light,
-                }}
-              color="primary"
+              style={{
+                color: screenSharing? effectEngagedColor: effectDisengagedColor,
+              }}
               className={classes.iconButton}
               aria-label="share screen"
-              onClick={toggleShareScreen}
+              onClick={()=>setScreenSharing(!screenSharing)}
             >
               <ScreenShareTwoToneIcon/>
             </IconButton>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip title="Hide Background">
-            <IconButton
-              style={
-                {color: removeBackground? theme.palette.success.light :
-                theme.palette.neutral.main,
-                }}
-              className={classes.iconButton}
-              aria-label="hide background"
-              onClick={toggleRemoveBackground}
-              disabled={videoDisabled}
-            >
-              <AccountBoxTwoToneIcon/>
-            </IconButton>
+            <span>
+              <IconButton
+                style={hideBackgroundStyle()}
+                className={classes.iconButton}
+                aria-label="hide background"
+                onClick={()=>setRemoveBackground(!removeBackground)}
+                disabled={videoDisabled}
+              >
+                <AccountBoxTwoToneIcon/>
+              </IconButton>
+            </span>
           </ToolTip>
           {/* <Divider className={classes.divider} orientation="vertical" /> */}
         </Paper>

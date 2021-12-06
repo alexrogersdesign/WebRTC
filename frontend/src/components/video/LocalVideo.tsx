@@ -38,7 +38,7 @@ export function LocalVideo({
 }: LocalVideoProps) {
   const {
     removeBackground,
-    segmentationReady,
+    segmentation,
   } = useContext(SegmentationContext);
   const {localVideoRef, outgoingMedia} = useContext(MediaControlContext);
   const {videoDrawerOpen} = useContext(AppStateContext);
@@ -58,7 +58,7 @@ export function LocalVideo({
   }, [videoDrawerOpen]);
 
 
-  const showBackground = !(removeBackground && segmentationReady);
+  const showBackground = !(removeBackground && segmentation.ready);
   return (
     <div className={clsx(propClasses.localContainer, propClasses.container)}>
       {videoLoading &&(

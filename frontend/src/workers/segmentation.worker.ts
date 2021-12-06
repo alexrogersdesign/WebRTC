@@ -1,6 +1,5 @@
 import * as bodyPix from '@tensorflow-models/body-pix';
 // eslint-disable-next-line no-unused-vars
-import createCanvasContext from 'canvas-context';
 import type {BodyPix} from '@tensorflow-models/body-pix';
 // const bodyPix = require('@tensorflow-models/body-pix');
 // const {BodyPix} = require('@tensorflow-models/body-pix');
@@ -39,12 +38,12 @@ const beginSegmentation = async (image: ImageBitmap) => {
   /** Turn segmented body data into a mask image */
   const detectedPersonParts = bodyPix.toMask(body);
   bodyPix.drawMask(
-    outputCanvas, //* The destination
-    inputCanvas, //* The video source
-    detectedPersonParts, //* Person parts detected in the video
-    1, //* The opacity value of the mask
-    9, //* The amount of blur
-    false, //* If the output video should be flipped horizontally
+      outputCanvas, //* The destination
+      inputCanvas, //* The video source
+      detectedPersonParts, //* Person parts detected in the video
+      1, //* The opacity value of the mask
+      9, //* The amount of blur
+      false, //* If the output video should be flipped horizontally
   );
   const returnImage = outputCanvas.transferToImageBitmap();
   worker.postMessage({image: returnImage}, [returnImage]);

@@ -1,38 +1,67 @@
 /* eslint-disable no-unused-vars */
 import {useState, useEffect, useRef} from 'react';
 import * as workerTimers from 'worker-timers';
-import createCanvasContext from 'canvas-context';
 
 
-import Worker from 'worker-loader!../workers/segmentation.worker';
-import {ReturnEvent} from '../workers/segmentation.worker';
 import {
   BodypixWorkerManager, createForegroundImage,
   generateBodyPixDefaultConfig,
-  generateDefaultBodyPixParams, SemanticPersonSegmentation,
+  generateDefaultBodyPixParams,
+  SemanticPersonSegmentation,
 } from '@dannadori/bodypix-worker-js';
+import * as bodyPix from '@tensorflow-models/body-pix';
 
 const config = generateBodyPixDefaultConfig();
+// config.useTFWasmBackend = true;
 const params = generateDefaultBodyPixParams();
 /** The resolution that determines accuracy (time tradeoff) */
-params.segmentPersonParams.internalResolution = .25;
+params.segmentPersonParams.internalResolution = 'low';
 /** To what confidence level background is removed */
-params.segmentPersonParams.segmentationThreshold = .4;
+params.segmentPersonParams.segmentationThreshold = .3;
+params.type = 0;
+params.processHeight = 480;
+params.processWidth = 640;
 
-const useSegmentation = (stream: MediaStream| undefined) => {
-  const segmentationWorker = useRef(new Worker());
-  const timeoutID= useRef<number| null>(null);
+
+const useSegmentation = (inputStream: MediaStream| undefined) => {
   const [segmentationReady, setSegmentationReady] = useState(false);
-  const outGoingStream = useRef<MediaStream| null>(null);
+  const [segmentationStarting, setSegmentationStarting] = useState(false);
+  const segmentationStopped = useRef<boolean>();
+  const outputStream = useRef<MediaStream| null>(null);
+  const timeoutID= useRef<number>(null!);
   const srcCanvas = useRef<HTMLCanvasElement>(null!);
   const dstCanvas = useRef<HTMLCanvasElement>(null!);
   const tempVideo = useRef(document.createElement('video'));
 
-  const manager = useRef(new BodypixWorkerManager());
-  const start = () => {
-    if (!stream) return;
+  useEffect(() => {
+    console.log('segmentation set to stopped?: ', segmentationStopped.current);
+  }, [segmentationStopped.current]);
 
-    const streamVideoTrack = stream.getVideoTracks()[0];
+  useEffect(() => {
+    console.log('seg ready: ', segmentationReady);
+  }, [segmentationReady]);
+
+
+  const manager = useRef(new BodypixWorkerManager());
+
+  const stopCycle = () => {
+    try {
+      timeoutID.current && workerTimers.clearTimeout(timeoutID.current);
+      // clearTimeout();
+    } catch (e) {
+      if (e instanceof Error) {
+        console.error(JSON.stringify(e.stack));
+      }
+    }
+  };
+
+  const start = () => {
+    console.log('start called');
+    if (!inputStream) return;
+    segmentationStopped.current = false;
+    setSegmentationStarting(true);
+
+    const streamVideoTrack = inputStream.getVideoTracks()[0];
     const {height, width} = streamVideoTrack.getSettings();
     if (!width || !height) {
       throw new Error('unable to retrieve width or height from ' +
@@ -50,83 +79,85 @@ const useSegmentation = (stream: MediaStream| undefined) => {
       canvas.height = height;
       dstCanvas.current = canvas;
     }
-    tempVideo.current.srcObject = stream;
-    tempVideo.current.autoplay = true;
+    tempVideo.current.srcObject = inputStream;
     tempVideo.current.height = height;
+    tempVideo.current.width = width;
+    tempVideo.current.autoplay = true;
 
 
     const runWorker = async () => {
-      // const imageCapture = new ImageCapture(streamVideoTrack);
-      // const image = await imageCapture.grabFrame();
       const context = srcCanvas.current.getContext('2d');
       context?.drawImage(tempVideo.current, 0, 0, width, height);
       const pred = await manager.current
           .predict(srcCanvas.current, params);
-      const foreground = createForegroundImage(
-          srcCanvas.current,
-          pred as SemanticPersonSegmentation,
-      );
-      dstCanvas.current.getContext('2d')?.putImageData(foreground, 0, 0);
-      !segmentationReady && renderStream();
-      timeoutID.current = workerTimers.setTimeout(runWorker, 1000 / 30);
-      // segmentationWorker.current.postMessage(
-      //    {action: 'start', image},
-      //    [image],
+      // const detectedPersonParts = bodyPix
+      //    .toMask(pred as SemanticPersonSegmentation);
+      // const foreground = createForegroundImage(
+      //    srcCanvas.current,
+      //    pred as SemanticPersonSegmentation,
       // );
+      // dstCanvas.current.getContext('2d')?.putImageData(foreground, 0, 0);
+      bodyPix.drawBokehEffect(
+          dstCanvas.current, //* The destination
+          tempVideo.current, //* The video source
+           pred as SemanticPersonSegmentation,
+           14,
+           10,
+      );
+      !segmentationReady && renderStream();
+      setSegmentationStarting(false);
+      if (!segmentationStopped.current) {
+        timeoutID.current = workerTimers.setTimeout(runWorker, 1000 / 60);
+      }
     };
 
     tempVideo.current.onloadeddata = async () => {
       await manager.current.init(config);
-      timeoutID.current = workerTimers.setTimeout(runWorker, 1000 / 30);
+      console.log('video loaded');
+      runWorker();
     };
   };
   const stop = () => {
-    timeoutID.current && workerTimers.clearTimeout(timeoutID.current);
+    console.log('stop called');
+    stopCycle();
+    segmentationStopped.current = true;
     setSegmentationReady(false);
   };
-  // useEffect(() => {
-  //  segmentationWorker.current.onmessage = (event:ReturnEvent) => {
-  //    const {image} = event.data;
-  //    const context = dstCanvas.current.getContext('2d');
-  //    context?.drawImage(image, 0, 0);
-  //    console.log('received event from worker ');
-  //    !segmentationReady && renderStream();
-  //  };
-  //  segmentationWorker.current.onerror = (event:ErrorEvent) => {
-  //    console.log(event);
-  //    timeoutID.current && workerTimers.clearTimeout(timeoutID.current);
-  //  };
-  // }, [segmentationWorker.current]);
 
   const renderStream = async () => {
     const capturedStream = await dstCanvas.current.captureStream();
-    if (capturedStream) {
-      outGoingStream.current = capturedStream;
+    if (capturedStream && !segmentationStopped.current) {
+      outputStream.current = capturedStream;
       setSegmentationReady(true);
     }
   };
-  interface Controls {
-    start: ()=> void;
-    stop: ()=> void;
-  }
-  interface ValidStream extends Controls {
-    ready: true;
-    stream: MediaStream;
-  }
-  interface InvalidStream extends Controls {
-    ready: false;
-    stream: null;
-  }
-  type Controller = ValidStream | InvalidStream;
+
   const segmentationController = {
-    stream: outGoingStream.current,
+    stream: outputStream.current,
     ready: segmentationReady,
     stop,
     start,
+    starting: segmentationStarting,
   };
 
 
-  return [segmentationController as Controller] as const;
+  return [segmentationController as SegmentationController] as const;
 };
+
+interface Controls {
+  start: ()=> void;
+  stop: ()=> void;
+}
+interface ValidStream extends Controls {
+  starting: false;
+  ready: true;
+  stream: MediaStream;
+}
+interface InvalidStream extends Controls {
+  starting: boolean
+  ready: false;
+  stream: null;
+}
+export type SegmentationController = ValidStream | InvalidStream;
 
 export {useSegmentation};

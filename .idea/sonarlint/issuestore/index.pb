@@ -9,8 +9,6 @@ M
 .frontend/src/components/common/AlertDialog.tsx,9/5/9532e4da47cf5fb360e47d34226392a8cf0c1b95
 N
 frontend/src/util/Constants.ts,c/9/c9d6c29e1c8818a91e864b40b0483d32cefd3094
-S
-#.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
 f
 6frontend/src/components/attendee/AttendeeInfoModal.tsx,0/b/0b22a89b52b97a6cc8c7cfcc88773b408161959f
 d
@@ -45,9 +43,6 @@ b
 2frontend/src/components/menu/RenderWhenMeeting.tsx,1/7/1796959d7eddc23e4cea62cfde133447cdc47136
 d
 4frontend/src/components/menu/RenderWhenNotLogged.tsx,6/1/61e0214dda339afa9ce0d0a191f29955b851fa6b
-:
-
-.gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
 \
 ,frontend/src/context/CustomThemeProvider.tsx,a/c/ac485da3892be5fce125e559f69ffcc220a639cc
 W
@@ -78,8 +73,6 @@ _
 +frontend/src/components/menu/MenuDrawer.tsx,f/e/fe808ecdae935727402f0516892776a72407dd6b
 N
 frontend/src/util/constants.ts,2/0/203000c654d5462271b5cef73a47f594f5af2218
-]
--frontend/src/components/video/VideoDrawer.tsx,2/f/2f2d76d80d3b8a6563b81cf4c06313a634977510
 D
 frontend/src/App.tsx,b/9/b9c5384815ed26f7912bd4d34cab45985cb9a0cd
 d
@@ -124,13 +117,29 @@ P
 -frontend/src/components/common/UserAvatar.tsx,1/a/1ab36bf5abd62b6099d151ae7983ba57146a5aec
 W
 'frontend/types/worker-loader/index.d.ts,e/a/ea51320ec73770d3c4b664372892800c0e55eaba
-J
-frontend/webpack.config.js,5/f/5f07e4e7728c11cad9d76dbfd012cd35981ba597
 V
 &frontend/src/hooks/useLocalStorage.tsx,8/3/8389c4e1ff02ab6d2e3ce5140b7df61f9a4e2901
 E
 frontend/package.json,3/7/37083060967a471c011a16651e22bdc2ade41759
-R
-"frontend/src/workers/tsconfig.json,a/8/a87324715fa7192112924bde1f797ab68e9284b0
 D
 frontend/.prettierrc,e/b/eb34c317f59360c2bce8325a2c03641da0d2f925
+F
+frontend/.eslintrc.cjs,8/4/84231099d9a06b2d88c9279cd7ff80b7f1c1072b
+^
+.frontend/src/context/PeerConnectionContext.tsx,2/b/2bff8f15dd1fa498cfb45db1d041e8eb4ba6b7b1
+T
+$frontend/src/context/RestContext.tsx,4/b/4b63648759859242100c27bceffb321387cb3c91
+c
+3frontend/src/components/tutorial/TutorialPrompt.tsx,9/a/9a5d9203eaa781a9bd253e71edb34bdd89e70ee5
+F
+frontend/tsconfig.json,1/8/18471fb0707c190401cd5328ddb4664160a53d26
+T
+$frontend/src/hooks/useFirstUpdate.ts,5/0/508d12b73741e3029f5d314135be5a5028d50a91
+\
+,frontend/src/context/MediaControlContext.tsx,1/6/16a7f1ffaec412ce6e34eb2a1786632c689dde5c
+U
+%frontend/src/hooks/useSegmentation.ts,c/3/c31949179ca344e2500683a86f9697dcc833ffd2
+`
+0frontend/src/components/video/WebcamControls.tsx,b/e/be4c18ac1d34539eae133cf69869d24e417f1d7c
+\
+,frontend/src/context/SegmentationContext.tsx,8/9/89eead96f4dc0c916ebca42a192565e3faa9755f

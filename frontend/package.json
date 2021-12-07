@@ -96,7 +96,6 @@
     "validator": "^13.6.0",
     "web-vitals": "^1.0.1",
     "webfontloader": "^1.6.28",
-    "worker-loader": "^3.0.8",
     "worker-timers": "^7.0.42",
     "yup": "^0.32.9"
   },

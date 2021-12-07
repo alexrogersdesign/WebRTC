@@ -10,6 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import ToolTip from '@material-ui/core/Tooltip';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import ScreenShareTwoToneIcon from '@material-ui/icons/ScreenShareTwoTone';
 import VolumeOffTwoToneIcon from '@material-ui/icons/VolumeOffTwoTone';
 import VideocamOffTwoToneIcon from '@material-ui/icons/VideocamOffTwoTone';
@@ -49,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     iconButton: {
       padding: 10,
+      width: 35,
       // color: '#e0e0e0',
       marginLeft: theme.spacing(2),
       marginRight: theme.spacing(2),
@@ -61,6 +63,23 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.neutral.main,
       opacity: .5,
       width: 1,
+    },
+    wrapper: {
+      margin: theme.spacing(1),
+      position: 'relative',
+    },
+    progress: {
+      // color: theme.palette.success.light,
+      color: theme.palette.neutralGray.main,
+      position: 'absolute',
+      // top: -6,
+      // left: -6,
+      zIndex: 1,
+    },
+    shrink: {
+      transition: theme.transitions.easing.easeIn,
+      transform: 'scale(0.75)',
+      color: theme.palette.success.main,
     },
   }),
 );
@@ -88,6 +107,7 @@ const WebcamControls = ({className, isolated}: Props) => {
   const {
     setRemoveBackground,
     removeBackground,
+    segmentation,
   } = useContext(SegmentationContext);
 
   const rootClass = clsx(!isolated && classes.rootAttached, classes.root);
@@ -99,7 +119,9 @@ const WebcamControls = ({className, isolated}: Props) => {
        palette.neutral.contrastText:
        palette.neutral.light;
   const hideBackgroundStyle = () : React.CSSProperties => {
-    let color = removeBackground? effectEngagedColor: effectDisengagedColor;
+    let color = segmentation.ready && removeBackground?
+      effectEngagedColor:
+      effectDisengagedColor;
     if (videoDisabled) color = actionDisabledColor;
     return {color};
   };
@@ -155,15 +177,25 @@ const WebcamControls = ({className, isolated}: Props) => {
               <IconButton
                 style={hideBackgroundStyle()}
                 className={classes.iconButton}
+                // className={
+                //  clsx(
+                //      // !isolated && classes.shrink,
+                //      classes.iconButton,
+                //  )}
                 aria-label="hide background"
                 onClick={()=>setRemoveBackground(!removeBackground)}
                 disabled={videoDisabled}
               >
-                <AccountBoxTwoToneIcon/>
+                <AccountBoxTwoToneIcon
+                  fontSize={segmentation.starting? 'small': 'medium'}
+                  className={clsx(segmentation.starting && classes.shrink)}
+                />
+                {segmentation.starting &&
+                  <CircularProgress size={30} className={classes.progress} />
+                }
               </IconButton>
             </span>
           </ToolTip>
-          {/* <Divider className={classes.divider} orientation="vertical" /> */}
         </Paper>
       </div>
     </MemoizedHelpWrapper>

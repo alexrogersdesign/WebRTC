@@ -1,12 +1,8 @@
 
-F
-frontend/tsconfig.json,1/8/18471fb0707c190401cd5328ddb4664160a53d26
 L
 .idea/codeStyles/Project.xml,6/e/6ecd6000a7b6f4a2884412ff19f74193ed089648
 J
 frontend/package-lock.json,7/5/75b3b81cff849b08343553e269c3327a04ab22e0
-F
-frontend/.eslintrc.cjs,8/4/84231099d9a06b2d88c9279cd7ff80b7f1c1072b
 M
 frontend/styleguide.config.js,6/2/628a509789988f335cf62038828e9f74c51f0cd0
 ^
@@ -64,8 +60,6 @@ Y
 )frontend/src/components/meeting/Readme.md,e/4/e4d5a56a9272185d336a959a4ca3b866955062ff
 _
 /frontend/src/components/meeting/MeetingCard.tsx,e/e/ee009e81f82a89cf6c7469f8a5bffed86573fefa
-E
-frontend/package.json,3/7/37083060967a471c011a16651e22bdc2ade41759
 P
  frontend/src/util/classParser.ts,f/b/fb34f8ca3e0ac20ada293e3f2d9cc5e652a61e87
 ]
@@ -106,16 +100,12 @@ R
 "backend/src/routes/login.router.ts,1/b/1bca26b982384daace1b7630de85ea6a1250b739
 d
 4frontend/src/components/meeting/MeetingCardModal.tsx,a/9/a934b0d01e39127505e9c0915c31dd00c74183ec
-V
-&frontend/src/hooks/useLocalStorage.tsx,8/3/8389c4e1ff02ab6d2e3ce5140b7df61f9a4e2901
 X
 (frontend/src/components/AppContainer.tsx,3/a/3a508c864607fd392d1730d69dd71990b266a099
 e
 5frontend/src/components/common/ConditionalWrapper.tsx,5/5/557bc7ab044c3abead967c1df9e4548fb1efdba0
 ^
 .frontend/src/components/common/UploadImage.tsx,a/c/ac48c9d576ca0c3ac774156f68b9598f23282621
-^
-.frontend/src/context/PeerConnectionContext.tsx,2/b/2bff8f15dd1fa498cfb45db1d041e8eb4ba6b7b1
 L
 frontend/src/shared/types.ts,f/f/ff095f2cd5feb67e88cb3240b55d55b7049e1e29
 F
@@ -124,3 +114,23 @@ a
 1frontend/src/components/attendee/AttendeeInfo.tsx,d/4/d411730e57c6fd48f5ad60762fdb031bd58d14d0
 S
 #frontend/types/ChatScope/index.d.ts,d/8/d80a806245d2c9e833fa9aa2562ffb96774dc07a
+_
+/frontend/src/components/video/ExternalVideo.tsx,a/2/a21252fe93f1aabff7585186a9e6a3a9584b0b93
+P
+ frontend/src/util/theme/base.tsx,8/8/88ac744b21eb90777dcad7190bc40c3c31ff7560
+[
++frontend/src/components/video/VideoGrid.tsx,d/9/d955e99cc9f5841b7270494505629ff26eb0aec1
+]
+-frontend/src/components/common/UserAvatar.tsx,1/a/1ab36bf5abd62b6099d151ae7983ba57146a5aec
+W
+'frontend/types/worker-loader/index.d.ts,e/a/ea51320ec73770d3c4b664372892800c0e55eaba
+J
+frontend/webpack.config.js,5/f/5f07e4e7728c11cad9d76dbfd012cd35981ba597
+V
+&frontend/src/hooks/useLocalStorage.tsx,8/3/8389c4e1ff02ab6d2e3ce5140b7df61f9a4e2901
+E
+frontend/package.json,3/7/37083060967a471c011a16651e22bdc2ade41759
+R
+"frontend/src/workers/tsconfig.json,a/8/a87324715fa7192112924bde1f797ab68e9284b0
+D
+frontend/.prettierrc,e/b/eb34c317f59360c2bce8325a2c03641da0d2f925

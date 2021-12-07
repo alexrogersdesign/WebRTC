@@ -19,11 +19,15 @@ module.exports = {
   'plugins': [
     'react',
     '@typescript-eslint',
-    "jsdoc"
+    'jsdoc',
+    'prettier'
+    
   ],
-  "rules": {
-    "react/prop-types": 0,
-    "jsdoc/check-syntax": 1,
+  'rules': {
+    'react/prop-types': 0,
+    'jsdoc/check-syntax': 1,
+    // 'indent': 'off',
+    // '@typescript-eslint/indent': ['error', 2]
   },
-  "ignorePatterns": ["**/*.js", "**/*.jsx"],
+  'ignorePatterns': ['**/*.js', '**/*.jsx'],
 };

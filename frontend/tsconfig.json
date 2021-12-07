@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2017",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext",
-      "es6"
+      "es6",
+      "webworker"
     ],
     "types": [
       "node"
@@ -28,17 +29,21 @@
     "noImplicitThis": true,
     "strictNullChecks": true,
     "typeRoots": [
-      "./types"
+      "./types",
+      "node_modules/@types"
     ],
     "noEmit": true
   },
   "include": [
     "./src/**/*.ts",
     "./src/**/*.tsx",
-    "types"
+    "types",
+    "node_modules/@types/w3c-image-capture/index.d.ts",
+    "node_modules/@types/offscreencanvas/index.d.ts",
   ],
   "exclude": [
     "src/**/*.js",
-    "src/**/*.jsx"
+    "src/**/*.jsx",
+//    "src/workers"
   ]
 }

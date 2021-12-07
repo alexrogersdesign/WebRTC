@@ -62,7 +62,7 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
       !firstRender && segmentation.stop();
       if (localVideoRef.current && localMedia) {
         outgoingMedia.current = localMedia;
-        localVideoRef.current.srcObject = outgoingMedia.current;
+        localVideoRef.current.srcObject = localMedia;
       }
     }
     /** Resynchronize the audio and video mutes */

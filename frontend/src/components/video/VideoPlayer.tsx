@@ -4,7 +4,7 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import User from '../../shared/classes/User';
 import {MemoizedExternalVideo} from './ExternalVideo';
-import {MemoizedLocalVideo} from './LocalVideo';
+import {LocalVideo, MemoizedLocalVideo} from './LocalVideo';
 
 interface StyleProps {
     videoLoading: boolean;
@@ -49,9 +49,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
     },
     localVideo: {
       transform: 'rotateY(180deg)',
-      [theme.breakpoints.down('xs')]: {
-        display: 'none',
-      },
     },
     externalAvatar: {
       position: 'absolute',
@@ -100,7 +97,7 @@ const VideoPlayer = ({local, stream, user, className}: Props)=> {
   return (
     <div className={className}>
       { local?(
-        <MemoizedLocalVideo
+        <LocalVideo
           propClasses={classes}
           {...{videoLoading, setVideoLoading}}
         />

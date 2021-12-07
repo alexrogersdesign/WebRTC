@@ -43,12 +43,12 @@ const useStyles = makeStyles((theme: Theme) =>
       float: 'right',
       right: 0,
       bottom: 0,
-      [theme.breakpoints.down('xs')]: {
-        flexDirection: 'column',
-        width: '100%',
-        zIndex: theme.zIndex.drawer +1,
-        bottom: 50,
-      },
+      // [theme.breakpoints.down('xs')]: {
+      //  flexDirection: 'column',
+      //  width: '100%',
+      //  zIndex: theme.zIndex.drawer +1,
+      //  bottom: 50,
+      // },
     },
   }),
 );

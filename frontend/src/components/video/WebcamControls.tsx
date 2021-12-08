@@ -170,15 +170,17 @@ const WebcamControls = ({className, isolated}: Props) => {
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip title="Share Screen">
-            <IconButton
-              style= {shareScreenStyle()}
-              className={classes.iconButton}
-              aria-label="share screen"
-              onClick={toggleScreenShare}
-              disabled={shareScreenDisabled}
-            >
-              <ScreenShareTwoToneIcon/>
-            </IconButton>
+            <span>
+              <IconButton
+                style= {shareScreenStyle()}
+                className={classes.iconButton}
+                aria-label="share screen"
+                onClick={toggleScreenShare}
+                disabled={shareScreenDisabled}
+              >
+                <ScreenShareTwoToneIcon/>
+              </IconButton>
+            </span>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip title="Hide Background">

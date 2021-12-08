@@ -2,8 +2,8 @@
 import React, {useContext, useEffect} from 'react';
 import {CircularProgress, Paper} from '@material-ui/core';
 import WebcamControls from './WebcamControls';
-import {SegmentationContext} from '../../context/SegmentationContext';
-import {MediaControlContext} from '../../context/MediaControlContext';
+import {MediaControlContext, StreamType,
+} from '../../context/MediaControlContext';
 import {VideoClasses, VideoProps} from './VideoPlayer';
 import clsx from 'clsx';
 import {AppStateContext} from 'src/context/AppStateContext';
@@ -11,12 +11,10 @@ import {LOCAL_VIDEO_WIDTH} from '../../util/constants';
 
 interface LocalVideoClasses extends VideoClasses {
   localContainer?: string;
-  localVideo?: string;
 }
 export interface LocalVideoProps extends VideoProps {
   propClasses: LocalVideoClasses
 }
-
 
 /**
  * Renders a local video element which acts as webcam preview displaying
@@ -37,18 +35,19 @@ export function LocalVideo({
   propClasses,
 }: LocalVideoProps) {
   const {
-    removeBackground,
-    segmentation,
-  } = useContext(SegmentationContext);
-  const {localVideoRef, outgoingMedia} = useContext(MediaControlContext);
+    localVideoRef,
+    outgoingMedia,
+    streamState,
+  } = useContext(MediaControlContext);
   const {videoDrawerOpen} = useContext(AppStateContext);
 
   /** Set video loading to true on first render */
   useEffect(() => {
     setVideoLoading(true);
   }, []);
-  /** If the video element readyState is 0 (meaning it has no media set),
-   * then set the srcObject to the localMedia stream */
+  /** When the video drawer open stage changes check if the
+   * video element readyState is 0 (meaning it has no media set).
+   * If so, set the srcObject to the outgoing stream */
   useEffect(() => {
     if (localVideoRef.current?.readyState === 0) {
       if (localVideoRef.current && outgoingMedia.current) {
@@ -56,6 +55,17 @@ export function LocalVideo({
       }
     }
   }, [videoDrawerOpen]);
+  /**
+   * A function that returns CSS properties for
+   * the video element.
+   * @return {React.CSSProperties} The css properties to apply to the style
+   * prop of the element
+   */
+  const videoStyle = () : React.CSSProperties => {
+    const transform = streamState === StreamType.WEBCAM?
+      'rotateY(180deg)': undefined;
+    return {transform};
+  };
 
   return (
     <div className={clsx(propClasses.localContainer, propClasses.container)}>
@@ -72,7 +82,8 @@ export function LocalVideo({
       )}
       <Paper className={propClasses.paper} elevation={3} variant="outlined" >
         <video
-          className={clsx(propClasses.localVideo, propClasses.video)}
+          className={ propClasses.video}
+          style={videoStyle()}
           ref={localVideoRef}
           playsInline
           muted

@@ -37,7 +37,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       justifyContent: 'center',
       backgroundColor: theme.palette.neutralGray.dark,
       boxShadow: theme.shadows[4],
-      // boxShadow: theme.shadows[2],
       opacity: videoLoading? 0: 1,
       width: 'max-content',
       height: 'max-content',
@@ -47,9 +46,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
     },
     externalVideo: {
       objectFit: 'scale-down',
-    },
-    localVideo: {
-      transform: 'rotateY(180deg)',
     },
     externalAvatar: {
       position: 'absolute',
@@ -64,10 +60,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       display: 'absolute',
       zIndex: 99,
       borderRadius: innerBorderRadius,
-      // marginTop: '-12.75%',
-      // marginTop: '-14%',
       marginTop: '-15%',
-      // bottom: 20,
       width: '100%',
       height: '100%',
       [theme.breakpoints.down('xs')]: {

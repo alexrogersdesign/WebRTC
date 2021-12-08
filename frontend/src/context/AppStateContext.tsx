@@ -47,7 +47,7 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const {
     clearExternalMedia,
     initializeMediaStream,
-    stopWebcamStream,
+    stopLocalMediaStream,
   } = useContext(MediaControlContext);
   const {
     setMeeting,
@@ -140,7 +140,7 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
     socketLeaveMeeting();
     enqueueSnackbar(`Leaving meeting`, snackbarInfoOptions(sm));
     setMeeting(null);
-    stopWebcamStream();
+    stopLocalMediaStream();
     navigate('');
     clearExternalMedia();
     dismantleCallService();

@@ -4,7 +4,7 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import User from '../../shared/classes/User';
 import {MemoizedExternalVideo} from './ExternalVideo';
-import {LocalVideo, MemoizedLocalVideo} from './LocalVideo';
+import {MemoizedLocalVideo} from './LocalVideo';
 
 interface StyleProps {
     videoLoading: boolean;
@@ -29,6 +29,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
     paper: ({videoLoading}) => ({
       padding: innerPadding,
       borderRadius: outerBorderRadius,
+      // position: 'relative',
       display: 'flex',
       flexGrow: -1,
       flexDirection: 'column',
@@ -64,7 +65,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       zIndex: 99,
       borderRadius: innerBorderRadius,
       // marginTop: '-12.75%',
-      marginTop: '-14%',
+      // marginTop: '-14%',
+      marginTop: '-15%',
+      // bottom: 20,
       width: '100%',
       height: '100%',
       [theme.breakpoints.down('xs')]: {
@@ -97,7 +100,7 @@ const VideoPlayer = ({local, stream, user, className}: Props)=> {
   return (
     <div className={className}>
       { local?(
-        <LocalVideo
+        <MemoizedLocalVideo
           propClasses={classes}
           {...{videoLoading, setVideoLoading}}
         />

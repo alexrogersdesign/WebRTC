@@ -2,7 +2,6 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 
 import WebcamControls from './WebcamControls';
 
@@ -16,21 +15,20 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
   }),
 );
 
-type Props = {}
 
 /**
- *
+ * Renders the WebcamControls element inside of an AppBar
+ * at the bottom of the screen.
+ * The VideoControlBar is used when the application is viewed with a
+ * small screen width
  * @return {JSX.Element}
- * @constructor
  */
-export function VideoControlBar({}: Props) {
+export function VideoControlBar() {
   const classes = useStyles();
 
   return (
     <AppBar position="fixed" className={classes.appBar}>
-      {/* <Toolbar>*/}
       <WebcamControls isolated/>
-      {/* </Toolbar>*/}
     </AppBar>
   );
 };

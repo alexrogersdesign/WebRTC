@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import {
   makeStyles,
@@ -14,11 +13,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import ScreenShareTwoToneIcon from '@material-ui/icons/ScreenShareTwoTone';
 import VolumeOffTwoToneIcon from '@material-ui/icons/VolumeOffTwoTone';
 import VideocamOffTwoToneIcon from '@material-ui/icons/VideocamOffTwoTone';
+import clsx from 'clsx';
 import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 
 import {SegmentationContext} from '../../context/SegmentationContext';
 import {MediaControlContext} from '../../context/MediaControlContext';
-import clsx from 'clsx';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
 interface Props {
@@ -34,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'space-around',
       width: 'auto',
-      zIndex: 99,
+      zIndex: 999,
       backgroundColor: 'rgb(255,255,255, 0)',
     },
     rootAttached: {
@@ -49,31 +48,29 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
     },
     iconButton: {
-      padding: 10,
-      width: 35,
-      // color: '#e0e0e0',
+      width: 40,
       marginLeft: theme.spacing(2),
       marginRight: theme.spacing(2),
     },
     divider: {
       height: 28,
-      margin: 4,
+      // margin: 4,
       color: theme.palette.neutral.light,
       fill: theme.palette.neutral.light,
       backgroundColor: theme.palette.neutral.main,
       opacity: .5,
       width: 1,
+      [theme.breakpoints.down('xs')]: {
+        width: 2,
+      },
     },
     wrapper: {
       margin: theme.spacing(1),
       position: 'relative',
     },
     progress: {
-      // color: theme.palette.success.light,
       color: theme.palette.neutralGray.main,
       position: 'absolute',
-      // top: -6,
-      // left: -6,
       zIndex: 1,
     },
     shrink: {
@@ -98,7 +95,7 @@ const WebcamControls = ({className, isolated}: Props) => {
   const {
     setMicMuted,
     setVideoDisabled,
-    attemptScreenShare,
+    toggleScreenShare,
     micMuted,
     videoDisabled,
     screenSharing,
@@ -110,7 +107,6 @@ const WebcamControls = ({className, isolated}: Props) => {
     segmentation,
   } = useContext(SegmentationContext);
 
-  const rootClass = clsx(!isolated && classes.rootAttached, classes.root);
   const {palette} = useTheme();
   const effectEngagedColor = palette.success.light;
   const actionDisabledColor = palette.action.disabled;
@@ -118,11 +114,20 @@ const WebcamControls = ({className, isolated}: Props) => {
   const effectDisengagedColor = screenSharing?
        palette.neutral.contrastText:
        palette.neutral.light;
+  const hideBackgroundDisabled = videoDisabled || screenSharing;
   const hideBackgroundStyle = () : React.CSSProperties => {
     let color = segmentation.ready && removeBackground?
       effectEngagedColor:
       effectDisengagedColor;
-    if (videoDisabled) color = actionDisabledColor;
+    if (hideBackgroundDisabled) color = actionDisabledColor;
+    return {color};
+  };
+  const shareScreenDisabled = segmentation.loading || videoDisabled;
+  const shareScreenStyle = () : React.CSSProperties => {
+    let color = screenSharing?
+      effectEngagedColor:
+      effectDisengagedColor;
+    if (shareScreenDisabled) color = actionDisabledColor;
     return {color};
   };
 
@@ -132,7 +137,12 @@ const WebcamControls = ({className, isolated}: Props) => {
       tooltipProps={{placement: 'top'}}
     >
       <div className={className}>
-        <Paper className={rootClass} elevation={3}>
+        <Paper
+          className={clsx(
+              !isolated && classes.rootAttached,
+              classes.root)}
+          elevation={3}
+        >
           <ToolTip title="Mute Microphone">
             <IconButton
               style={{
@@ -161,12 +171,11 @@ const WebcamControls = ({className, isolated}: Props) => {
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip title="Share Screen">
             <IconButton
-              style={{
-                color: screenSharing? effectEngagedColor: effectDisengagedColor,
-              }}
+              style= {shareScreenStyle()}
               className={classes.iconButton}
               aria-label="share screen"
-              onClick={attemptScreenShare}
+              onClick={toggleScreenShare}
+              disabled={shareScreenDisabled}
             >
               <ScreenShareTwoToneIcon/>
             </IconButton>
@@ -177,20 +186,15 @@ const WebcamControls = ({className, isolated}: Props) => {
               <IconButton
                 style={hideBackgroundStyle()}
                 className={classes.iconButton}
-                // className={
-                //  clsx(
-                //      // !isolated && classes.shrink,
-                //      classes.iconButton,
-                //  )}
                 aria-label="hide background"
                 onClick={()=>setRemoveBackground(!removeBackground)}
-                disabled={videoDisabled}
+                disabled={hideBackgroundDisabled}
               >
                 <AccountBoxTwoToneIcon
-                  fontSize={segmentation.starting? 'small': 'medium'}
-                  className={clsx(segmentation.starting && classes.shrink)}
+                  fontSize={segmentation.loading? 'small': 'medium'}
+                  className={clsx(segmentation.loading && classes.shrink)}
                 />
-                {segmentation.starting &&
+                {segmentation.loading &&
                   <CircularProgress size={30} className={classes.progress} />
                 }
               </IconButton>

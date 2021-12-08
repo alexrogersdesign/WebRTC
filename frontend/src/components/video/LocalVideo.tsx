@@ -57,8 +57,6 @@ export function LocalVideo({
     }
   }, [videoDrawerOpen]);
 
-
-  const showBackground = !(removeBackground && segmentation.ready);
   return (
     <div className={clsx(propClasses.localContainer, propClasses.container)}>
       {videoLoading &&(
@@ -84,9 +82,7 @@ export function LocalVideo({
           onCanPlay={() => setVideoLoading(false)}
           // onLoadStart={() => setVideoLoading(true)}
         />
-        <div className={propClasses.controls}>
-          <WebcamControls />
-        </div>
+        <WebcamControls className={propClasses.controls}/>
       </Paper>
     </div>
   );

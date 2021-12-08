@@ -5,7 +5,6 @@ import {
   createStyles,
   makeStyles,
   Theme,
-  useTheme,
 } from '@material-ui/core/styles';
 
 import VideoPlayer from './video/VideoPlayer';
@@ -76,7 +75,7 @@ const AppContainer = () => {
         <div className={classes.grid}>
           <VideoGrid />
           <div className={classes.local}>
-            {(meeting && !xs) && (<VideoPlayer local/>)}
+            {(meeting && !xs) && <VideoPlayer local/>}
           </div>
         </div>
         {(meeting && xs) && (

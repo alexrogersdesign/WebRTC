@@ -114,7 +114,15 @@ const WebcamControls = ({className, isolated}: Props) => {
   const effectDisengagedColor = screenSharing?
        palette.neutral.contrastText:
        palette.neutral.light;
+  /** A boolean value representing whether the hide background button
+   * is disabled.*/
   const hideBackgroundDisabled = videoDisabled || screenSharing;
+  /**
+   * A function that returns CSS properties for
+   * the hide background button.
+   * @return {React.CSSProperties} The css properties to apply to the style
+   * prop of the element
+   */
   const hideBackgroundStyle = () : React.CSSProperties => {
     let color = segmentation.ready && removeBackground?
       effectEngagedColor:
@@ -122,7 +130,15 @@ const WebcamControls = ({className, isolated}: Props) => {
     if (hideBackgroundDisabled) color = actionDisabledColor;
     return {color};
   };
+  /** A boolean value representing whether the share screen button
+   * is disabled.*/
   const shareScreenDisabled = segmentation.loading || videoDisabled;
+  /**
+   * A function that returns CSS properties for
+   * the share screen button.
+   * @return {React.CSSProperties} The css properties to apply to the style
+   * prop of the element
+   */
   const shareScreenStyle = () : React.CSSProperties => {
     let color = screenSharing?
       effectEngagedColor:

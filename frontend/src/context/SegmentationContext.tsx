@@ -50,33 +50,26 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     }
   }, [videoDisabled]);
 
-  /** Disables segmentation if screen sharing is started
-   * and re-enables it when finished */
+  /** Sets and unsets the background removal process when various app
+   * state changes. When screen sharing is enabled, segmentation is
+   * stopped temporarily to prevent it from running against the screen
+   * sharing feed.*/
   useEffect(() => {
-    if (screenSharing && segmentation.ready) {
-      segmentation.stop();
-    }
-    if (!screenSharing && streamState === StreamType.WEBCAM &&
-      removeBackground) {
-      segmentation.start();
-    }
-  }, [screenSharing, streamState]);
-
-  /** Sets and unsets the background removal process when removeBackground state
-   * changes. */
-  useEffect(() => {
-    if (removeBackground) {
+    if (!screenSharing && removeBackground &&
+      streamState === StreamType.WEBCAM) {
       segmentation.start();
     } else {
       !firstRender && segmentation.stop();
-      if (localVideoRef.current && localMedia) {
+      if (localVideoRef.current && localMedia &&
+        streamState === StreamType.WEBCAM ) {
+        console.log('setting media refs');
         outgoingMedia.current = localMedia;
         localVideoRef.current.srcObject = localMedia;
       }
     }
     /** Resynchronize the audio and video mutes */
     updateStreamMutes();
-  }, [removeBackground]);
+  }, [removeBackground, screenSharing, streamState]);
 
   useEffect(() => {
     if (!segmentation.ready || !removeBackground) return;

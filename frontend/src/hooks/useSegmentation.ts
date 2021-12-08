@@ -36,7 +36,7 @@ const useSegmentation = (inputStream: MediaStream| undefined) => {
   const outputStream = useRef<MediaStream| null>(null);
   /** The timeoutID of the timeout process that controls the timing
    * of the recursive runWorker function */
-  const timeoutID= useRef<number>(null!);
+  const timeoutID= useRef<number| null>(null);
   /** The source canvas that is supplied to ML algorithm
    * to make predictions against*/
   const srcCanvas = useRef<HTMLCanvasElement>(null!);
@@ -51,7 +51,10 @@ const useSegmentation = (inputStream: MediaStream| undefined) => {
 
   const stopCycle = () => {
     try {
-      timeoutID.current && workerTimers.clearTimeout(timeoutID.current);
+      if (timeoutID.current) {
+        workerTimers.clearTimeout(timeoutID.current);
+        timeoutID.current = null;
+      }
     } catch (e) {
       if (e instanceof Error) {
         console.error(JSON.stringify(e.stack));

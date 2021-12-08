@@ -148,7 +148,7 @@ const useSegmentation = (inputStream: MediaStream| undefined) => {
     ready: segmentationReady,
     stop,
     start,
-    starting: segmentationLoading,
+    loading: segmentationLoading,
   };
 
   return [segmentationController as SegmentationController] as const;
@@ -159,12 +159,12 @@ interface Controls {
   stop: ()=> void;
 }
 interface ValidStream extends Controls {
-  starting: false;
+  loading: false;
   ready: true;
   stream: MediaStream;
 }
 interface InvalidStream extends Controls {
-  starting: boolean
+  loading: boolean
   ready: false;
   stream: null;
 }

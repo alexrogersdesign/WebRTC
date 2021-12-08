@@ -49,6 +49,9 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    * background removal and unaltered webcam streams*/
   const outgoingMedia = useRef<MediaStream>();
 
+
+  const [streamState, setStreamState] = useState<StreamType>(0);
+
   /** Dummy video streams used for demonstrations purposes. */
   const dummyVideoA = useRef(document.createElement('video'));
   const dummyVideoB = useRef(document.createElement('video'));
@@ -80,13 +83,13 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    * Else the video feed is re-initialized with the screen as the source
    * @return {Promise<void>}
    */
-  const attemptScreenShare = async () => {
+  const toggleScreenShare = async () => {
     if (screenSharing) {
       stopLocalMediaStream();
       setScreenSharing(false);
       await initializeMediaStream();
     } else {
-      const success = await initializeMediaStream('screen');
+      const success = await initializeMediaStream(StreamType.SCREEN);
       success && setScreenSharing(true);
     }
   };
@@ -149,16 +152,15 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   /**
    * Get audio and video stream from the browser
    * Prompts users for mic and video permissions
-   * @param {StreamTarget} target An optional target of where the stream
-   * should be retrieved from. Either 'webcam' or 'screen'. Defaults to
-   * 'webcam'
+   * @param {StreamType} target An optional target of where the stream
+   * should be retrieved from.
    * @return {Promise<MediaStream>} The retrieved media stream
    */
-  const initializeMediaStream = async (target:StreamTarget ='webcam') => {
+  const initializeMediaStream = async (target:StreamType = 1) => {
     try {
       /** Retrieves webcam or screen share stream based
        * on screenSharing variable. */
-      const stream = target === 'screen' ?
+      const stream = target === StreamType.SCREEN?
           await getScreenShareMedia() :
           await getWebcamMedia();
       if (!stream) {
@@ -174,6 +176,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = outgoingMedia.current;
       }
+      setStreamState(target);
       return stream;
     } catch (err) {
       console.log(err);
@@ -293,7 +296,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         initializeMediaStream,
         setMicMuted,
         setVideoDisabled,
-        attemptScreenShare,
+        toggleScreenShare,
         micMuted,
         videoDisabled,
         screenSharing,
@@ -304,8 +307,9 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         localMedia,
         setShowDemo,
         showDemo,
-        stopWebcamStream: stopLocalMediaStream,
+        stopLocalMediaStream,
         updateStreamMutes,
+        streamState,
       }}
     >
       {children}
@@ -319,7 +323,7 @@ export interface IMediaControlContext {
   initializeMediaStream: () => Promise<MediaStream| undefined>,
   setMicMuted: (boolean: boolean) => void,
   setVideoDisabled: (boolean: boolean) => void,
-  attemptScreenShare: () => Promise<void>,
+  toggleScreenShare: () => Promise<void>,
   micMuted: boolean,
   videoDisabled: boolean,
   screenSharing: boolean,
@@ -330,11 +334,18 @@ export interface IMediaControlContext {
   clearExternalMedia: () => void,
   setShowDemo: (boolean:boolean) => void,
   showDemo: boolean,
-  stopWebcamStream: () => void,
+  stopLocalMediaStream: () => void,
   updateStreamMutes: () => void,
+  streamState: StreamType,
 }
 
 MediaControlContext.displayName = 'Media Control Context';
 
 
 export {MediaControlContextProvider, MediaControlContext};
+
+export enum StreamType {
+  DISABLED,
+  WEBCAM,
+  SCREEN,
+}

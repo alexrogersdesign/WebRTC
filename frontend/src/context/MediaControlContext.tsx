@@ -75,16 +75,20 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
     updateStreamMutes();
   }, [micMuted, videoDisabled]);
 
-
+  enum ToggleOverride {
+    stop
+  }
   /**
    * Toggles the screen sharing feature.
    * If screen sharing currently enabled, it is disabled and
    * the video feed is re-initialized with the webcam as the source.
    * Else the video feed is re-initialized with the screen as the source
+   * @param {ToggleOverride} override An optional value to override
+   * toggling and set screen sharing to a specific state.
    * @return {Promise<void>}
    */
-  const toggleScreenShare = async () => {
-    if (screenSharing) {
+  const toggleScreenShare = async (override?: ToggleOverride) => {
+    if (screenSharing || override === ToggleOverride.stop) {
       stopLocalMediaStream();
       setScreenSharing(false);
       await initializeMediaStream();
@@ -135,7 +139,9 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       const stream = await navigator.mediaDevices.getDisplayMedia();
       stream
           .getVideoTracks()[0]
-          .addEventListener('ended', () => setScreenSharing(false));
+          .addEventListener('ended',
+              () => toggleScreenShare(ToggleOverride.stop),
+          );
       return stream;
     } catch (err) {
       /** Allow user to decline permission prompt */
@@ -147,8 +153,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       }
     }
   };
-  type StreamTarget = 'webcam' | 'screen'
-
   /**
    * Get audio and video stream from the browser
    * Prompts users for mic and video permissions

@@ -50,7 +50,7 @@ const PeerConnectionContextProvider : React.FC<ChildrenProps> = ({
    * ensures that external streams are synchronized when the user enables
    * screen sharing or other events that change the outgoing media*/
   useEffect(() => {
-    if (outgoingMedia.current) changePeerStream(outgoingMedia.current);
+    if (outgoingMedia) changePeerStream(outgoingMedia);
   }, [outgoingMedia]);
 
 
@@ -164,8 +164,8 @@ const PeerConnectionContextProvider : React.FC<ChildrenProps> = ({
     /** Listens for a call event from the peer server. Answers the call and
      * returns a media stream to the caller*/
     peerConnection.current.on('call', (call: MediaConnection) => {
-      if (!outgoingMedia.current) throw new Error('Missing webcam stream');
-      call.answer(outgoingMedia?.current);
+      if (!outgoingMedia) throw new Error('Missing webcam stream');
+      call.answer(outgoingMedia);
       console.log('call received and answered', call);
       handleCall(call);
     });
@@ -199,20 +199,20 @@ const PeerConnectionContextProvider : React.FC<ChildrenProps> = ({
       metadata: {user: currentUser},
     };
     if (!peerConnection.current) throw new Error('Missing peer connection');
-    if (!outgoingMedia.current) throw new Error('Missing webcam stream');
+    if (!outgoingMedia) throw new Error('Missing webcam stream');
     /** Place a call to the external user */
     const call = peerConnection
         .current
-        .call(externalUser.id.toString(), outgoingMedia.current, callOption);
+        .call(externalUser.id.toString(), outgoingMedia, callOption);
     console.log('peer - Placing call', call);
     handleCall(call, externalUser);
   };
+
 
   return (
     <PeerConnectionContext.Provider value={{
       peers,
       setConnectingPeersListener,
-      changePeerStream,
       addPeer,
       removePeer,
       peerConnection,
@@ -229,7 +229,6 @@ const PeerConnectionContextProvider : React.FC<ChildrenProps> = ({
 export interface IPeerConnectionContext {
   peers: React.MutableRefObject<IPeers>;
   setConnectingPeersListener: ()=>void;
-  changePeerStream: (stream: MediaStream) => void;
   addPeer: (peer: MediaConnection)=> void;
   removePeer: (id: string)=> void;
   peerConnection: React.MutableRefObject<Peer | null>;

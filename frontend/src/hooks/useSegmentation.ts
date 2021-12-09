@@ -45,7 +45,7 @@ const useSegmentation = (inputStream: MediaStream| undefined) => {
   const dstCanvas = useRef<HTMLCanvasElement>(null!);
   /** A temp video element used as a source to the srcCanvas and is also
    * used in the masking process*/
-  const tempVideo = useRef(document.createElement('video'));
+  const tempVideo = useRef<HTMLVideoElement>(null!);
 
   const manager = useRef(new BodypixWorkerManager());
 
@@ -87,10 +87,14 @@ const useSegmentation = (inputStream: MediaStream| undefined) => {
       canvas.height = height;
       dstCanvas.current = canvas;
     }
+    tempVideo.current = document.createElement('video');
+    tempVideo.current.defaultMuted = true;
+    tempVideo.current.muted = true;
     tempVideo.current.srcObject = inputStream;
     tempVideo.current.height = height;
     tempVideo.current.width = width;
-    tempVideo.current.autoplay = true;
+    tempVideo.current.play();
+    console.log(tempVideo.current?.muted);
 
     /**
      * Run the recursive segmentation process. The process is run in a

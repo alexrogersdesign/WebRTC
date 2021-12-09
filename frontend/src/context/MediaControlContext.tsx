@@ -47,7 +47,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   /** A ref of the stream being media stream being transmitted to peers. This is
    * distinguished from localMedia to allow for simple switching between
    * background removal and unaltered webcam streams*/
-  const outgoingMedia = useRef<MediaStream>();
+  const [outgoingMedia, setOutgoingMedia] = useState<MediaStream | null>(null);
 
 
   const [streamState, setStreamState] = useState<StreamType>(0);
@@ -61,9 +61,9 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
   /** Updates the outgoing stream tracks to match the state of the media
    * control parameters */
   const updateStreamMutes = () => {
-    if (outgoingMedia.current) {
-      const audioTracks = outgoingMedia.current.getAudioTracks();
-      const videoTracks = outgoingMedia.current.getVideoTracks();
+    if (outgoingMedia) {
+      const audioTracks = outgoingMedia.getAudioTracks();
+      const videoTracks = outgoingMedia.getVideoTracks();
       audioTracks.forEach((track)=> track.enabled = !micMuted);
       videoTracks.forEach((track)=> track.enabled = !videoDisabled);
     }
@@ -153,6 +153,21 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       }
     }
   };
+
+  /**
+    Set the webcam preview video element to display the outgoing stream
+   */
+  useEffect(() => {
+    if (localVideoRef.current) {
+      const previewStream = outgoingMedia?.clone()?? null;
+      previewStream?.getAudioTracks()
+          .forEach((track) => previewStream.removeTrack(track));
+      localVideoRef.current.srcObject = previewStream;
+      localVideoRef.current.defaultMuted = true;
+      localVideoRef.current.muted = true;
+    }
+  }, [outgoingMedia]);
+
   /**
    * Get audio and video stream from the browser
    * Prompts users for mic and video permissions
@@ -175,11 +190,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         return;
       }
       setLocalMedia(stream);
-      outgoingMedia.current = stream;
-      /** Set the webcam preview video element to display the outgoing stream */
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = outgoingMedia.current;
-      }
+      setOutgoingMedia(stream);
       setStreamState(target);
       return stream;
     } catch (err) {
@@ -292,6 +303,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    */
   const clearExternalMedia = () => setExternalMedia([]);
 
+
   return (
     <MediaControlContext.Provider
       value={{
@@ -305,6 +317,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         videoDisabled,
         screenSharing,
         outgoingMedia,
+        setOutgoingMedia,
         removeMedia,
         addExternalMedia,
         clearExternalMedia,
@@ -332,7 +345,8 @@ export interface IMediaControlContext {
   videoDisabled: boolean,
   screenSharing: boolean,
   localMedia: MediaStream | undefined,
-  outgoingMedia: React.MutableRefObject<MediaStream | undefined>,
+  outgoingMedia: MediaStream | null,
+  setOutgoingMedia: (media: MediaStream) => void,
   removeMedia: (id:string) => void
   addExternalMedia: (user:User, stream:MediaStream, data?:CallOption) => void,
   clearExternalMedia: () => void,

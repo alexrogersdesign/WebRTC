@@ -3,7 +3,6 @@ import React, {createContext, useContext, useEffect, useState} from 'react';
 
 import {ChildrenProps} from '../shared/types';
 import {MediaControlContext, StreamType} from './MediaControlContext';
-import {PeerConnectionContext} from './PeerConnectionContext';
 import {
   SegmentationController,
   useSegmentation,
@@ -30,8 +29,8 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
     screenSharing,
     updateStreamMutes,
     streamState,
+    setOutgoingMedia,
   } = useContext(MediaControlContext);
-  const {changePeerStream} = useContext(PeerConnectionContext);
   /** Used to indicate when segmenting animation should stop */
   /** Boolean state to be set by external components to start segmentation */
   const [removeBackground, setRemoveBackground] = useState<boolean>(false);
@@ -63,25 +62,18 @@ const SegmentationContextProvider: React.FC<ChildrenProps> = ({
       if (localVideoRef.current && localMedia &&
         streamState === StreamType.WEBCAM ) {
         console.log('setting media refs');
-        outgoingMedia.current = localMedia;
-        localVideoRef.current.srcObject = localMedia;
+        setOutgoingMedia(localMedia);
       }
     }
-    /** Resynchronize the audio and video mutes */
-    updateStreamMutes();
   }, [removeBackground, screenSharing, streamState]);
 
   useEffect(() => {
     if (!segmentation.ready || !removeBackground) return;
     /** Get audio track from webcam and inject it into canvas feed.  */
-    const audioTrack = outgoingMedia.current?.getAudioTracks()[0];
+    const audioTrack = outgoingMedia?.getAudioTracks()[0];
     audioTrack && segmentation.stream.addTrack(audioTrack);
     /** Change outgoing media to segmented stream */
-    outgoingMedia.current= segmentation.stream;
-    changePeerStream(segmentation.stream);
-    if (localVideoRef.current && outgoingMedia.current) {
-      localVideoRef.current.srcObject = outgoingMedia.current;
-    }
+    setOutgoingMedia(segmentation.stream);
   }, [segmentation.ready]);
 
 

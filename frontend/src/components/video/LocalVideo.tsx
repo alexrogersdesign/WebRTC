@@ -50,11 +50,12 @@ export function LocalVideo({
    * If so, set the srcObject to the outgoing stream */
   useEffect(() => {
     if (localVideoRef.current?.readyState === 0) {
-      if (localVideoRef.current && outgoingMedia.current) {
-        localVideoRef.current.srcObject = outgoingMedia.current;
+      if (localVideoRef.current && outgoingMedia) {
+        localVideoRef.current.srcObject = outgoingMedia;
       }
     }
   }, [videoDrawerOpen]);
+
   /**
    * A function that returns CSS properties for
    * the video element.

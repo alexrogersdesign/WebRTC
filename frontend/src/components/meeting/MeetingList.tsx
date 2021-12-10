@@ -1,24 +1,25 @@
-import List from '@material-ui/core/List';
-
-;/* eslint-disable no-unused-vars */
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useContext} from 'react';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {Paper, Typography} from '@material-ui/core';
+import List from '@material-ui/core/List';
 
 import {RestContext} from '../../context/RestContext';
 import MeetingListItem from './MeetingListItem';
 
-interface Props {
-}
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    paper: {
+      width: '65vw',
+      [theme.breakpoints.down('sm')]: {
+        width: '80vw',
+      },
+      [theme.breakpoints.down('xs')]: {
+        width: '100vw',
+      },
+    },
     title: {
       margin: theme.spacing(2, 1, 1),
-    },
-    paper: {
-      width: '75%',
     },
     list: {
       display: 'flex',
@@ -29,11 +30,9 @@ const useStyles = makeStyles((theme: Theme) =>
       alignContent: 'stretch',
     },
     item: {
-      // alignItems: 'flex-start',
       flexShrink: 1,
     },
     delete: {
-      // padding: theme.spacing(0, 70, 0),
       alignSelf: 'flex-start',
       color: '#f44336',
       fill: '#f44336',
@@ -41,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const MeetingList = (props:Props) => {
+const MeetingList = () => {
   const classes = useStyles();
   const {meetingList, meetingsLoading} = useContext(RestContext);
   return (
@@ -50,7 +49,6 @@ const MeetingList = (props:Props) => {
         className={classes.title}
         variant='h4'
         align='center'
-        // color='textSecondary'
       >
           Meetings
       </Typography>

@@ -5,3 +5,4 @@ export const LOCAL_VIDEO_WIDTH = 340;
 // export const LOCAL_VIDEO_HEIGHT = 240;
 export const EXTERNAL_VIDEO_HEIGHT = 255;
 export const EXTERNAL_VIDEO_WIDTH = 340;
+

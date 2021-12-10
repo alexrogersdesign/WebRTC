@@ -1,30 +1,12 @@
-import videoASrc from '../util/files/video/VideoG.mp4';
-import videoBSrc from '../util/files/video/VideoB.mp4';
-import videoCSrc from '../util/files/video/VideoC.mp4';
-import videoDSrc from '../util/files/video/VideoH.mp4';
-import videoESrc from '../util/files/video/VideoE.mp4';
-import videoFSrc from '../util/files/video/VideoF.mp4';
-import iconA from '../util/files/img/user-a-icon.jpeg';
-import iconB from '../util/files/img/user-b-icon.jpeg';
-import iconC from '../util/files/img/user-c-icon.jpeg';
-import iconD from '../util/files/img/user-d-icon.jpeg';
+
 import {useEffect, useRef, useState} from 'react';
 import User from '../shared/classes/User';
 import {CallOption} from 'peerjs';
+import {demoUsers, demoVideoFiles} from '../util/demoItems';
 
 type AddUsers = (user:User, stream:MediaStream, data?:CallOption) => void;
 type RemoveUsers = (id:string) => void
 
-const userA = new User('Jarrod', 'Carroll', 'jcarroll@gmail.com');
-const userB = new User('Kristina', 'Abernathy', 'kabernathy@gmail.com');
-const userC = new User('Hilma', 'Schinner', 'hachinner@gmail.com');
-const userD = new User('Roslyn', 'Satterfield', 'rsatterfield@gmail.com');
-const userE = new User('Eda', 'Kling', 'ekling@gmail.com');
-const userF = new User('Joan', 'Green', 'jgreen@gmail.com');
-userA.icon = iconA.toString();
-userB.icon = iconB.toString();
-userE.icon = iconC.toString();
-userD.icon = iconD.toString();
 
 /**
  * A hook that implements fake "demo" users for testing or demonstration
@@ -44,7 +26,7 @@ const useDemo = (
     argVideoFiles?: string[],
 ) => {
   const videos = useRef<HTMLVideoElement[]>([]);
-  const demoUsers = useRef<User[]>([]);
+  const createdUsers = useRef<User[]>([]);
   /**
    * @type {[Boolean, Function]} Demo
    */
@@ -54,10 +36,10 @@ const useDemo = (
    * clean up streams */
   useEffect(() => {
     if (!demo) {
-      return removeDemoUsers(demoUsers.current);
+      return removeDemoUsers(createdUsers.current);
     }
-    createDemoUsers().then((users) => demoUsers.current = users);
-    return () => removeDemoUsers(demoUsers.current);
+    createDemoUsers().then((users) => createdUsers.current = users);
+    return () => removeDemoUsers(createdUsers.current);
   }, [demo]);
 
   /**
@@ -83,10 +65,8 @@ const useDemo = (
    * @return {Promise<User[]>}
    */
   const createDemoUsers = async () => {
-    const users = argUsers?? [userA, userB, userC, userD, userE, userF];
-    const videoFiles = argVideoFiles?? [
-      videoASrc, videoBSrc, videoCSrc, videoDSrc, videoESrc, videoFSrc,
-    ];
+    const users = argUsers?? demoUsers;
+    const videoFiles = argVideoFiles?? demoVideoFiles;
     /** Create HTMLVideoElements to convert the file string into a MediaStream
      * element. */
     users.forEach(() => videos.current.push(document.createElement('video')));

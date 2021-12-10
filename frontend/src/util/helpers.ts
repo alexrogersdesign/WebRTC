@@ -34,7 +34,19 @@ export const promiseWithTimeout = <T>
  */
 export function getMessageDirection(message: Message, user: User) {
   return message.user.id.toString() === user?.id.toString() ?
-      'outgoing':
-      'incoming';
+    'outgoing' :
+    'incoming';
 }
-
+/**
+ * Converts the provided string to TitleCase
+ * @param {string} str The string to convert.
+ * @return {string} The converted string in TitleCase.
+ */
+export function toTitleCase(str: string) {
+  return str.replace(
+      /\w\S*/g,
+      (txt) => {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      },
+  );
+}

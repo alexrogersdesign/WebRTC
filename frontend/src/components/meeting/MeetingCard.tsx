@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 // TODO fix issue where join meeting button moves on screen size change
-import React, {useEffect, useContext, forwardRef} from 'react';
+import React, {useContext, forwardRef} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import Box from '@material-ui/core/Box';
@@ -9,42 +9,48 @@ import {Column, Row, Item} from '@mui-treasury/components/flex';
 import {Info, InfoSubtitle, InfoTitle} from '@mui-treasury/components/info';
 import {useApexInfoStyles} from '@mui-treasury/styles/info/apex';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
-import WebFont from 'webfontloader';
 import CalendarTodayTwoToneIcon from '@material-ui/icons/CalendarTodayTwoTone';
 import ScheduleTwoToneIcon from '@material-ui/icons/ScheduleTwoTone';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 
 import Meeting from '../../shared/classes/Meeting';
 import CopyButtonIcon from '../common/CopyButtonIcon';
 import PropTypes from 'prop-types';
 import {ChildrenProps} from '../../shared/types';
 import {getTimeDiffMinutes, toLocalStringMonth} from '../../util/timeHelper';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import {AppStateContext} from '../../context/AppStateContext';
-
+import {demoUsers} from 'src/util/demoItems';
+import UserAvatar from '../common/UserAvatar';
+import {toTitleCase} from '../../util/helpers';
 
 interface Props extends ChildrenProps{
     meeting: Meeting
 }
-// eslint-disable-next-line max-len
-const initialShadow = '0 4px 6px 2px rgba(0,0,0,0.08),' +
-    ' 0px 2px 4px 0px rgba(0,0,0,0.24),' +
-    ' inset 0 -3px 0 0 rgba(0,0,0,0.12)';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      'height': '40%',
-      'width': '60%',
-      'position': 'relative',
+      height: '50vh',
+      width: '60vw',
+      [theme.breakpoints.up('lg')]: {
+        width: '40vw',
+      },
+      [theme.breakpoints.down('sm')]: {
+        width: '80vw',
+      },
+      [theme.breakpoints.down('xs')]: {
+        width: '100vw',
+      },
     },
     card: {
-      zIndex: 1,
       boxShadow: theme.shadows[6],
       position: 'relative',
       borderRadius: 5,
       backgroundColor: theme.palette.neutral.main,
-      transition: '0.1s',
-      border: '1px solid #000',
+      transition: theme.transitions.create(['width', 'height'], {
+        easing: theme.transitions.easing.easeInOut,
+        duration: theme.transitions.duration.complex,
+      }),
     },
     logo: {
       width: 48,
@@ -53,11 +59,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     itemDisplay: {
       display: 'inline-flex',
+      // flexDirection: 'column',
+      textAlign: 'center',
       alignItems: 'center',
       padding: theme.spacing(0, .5, 0),
-      backgroundColor: theme.palette.neutralGray.light,
+      backgroundColor: theme.palette.grey['400'],
       borderRadius: 3,
-      border: `1px solid ${theme.palette.neutralGray.main}`,
+      border: `1px solid ${theme.palette.grey['500']}`,
       margin: theme.spacing(1.2),
     },
     description: {
@@ -75,7 +83,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     avatar: {
       fontSize: '0.875rem',
-      backgroundColor: '#6d7efc',
+      // backgroundColor: '#6d7efc',
     },
     delete: {
       alignSelf: 'flex-start',
@@ -85,6 +93,7 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       padding: theme.spacing(0, 1, 0),
     },
+
   }),
 );
 /**
@@ -121,7 +130,7 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(({
             position={'middle'}
             useStyles={useApexInfoStyles}
           >
-            <InfoTitle>{title}</InfoTitle>
+            <InfoTitle>{toTitleCase(title)}</InfoTitle>
             <InfoSubtitle>{`ID: ${id}`}</InfoSubtitle>
           </Info>
           <CopyButtonIcon
@@ -138,15 +147,14 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(({
         >
           <Paper
             className={classes.itemDisplay}
+            elevation={0}
           >
             <CalendarTodayTwoToneIcon
               fontSize={'small'}
               className={classes.icon}
             />
-            <Typography variant={'caption'}>
-              {'Start:  '}
-            </Typography>
             <Typography
+              align={'justify'}
               variant={'caption'}
               color={'textPrimary'}
             >
@@ -154,17 +162,13 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(({
             </Typography>
           </Paper>
           <Paper
-            // var  tiant={'outlined'}
-            elevation={1}
+            elevation={0}
             className={classes.itemDisplay}
           >
             <ScheduleTwoToneIcon
               fontSize={'small'}
               className={classes.icon}
             />
-            <Typography variant={'caption'}>
-              {'Duration:  '}
-            </Typography>
             <Typography
               variant={'caption'}
               color={'textPrimary'}
@@ -192,13 +196,16 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(({
         </Box>
         <Row p={2} gap={2} position={'bottom'}>
           <Item>
-            <AvatarGroup max={4} classes={{avatar: classes.avatar}}>
-              {new Array(5).fill(0).map((_, index) => (
-                <Avatar
+            <AvatarGroup
+              max={5}
+              spacing={'small'}
+              classes={{avatar: classes.avatar}}
+            >
+              {demoUsers.map((user, index) => (
+                <UserAvatar
                   key={index}
-                  src={`https://i.pravatar.cc/300?img=${Math.floor(
-                      Math.random() * 30,
-                  )}`}
+                  user={user}
+                  avatarSize={4}
                 />
               ))}
             </AvatarGroup>

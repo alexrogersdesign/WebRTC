@@ -13,6 +13,7 @@ import {RestContext} from '../../context/RestContext';
 import MeetingCardModal from './MeetingCardModal';
 import {toLocalStringMonth} from '../../util/timeHelper';
 import Avatar from '@material-ui/core/Avatar';
+import {toTitleCase} from '../../util/helpers';
 
 interface Props {
   meeting: Meeting
@@ -55,7 +56,7 @@ const MeetingListItem = ({meeting}: Props) => {
     void deleteMeeting(meeting.id.toString());
   };
 
-  const meetingPrimary = `${meeting?.title}`;
+  const meetingPrimary = `${toTitleCase(meeting?.title)}`;
   const meetingSecondary = toLocalStringMonth(meeting?.start);
   return (
     <>

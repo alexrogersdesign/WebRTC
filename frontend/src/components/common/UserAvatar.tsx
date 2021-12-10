@@ -1,39 +1,36 @@
+/* eslint-disable no-unused-vars */
 import React, {useState} from 'react';
 import {makeStyles, createStyles, Theme} from '@material-ui/core/styles';
-import {deepOrange, deepPurple} from '@material-ui/core/colors';
 import {Tooltip, Avatar, Fab} from '@material-ui/core';
 
 
 import User from '../../shared/classes/User';
 
-// import AttendeeInfoModal from '../attendee/AttendeeInfoModal';
 import ModalWrapper from './ModalWrapper';
 import AttendeeInfo, {AttendeeInfoProps} from '../attendee/AttendeeInfo';
-// TODO cleanup props and styles
-interface StyleProps {avatarSize: number}
+interface StyleProps {avatarSize: number, clickDisabled: boolean | undefined}
 
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
     root: {
-      // 'display': 'flex',
-      '& > *': {
-      },
     },
-    fab: (props) => ({
-      width: theme.spacing(props.avatarSize + .5),
-      height: theme.spacing(props.avatarSize + .5),
+    fab: () => ({
+      display: 'block',
+      height: 'max-content',
+      width: 'max-content',
       flexShrink: 0,
-      zindex: 99,
+      backgroundColor: theme.palette.grey['800'],
     }),
-    orange: {
-      color: theme.palette.getContrastText(deepOrange[500]),
-      backgroundColor: deepOrange[500],
-    },
     avatar: (props) => ({
+      margin: theme.spacing(.25),
+      display: 'relative',
       width: theme.spacing(props.avatarSize),
       height: theme.spacing(props.avatarSize),
-      color: theme.palette.getContrastText(deepPurple[500]),
-      backgroundColor: deepPurple[500],
+      backgroundColor: theme.palette.secondary.dark,
+      color: theme.palette.getContrastText(theme.palette.secondary.dark),
+      border: props.clickDisabled?
+        `1px solid ${theme.palette.grey['600']}`:
+      undefined,
     }),
   }),
 );
@@ -69,7 +66,7 @@ const UserAvatar = ({
   avatarSize,
   clickDisabled,
 }: Props) => {
-  const classes = useStyles({avatarSize: avatarSize?? 5});
+  const classes = useStyles({avatarSize: avatarSize?? 5, clickDisabled});
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -82,7 +79,7 @@ const UserAvatar = ({
                 title={user.fullName}
                 aria-label='User Avatar'>
                 <Fab
-                  color='secondary'
+                  // color='secondary'
                   size='medium'
                   className={classes.fab}
                   onClick={() => setModalOpen(true)}

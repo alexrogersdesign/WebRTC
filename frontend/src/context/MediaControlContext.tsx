@@ -10,16 +10,7 @@ import {ChildrenProps, IExternalMedia} from '../shared/types';
 
 import User from '../shared/classes/User';
 import {RestContext} from './RestContext';
-import videoASrc from '../util/files/video/VideoG.mp4';
-import videoBSrc from '../util/files/video/VideoB.mp4';
-import videoCSrc from '../util/files/video/VideoC.mp4';
-import videoDSrc from '../util/files/video/VideoH.mp4';
-import videoESrc from '../util/files/video/VideoE.mp4';
-import videoFSrc from '../util/files/video/VideoF.mp4';
-import iconA from '../util/files/img/user-a-icon.jpeg';
-import iconB from '../util/files/img/user-b-icon.jpeg';
-import iconC from '../util/files/img/user-c-icon.jpeg';
-import iconD from '../util/files/img/user-d-icon.jpeg';
+
 import {useSnackbar} from 'notistack';
 import {snackbarWarnOptions} from './NotificationProvider';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -57,16 +48,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
 
 
   const [streamState, setStreamState] = useState<StreamType>(0);
-
-  /** Dummy video streams used for demonstrations purposes. */
-  const dummyVideoA = useRef(document.createElement('video'));
-  const dummyVideoB = useRef(document.createElement('video'));
-  const dummyVideoC = useRef(document.createElement('video'));
-  const dummyVideoD = useRef(document.createElement('video'));
-  const dummyVideoE = useRef(document.createElement('video'));
-  const dummyVideoF = useRef(document.createElement('video'));
-  const [showDemo, setShowDemo] = useState(false);
-  const dummyStreams = useRef<User[]>([]);
 
   /** Updates the outgoing stream tracks to match the state of the media
    * control parameters */
@@ -233,69 +214,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
     localMedia?.getTracks().forEach((track) => track.stop());
   };
 
-  /**
-   * Cleans up dummy streams
-   * @param {User[]} users An array of the dummy users
-   */
-  const removeDummyStreams = (users: User[]) => {
-    users?.forEach((user)=> removeMedia(user.id.toString()));
-  };
-  /** Show dummy streams if showDemo is enabled, else
-   * clean up streams */
-  useEffect(() => {
-    if (!showDemo) {
-      return removeDummyStreams(dummyStreams.current);
-    }
-    const createUsers = async () => {
-      dummyStreams.current = await createDummyStreams();
-    };
-    createUsers();
-    return () => removeDummyStreams(dummyStreams.current);
-  }, [showDemo]);
-
-  const createDummyStreams = async () => {
-    const userA = new User('Jarrod', 'Carroll', 'jcarroll@gmail.com');
-    const userB = new User('Kristina', 'Abernathy', 'kabernathy@gmail.com');
-    const userC = new User('Hilma', 'Schinner', 'hachinner@gmail.com');
-    const userD = new User('Roslyn', 'Satterfield', 'rsatterfield@gmail.com');
-    const userE = new User('Eda', 'Kling', 'ekling@gmail.com');
-    const userF = new User('Joan', 'Green', 'jgreen@gmail.com');
-    dummyVideoA.current.src = videoASrc;
-    dummyVideoB.current.src = videoBSrc;
-    dummyVideoC.current.src = videoCSrc;
-    dummyVideoD.current.src = videoDSrc;
-    dummyVideoE.current.src = videoESrc;
-    dummyVideoF.current.src = videoFSrc;
-    dummyVideoA.current.load();
-    dummyVideoA.current.autoplay = true;
-    dummyVideoA.current.loop = true;
-    dummyVideoB.current.load();
-    dummyVideoB.current.autoplay = true;
-    dummyVideoB.current.loop = true;
-    dummyVideoC.current.load();
-    dummyVideoC.current.autoplay = true;
-    dummyVideoC.current.loop = true;
-    dummyVideoD.current.load();
-    dummyVideoD.current.autoplay = true;
-    dummyVideoD.current.loop = true;
-    dummyVideoE.current.load();
-    dummyVideoE.current.autoplay = true;
-    dummyVideoE.current.loop = true;
-    dummyVideoF.current.load();
-    dummyVideoF.current.autoplay = true;
-    dummyVideoF.current.loop = true;
-    userA.icon = iconA.toString();
-    userB.icon = iconB.toString();
-    userE.icon = iconC.toString();
-    userD.icon = iconD.toString();
-    addExternalMedia(userA, (dummyVideoA.current as any).captureStream());
-    addExternalMedia(userB, (dummyVideoB.current as any).captureStream());
-    addExternalMedia(userC, (dummyVideoC.current as any).captureStream());
-    addExternalMedia(userD, (dummyVideoD.current as any).captureStream());
-    addExternalMedia(userE, (dummyVideoE.current as any).captureStream());
-    addExternalMedia(userF, (dummyVideoF.current as any).captureStream());
-    return [userA, userB, userC, userD, userE, userF];
-  };
 
   /**
    * Helper function to remove a media stream from the
@@ -337,7 +255,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    */
   const clearExternalMedia = () => setExternalMedia([]);
 
-
   return (
     <MediaControlContext.Provider
       value={{
@@ -356,8 +273,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         addExternalMedia,
         clearExternalMedia,
         localMedia,
-        setShowDemo,
-        showDemo,
         stopLocalMediaStream,
         updateStreamMutes,
         streamState,
@@ -384,8 +299,6 @@ export interface IMediaControlContext {
   removeMedia: (id:string) => void
   addExternalMedia: (user:User, stream:MediaStream, data?:CallOption) => void,
   clearExternalMedia: () => void,
-  setShowDemo: (boolean:boolean) => void,
-  showDemo: boolean,
   stopLocalMediaStream: () => void,
   updateStreamMutes: () => void,
   streamState: StreamType,

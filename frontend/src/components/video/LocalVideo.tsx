@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, {useContext, useEffect} from 'react';
-import {CircularProgress, Paper} from '@material-ui/core';
+import {CircularProgress, Paper, useTheme} from '@material-ui/core';
+import Collapse from '@material-ui/core/Collapse';
+
 import WebcamControls from './WebcamControls';
 import {MediaControlContext, StreamType,
 } from '../../context/MediaControlContext';
@@ -14,6 +16,7 @@ interface LocalVideoClasses extends VideoClasses {
 }
 export interface LocalVideoProps extends VideoProps {
   propClasses: LocalVideoClasses
+  style?: React.CSSProperties
 }
 
 /**
@@ -33,6 +36,7 @@ export function LocalVideo({
   videoLoading,
   setVideoLoading,
   propClasses,
+  style,
 }: LocalVideoProps) {
   const {
     localVideoRef,
@@ -63,13 +67,23 @@ export function LocalVideo({
    * prop of the element
    */
   const videoStyle = () : React.CSSProperties => {
-    const transform = streamState === StreamType.WEBCAM?
+    const theme = useTheme();
+    const isWebcam = streamState === StreamType.WEBCAM;
+    const transform = isWebcam?
       'rotateY(180deg)': undefined;
-    return {transform};
+    const height = !isWebcam? 215: 255;
+    const transition = theme.transitions.create(['width', 'height'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.standard,
+    });
+    return {transform, height, transition};
   };
 
   return (
-    <div className={clsx(propClasses.localContainer, propClasses.container)}>
+    <div
+      className={clsx(propClasses.localContainer, propClasses.container)}
+      style={style}
+    >
       {videoLoading &&(
         <CircularProgress
           className={propClasses.progress}
@@ -81,6 +95,7 @@ export function LocalVideo({
           }}
         />
       )}
+      {/* <Collapse in={!videoLoading}>*/}
       <Paper className={propClasses.paper} elevation={3} variant="outlined" >
         <video
           className={ propClasses.video}
@@ -91,11 +106,13 @@ export function LocalVideo({
           height='auto'
           width={LOCAL_VIDEO_WIDTH}
           autoPlay
+          // onCanPlay={() => setTimeout(() => setVideoLoading(false), 500)}
           onCanPlay={() => setVideoLoading(false)}
-          // onLoadStart={() => setVideoLoading(true)}
+          onLoadStart={() => setVideoLoading(true)}
         />
         <WebcamControls className={propClasses.controls}/>
       </Paper>
+      {/* </Collapse>*/}
     </div>
   );
 }

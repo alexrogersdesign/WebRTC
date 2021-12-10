@@ -29,7 +29,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
     paper: ({videoLoading}) => ({
       padding: innerPadding,
       borderRadius: outerBorderRadius,
-      // position: 'relative',
       display: 'flex',
       flexGrow: -1,
       flexDirection: 'column',
@@ -71,7 +70,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       position: 'absolute',
       top: '40%',
       left: '40%',
-      zIndex: 9999,
+      zIndex: 2,
       animationDuration: '750ms',
     },
     circle: {

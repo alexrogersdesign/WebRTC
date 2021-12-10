@@ -97,6 +97,27 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       success && setScreenSharing(true);
     }
   };
+  const audioConstrains: MediaTrackConstraintSet = {
+    echoCancellation: true,
+  };
+
+  const videoConstraints: MediaTrackConstraintSet = {
+    width: 640,
+    height: 480,
+    // aspectRatio: 4/3,
+  };
+  const webcamConstraints: MediaStreamConstraints = {
+    audio: audioConstrains,
+    video: {
+      ...videoConstraints,
+      facingMode: 'user',
+    },
+  };
+  const screenConstraints: MediaStreamConstraints = {
+    audio: audioConstrains,
+    video: videoConstraints,
+  };
+
 
   /**
    * Attempts to retrieve the webcam media from the browser.
@@ -108,10 +129,8 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    */
   const getWebcamMedia = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia( {
-        video: true,
-        audio: true,
-      });
+      const stream = await navigator.mediaDevices
+          .getUserMedia(webcamConstraints);
       stream
           .getVideoTracks()[0]
           .addEventListener('ended', () => setVideoDisabled(true));
@@ -136,7 +155,8 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    */
   const getScreenShareMedia = async () => {
     try {
-      const stream = await navigator.mediaDevices.getDisplayMedia();
+      const stream = await navigator.mediaDevices
+          .getDisplayMedia(screenConstraints);
       stream
           .getVideoTracks()[0]
           .addEventListener('ended',

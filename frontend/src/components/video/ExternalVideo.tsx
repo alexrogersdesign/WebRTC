@@ -6,7 +6,7 @@ import {VideoClasses, VideoProps} from './VideoPlayer';
 import clsx from 'clsx';
 import User from '../../shared/classes/User';
 import {
-  EXTERNAL_VIDEO_HEIGHT,
+  EXTERNAL_VIDEO_HEIGHT, EXTERNAL_VIDEO_WIDTH,
 } from '../../util/constants';
 
 interface ExternalVideoClasses extends VideoClasses {

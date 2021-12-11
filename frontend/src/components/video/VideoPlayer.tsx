@@ -23,10 +23,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
         width: '80%',
       },
     },
-    localContainer: {
-      // padding: '5%',
-      // width: '30em !important',
-    },
     paper: ({videoLoading}) => ({
       padding: innerPadding,
       borderRadius: outerBorderRadius,

@@ -76,11 +76,15 @@ const useDemo = (
       if (typeof users[index] === 'undefined') return;
       if (typeof videoFiles[index] === 'undefined') return;
       video.src = videoFiles[index];
+      video.defaultMuted = true;
       video.load();
-      video.autoplay = true;
       video.loop = true;
+      const stream: MediaStream = (video as any).captureStream();
+      stream.getAudioTracks().forEach((track) => track.stop());
+      video.muted = true;
+      video.play();
       /** Add the users and media streams  */
-      add(users[index], (video as any).captureStream());
+      add(users[index], stream);
     });
     return users;
   };

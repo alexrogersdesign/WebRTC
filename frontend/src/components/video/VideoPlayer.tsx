@@ -23,8 +23,8 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       },
     },
     localContainer: {
-      padding: '5%',
-      width: '30em !important',
+      // padding: '5%',
+      // width: '30em !important',
     },
     paper: ({videoLoading}) => ({
       padding: innerPadding,

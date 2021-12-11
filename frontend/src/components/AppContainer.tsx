@@ -23,14 +23,18 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       overflow: 'hidden',
+      height: 'max-content',
     },
     container: {
+      // overflowX: 'hidden',
       display: 'flex',
+      height: '100%',
       flexDirection: 'column',
       alignItems: 'center',
       alignContent: 'stretch',
       justifyContent: 'center',
       padding: '2%',
+      border: '1px solid',
     },
     grid: {
     },
@@ -42,6 +46,10 @@ const useStyles = makeStyles((theme: Theme) =>
       float: 'right',
       right: 0,
       bottom: 0,
+    },
+    videoPlayer: {
+      margin: '3vw',
+
     },
   }),
 );
@@ -75,13 +83,14 @@ const AppContainer = () => {
         <div className={classes.grid}>
           <VideoGrid />
           <div className={classes.local}>
-            {(meeting && !sm) && <VideoPlayer local/>}
+            {(meeting && !sm) &&
+              <VideoPlayer local className={classes.videoPlayer}/>}
           </div>
         </div>
         {(meeting && sm) && (
           <>
-            <VideoDrawer/>
             <VideoControlBar/>
+            <VideoDrawer/>
           </>
         )}
         <DemoPrompt/>

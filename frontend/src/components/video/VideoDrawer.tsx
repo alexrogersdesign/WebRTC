@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import clsx from 'clsx';
 import {makeStyles,
@@ -14,20 +15,23 @@ import VideoPlayer from './VideoPlayer';
 import {MediaControlContext} from '../../context/MediaControlContext';
 import {AppStateContext} from '../../context/AppStateContext';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
+import Fade from '@material-ui/core/Fade';
+import {ButtonBase} from '@material-ui/core';
 
 
 type StyleRef = React.RefObject<HTMLVideoElement>
 const offset = 20;
 
-const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
-  createStyles({
-    root: (props) => ({
-      width: '100%',
-      height: props.current?.offsetHeight,
+const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) => {
+  return createStyles({
+    root: () => ({
+      position: 'fixed',
+      right: 20,
+      bottom: 20,
     }),
     drawerButton: {
-      float: 'left',
-      position: 'fixed',
+      float: 'right',
+      position: 'relative',
       bottom: offset + 30,
       zIndex: theme.zIndex.drawer + 1,
       margin: theme.spacing(1),
@@ -35,6 +39,7 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
+      // border: '1px solid red',
     },
     drawerButtonOpen: {
       display: 'none',
@@ -45,15 +50,28 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     },
     openIcon: {
       transform: 'rotateY(180deg) rotateX(180deg)',
-      bottom: 0,
+      height: '50%',
+      zIndex: theme.zIndex.drawer - 500,
     },
     closeIcon: {
-      backgroundColor: theme.palette.secondary.light,
+      'transform': 'scaleX(2.4) scaleY(1.2)',
+      '&:hover, &$focusVisible': {
+        'color': theme.palette.grey['100'],
+      },
+    },
+    closeButton: {
+      'color': theme.palette.grey['400'],
     },
     drawer: {
-      flexShrink: 0,
+      'flexShrink': 0,
     },
     drawerPaper: {
+      display: 'flex',
+      flexDirection: 'row',
+      marginBottom: '2vh',
+      alignItems: 'flex-end',
+      justifyContent: 'flex-end',
+      padding: 10,
       bottom: offset + 10,
       backgroundColor: 'rgba(255,255,255,0)',
       outline: 0,
@@ -61,27 +79,22 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     },
     drawerHeader: (props) => ({
       position: 'absolute',
-      bottom: props.current?.offsetHeight,
-      padding: theme.spacing(0, 2),
+      top: 0,
+      left: '50%',
+      transform: 'translate(-50%, 0)',
     }),
-
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(0, 3),
+    drawerContainer: {
+      position: 'relative',
       transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
     },
-    contentOpen: {
-      marginBottom: 0,
+    hide: {
+      visibility: 'hidden',
     },
-    videoPlayer: {
-      float: 'left',
-      alignSelf: 'flex-end',
-      overflow: 'hidden',
-    },
-  }),
+  });
+},
 );
 /**
  * Renders the webcam component drawer which is a collapsable component
@@ -113,14 +126,14 @@ const VideoDrawer = () => {
               placement="right"
             >
               <IconButton
-                edge='start'
+                edge='end'
                 id={'toggle-preview'}
                 aria-label="open webcam preview"
                 className={classes.openIcon}
                 onClick={handleDrawerOpen}
-                size='small'
+                size='medium'
               >
-                <FeaturedVideoIcon/>
+                <FeaturedVideoIcon fontSize={'large'}/>
               </IconButton>
             </Tooltip>
           </div>
@@ -135,29 +148,38 @@ const VideoDrawer = () => {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
-          <MemoizedHelpWrapper
-            message={'Close preview'}
-            tooltipProps={{placement: 'left-end'}}
-          >
-            <div>
-              <Tooltip
-                title="Close webcam preview"
-                placement="right"
-              >
-                <IconButton
-                  id={'close-webcam-button'}
-                  className={classes.closeIcon}
-                  onClick={handleDrawerClose}
-                  size='small'
-                >
-                  <KeyboardArrowDownIcon/>
-                </IconButton>
-              </Tooltip>
-            </div>
-          </MemoizedHelpWrapper>
+        <div className={classes.drawerContainer}>
+          <VideoPlayer local />
+          <div className={classes.drawerHeader}>
+            <MemoizedHelpWrapper
+              message={'Close preview'}
+              tooltipProps={{placement: 'top'}}
+            >
+              <Fade in={videoDrawerOpen}>
+                <div>
+                  <Tooltip
+                    title="Close webcam preview"
+                    placement="top"
+                    classes={{
+                      popper: clsx( {[classes.hide]: !videoDrawerOpen}),
+                    }}
+                  >
+                    <ButtonBase
+                      disableTouchRipple
+                      id={'close-webcam-button'}
+                      className={classes.closeButton}
+                      onClick={handleDrawerClose}
+                    >
+                      <KeyboardArrowDownIcon
+                        className={classes.closeIcon}
+                      />
+                    </ButtonBase>
+                  </Tooltip>
+                </div>
+              </Fade>
+            </MemoizedHelpWrapper>
+          </div>
         </div>
-        <VideoPlayer local className={classes.videoPlayer} />
       </Drawer>
     </div>
   );

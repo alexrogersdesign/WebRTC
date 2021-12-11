@@ -84,7 +84,7 @@ export function LocalVideo({
       className={clsx(propClasses.localContainer, propClasses.container)}
       style={style}
     >
-      {videoLoading &&(
+      {videoLoading &&
         <CircularProgress
           className={propClasses.progress}
           size={80}
@@ -94,7 +94,7 @@ export function LocalVideo({
             circle: propClasses.circle,
           }}
         />
-      )}
+      }
       <Paper className={propClasses.paper} elevation={3} variant="outlined" >
         <video
           className={ propClasses.video}

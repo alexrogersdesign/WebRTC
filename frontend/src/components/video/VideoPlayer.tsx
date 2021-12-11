@@ -62,7 +62,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       marginTop: '-15%',
       width: '100%',
       height: '100%',
-      [theme.breakpoints.down('xs')]: {
+      [theme.breakpoints.down('sm')]: {
         display: 'none',
       },
     },
@@ -91,20 +91,17 @@ const VideoPlayer = ({local, stream, user, className}: Props)=> {
 
   return (
     <div className={className}>
-      { local?(
+      { local?
         <MemoizedLocalVideo
           propClasses={classes}
           {...{videoLoading, setVideoLoading}}
-        />
-      ):
-      (
+        /> :
         <MemoizedExternalVideo
           propClasses={classes}
           user={user!}
           stream={stream!}
           {...{videoLoading, setVideoLoading}}
         />
-      )
       }
     </div>
   );

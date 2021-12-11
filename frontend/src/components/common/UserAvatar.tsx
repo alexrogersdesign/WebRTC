@@ -20,6 +20,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       width: 'max-content',
       flexShrink: 0,
       backgroundColor: theme.palette.grey['800'],
+      zindex: theme.zIndex.drawer,
     }),
     avatar: (props) => ({
       margin: theme.spacing(.25),
@@ -69,29 +70,38 @@ const UserAvatar = ({
   const classes = useStyles({avatarSize: avatarSize?? 5, clickDisabled});
   const [modalOpen, setModalOpen] = useState(false);
 
+  const AvatarWithButton = () => {
+    return (
+      <Tooltip
+        title={user!.fullName}
+        aria-label='User Avatar'
+      >
+        <Fab
+          size='medium'
+          className={classes.fab}
+          onClick={() => setModalOpen(true)}
+          disabled={clickDisabled}
+        >
+          <AvatarIcon user={user!} className={classes.avatar}/>
+        </Fab>
+      </Tooltip>
+    );
+  };
+  const AvatarNoButton = () => {
+    return (
+      <AvatarIcon user={user!} className={classes.avatar}/>
+    );
+  };
+  const RenderAvatar = () => {
+    return !clickDisabled ? <AvatarWithButton/> : <AvatarNoButton/>;
+  };
+
   return (
     <div className={className}>
       <div className={classes.root}>
-        {user && (
+        {user ? (
           <>
-            {!clickDisabled && (
-              <Tooltip
-                title={user.fullName}
-                aria-label='User Avatar'>
-                <Fab
-                  // color='secondary'
-                  size='medium'
-                  className={classes.fab}
-                  onClick={() => setModalOpen(true)}
-                  disabled={clickDisabled}
-                >
-                  <AvatarIcon user={user} className={classes.avatar}/>
-                </Fab>
-              </Tooltip>
-            )}
-            {clickDisabled && (
-              <AvatarIcon user={user} className={classes.avatar}/>
-            )}
+            <RenderAvatar/>
             <ModalWrapper<AttendeeInfoProps>
               modalOpen={modalOpen}
               setModalOpen={setModalOpen}
@@ -103,10 +113,7 @@ const UserAvatar = ({
               }}
             />
           </>
-        )}
-        {!user && (
-          <Avatar/>
-        )}
+        ) :<Avatar/> }
       </div>
     </div>
   );

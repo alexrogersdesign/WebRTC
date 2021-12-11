@@ -56,7 +56,7 @@ const AppContainer = () => {
   const classes = useStyles();
   const {token, currentUser, meeting} = useContext(RestContext);
   const {setTheme} = useContext(CustomThemeContext);
-  const {xs} = useContext(AppStateContext);
+  const {sm} = useContext(AppStateContext);
 
   /** Render a different theme on login */
   useEffect(() => {
@@ -75,10 +75,10 @@ const AppContainer = () => {
         <div className={classes.grid}>
           <VideoGrid />
           <div className={classes.local}>
-            {(meeting && !xs) && <VideoPlayer local/>}
+            {(meeting && !sm) && <VideoPlayer local/>}
           </div>
         </div>
-        {(meeting && xs) && (
+        {(meeting && sm) && (
           <>
             <VideoDrawer/>
             <VideoControlBar/>

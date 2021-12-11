@@ -95,7 +95,6 @@ export function LocalVideo({
           }}
         />
       )}
-      {/* <Collapse in={!videoLoading}>*/}
       <Paper className={propClasses.paper} elevation={3} variant="outlined" >
         <video
           className={ propClasses.video}
@@ -112,7 +111,6 @@ export function LocalVideo({
         />
         <WebcamControls className={propClasses.controls}/>
       </Paper>
-      {/* </Collapse>*/}
     </div>
   );
 }

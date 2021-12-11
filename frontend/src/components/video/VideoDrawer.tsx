@@ -19,20 +19,22 @@ import Fade from '@material-ui/core/Fade';
 import {ButtonBase} from '@material-ui/core';
 
 
-type StyleRef = React.RefObject<HTMLVideoElement>
-const offset = 20;
+type StyleProps = {
+  offset: number | string;
+}
 
-const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) => {
+const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => {
   return createStyles({
     root: () => ({
       position: 'fixed',
       right: 20,
       bottom: 20,
     }),
-    drawerButton: {
+    drawerButton: (props) => ({
       float: 'right',
       position: 'relative',
-      bottom: offset + 30,
+      // bottom: `calc(${props.offset} + 30px)`,
+      bottom: props.offset,
       zIndex: theme.zIndex.drawer + 1,
       margin: theme.spacing(1),
       transition: theme.transitions.create(['margin', 'height'], {
@@ -40,7 +42,7 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) => {
         duration: theme.transitions.duration.leavingScreen,
       }),
       // border: '1px solid red',
-    },
+    }),
     drawerButtonOpen: {
       display: 'none',
       transition: theme.transitions.create(['margin', 'height'], {
@@ -60,23 +62,24 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) => {
       },
     },
     closeButton: {
-      'color': theme.palette.grey['400'],
+      color: theme.palette.grey['400'],
     },
     drawer: {
-      'flexShrink': 0,
+      flexShrink: 0,
     },
-    drawerPaper: {
+    drawerPaper: (props) => ({
       display: 'flex',
       flexDirection: 'row',
-      marginBottom: '2vh',
+      marginBottom: '3vh',
       alignItems: 'flex-end',
       justifyContent: 'flex-end',
       padding: 10,
-      bottom: offset + 10,
+      // bottom: `calc(${props.offset} + 10px)`,
+      bottom: props.offset,
       backgroundColor: 'rgba(255,255,255,0)',
       outline: 0,
       borderWidth: 0,
-    },
+    }),
     drawerHeader: (props) => ({
       position: 'absolute',
       top: 0,
@@ -96,15 +99,19 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) => {
   });
 },
 );
+interface Props {
+  offset?: number | string;
+}
 /**
  * Renders the webcam component drawer which is a collapsable component
  * that displays a preview of the users outgoing webcam feed.
  * @return {JSX.Element}
  */
-const VideoDrawer = () => {
-  const {localVideoRef} = useContext(MediaControlContext);
+const VideoDrawer = ({offset = 0}:Props) => {
+  const {xs} = useContext(AppStateContext);
+  // const {localVideoRef} = useContext(MediaControlContext);
   const {videoDrawerOpen, setVideoDrawerOpen} = useContext(AppStateContext);
-  const classes = useStyles(localVideoRef);
+  const classes = useStyles({offset});
 
   const handleDrawerOpen = () => setVideoDrawerOpen(true);
   const handleDrawerClose = () => setVideoDrawerOpen(false);
@@ -124,6 +131,9 @@ const VideoDrawer = () => {
             <Tooltip
               title="Open webcam preview"
               placement="right"
+              classes={{
+                popper: clsx( {[classes.hide]: videoDrawerOpen}),
+              }}
             >
               <IconButton
                 edge='end'
@@ -149,7 +159,7 @@ const VideoDrawer = () => {
         }}
       >
         <div className={classes.drawerContainer}>
-          <VideoPlayer local />
+          <VideoPlayer local hideControls={xs} />
           <div className={classes.drawerHeader}>
             <MemoizedHelpWrapper
               message={'Close preview'}

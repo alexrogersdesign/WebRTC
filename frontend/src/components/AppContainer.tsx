@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignContent: 'stretch',
       justifyContent: 'center',
       padding: '2%',
-      border: '1px solid',
     },
     grid: {
     },
@@ -49,7 +48,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     videoPlayer: {
       margin: '3vw',
-
     },
   }),
 );
@@ -64,7 +62,7 @@ const AppContainer = () => {
   const classes = useStyles();
   const {token, currentUser, meeting} = useContext(RestContext);
   const {setTheme} = useContext(CustomThemeContext);
-  const {sm} = useContext(AppStateContext);
+  const {xs} = useContext(AppStateContext);
 
   /** Render a different theme on login */
   useEffect(() => {
@@ -75,22 +73,24 @@ const AppContainer = () => {
   return (
     <div className={classes.root}>
       <div>
-        <ControlBar meeting={meeting}/>
-        <ChatDrawer meeting={meeting}/>
       </div>
       <Container className={classes.container}>
         {(!meeting && currentUser) && <MeetingList/>}
+        <ControlBar meeting={meeting}/>
+        <ChatDrawer meeting={meeting}/>
         <div className={classes.grid}>
           <VideoGrid />
           <div className={classes.local}>
-            {(meeting && !sm) &&
-              <VideoPlayer local className={classes.videoPlayer}/>}
+            {(meeting && !xs) &&
+              // <VideoPlayer local className={classes.videoPlayer}/>
+              <VideoDrawer />
+            }
           </div>
         </div>
-        {(meeting && sm) && (
+        {(meeting && xs) && (
           <>
             <VideoControlBar/>
-            <VideoDrawer/>
+            <VideoDrawer offset={30}/>
           </>
         )}
         <DemoPrompt/>

@@ -8,6 +8,7 @@ import {MemoizedLocalVideo} from './LocalVideo';
 
 interface StyleProps {
     videoLoading: boolean;
+    hideControls?: boolean;
 }
 
 const outerBorderRadius = 10;
@@ -55,17 +56,14 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
         display: 'none',
       },
     },
-    controls: {
-      display: 'absolute',
+    controls: ({hideControls}) => ({
+      display: hideControls? 'none' : 'absolute',
       zIndex: 99,
       borderRadius: innerBorderRadius,
       marginTop: '-15%',
       width: '100%',
       height: '100%',
-      [theme.breakpoints.down('sm')]: {
-        display: 'none',
-      },
-    },
+    }),
     progress: {
       position: 'absolute',
       top: '40%',
@@ -81,13 +79,23 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
  interface PlayerProps {
     className?: string;
  }
- interface ExternalProps {local?: false; stream: MediaStream; user:User}
- interface LocalProps {local: true; stream?:never; user?: never}
+ interface ExternalProps {
+   local?: false;
+   stream: MediaStream;
+   user:User
+   hideControls?: never;
+ }
+ interface LocalProps {
+   local: true;
+   hideControls?: boolean;
+   stream?:never;
+   user?: never
+ }
  type Props = PlayerProps & (ExternalProps | LocalProps);
 
-const VideoPlayer = ({local, stream, user, className}: Props)=> {
+const VideoPlayer = ({local, stream, user, className, hideControls}: Props)=> {
   const [videoLoading, setVideoLoading] = useState(false);
-  const classes = useStyles({videoLoading});
+  const classes = useStyles({videoLoading, hideControls});
 
   return (
     <div className={className}>

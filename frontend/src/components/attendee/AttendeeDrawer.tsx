@@ -54,6 +54,10 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
     },
     heightShift: (props) => ({
       [theme.breakpoints.down('xs')]: {
+        transition: theme.transitions.create('height', {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.shortest,
+        }),
         height: `calc(90% - ${props.localVideoRef.current?.offsetHeight}px)`,
         borderBottomRightRadius: theme.shape.borderRadius,
       },

@@ -62,7 +62,7 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
   const [attendeeDrawerOpen, setAttendeeDrawerOpen] = useState(false);
-  const [videoDrawerOpen, setVideoDrawerOpen] = useState(false);
+  const [videoDrawerOpen, setVideoDrawerOpen] = useState(true);
 
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.down('xs'));

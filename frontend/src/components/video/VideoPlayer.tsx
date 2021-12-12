@@ -36,6 +36,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       opacity: videoLoading? 0: 1,
       width: 'max-content',
       height: 'max-content',
+      // overflow: 'hidden',
     }),
     video: {
       borderRadius: innerBorderRadius,
@@ -56,7 +57,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       display: hideControls? 'none' : 'absolute',
       zIndex: 99,
       borderRadius: innerBorderRadius,
-      marginTop: '-15%',
+      marginTop: '-13%',
       width: '100%',
       height: '100%',
     }),

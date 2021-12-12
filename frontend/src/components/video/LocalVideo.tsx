@@ -10,6 +10,7 @@ import {VideoClasses, VideoProps} from './VideoPlayer';
 import clsx from 'clsx';
 import {AppStateContext} from 'src/context/AppStateContext';
 import {LOCAL_VIDEO_WIDTH} from '../../util/constants';
+import {useFirstUpdate} from '../../hooks/useFirstUpdate';
 
 interface LocalVideoClasses extends VideoClasses {
   localContainer?: string;
@@ -29,6 +30,8 @@ export interface LocalVideoProps extends VideoProps {
  * A function to set the video loading state.
  * @param {LocalVideoClasses} propClasses An object representing Css classes
  * to pass to the internal components.
+ * @param {React.CSSProperties} Style A set of CSS styles to apply to the
+ * root element.
  * @return {JSX.Element}
  * @constructor
  */
@@ -44,10 +47,11 @@ export function LocalVideo({
     streamState,
   } = useContext(MediaControlContext);
   const {videoDrawerOpen} = useContext(AppStateContext);
+  const firstUpdate = useFirstUpdate();
 
   /** Set video loading to true on first render */
   useEffect(() => {
-    setVideoLoading(true);
+    // firstUpdate && setVideoLoading(true);
   }, []);
   /** When the video drawer open stage changes check if the
    * video element readyState is 0 (meaning it has no media set).
@@ -107,7 +111,7 @@ export function LocalVideo({
           autoPlay
           // onCanPlay={() => setTimeout(() => setVideoLoading(false), 500)}
           onCanPlay={() => setVideoLoading(false)}
-          onLoadStart={() => setVideoLoading(true)}
+          // onLoadStart={() => setVideoLoading(true)}
         />
         <WebcamControls className={propClasses.controls}/>
       </Paper>

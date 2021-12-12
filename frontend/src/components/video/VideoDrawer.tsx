@@ -57,7 +57,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => {
     },
     closeIcon: {
       'transform': 'scaleX(2.4) scaleY(1.2)',
-      '&:hover, &$focusVisible': {
+      '&:hover, &.Mui-focusVisible': {
         'color': theme.palette.grey['100'],
       },
     },

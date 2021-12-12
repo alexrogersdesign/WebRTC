@@ -1,13 +1,12 @@
+/* eslint-disable no-unused-vars */
 import React, {useContext} from 'react';
 import {
   makeStyles,
   Theme,
   createStyles,
-  useTheme,
 } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import ToolTip from '@material-ui/core/Tooltip';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ScreenShareTwoToneIcon from '@material-ui/icons/ScreenShareTwoTone';
@@ -19,6 +18,7 @@ import AccountBoxTwoToneIcon from '@material-ui/icons/AccountBoxTwoTone';
 import {SegmentationContext} from '../../context/SegmentationContext';
 import {MediaControlContext} from '../../context/MediaControlContext';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
+import {ButtonBase} from '@material-ui/core';
 
 interface Props {
    className?: string;
@@ -28,11 +28,12 @@ interface Props {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      padding: '2px 4px',
+      height: 45,
+      overflow: 'hidden',
       display: 'flex',
+      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-around',
-      width: 'auto',
+      justifyContent: 'center',
       zIndex: 999,
       backgroundColor: 'rgb(255,255,255, 0)',
     },
@@ -43,30 +44,22 @@ const useStyles = makeStyles((theme: Theme) =>
       borderTopRightRadius: 3,
       backgroundColor: 'rgb(255,255,255, .5)',
     },
-    input: {
-      marginLeft: theme.spacing(1),
-      flex: 1,
-    },
     iconButton: {
-      width: 40,
-      marginLeft: theme.spacing(2),
-      marginRight: theme.spacing(2),
+      margin: 0,
+      padding: theme.spacing(2, 0),
+      flexGrow: 1,
+      flexShrink: 1,
+      flexBasis: 'auto',
     },
     divider: {
-      height: 28,
-      // margin: 4,
+      height: '70%',
       color: theme.palette.neutral.light,
       fill: theme.palette.neutral.light,
       backgroundColor: theme.palette.neutral.main,
       opacity: .5,
-      width: 1,
       [theme.breakpoints.down('xs')]: {
         width: 2,
       },
-    },
-    wrapper: {
-      margin: theme.spacing(1),
-      position: 'relative',
     },
     progress: {
       color: theme.palette.neutralGray.main,
@@ -77,6 +70,36 @@ const useStyles = makeStyles((theme: Theme) =>
       transition: theme.transitions.easing.easeIn,
       transform: 'scale(0.75)',
       color: theme.palette.success.main,
+    },
+    active: {
+      'color': theme.palette.success.dark,
+      '&:hover, &.Mui-focusVisible': {
+        'color': theme.palette.success.light,
+      },
+    },
+    activeMute: {
+      'color': theme.palette.disabled.main,
+      '&:hover, &.Mui-focusVisible': {
+        'color': theme.palette.disabled.light,
+      },
+    },
+    disabled: {
+      color: theme.palette.action.disabled,
+    },
+    inactive: {
+      'color': theme.palette.grey['200'],
+      '&:hover, &.Mui-focusVisible': {
+        'color': theme.palette.grey['300'],
+      },
+    },
+    inactiveAlt: {
+      'color': theme.palette.neutral.contrastText,
+      '&:hover, &.Mui-focusVisible': {
+        'color': theme.palette.grey['200'],
+      },
+    },
+    hide: {
+      display: 'none',
     },
   }),
 );
@@ -100,52 +123,20 @@ const WebcamControls = ({className, isolated}: Props) => {
     videoDisabled,
     screenSharing,
   } = useContext(MediaControlContext);
-
   const {
     setRemoveBackground,
     removeBackground,
     segmentation,
   } = useContext(SegmentationContext);
-
-  const {palette} = useTheme();
-  const effectEngagedColor = palette.success.light;
-  const actionDisabledColor = palette.action.disabled;
-  const disableEngagedColor= palette.disabled.main;
-  const effectDisengagedColor = screenSharing?
-       palette.neutral.contrastText:
-       palette.neutral.light;
   /** A boolean value representing whether the hide background button
    * is disabled.*/
   const hideBackgroundDisabled = videoDisabled || screenSharing;
-  /**
-   * A function that returns CSS properties for
-   * the hide background button.
-   * @return {React.CSSProperties} The css properties to apply to the style
-   * prop of the element
-   */
-  const hideBackgroundStyle = () : React.CSSProperties => {
-    let color = segmentation.ready && removeBackground?
-      effectEngagedColor:
-      effectDisengagedColor;
-    if (hideBackgroundDisabled) color = actionDisabledColor;
-    return {color};
-  };
   /** A boolean value representing whether the share screen button
    * is disabled.*/
   const shareScreenDisabled = segmentation.loading || videoDisabled;
-  /**
-   * A function that returns CSS properties for
-   * the share screen button.
-   * @return {React.CSSProperties} The css properties to apply to the style
-   * prop of the element
-   */
-  const shareScreenStyle = () : React.CSSProperties => {
-    let color = screenSharing?
-      effectEngagedColor:
-      effectDisengagedColor;
-    if (shareScreenDisabled) color = actionDisabledColor;
-    return {color};
-  };
+  /** A boolean value representing whether the segmentation button
+   * is shown as active.*/
+  const segmentationActive = segmentation.ready && removeBackground;
 
   return (
     <MemoizedHelpWrapper
@@ -154,69 +145,102 @@ const WebcamControls = ({className, isolated}: Props) => {
     >
       <div className={className}>
         <Paper
-          className={clsx(
-              !isolated && classes.rootAttached,
-              classes.root)}
+          className={clsx( classes.root, {
+            [classes.rootAttached]: !isolated,
+          })}
           elevation={3}
         >
-          <ToolTip title="Mute Microphone">
-            <IconButton
-              style={{
-                color: micMuted? disableEngagedColor:effectDisengagedColor,
-              }}
-              className={classes.iconButton}
+          <ToolTip
+            title={
+              !micMuted?
+                'Mute Microphone' :
+                'Unmute Microphone'
+            }
+          >
+            <ButtonBase
+              className={clsx(classes.iconButton, {
+                [classes.activeMute]: micMuted,
+                [classes.inactive]: !micMuted,
+              })}
               aria-label="mute microphone"
               onClick={() => setMicMuted(!micMuted)}
             >
-              <VolumeOffTwoToneIcon/>
-            </IconButton>
+              <VolumeOffTwoToneIcon />
+            </ButtonBase>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
-          <ToolTip title="Disable Video">
-            <IconButton
-              style={{
-                color: videoDisabled? disableEngagedColor:effectDisengagedColor,
-              }}
-              className={classes.iconButton}
+          <ToolTip title={
+            !videoDisabled?
+              'Disable Video' :
+              'Show Video'
+          }>
+            <ButtonBase
+              className={clsx(classes.iconButton, {
+                [classes.activeMute]: videoDisabled,
+                [classes.inactive]: !videoDisabled,
+              })}
               aria-label="disable video"
               onClick={()=> setVideoDisabled(!videoDisabled)}
             >
               <VideocamOffTwoToneIcon/>
-            </IconButton>
+            </ButtonBase>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
-          <ToolTip title="Share Screen">
-            <span>
-              <IconButton
-                style= {shareScreenStyle()}
-                className={classes.iconButton}
+          <ToolTip
+            title={!screenSharing? 'Share Screen': 'Stop Sharing Screen '}
+            classes={{
+              popper: clsx( {[classes.hide]: shareScreenDisabled}),
+            }}
+          >
+            <>
+              <ButtonBase
                 aria-label="share screen"
                 onClick={toggleScreenShare}
                 disabled={shareScreenDisabled}
+                className={clsx(classes.iconButton, {
+                  [classes.inactive]: !screenSharing && !shareScreenDisabled,
+                  [classes.active]: screenSharing && !shareScreenDisabled,
+                  [classes.disabled]: shareScreenDisabled,
+                })}
               >
-                <ScreenShareTwoToneIcon/>
-              </IconButton>
-            </span>
+                <ScreenShareTwoToneIcon />
+              </ButtonBase>
+            </>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
-          <ToolTip title="Hide Background">
-            <span>
-              <IconButton
-                style={hideBackgroundStyle()}
-                className={classes.iconButton}
+          <ToolTip
+            title={
+              !segmentationActive?
+              'Hide Background' :
+              'Show Background'
+            }
+            classes={{
+              popper: clsx( {[classes.hide]: hideBackgroundDisabled}),
+            }}
+          >
+            <>
+              <ButtonBase
+                className={clsx( classes.iconButton, {
+                  [classes.active]: segmentationActive &&
+                   !hideBackgroundDisabled,
+                  [classes.inactive]: !segmentationActive&&
+                   !hideBackgroundDisabled,
+                  [classes.shrink]: segmentation.loading &&
+                   screenSharing,
+                  [classes.disabled]: hideBackgroundDisabled,
+                })}
                 aria-label="hide background"
                 onClick={()=>setRemoveBackground(!removeBackground)}
                 disabled={hideBackgroundDisabled}
               >
                 <AccountBoxTwoToneIcon
                   fontSize={segmentation.loading? 'small': 'medium'}
-                  className={clsx(segmentation.loading && classes.shrink)}
                 />
                 {segmentation.loading &&
                   <CircularProgress size={30} className={classes.progress} />
                 }
-              </IconButton>
-            </span>
+              </ButtonBase>
+            </>
           </ToolTip>
         </Paper>
       </div>

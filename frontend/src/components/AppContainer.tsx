@@ -63,7 +63,7 @@ const AppContainer = () => {
   const {token, currentUser, meeting} = useContext(RestContext);
   const {setTheme} = useContext(CustomThemeContext);
   const {xs} = useContext(AppStateContext);
-
+  // TODO clean up video drawer rendering
   /** Render a different theme on login */
   useEffect(() => {
     if (!token) setTheme('dark');

@@ -72,11 +72,9 @@ const AppContainer = () => {
 
   return (
     <div className={classes.root}>
-      <div>
-      </div>
+      <ControlBar meeting={meeting}/>
       <Container className={classes.container}>
         {(!meeting && currentUser) && <MeetingList/>}
-        <ControlBar meeting={meeting}/>
         <ChatDrawer meeting={meeting}/>
         <div className={classes.grid}>
           <VideoGrid />

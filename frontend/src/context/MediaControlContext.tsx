@@ -16,8 +16,31 @@ import {snackbarWarnOptions} from './NotificationProvider';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import useTheme from '@material-ui/core/styles/useTheme';
 
+const audioConstrains: MediaTrackConstraintSet = {
+  echoCancellation: true,
+};
+
+const videoHeight = 480;
+const videoWidth = 640;
+
+const videoConstraints: MediaTrackConstraintSet = {
+  width: videoWidth,
+  height: videoHeight,
+};
+const webcamConstraints: MediaStreamConstraints = {
+  audio: audioConstrains,
+  video: {
+    ...videoConstraints,
+    facingMode: 'user',
+  },
+};
+const screenConstraints: MediaStreamConstraints = {
+  audio: audioConstrains,
+  video: videoConstraints,
+};
+
 /** The Context that handles media and media controls. */
-const MediaControlContext = createContext<IMediaControlContext>(undefined!);
+const MediaControlContext = createContext<IMediaControlContext>(undefined!); ``;
 /**
  * A context provider for MediaControlContext
  * @param {React.Children} children
@@ -45,6 +68,29 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
    * distinguished from localMedia to allow for simple switching between
    * background removal and unaltered webcam streams*/
   const [outgoingMedia, setOutgoingMedia] = useState<MediaStream | null>(null);
+
+  const [videoResolution, setVideoResolution] = useState<VideoResolution>({
+    height: videoHeight,
+    width: videoWidth,
+  });
+
+  useEffect(() => {
+    const resetVideoResolution = () => {
+      setVideoResolution({height: videoHeight, width: videoWidth});
+    };
+
+    if (outgoingMedia) {
+      const constraints = outgoingMedia?.getVideoTracks()[0].getSettings();
+      const {width, height} = constraints;
+      if (width && height) {
+        setVideoResolution({width, height});
+      } else {
+        resetVideoResolution();
+      }
+    } else {
+      resetVideoResolution();
+    }
+  }, [outgoingMedia]);
 
 
   const [streamState, setStreamState] = useState<StreamType>(0);
@@ -87,26 +133,6 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
       const success = await initializeMediaStream(StreamType.SCREEN);
       success && setScreenSharing(true);
     }
-  };
-  const audioConstrains: MediaTrackConstraintSet = {
-    echoCancellation: true,
-  };
-
-  const videoConstraints: MediaTrackConstraintSet = {
-    width: 640,
-    height: 480,
-    // aspectRatio: 4/3,
-  };
-  const webcamConstraints: MediaStreamConstraints = {
-    audio: audioConstrains,
-    video: {
-      ...videoConstraints,
-      facingMode: 'user',
-    },
-  };
-  const screenConstraints: MediaStreamConstraints = {
-    audio: audioConstrains,
-    video: videoConstraints,
   };
 
 
@@ -276,6 +302,7 @@ const MediaControlContextProvider: React.FC<ChildrenProps> = ({children}) => {
         stopLocalMediaStream,
         updateStreamMutes,
         streamState,
+        videoResolution,
       }}
     >
       {children}
@@ -302,12 +329,18 @@ export interface IMediaControlContext {
   stopLocalMediaStream: () => void,
   updateStreamMutes: () => void,
   streamState: StreamType,
+  videoResolution: VideoResolution,
 }
 
 MediaControlContext.displayName = 'Media Control Context';
 
 
 export {MediaControlContextProvider, MediaControlContext};
+
+type VideoResolution = {
+  height : number,
+  width : number,
+}
 
 export enum StreamType {
   DISABLED,

@@ -44,11 +44,23 @@ const useStyles = makeStyles((theme: Theme) =>
       borderTopRightRadius: 3,
       backgroundColor: 'rgb(255,255,255, .5)',
     },
+    iconButtonWrapped: {
+      margin: 0,
+      padding: theme.spacing(2, 0),
+      width: '100%',
+    },
+    span: {
+      width: '25%',
+      flexGrow: 1,
+      flexShrink: 0,
+      flexBasis: 'auto',
+    },
     iconButton: {
+      width: '25%',
       margin: 0,
       padding: theme.spacing(2, 0),
       flexGrow: 1,
-      flexShrink: 1,
+      flexShrink: 0,
       flexBasis: 'auto',
     },
     divider: {
@@ -62,12 +74,18 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     progress: {
-      color: theme.palette.neutralGray.main,
+      color: theme.palette.success.light,
       position: 'absolute',
       zIndex: 1,
     },
-    shrink: {
-      transition: theme.transitions.easing.easeIn,
+    loading: {
+      // transition: theme.transitions.easing.easeIn,
+      flexShrink: 1,
+      transition: theme.transitions.create(['transform'], {
+        easing: theme.transitions.easing.sharp,
+        // duration: theme.transitions.duration.complex,
+        duration: 4000,
+      }),
       transform: 'scale(0.75)',
       color: theme.palette.success.main,
     },
@@ -137,6 +155,9 @@ const WebcamControls = ({className, isolated}: Props) => {
   /** A boolean value representing whether the segmentation button
    * is shown as active.*/
   const segmentationActive = segmentation.ready && removeBackground;
+  /** A boolean value representing whether the disable video button
+   * is disabled.*/
+  const disableVideoDisabled = segmentation.loading;
 
   return (
     <MemoizedHelpWrapper
@@ -169,21 +190,26 @@ const WebcamControls = ({className, isolated}: Props) => {
             </ButtonBase>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
-          <ToolTip title={
-            !videoDisabled?
-              'Disable Video' :
-              'Show Video'
-          }>
-            <ButtonBase
-              className={clsx(classes.iconButton, {
-                [classes.activeMute]: videoDisabled,
-                [classes.inactive]: !videoDisabled,
-              })}
-              aria-label="disable video"
-              onClick={()=> setVideoDisabled(!videoDisabled)}
-            >
-              <VideocamOffTwoToneIcon/>
-            </ButtonBase>
+          <ToolTip
+            title={!videoDisabled? 'Disable Video' : 'Show Video'}
+            classes={{
+              popper: clsx( {[classes.hide]: disableVideoDisabled}),
+            }}
+          >
+            <span className={classes.span}>
+              <ButtonBase
+                aria-label="disable video"
+                onClick={()=> setVideoDisabled(!videoDisabled)}
+                disabled={disableVideoDisabled}
+                className={clsx(classes.iconButtonWrapped, {
+                  [classes.activeMute]: videoDisabled && !disableVideoDisabled,
+                  [classes.inactive]: !videoDisabled && !disableVideoDisabled,
+                  [classes.disabled]: disableVideoDisabled,
+                })}
+              >
+                <VideocamOffTwoToneIcon/>
+              </ButtonBase>
+            </span>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip
@@ -192,12 +218,12 @@ const WebcamControls = ({className, isolated}: Props) => {
               popper: clsx( {[classes.hide]: shareScreenDisabled}),
             }}
           >
-            <>
+            <span className={classes.span}>
               <ButtonBase
                 aria-label="share screen"
                 onClick={toggleScreenShare}
                 disabled={shareScreenDisabled}
-                className={clsx(classes.iconButton, {
+                className={clsx(classes.iconButtonWrapped, {
                   [classes.inactive]: !screenSharing && !shareScreenDisabled,
                   [classes.active]: screenSharing && !shareScreenDisabled,
                   [classes.disabled]: shareScreenDisabled,
@@ -205,7 +231,7 @@ const WebcamControls = ({className, isolated}: Props) => {
               >
                 <ScreenShareTwoToneIcon />
               </ButtonBase>
-            </>
+            </span>
           </ToolTip>
           <Divider className={classes.divider} orientation="vertical" />
           <ToolTip
@@ -218,14 +244,14 @@ const WebcamControls = ({className, isolated}: Props) => {
               popper: clsx( {[classes.hide]: hideBackgroundDisabled}),
             }}
           >
-            <>
+            <span className={classes.span}>
               <ButtonBase
-                className={clsx( classes.iconButton, {
+                className={clsx( classes.iconButtonWrapped, {
                   [classes.active]: segmentationActive &&
                    !hideBackgroundDisabled,
                   [classes.inactive]: !segmentationActive&&
                    !hideBackgroundDisabled,
-                  [classes.shrink]: segmentation.loading &&
+                  [classes.loading]: segmentation.loading &&
                    screenSharing,
                   [classes.disabled]: hideBackgroundDisabled,
                 })}
@@ -240,7 +266,7 @@ const WebcamControls = ({className, isolated}: Props) => {
                   <CircularProgress size={30} className={classes.progress} />
                 }
               </ButtonBase>
-            </>
+            </span>
           </ToolTip>
         </Paper>
       </div>

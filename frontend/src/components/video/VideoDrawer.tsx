@@ -12,7 +12,6 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import FeaturedVideoIcon from '@material-ui/icons/FeaturedVideo';
 
 import VideoPlayer from './VideoPlayer';
-import {MediaControlContext} from '../../context/MediaControlContext';
 import {AppStateContext} from '../../context/AppStateContext';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 import Fade from '@material-ui/core/Fade';
@@ -109,7 +108,6 @@ interface Props {
  */
 const VideoDrawer = ({offset = 0}:Props) => {
   const {xs} = useContext(AppStateContext);
-  // const {localVideoRef} = useContext(MediaControlContext);
   const {videoDrawerOpen, setVideoDrawerOpen} = useContext(AppStateContext);
   const classes = useStyles({offset});
 

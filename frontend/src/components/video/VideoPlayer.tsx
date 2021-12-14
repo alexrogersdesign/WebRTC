@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useState} from 'react';
+import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 import User from '../../shared/classes/User';
@@ -14,7 +14,7 @@ interface StyleProps {
 const outerBorderRadius = 10;
 const innerPadding = 1;
 const innerBorderRadius = outerBorderRadius - innerPadding;
-const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
+export const useVideoStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
   createStyles({
     container: {
       position: 'relative',
@@ -23,17 +23,19 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
         width: '80%',
       },
     },
-    paper: ({videoLoading}) => ({
+    hideWhenLoading: ({videoLoading}) => ({
+      opacity: videoLoading? 0: 1,
+    }),
+    paper: () => ({
       padding: innerPadding,
       borderRadius: outerBorderRadius,
       display: 'flex',
-      flexGrow: -1,
+      // flexGrow: -1,
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.palette.neutralGray.dark,
       boxShadow: theme.shadows[4],
-      opacity: videoLoading? 0: 1,
       width: 'max-content',
       height: 'max-content',
       // overflow: 'hidden',
@@ -57,7 +59,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       display: hideControls? 'none' : 'absolute',
       zIndex: 99,
       borderRadius: innerBorderRadius,
-      marginTop: '-13%',
+      marginTop: '-14%',
       width: '100%',
       height: '100%',
     }),
@@ -70,6 +72,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
     },
     circle: {
       strokeLinecap: 'round',
+    },
+    hide: {
+      display: 'none',
     },
   }),
 );
@@ -91,21 +96,15 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
  type Props = PlayerProps & (ExternalProps | LocalProps);
 
 const VideoPlayer = ({local, stream, user, className, hideControls}: Props)=> {
-  const [videoLoading, setVideoLoading] = useState(false);
-  const classes = useStyles({videoLoading, hideControls});
-
   return (
     <div className={className}>
       { local?
         <MemoizedLocalVideo
-          propClasses={classes}
-          {...{videoLoading, setVideoLoading}}
+          hideControls={hideControls}
         /> :
         <MemoizedExternalVideo
-          propClasses={classes}
           user={user!}
           stream={stream!}
-          {...{videoLoading, setVideoLoading}}
         />
       }
     </div>
@@ -113,19 +112,5 @@ const VideoPlayer = ({local, stream, user, className, hideControls}: Props)=> {
 };
 
 export default VideoPlayer;
-
-export interface VideoProps {
-    videoLoading: boolean;
-    setVideoLoading: (value: boolean) => void;
-}
-
-export interface VideoClasses {
-    container?: string;
-    video?: string;
-    paper?: string;
-    controls?: string;
-    progress?: string;
-    circle?: string;
-}
 
 

@@ -7,7 +7,6 @@ import {
   Theme,
 } from '@material-ui/core/styles';
 
-import VideoPlayer from './video/VideoPlayer';
 import {ControlBar} from './ControlBar';
 import ChatDrawer from './chat/ChatDrawer';
 import {CustomThemeContext} from '../context/CustomThemeProvider';
@@ -35,16 +34,8 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       padding: '2%',
     },
-    grid: {
-    },
     form: {
       padding: 5,
-    },
-    local: {
-      position: 'fixed',
-      float: 'right',
-      right: 0,
-      bottom: 0,
     },
     videoPlayer: {
       margin: '3vw',
@@ -63,35 +54,36 @@ const AppContainer = () => {
   const {token, currentUser, meeting} = useContext(RestContext);
   const {setTheme} = useContext(CustomThemeContext);
   const {xs} = useContext(AppStateContext);
-  // TODO clean up video drawer rendering
   /** Render a different theme on login */
   useEffect(() => {
     if (!token) setTheme('dark');
     if (token) setTheme('normal');
   }, [meeting, token]);
 
+  /**
+   * Groups the elements to be rendered when a meeting
+   * has been joined.
+   * @return {JSX.Element}
+   * @constructor
+   */
+  const RenderWhenMeeting = () => {
+    return (
+      <>
+        <DemoPrompt/>
+        <ChatDrawer />
+        <VideoGrid />
+        <VideoDrawer offset={xs? 30 : undefined}/>
+        {xs && <VideoControlBar/>}
+      </>
+    );
+  };
+
   return (
     <div className={classes.root}>
       <ControlBar meeting={meeting}/>
       <Container className={classes.container}>
         {(!meeting && currentUser) && <MeetingList/>}
-        <ChatDrawer meeting={meeting}/>
-        <div className={classes.grid}>
-          <VideoGrid />
-          <div className={classes.local}>
-            {(meeting && !xs) &&
-              // <VideoPlayer local className={classes.videoPlayer}/>
-              <VideoDrawer />
-            }
-          </div>
-        </div>
-        {(meeting && xs) && (
-          <>
-            <VideoControlBar/>
-            <VideoDrawer offset={30}/>
-          </>
-        )}
-        <DemoPrompt/>
+        {meeting && <RenderWhenMeeting/>}
       </Container>
     </div>
   );

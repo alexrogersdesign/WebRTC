@@ -5,11 +5,8 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {MediaControlContext} from '../../context/MediaControlContext';
 import VideoPlayer from './VideoPlayer';
 
-interface StyleProps {
-    localVideoRef: React.RefObject<HTMLVideoElement>,
-}
 
-const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
+const useStyles = makeStyles<Theme>((theme: Theme) =>
   createStyles({
     root: (props) => ({
       display: 'flex',
@@ -17,7 +14,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       flexGrow: 1,
       justifyContent: 'space-around',
     }),
-    grid: (props) => ({
+    grid: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -29,7 +26,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
         width: '100%',
         paddingLeft: theme.spacing(9) + 12,
       },
-    }),
+    },
   }),
 );
 
@@ -38,9 +35,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
  * @return {JSX.Element}
  * @constructor
  */
-const VideoGrid = () => {
-  const {externalMedia, localVideoRef} = useContext(MediaControlContext);
-  const classes = useStyles({localVideoRef});
+export function VideoGrid() {
+  const {externalMedia} = useContext(MediaControlContext);
+  const classes = useStyles();
   const videoList = () => externalMedia?.map(({user, stream}) => {
     return (
       <Grid item key={user.id.toString()} >
@@ -63,4 +60,4 @@ const VideoGrid = () => {
   );
 };
 
-export default VideoGrid;
+export const MemoizedVideoGrid = React.memo(VideoGrid);

@@ -1,10 +1,8 @@
-/* eslint-disable no-unused-vars */
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Snackbar from '@material-ui/core/Snackbar';
 import {MediaControlContext} from '../../context/MediaControlContext';
 import Button from '@material-ui/core/Button';
-import {RestContext} from '../../context/RestContext';
 import {AppStateContext} from '../../context/AppStateContext';
 import {useDemo} from '../../hooks/useDemo';
 
@@ -37,9 +35,8 @@ const DemoPrompt = () => {
       addExternalMedia,
       removeMedia,
   );
-  const {meeting} = useContext(RestContext);
   const {sm} = useContext(AppStateContext);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const handleShowDemo = () => {
     startDemo();
     setOpen(false);
@@ -48,16 +45,6 @@ const DemoPrompt = () => {
     stopDemo();
     setOpen(false);
   };
-  /* If meeting exists, show prompt */
-  useEffect(() => {
-    if (meeting) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }, [meeting]);
-
-
   return (
     <div className={classes.root}>
       <Snackbar
@@ -90,7 +77,7 @@ const DemoPrompt = () => {
       />
       <Snackbar
         className={classes.snackbar}
-        open={demoPlaying && !!meeting}
+        open={demoPlaying}
         anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
         message={'A demo is now playing'}
         action={

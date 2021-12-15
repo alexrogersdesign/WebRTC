@@ -16,7 +16,7 @@ import DemoPrompt from './tutorial/DemoPrompt';
 import {VideoControlBar} from './video/VideoControlBar';
 import {AppStateContext} from '../context/AppStateContext';
 import VideoDrawer from './video/VideoDrawer';
-import VideoGrid from './video/VideoGrid';
+import {MemoizedVideoGrid} from './video/VideoGrid';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,14 +66,14 @@ const AppContainer = () => {
    * @return {JSX.Element}
    * @constructor
    */
-  const RenderWhenMeeting = () => {
+  const renderWhenMeeting = () => {
     return (
       <>
-        <DemoPrompt/>
         <ChatDrawer />
-        <VideoGrid />
         <VideoDrawer offset={xs? 30 : undefined}/>
         {xs && <VideoControlBar/>}
+        <MemoizedVideoGrid />
+        <DemoPrompt/>
       </>
     );
   };
@@ -83,7 +83,7 @@ const AppContainer = () => {
       <ControlBar meeting={meeting}/>
       <Container className={classes.container}>
         {(!meeting && currentUser) && <MeetingList/>}
-        {meeting && <RenderWhenMeeting/>}
+        {meeting && renderWhenMeeting()}
       </Container>
     </div>
   );

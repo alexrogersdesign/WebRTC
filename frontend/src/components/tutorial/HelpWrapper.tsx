@@ -86,10 +86,11 @@ export function HelpWrapper({
   /** Force component to update when watchItem changes */
   useEffect(() => {
     setCloseOverride(true);
-    setTimeout(()=> {
+    const id = setTimeout(()=> {
       forceUpdate();
       setCloseOverride(false);
     }, 500);
+    return () => clearTimeout(id);
   }, [watchItem]);
 
   return (

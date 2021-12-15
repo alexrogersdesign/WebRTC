@@ -95,7 +95,11 @@ export function LocalVideo({
    * sources*/
   useLayoutEffect(() => {
     setVideoLoading(true);
-    setTimeout(() => setVideoLoading(false), 1000);
+    const id = setTimeout(() => setVideoLoading(false), 1000);
+    return () => {
+      clearTimeout(id);
+      setVideoLoading(false);
+    };
   }, [outgoingMedia]);
 
   /** Update the style of the video element before browser paint */

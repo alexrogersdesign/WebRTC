@@ -10,7 +10,8 @@ import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import User from '../../shared/classes/User';
 
 import UserAvatar from '../common/UserAvatar';
-import AttendeeInfoModal from './AttendeeInfoModal';
+import AttendeeInfo, {AttendeeInfoProps} from './AttendeeInfo';
+import ModalWrapper from '../common/ModalWrapper';
 
 interface Props {
    user:User
@@ -52,10 +53,15 @@ const AttendeeListItem = ({user}: Props) => {
           primary={name} />
         <Divider variant='middle' />
       </ListItem>
-      <AttendeeInfoModal
-        open={modalOpen}
-        setOpen={setModalOpen}
-        user={user}
+      <ModalWrapper<AttendeeInfoProps>
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        WrappedComponent={AttendeeInfo}
+        componentProps={{
+          open: modalOpen,
+          setOpen: setModalOpen,
+          user,
+        }}
       />
     </>
   );

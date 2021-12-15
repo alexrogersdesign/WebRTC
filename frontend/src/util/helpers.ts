@@ -50,3 +50,33 @@ export function toTitleCase(str: string) {
       },
   );
 }
+
+/**
+ * A comparator function that attempts to determine whether two parameters
+ * can be evaluated to be within a specified range. If so,
+ * the difference is returned. Otherwise - 1 is returned. If either of the
+ * parameters cannot be evaluated as a number, -1 is returned.
+ * @param {any} a The first parameter to compare
+ * @param {any} b The second parameter to compare against the first .
+ * @param {number} delta The specified range the values should be within.
+ * @param {number} aFactor An optional factor to be applied to the first
+ * parameter after it has been evaluated as a number.
+ * @param {number} bFactor An optional factor to be applied to the second
+ * parameter after it has been evaluated as a number.
+ * @return {number} The difference between the values if the values are
+ * within the specified range or -1 if they are not within the specified range.
+ */
+export function withinRange(
+    a:any, b:any, delta:number, aFactor = 1, bFactor = 1,
+) {
+  try {
+    const inputA = parseInt(a) * aFactor;
+    const inputB = parseInt(b) * bFactor;
+    const difference = Math.abs(inputA - inputB);
+    if (difference > delta) return -1;
+    else return difference;
+  } catch (e) {
+    console.error(e);
+    return -1;
+  }
+}

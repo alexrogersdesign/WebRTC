@@ -27,9 +27,7 @@ export interface LocalVideoProps {
  * @param {boolean} videoLoading A boolean indicating whether the video is
  * loading or ready to displayed. When loading is true, the webcam preview
  * is hidden and a loading animation is shown.
- * @param {React.Dispatch<React.SetStateAction<boolean>>} setVideoLoading
- * A function to set the video loading state.
- * @param {React.CSSProperties} Style A set of CSS styles to apply to the
+ * @param {React.CSSProperties} style A set of CSS styles to apply to the
  * root element.
  * @return {JSX.Element}
  * @constructor
@@ -116,7 +114,7 @@ export function LocalVideo({
           className={clsx( videoClasses.video, {
             [videoClasses.hide]: hideVideo,
           })}
-          style={videoStyle!}
+          style={videoStyle}
           ref={localVideoRef}
           playsInline
           muted

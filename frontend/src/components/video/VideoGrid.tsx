@@ -21,8 +21,10 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '80%',
+      width: '90%',
       alignContent: 'center',
+      paddingLeft: '5%',
+
       [theme.breakpoints.down('xs')]: {
         width: '100%',
         paddingLeft: theme.spacing(9) + 12,
@@ -52,7 +54,7 @@ const VideoGrid = () => {
         direction="row-reverse"
         justifyContent="center"
         alignItems="center"
-        spacing={3}
+        spacing={1}
         className={classes.grid}
       >
         {videoList()}

@@ -15,14 +15,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Chip from '@material-ui/core/Chip';
 import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
 
-import Meeting from '../../shared/classes/Meeting';
-
 import ChatBox from './ChatBox';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 
-interface Props {
-   meeting: Meeting | undefined| null,
-}
+
 type StyleRef = React.MutableRefObject<HTMLDivElement | undefined>
 
 const drawerWidth = 340;
@@ -83,7 +79,9 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
-      marginRight: props.current?.offsetWidth? -props.current?.offsetWidth : drawerWidth,
+      marginRight: props.current?.offsetWidth?
+        -props.current?.offsetWidth :
+        drawerWidth,
     }),
     contentOpen: {
       transition: theme.transitions.create('margin', {
@@ -111,7 +109,7 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
  * @return {JSX.Element}
  * @constructor
  */
-const ChatDrawer = ({meeting}: Props) => {
+const ChatDrawer = () => {
   const theme = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const chatBoxRef = useRef<HTMLDivElement>();
@@ -125,7 +123,6 @@ const ChatDrawer = ({meeting}: Props) => {
   useEffect(() => {
     if (drawerOpen) scrollToBottom();
   }, [drawerOpen]);
-  if (!meeting) return <></>;
   return (
     <div>
       <div

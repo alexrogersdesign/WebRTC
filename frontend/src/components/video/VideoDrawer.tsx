@@ -28,6 +28,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => {
       position: 'fixed',
       right: 20,
       bottom: 20,
+      zIndex: theme.zIndex.drawer,
     }),
     drawerButton: (props) => ({
       float: 'right',

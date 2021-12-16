@@ -52,8 +52,22 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
   /** The param extracted from the url indicating the current meeting */
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
-  let socketLocation = 'https://ar-webrtc.herokuapp.com/';
-  if (process.env.NODE_ENV === 'development' || 'test') socketLocation = 'http://localhost:3000';
+  let socketLocation;
+
+  switch (process.env.NODE_ENV) {
+    case 'production':
+      socketLocation = 'https://ar-webrtc.herokuapp.com/';
+      break;
+    case 'development':
+      socketLocation = 'http://localhost:3000';
+      break;
+    case 'test':
+      socketLocation = 'http://localhost:3000';
+      break;
+    default:
+      socketLocation = 'https://ar-webrtc.herokuapp.com/';
+  }
+
   /** SocketIO server instance */
   const connectionUrl = `${socketLocation}?room=${roomParam}`;
 

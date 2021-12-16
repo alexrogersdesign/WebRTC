@@ -58,6 +58,6 @@ export function VideoGrid() {
       </Grid>
     </div>
   );
-};
+}
 
 export const MemoizedVideoGrid = React.memo(VideoGrid);

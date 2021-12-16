@@ -28,7 +28,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => {
       position: 'fixed',
       right: 20,
       bottom: 20,
-      zIndex: theme.zIndex.drawer,
+      zIndex: theme.zIndex.drawer -1,
     }),
     drawerButton: (props) => ({
       float: 'right',
@@ -41,7 +41,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) => {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
       }),
-      // border: '1px solid red',
     }),
     drawerButtonOpen: {
       display: 'none',

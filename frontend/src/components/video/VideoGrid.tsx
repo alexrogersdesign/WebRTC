@@ -13,6 +13,7 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
       flexWrap: 'wrap',
       flexGrow: 1,
       justifyContent: 'space-around',
+      zindex: theme.zIndex.drawer - 5,
     }),
     grid: {
       display: 'flex',

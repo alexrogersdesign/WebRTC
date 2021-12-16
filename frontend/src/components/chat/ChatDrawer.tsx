@@ -1,6 +1,5 @@
-/* eslint-disable max-len */
 /* eslint-disable no-unused-vars */
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import clsx from 'clsx';
 import {makeStyles,
   Theme,
@@ -12,11 +11,11 @@ import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Chip from '@material-ui/core/Chip';
-import ChatBubbleTwoToneIcon from '@material-ui/icons/ChatBubbleTwoTone';
+import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 
 import ChatBox from './ChatBox';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
+import {Tooltip} from '@material-ui/core';
 
 
 type StyleRef = React.MutableRefObject<HTMLDivElement | undefined>
@@ -28,7 +27,7 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
   createStyles({
     drawerButton: {
       position: 'fixed',
-      top: '15%',
+      top: '10%',
       right: '0',
       float: 'right',
       transition: theme.transitions.create(['margin', 'width'], {
@@ -48,6 +47,8 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     openIcon: {
       padding: theme.spacing(1),
       margin: theme.spacing(1),
+      transform: 'rotateY(180deg)',
+      // height: '50%',
     },
     hide: {
       display: 'none',
@@ -55,6 +56,7 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
     drawer: (props) => ({
       width: props.current?.offsetWidth,
       flexShrink: 0,
+
     }),
     drawerPaper: {
       top: offset,
@@ -98,14 +100,15 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
       overflowWrap: 'break-word',
       margin: '10px 0',
     },
+    modal: {
+      inset: 'unset !important',
+    },
   }),
 );
 /**
  * Renders the chat drawer component which is a collapsable display
  * that contains a chat box which displays the meeting messages.
  * The component is only displayed if a meeting is passed to it.
- * @param {Meeting | undefined | null} meeting The meeting used to
- * decide whether or not to render the component.
  * @return {JSX.Element}
  * @constructor
  */
@@ -116,13 +119,6 @@ const ChatDrawer = () => {
   const classes = useStyles(chatBoxRef);
   const handleDrawerOpen = () => setDrawerOpen(true);
   const handleDrawerClose = () => setDrawerOpen(false);
-  const chatBottomRef = useRef<HTMLDivElement>(null!);
-  const scrollToBottom = () => {
-    chatBottomRef.current?.scrollIntoView({behavior: 'smooth'});
-  };
-  useEffect(() => {
-    if (drawerOpen) scrollToBottom();
-  }, [drawerOpen]);
   return (
     <div>
       <div
@@ -135,26 +131,28 @@ const ChatDrawer = () => {
           tooltipProps={{placement: 'bottom-start'}}
           tooltipClass={classes.openTooltip}
         >
-          <Chip
-            className={classes.openIcon}
-            id={'open-chat-button'}
-            aria-label="open drawer"
-            color='secondary'
-            size='medium'
-            label='Chat'
-            clickable
-            onClick={handleDrawerOpen}
-            icon={<ChatBubbleTwoToneIcon/>}
-          />
+          <div>
+            <Tooltip
+              title="Open Chat"
+              placement="right"
+              classes={{
+                popper: clsx( {[classes.hide]: drawerOpen}),
+              }}
+            >
+              <IconButton
+                edge='end'
+                id={'open-chat-button'}
+                aria-label="open chat "
+                className={classes.openIcon}
+                onClick={handleDrawerOpen}
+                size='medium'
+              >
+                <SpeakerNotesIcon fontSize={'large'}/>
+              </IconButton>
+            </Tooltip>
+          </div>
         </MemoizedHelpWrapper>
       </div>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentOpen]: drawerOpen,
-        })}
-      >
-        <div className={classes.drawerHeader} />
-      </main>
       <Drawer
         className={classes.drawer}
         variant="persistent"
@@ -162,26 +160,38 @@ const ChatDrawer = () => {
         open={drawerOpen}
         classes={{
           paper: classes.drawerPaper,
+          modal: classes.modal,
         }}
       >
         <div className={classes.drawerHeader}>
           <MemoizedHelpWrapper
-            message={'Close the meeting chat'}
+            message={'Close the chat'}
             tooltipProps={{placement: 'bottom-end'}}
             tooltipClass={classes.closeTooltip}
           >
-            <IconButton
-              id={'close-chat-button'}
-              className={classes.closeButton}
-              onClick={handleDrawerClose}
-              size='small'
-            >
-              {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-            </IconButton>
+            <div>
+              <Tooltip
+                title="Close Chat"
+                placement="left"
+                classes={{
+                  popper: clsx( {[classes.hide]: !drawerOpen}),
+                }}
+              >
+                <IconButton
+                  id={'close-chat-button'}
+                  className={classes.closeButton}
+                  onClick={handleDrawerClose}
+                  size='small'
+                >
+                  {theme.direction === 'rtl' ?
+                    <ChevronLeftIcon /> :
+                    <ChevronRightIcon />}
+                </IconButton>
+              </Tooltip>
+            </div>
           </MemoizedHelpWrapper>
         </div>
         <ChatBox innerRef={chatBoxRef} isOpen={drawerOpen}/>
-        <div ref={chatBottomRef}/>
       </Drawer>
     </div>
   );

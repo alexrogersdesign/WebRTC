@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) =>
       alignItems: 'center',
       flexDirection: 'column',
       position: 'relative',
+      zindex: 0,
     },
     container: {
       ...styles,
@@ -42,7 +43,7 @@ const useStyles = makeStyles((theme) =>
       boxShadow: theme.shadows[0],
     },
     chatContainer: {
-      width: '28vw',
+      width: '30vw',
       minHeight: 200,
     },
     message: {

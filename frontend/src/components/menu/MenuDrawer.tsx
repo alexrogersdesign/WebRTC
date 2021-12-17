@@ -19,13 +19,9 @@ export interface Props extends MenuStateProps{
 
 const useStyles = makeStyles(() =>
   createStyles({
-    drawer: {
-      backgroundColor: 'rgb(255,255,255,.6)',
-    },
     tooltip: {
       whiteSpace: 'nowrap',
       transform: 'translate(0, -10px)',
-
     },
   }),
 );
@@ -71,14 +67,12 @@ export const MenuDrawer = ({
           aria-label="open drawer"
         >
           <ViewHeadlineIcon />
-
           <Typography variant="subtitle2" id='menu-button' >
               Menu
           </Typography>
         </Button>
       </MemoizedHelpWrapper>
       <Drawer
-        className={classes.drawer}
         anchor='top'
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}

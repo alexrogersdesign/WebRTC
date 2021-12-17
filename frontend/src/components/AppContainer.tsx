@@ -51,16 +51,11 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const AppContainer = () => {
   const classes = useStyles();
-  const {token, currentUser, meeting} = useContext(RestContext);
-  const {setTheme} = useContext(CustomThemeContext);
+  const {currentUser, meeting} = useContext(RestContext);
   const {xs} = useContext(AppStateContext);
   /** The param extracted from the url indicating the current meeting */
   const roomParam = new URLSearchParams(window.location.search).get('room');
-  /** Render a different theme on login */
-  useEffect(() => {
-    if (!token) setTheme('dark');
-    if (token) setTheme('normal');
-  }, [meeting, token]);
+
 
   /**
    * Groups the elements to be rendered when a meeting
@@ -79,7 +74,6 @@ const AppContainer = () => {
       </>
     );
   };
-
   return (
     <div className={classes.root}>
       <ControlBar meeting={meeting}/>

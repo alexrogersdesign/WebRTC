@@ -1,5 +1,3 @@
-// import {Theme} from '@material-ui/core/styles';
-
 
 import active from './active';
 import inactive from './inactive';
@@ -14,7 +12,7 @@ export type ThemeOption = keyof typeof themes;
 
 /**
  * A theme selector component that returns themes
- * @param {string} theme the theme to retreive
+ * @param {string} theme the theme to retrieve
  * @return {Theme} theme
  */
 export default function getTheme(theme:ThemeOption) {

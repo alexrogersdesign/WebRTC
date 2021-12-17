@@ -23,6 +23,7 @@ import {
   snackbarErrorOptions,
   snackbarInfoOptions,
 } from './NotificationProvider';
+import {CustomThemeContext} from './CustomThemeProvider';
 
 /**
  * The context that handles the application state changes
@@ -60,14 +61,20 @@ const AppStateContextProvider : React.FC<ChildrenProps> = ({children}) => {
   const navigate = useNavigate();
   /** The param extracted from the url indicating the current meeting.*/
   const roomParam = new URLSearchParams(window.location.search).get('room');
+  const {token, meeting} = useContext(RestContext);
 
   const [attendeeDrawerOpen, setAttendeeDrawerOpen] = useState(false);
   const [videoDrawerOpen, setVideoDrawerOpen] = useState(true);
-
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.down('xs'));
   const sm = useMediaQuery(theme.breakpoints.down('sm'));
+  const {setTheme} = useContext(CustomThemeContext);
 
+  /** Render a different theme on login */
+  useEffect(() => {
+    if (!token) setTheme('dark');
+    if (token) setTheme('normal');
+  }, [meeting, token]);
 
   /**
    * The cadence to be called on the application's first load.

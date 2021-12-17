@@ -54,6 +54,8 @@ const AppContainer = () => {
   const {token, currentUser, meeting} = useContext(RestContext);
   const {setTheme} = useContext(CustomThemeContext);
   const {xs} = useContext(AppStateContext);
+  /** The param extracted from the url indicating the current meeting */
+  const roomParam = new URLSearchParams(window.location.search).get('room');
   /** Render a different theme on login */
   useEffect(() => {
     if (!token) setTheme('dark');
@@ -82,7 +84,7 @@ const AppContainer = () => {
     <div className={classes.root}>
       <ControlBar meeting={meeting}/>
       <Container className={classes.container}>
-        {(!meeting && currentUser) && <MeetingList/>}
+        {(!roomParam && currentUser) && <MeetingList/>}
         {meeting && renderWhenMeeting()}
       </Container>
     </div>

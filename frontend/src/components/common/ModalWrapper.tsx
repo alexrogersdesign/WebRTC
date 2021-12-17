@@ -39,12 +39,10 @@ interface Props <P, T={}> extends ModalProps{
 /**
  * @typedef {Object} P A generic prop
  * @template P The Type of the props to pass to the wrapped component.
-
  */
 /**
  * @typedef {Object} T A generic type
  * @template T An optional type assertion to be made on the component.
-
  */
 
 /**

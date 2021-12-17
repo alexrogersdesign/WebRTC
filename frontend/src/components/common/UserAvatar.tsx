@@ -27,7 +27,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
       display: 'relative',
       width: theme.spacing(props.avatarSize),
       height: theme.spacing(props.avatarSize),
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.secondary.main,
       color: theme.palette.getContrastText(theme.palette.secondary.dark),
       border: props.clickDisabled?
         `1px solid ${theme.palette.grey['600']}`:

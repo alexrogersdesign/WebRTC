@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-// TODO fix issue where join meeting button moves on screen size change
 import React, {useContext, forwardRef} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
@@ -93,6 +92,9 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       padding: theme.spacing(0, 1, 0),
     },
+    titleText: {
+      color: theme.palette.secondary.main,
+    },
 
   }),
 );
@@ -130,7 +132,9 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(({
             position={'middle'}
             useStyles={useApexInfoStyles}
           >
-            <InfoTitle>{toTitleCase(title)}</InfoTitle>
+            <InfoTitle className={classes.titleText}>
+              {toTitleCase(title)}
+            </InfoTitle>
             <InfoSubtitle>{`ID: ${id}`}</InfoSubtitle>
           </Info>
           <CopyButtonIcon

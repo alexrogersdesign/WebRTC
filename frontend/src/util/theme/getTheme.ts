@@ -1,10 +1,11 @@
-
-import active from './active';
+import type {Theme} from '@material-ui/core/styles';
+// import active from './active';
+import normal from './normal';
 import inactive from './inactive';
 import light from './light';
 
 export const themes = {
-  normal: active,
+  normal,
   dark: inactive,
   light,
 };
@@ -15,6 +16,6 @@ export type ThemeOption = keyof typeof themes;
  * @param {string} theme the theme to retrieve
  * @return {Theme} theme
  */
-export default function getTheme(theme:ThemeOption) {
+export default function getTheme(theme:ThemeOption): Theme {
   return themes[theme];
 }

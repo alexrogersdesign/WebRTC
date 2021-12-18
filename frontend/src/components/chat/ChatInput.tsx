@@ -5,10 +5,10 @@ import {InputBase, ButtonBase} from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import {alpha} from '@material-ui/core/styles/colorManipulator';
 
-import {ChatContext} from '../../../context/ChatContext';
-import Message from '../../../shared/classes/Message';
-import {SocketIOContext} from '../../../context/SocketIOContext';
-import {RestContext} from '../../../context/RestContext';
+import {ChatContext} from '../../context/ChatContext';
+import Message from '../../shared/classes/Message';
+import {SocketIOContext} from '../../context/SocketIOContext';
+import {RestContext} from '../../context/RestContext';
 
 
 const useStyles = makeStyles((theme) =>
@@ -44,6 +44,12 @@ const useStyles = makeStyles((theme) =>
   }),
 );
 
+/**
+ * Renders a chat input field and send button which is hooked up to the
+ * Rest API context.
+ * @return {JSX.Element}
+ * @constructor
+ */
 const ChatInput = () => {
   const classes = useStyles();
   const {sendMessage} = useContext(ChatContext);
@@ -60,6 +66,7 @@ const ChatInput = () => {
     setField('');
   };
   const handleKeypress =
+    /** Allow enter keypress to trigger a send event */
     (event: React.KeyboardEvent) => {
       if (event?.code === 'Enter' || event?.code === 'NumpadEnter') {
         handleSend();

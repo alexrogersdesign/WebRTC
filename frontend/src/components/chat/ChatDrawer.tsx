@@ -13,7 +13,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 
-import ChatBox from './new/ChatBox';
+import ChatBox from './ChatBox';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
 import {ButtonBase, Tooltip} from '@material-ui/core';
 

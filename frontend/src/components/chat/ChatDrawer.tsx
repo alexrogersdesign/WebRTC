@@ -13,9 +13,9 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotes';
 
-import ChatBox from './ChatBox';
+import ChatBox from './new/ChatBox';
 import {MemoizedHelpWrapper} from '../tutorial/HelpWrapper';
-import {Tooltip} from '@material-ui/core';
+import {ButtonBase, Tooltip} from '@material-ui/core';
 
 
 type StyleRef = React.MutableRefObject<HTMLDivElement | undefined>
@@ -48,7 +48,6 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
       padding: theme.spacing(1),
       margin: theme.spacing(1),
       transform: 'rotateY(180deg)',
-      // height: '50%',
     },
     hide: {
       display: 'none',
@@ -65,14 +64,26 @@ const useStyles = makeStyles<Theme, StyleRef>((theme: Theme) =>
       borderWidth: 0,
     },
     drawerHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      padding: theme.spacing(0, 1),
-      justifyContent: 'flex-start',
+      position: 'absolute',
+      backgroundColor: 'white',
+      zIndex: 10,
+      borderTopLeftRadius: 5,
+      borderBottomRightRadius: 10,
+      color: theme.palette.secondary.main,
+
+      borderTop: `1px solid ${theme.palette.grey[400]}`,
+      borderLeft: `1px solid ${theme.palette.grey[400]}`,
+      borderRight: `1px solid ${theme.palette.grey[500]}`,
+      borderBottom: `1px solid ${theme.palette.grey[500]}`,
     },
     closeIcon: {
-      backgroundColor: theme.palette.secondary.light,
-      margin: theme.spacing(1),
+      'width': 'inherit',
+      '&:hover, &.Mui-focusVisible': {
+        'color': theme.palette.grey['200'],
+      },
+      'borderTopLeftRadius': 5,
+      'borderBottomRightRadius': 10,
+
     },
     content: (props) => ({
       flexGrow: 1,
@@ -177,21 +188,24 @@ const ChatDrawer = () => {
                   popper: clsx( {[classes.hide]: !drawerOpen}),
                 }}
               >
-                <IconButton
+                <ButtonBase
                   id={'close-chat-button'}
-                  className={classes.closeButton}
+                  className={classes.closeIcon}
                   onClick={handleDrawerClose}
-                  size='small'
+                  // size='small'
                 >
                   {theme.direction === 'rtl' ?
                     <ChevronLeftIcon /> :
                     <ChevronRightIcon />}
-                </IconButton>
+                </ButtonBase>
               </Tooltip>
             </div>
           </MemoizedHelpWrapper>
         </div>
-        <ChatBox innerRef={chatBoxRef} isOpen={drawerOpen}/>
+        <ChatBox
+          innerRef={chatBoxRef}
+          // isOpen={drawerOpen}
+        />
       </Drawer>
     </div>
   );

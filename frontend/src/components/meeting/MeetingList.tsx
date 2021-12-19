@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       width: '50em',
       [theme.breakpoints.down('sm')]: {
-        width: '50em',
+        width: '45em',
       },
       [theme.breakpoints.down('xs')]: {
         width: '100vw',
@@ -36,8 +36,6 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: alpha(theme.palette.secondary.light, 1),
     },
     icon: {
-      // height: 130,
-      // width: 220,
       height: 100,
       width: 100,
       marginTop: 'auto',
@@ -47,10 +45,9 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingRight: '2%',
     },
     titleContainer: {
+      display: 'flex',
       flexDirection: 'column',
-      alignItems: 'stretch',
-      justifyContent: 'stretch',
-      justifyItems: 'stretch',
+      alignItems: 'center',
       marginLeft: '5%',
       marginRight: '5%',
       padding: theme.spacing(1, 0, 1),
@@ -58,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '9em',
     },
     title: {
-      fontSize: 40,
+      fontSize: 36,
     },
     description: {
       fontSize: 16,

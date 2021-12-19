@@ -13,6 +13,13 @@ const useStyles = makeStyles((theme) =>
         paddingTop: '6vh',
       },
     },
+    variantInfo: {
+      backgroundColor: theme.palette.secondary.dark,
+    },
+    variantSuccess: {
+      backgroundColor: theme.palette.primary.dark,
+    },
+
   }),
 );
 

@@ -11,12 +11,12 @@ import AlertDialog from '../common/AlertDialog';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {RestContext} from '../../context/RestContext';
-import MeetingCardModal from './MeetingCardModal';
 import {toLocalStringMonth} from '../../util/timeHelper';
 import Avatar from '@material-ui/core/Avatar';
 import {toTitleCase} from '../../util/helpers';
 import {alpha} from '@material-ui/core/styles/colorManipulator';
-import useTheme from '@material-ui/core/styles/useTheme';
+import ModalWrapper from '../common/ModalWrapper';
+import MeetingCard, {MeetingCardProps} from './MeetingCard';
 
 interface Props {
   meeting: Meeting
@@ -69,7 +69,6 @@ const MeetingListItem = ({meeting, divider}: Props) => {
 
   const meetingPrimary = `${toTitleCase(meeting?.title)}`;
   const meetingSecondary = toLocalStringMonth(meeting?.start);
-  const theme = useTheme();
   return (
     <>
       <ListItem
@@ -78,6 +77,7 @@ const MeetingListItem = ({meeting, divider}: Props) => {
         className={classes.listItem}
         button
         divider={divider}
+        disableRipple
       >
         <Avatar
           className={classes.logo}
@@ -123,11 +123,16 @@ const MeetingListItem = ({meeting, divider}: Props) => {
         cancelLabel={'Cancel'}
         warn
       />
-      <MeetingCardModal
-        open={joinModalOpen}
-        setOpen={setJoinModalOpen}
-        meeting={meeting}
+      <ModalWrapper<MeetingCardProps>
+        WrappedComponent={MeetingCard}
+        componentProps={{
+          meeting,
+          setOpen: setJoinModalOpen,
+        }}
+        modalOpen={joinModalOpen}
+        setModalOpen={setJoinModalOpen}
       />
+
     </>
   );
 };

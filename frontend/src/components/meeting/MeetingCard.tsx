@@ -1,20 +1,15 @@
 /* eslint-disable no-unused-vars */
 import React, {useContext, forwardRef} from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import AvatarGroup from '@material-ui/lab/AvatarGroup';
-import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import {Column, Row, Item} from '@mui-treasury/components/flex';
-import {Info, InfoSubtitle, InfoTitle} from '@mui-treasury/components/info';
-import {useApexInfoStyles} from '@mui-treasury/styles/info/apex';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
-import CalendarTodayTwoToneIcon from '@material-ui/icons/CalendarTodayTwoTone';
-import ScheduleTwoToneIcon from '@material-ui/icons/ScheduleTwoTone';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia';
+import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
 
 import Meeting from '../../shared/classes/Meeting';
-import CopyButtonIcon from '../common/CopyButtonIcon';
 import PropTypes from 'prop-types';
 import {ChildrenProps} from '../../shared/types';
 import {getTimeDiffMinutes, toLocalStringMonth} from '../../util/timeHelper';
@@ -22,90 +17,91 @@ import {AppStateContext} from '../../context/AppStateContext';
 import {demoUsers} from 'src/util/demoItems';
 import UserAvatar from '../common/UserAvatar';
 import {toTitleCase} from '../../util/helpers';
+import {Chip} from '@material-ui/core';
+import clsx from 'clsx';
 
-interface Props extends ChildrenProps{
+export interface MeetingCardProps extends ChildrenProps{
     meeting: Meeting
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
+
+const mediaWidth = 160;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      height: '50vh',
-      width: '60vw',
-      [theme.breakpoints.up('lg')]: {
-        width: '40vw',
-      },
+      width: '50em',
       [theme.breakpoints.down('sm')]: {
-        width: '80vw',
+        width: '45em',
       },
       [theme.breakpoints.down('xs')]: {
         width: '100vw',
       },
     },
-    card: {
-      boxShadow: theme.shadows[6],
-      position: 'relative',
-      borderRadius: 5,
-      backgroundColor: theme.palette.neutral.main,
-      transition: theme.transitions.create(['width', 'height'], {
-        easing: theme.transitions.easing.easeInOut,
-        duration: theme.transitions.duration.complex,
-      }),
-    },
-    logo: {
-      width: 48,
-      height: 48,
-      borderRadius: 5,
-    },
-    itemDisplay: {
-      display: 'inline-flex',
-      // flexDirection: 'column',
-      textAlign: 'center',
-      alignItems: 'center',
-      padding: theme.spacing(0, .5, 0),
-      backgroundColor: theme.palette.grey['400'],
-      borderRadius: 3,
-      border: `1px solid ${theme.palette.grey['500']}`,
-      margin: theme.spacing(1.2),
-    },
-    description: {
-      display: 'flex',
-      flexDirection: 'column',
-      padding: theme.spacing(1),
-      height: '100%',
-      backgroundColor: theme.palette.neutral.main,
-    },
     button: {
       border: `1px solid ${theme.palette.primary.dark}`,
+      margin: theme.spacing(1),
     },
     icon: {
       margin: theme.spacing(.25, .25, .25),
     },
     avatar: {
       fontSize: '0.875rem',
-      // backgroundColor: '#6d7efc',
+      boxShadow: theme.shadows[0],
+      border: '1px solid transparent',
     },
-    delete: {
-      alignSelf: 'flex-start',
-      color: '#f44336',
-      fill: '#f44336',
+    card: {
+      display: 'flex',
     },
-    title: {
-      padding: theme.spacing(0, 1, 0),
+    cardDetails: {
+      flex: 1,
     },
-    titleText: {
-      color: theme.palette.secondary.main,
+    cardMedia: {
+      width: mediaWidth,
     },
-
+    cardContent: {
+      // height: '100%',
+    },
+    descriptor: {
+      fontWeight: 'bold',
+      paddingRight: theme.spacing(1),
+    },
+    duration: {
+      position: 'absolute',
+      bottom: theme.spacing(1),
+      right: theme.spacing(1),
+      backgroundColor: theme.palette.secondary.light,
+    },
+    users: {
+      position: 'absolute',
+      top: theme.spacing(1),
+      right: theme.spacing(1),
+    },
+    iconOffset: {
+      right: `calc(${mediaWidth}px + ${theme.spacing(1)}px)`,
+    },
   }),
 );
 /**
- * Displays a meeting in card form.
- * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<Props>
+ * A forward reference exotic component that renders meeting information
+ * in the form of a card..
+ * The component is intended to be rendered inside of a Modal.
+ * A ref is forwarded through the component from it's props to a
+ * div element wrapping DialogTitle and DialogContent. The forward ref allows
+ * the form to be rendered in a Modal component transparently without
+ * breaking any of the functionality of the Modal or introducing
+ * accessibility issues.
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setOpen A function
+ * that sets the state of a boolean variable representing whether the
+ * modal should open.
+ * @param {User} user The meeting instance for which to display
+ * the information of.
+ * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
  *     & React.RefAttributes<HTMLDivElement>>}
  */
-const MeetingCard = forwardRef<HTMLDivElement, Props>(({
+const MeetingCard = forwardRef<HTMLDivElement, MeetingCardProps>(({
   meeting,
-}: Props, ref) => {
+  setOpen,
+}: MeetingCardProps, ref) => {
   const {
     icon,
     title,
@@ -116,117 +112,70 @@ const MeetingCard = forwardRef<HTMLDivElement, Props>(({
   }= meeting;
   const classes = useStyles();
   const {joinMeeting} = useContext(AppStateContext);
+  const handleJoin = () => {
+    joinMeeting(meeting.id.toString());
+    setOpen(false);
+  };
   return (
     <div className={classes.root} ref={ref}>
-      <Column className={classes.card}>
-        <Row p={2} gap={1}>
-          {icon?.length !== 0 && (
-            <Avatar
-              className={classes.logo}
-              variant={'rounded'}
-              src={icon}
-            />
-          )}
-          <Info
-            className={classes.title}
-            position={'middle'}
-            useStyles={useApexInfoStyles}
-          >
-            <InfoTitle className={classes.titleText}>
+      <Card className={classes.card}>
+        <div className={classes.cardDetails}>
+          <CardContent className={classes.cardContent}>
+            <Typography component="h2" variant="h5">
               {toTitleCase(title)}
-            </InfoTitle>
-            <InfoSubtitle>{`ID: ${id}`}</InfoSubtitle>
-          </Info>
-          <CopyButtonIcon
-            tooltipPlacement={'right-end'}
-            textToCopy={id.toString()}
-            description={'Meeting ID'}
-            edge='end'
-          />
-        </Row>
-        <Box
-          pb={1}
-          px={3}
-          color="text.primary"
-        >
-          <Paper
-            className={classes.itemDisplay}
-            elevation={0}
-          >
-            <CalendarTodayTwoToneIcon
-              fontSize={'small'}
-              className={classes.icon}
-            />
-            <Typography
-              align={'justify'}
-              variant={'caption'}
-              color={'textPrimary'}
-            >
+            </Typography>
+            <Typography variant="subtitle1" color="textSecondary">
+              <span className={classes.descriptor}>
+                  Starts
+              </span>
               {toLocalStringMonth(start)}
             </Typography>
-          </Paper>
-          <Paper
-            elevation={0}
-            className={classes.itemDisplay}
-          >
-            <ScheduleTwoToneIcon
-              fontSize={'small'}
-              className={classes.icon}
+            <Chip
+              className={clsx(classes.duration, {
+                [classes.iconOffset]: icon,
+              })}
+              size="small"
+              label={`${getTimeDiffMinutes(start, end)} Min`}
+              icon={<QueryBuilderIcon />}
             />
-            <Typography
-              variant={'caption'}
-              color={'textPrimary'}
-            >
-              {`${getTimeDiffMinutes(start, end)} Minutes`}
+            <Typography variant="subtitle1" paragraph>
+              {description}
             </Typography>
-          </Paper>
-        </Box>
-        <Box
-          pb={1}
-          px={4}
-          color={'grey.600'}
-          fontSize={'0.875rem'}
-        >
-          <Typography
-            variant={'subtitle2'}
-            color={'textPrimary'}
+          </CardContent>
+          <Button
+            id='join-meeting-button'
+            className={classes.button}
+            variant={'contained'}
+            color={'primary'}
+            onClick={handleJoin}
           >
-                Description
-          </Typography>
-          <Typography variant={'caption'} color ={'textSecondary'}>
-            {description}
-          </Typography>
-          {/* </Paper>*/}
-        </Box>
-        <Row p={2} gap={2} position={'bottom'}>
-          <Item>
-            <AvatarGroup
-              max={5}
-              spacing={'small'}
-              classes={{avatar: classes.avatar}}
-            >
-              {demoUsers.map((user, index) => (
-                <UserAvatar
-                  key={index}
-                  user={user}
-                  avatarSize={4}
+              Join Meeting
+          </Button>
+          <AvatarGroup
+            className={clsx(classes.users, {
+              [classes.iconOffset]: icon,
+            })}
+            max={5}
+            spacing={'small'}
+            classes={{avatar: classes.avatar}}
+          >
+            {demoUsers.map((user, index) => (
+              <UserAvatar
+                key={index}
+                user={user}
+                avatarSize={4}
+              />
+            ))}
+          </AvatarGroup>
+        </div>
+        {icon &&
+                <CardMedia
+                  className={classes.cardMedia}
+                  image={icon}
+                  title={'Meeting Icon'}
                 />
-              ))}
-            </AvatarGroup>
-          </Item>
-          <Item position={'middle-right'}>
-            <Button
-              id='join-meeting-button'
-              className={classes.button}
-              variant={'contained'}
-              color={'primary'}
-              onClick={()=>joinMeeting(meeting.id.toString())}
-            >
-                Join Meeting
-            </Button>
-          </Item>
-        </Row>
-      </Column>
+        }
+      </Card>
     </div>
   );
 });

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, {forwardRef} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -10,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 
 
 import User from '../../shared/classes/User';
-
 import UserAvatar from '../common/UserAvatar';
 import {IconButton} from '@material-ui/core';
 import PropTypes from 'prop-types';
@@ -29,14 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
     },
-    modal: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    item: {
-      margin: theme.spacing(0, 0, 1),
-    },
     title: {
       display: 'flex',
       flexDirection: 'row',
@@ -49,6 +39,23 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+/**
+ * A forward reference exotic component that renders user information.
+ * The component is intended to be rendered inside of a Modal.
+ * A ref is forwarded through the component from it's props to a
+ * div element wrapping DialogTitle and DialogContent. The forward ref allows
+ * the form to be rendered in a Modal component transparently without
+ * breaking any of the functionality of the Modal or introducing
+ * accessibility issues.
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setOpen A function
+ * that sets the state of a boolean variable representing whether the
+ * modal should open.
+ * @param {Boolean} open A boolean variable representing whether the modal
+ * is open.
+ * @param {User} user The user instance for which to display the information of.
+ * @type {React.ForwardRefExoticComponent<React.PropsWithoutRef<FormProps>
+ *     & React.RefAttributes<HTMLDivElement>>}
+ */
 const AttendeeInfo = forwardRef<HTMLDivElement, AttendeeInfoProps>(({
   open,
   setOpen,

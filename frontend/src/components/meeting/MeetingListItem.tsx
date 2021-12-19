@@ -131,8 +131,8 @@ const MeetingListItem = ({meeting, divider}: Props) => {
         }}
         modalOpen={joinModalOpen}
         setModalOpen={setJoinModalOpen}
+        fastExit
       />
-
     </>
   );
 };

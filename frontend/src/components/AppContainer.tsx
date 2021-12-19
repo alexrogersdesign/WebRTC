@@ -56,6 +56,7 @@ const AppContainer = () => {
   /** The param extracted from the url indicating the current meeting */
   const roomParam = new URLSearchParams(window.location.search).get('room');
 
+  const shouldRenderMeetingList = (!roomParam && currentUser) && !meeting;
 
   /**
    * Groups the elements to be rendered when a meeting
@@ -78,7 +79,7 @@ const AppContainer = () => {
     <div className={classes.root}>
       <ControlBar meeting={meeting}/>
       <Container className={classes.container}>
-        {(!roomParam && currentUser) && <MeetingList/>}
+        {shouldRenderMeetingList && <MeetingList/>}
         {meeting && renderWhenMeeting()}
       </Container>
     </div>

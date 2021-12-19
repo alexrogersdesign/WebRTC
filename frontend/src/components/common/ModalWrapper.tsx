@@ -23,6 +23,7 @@ const useStyles = makeStyles(() =>
 export interface ModalProps {
     modalOpen: boolean,
     setModalOpen: (open: boolean) => void,
+    fastExit?: boolean,
 }
 
 /**
@@ -70,6 +71,7 @@ const ModalWrapper= <P, T={}>({
   ariaDescribedBy,
   ariaLabeledBy,
   componentProps,
+  fastExit,
 }: Props<P & T>) => {
   const classes = useStyles();
   const handleClose = () => setModalOpen(false);
@@ -89,7 +91,7 @@ const ModalWrapper= <P, T={}>({
         timeout: 500,
       }}
     >
-      <Fade in={modalOpen} timeout={{enter: 750, exit: 250}}>
+      <Fade in={modalOpen} timeout={{enter: 750, exit: fastExit? 100: 250}}>
         <div className={classes.dialogContent}>
           <WrappedComponent
             {...componentProps}

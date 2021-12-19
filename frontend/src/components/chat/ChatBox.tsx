@@ -1,157 +1,105 @@
-/* eslint-disable no-unused-vars,max-len */
-// TODO add ability to attach files and emotes
 import React, {useContext} from 'react';
 import {makeStyles, createStyles} from '@material-ui/core/styles';
-import {
-  ChatContainer,
-  MessageList,
-  MessageInput,
-  MainContainer,
-  Message as MessageElement, Avatar, MessageSeparator,
-} from '@chatscope/chat-ui-kit-react';
-import styles from '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+import Paper from '@material-ui/core/Paper';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 import {ChatContext} from '../../context/ChatContext';
-import {Paper} from '@material-ui/core';
-import {RestContext} from '../../context/RestContext';
-import Message from '../../shared/classes/Message';
-import UserAvatar from '../common/UserAvatar';
-import Typography from '@material-ui/core/Typography';
-import {getMessageDirection} from '../../util/helpers';
-import {getMessageTimeDifference} from '../../util/timeHelper';
+
+import ChatMessage from './ChatMessage';
+import ChatInput from './ChatInput';
 import {ScrollToBottom} from '../common/ScrollToBottom';
-
-
 interface Props {
-    innerRef: React.MutableRefObject<any>
-    isOpen: boolean
+  innerRef: React.MutableRefObject<any>
 }
+const outerBorderRadius = 5;
+const innerPadding = 1;
+const innerBorderRadius = outerBorderRadius - innerPadding;
 const useStyles = makeStyles((theme) =>
   createStyles({
+    root: {
+      width: '30vw',
+    },
     paper: {
       width: '100%',
-      maxHeight: '50vw',
+      height: '50vh',
+      maxWidth: '500px',
+      maxHeight: '55vh',
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
       position: 'relative',
-      zindex: 0,
+      backgroundColor: theme.palette.grey[400],
+      borderRadius: outerBorderRadius,
+      padding: innerPadding,
+      borderTopRightRadius: 0,
+      borderBottomRightRadius: 0,
     },
-    container: {
-      ...styles,
-      borderRadius: theme.shape.borderRadius,
-      boxShadow: theme.shadows[0],
+    list: {
+      // width: '100%',
+    },
+    listItem: {
+      // width: '100%',
     },
     chatContainer: {
-      width: '30vw',
-      minHeight: 200,
-    },
-    message: {
-      width: 'calc( 100% - 20px )',
-      height: 'calc( 20% - 10px )',
-    },
-    messageText: {
-      itemColor: theme.palette.primary.dark,
-    },
-    avatarWrapper: {
       display: 'flex',
-      flexDirection: 'row',
-      alignContent: 'stretch',
-      alignItems: 'center',
-      padding: theme.spacing(0, 0, 0),
+      // backgroundColor: theme.palette.grey[700],
+      backgroundColor: theme.palette.primary.dark,
+      flexDirection: 'column',
+      height: '100%',
+      width: '100%',
+      borderRadius: innerBorderRadius,
+      borderBottomRightRadius: 0,
     },
-    avatar: {
-      padding: theme.spacing(0, 1, 0),
-    },
-    input: {
-      width: '90%',
-      height: '90%',
-      margin: theme.spacing(.5, .5, .5),
+    chatWindow: {
+      backgroundColor: theme.palette.grey[50],
+      padding: theme.spacing(2),
+      height: '100%',
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      borderTopLeftRadius: innerBorderRadius,
+      borderBottom: `1px solid ${theme.palette.grey[300]}`,
     },
   }),
 );
 
-const ChatBox = ({innerRef, isOpen}: Props) => {
+/**
+ * Renders the chat messages in a contained chatContainer with a
+ * chat input field.
+ * @param {React.MutableRefObject<any>} innerRef A ref to apply
+ * to the root.
+ * @return {JSX.Element}
+ * @constructor
+ */
+const ChatBox = ({innerRef}: Props) => {
   const classes = useStyles();
-  const {messageList, sendMessage} = useContext(ChatContext);
-  const {currentUser, meeting} = useContext(RestContext);
-  const handleSend = (contents:string) => {
-    if (!meeting) throw new Error('Message sent outside of meeting');
-    if (!currentUser) throw new Error('Attempted to send message when not logged in');
-    const message = new Message(meeting.id, currentUser, contents);
-    sendMessage(message);
-  };
+  const {messageList} = useContext(ChatContext);
 
-  const renderMessage = () => {
-    if (messageList?.length === 0) {
-      return <MessageSeparator>No Messages</MessageSeparator>;
-    }
+  const renderMessages = () => {
     return messageList?.map((message) => {
-      if (!currentUser) throw new Error('currentUser is undefined');
-      const direction = getMessageDirection(message, currentUser);
-      const timeToDisplay = getMessageTimeDifference(message);
       return (
-        <MessageElement
+        <ListItem
+          className={classes.listItem}
           key={message.id.toString()}
-          className={classes.message}
-          model={{
-            sentTime: timeToDisplay,
-            direction: direction,
-            position: 'single',
-            type: 'custom',
-          }}
-          avatarPosition="tl"
+          disableGutters
         >
-          <MessageElement.TextContent className={classes.messageText}>
-            <Typography
-              variant='body2'
-            >
-              {message.contents}
-            </Typography>
-          </MessageElement.TextContent>
-          <MessageElement.Header
-            sender={message.user.fullName}
-          />
-          <MessageElement.Footer
-            sentTime={timeToDisplay}
-          />
-          {direction === 'incoming' && (
-            <Avatar
-              className={classes.avatarWrapper}
-              size="fluid"
-            >
-              <UserAvatar avatarSize={4} user={message.user} className={classes.avatar}/>
-            </Avatar>
-          )}
-        </MessageElement>
+          <ChatMessage message={message}/>
+        </ListItem>
       );
     });
   };
   return (
-    <div
-      className={classes.container}
-      ref={innerRef}
-    >
-      <Paper className={classes.paper}>
-        <MainContainer
-          style={{fontSize: '1em'}}
-          responsive
-        >
-          <ChatContainer className={classes.chatContainer}>
-            <MessageList
-            >
-              {renderMessage()}
+    <div className={classes.root} ref={innerRef}>
+      <Paper className={classes.paper} elevation={0}>
+        <div className={classes.chatContainer}>
+          <div className={classes.chatWindow}>
+            <List className={classes.list} disablePadding>
+              {(messageList && messageList?.length > 0) && renderMessages()}
               <ScrollToBottom/>
-            </MessageList>
-          </ChatContainer>
-        </MainContainer>
-        <MessageInput
-          className={classes.input}
-          autoFocus
-          attachButton={false}
-          onSend={handleSend}
-          placeholder='Type a message...'
-        />
+            </List>
+          </div>
+          <ChatInput />
+        </div>
       </Paper>
     </div>
   );

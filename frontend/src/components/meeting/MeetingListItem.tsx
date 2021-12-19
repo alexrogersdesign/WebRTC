@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useState, useContext} from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -14,19 +15,26 @@ import MeetingCardModal from './MeetingCardModal';
 import {toLocalStringMonth} from '../../util/timeHelper';
 import Avatar from '@material-ui/core/Avatar';
 import {toTitleCase} from '../../util/helpers';
+import {alpha} from '@material-ui/core/styles/colorManipulator';
+import useTheme from '@material-ui/core/styles/useTheme';
 
 interface Props {
   meeting: Meeting
+  divider?: boolean
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     listItem: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexShrink: 1,
+      'display': 'flex',
+      'flexDirection': 'row',
+      'justifyContent': 'center',
+      'alignItems': 'center',
+      'flexShrink': 1,
+      '&:hover': {
+        backgroundColor: alpha(theme.palette.secondary.light, .2),
+        // color: '#3c52b2',
+      },
     },
     delete: {
       alignSelf: 'flex-start',
@@ -44,10 +52,13 @@ const useStyles = makeStyles((theme: Theme) =>
     primaryText: {
       marginBottom: -5,
     },
+    secondaryText: {
+      color: theme.palette.grey[700],
+    },
   }),
 );
 
-const MeetingListItem = ({meeting}: Props) => {
+const MeetingListItem = ({meeting, divider}: Props) => {
   const classes = useStyles();
   const {deleteMeeting} = useContext(RestContext);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -58,6 +69,7 @@ const MeetingListItem = ({meeting}: Props) => {
 
   const meetingPrimary = `${toTitleCase(meeting?.title)}`;
   const meetingSecondary = toLocalStringMonth(meeting?.start);
+  const theme = useTheme();
   return (
     <>
       <ListItem
@@ -65,7 +77,7 @@ const MeetingListItem = ({meeting}: Props) => {
         onClick={()=>setJoinModalOpen(true)}
         className={classes.listItem}
         button
-        disableRipple={true}
+        divider={divider}
       >
         <Avatar
           className={classes.logo}
@@ -77,7 +89,7 @@ const MeetingListItem = ({meeting}: Props) => {
           primary={meetingPrimary}
           primaryTypographyProps={{
             id: 'meeting-title',
-            color: 'secondary',
+            color: 'primary',
             variant: 'h6',
             className: classes.primaryText,
           }}
@@ -85,6 +97,8 @@ const MeetingListItem = ({meeting}: Props) => {
           secondaryTypographyProps={{
             id: 'meeting-start',
             variant: 'subtitle2',
+            className: classes.secondaryText,
+            // color: theme.palette.augmentColor(theme.palette.primary),
           }}
         />
         <ListItemSecondaryAction>

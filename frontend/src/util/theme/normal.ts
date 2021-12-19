@@ -22,14 +22,14 @@ const theme = createTheme({
   ...baseTheme,
   palette: {
     primary: {
-      main: '#00796b',
-      light: '#48a999',
-      dark: '#004c40',
+      main: '#5085a5',
+      light: '#8fc1e3',
+      dark: '#31708e',
     },
     secondary: {
-      main: '#ef6c00',
-      light: '#ff9d3f',
-      dark: '#b53d00',
+      main: '#95a193',
+      light: '#b4bcb2',
+      dark: '#687864',
     },
     neutral: {
       main: '#E0E3E1',

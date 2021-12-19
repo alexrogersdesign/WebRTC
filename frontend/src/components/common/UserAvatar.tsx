@@ -8,6 +8,7 @@ import User from '../../shared/classes/User';
 
 import ModalWrapper from './ModalWrapper';
 import AttendeeInfo, {AttendeeInfoProps} from '../attendee/AttendeeInfo';
+import clsx from 'clsx';
 interface StyleProps {avatarSize: number, clickDisabled: boolean | undefined}
 
 const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
@@ -33,6 +34,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme: Theme) =>
         `1px solid ${theme.palette.grey['600']}`:
       undefined,
     }),
+    hide: {
+      display: 'none',
+    },
   }),
 );
 
@@ -42,6 +46,7 @@ interface Props {
    className?: string,
    avatarSize?: number,
    clickDisabled?: boolean,
+   tooltipDisabled?: boolean
    Component?: JSX.Element,
    componentProps?: any,
 }
@@ -60,12 +65,28 @@ const AvatarIcon = ({user, className} : AvatarIconProps) => {
     </Avatar>
   );
 };
-
+/**
+ * Renders a clickable avatar object that displays a users icon image or
+ * their initials if no icon is present. When clicked, user information is
+ * displayed.
+ * @param {User | undefined} user An optional user object.
+ * @param {string | undefined} className An optional Css classname to pass
+ * to the root element.
+ * @param {number | undefined} avatarSize An optional number representing the
+ * size of the avatar.
+ * @param {boolean | undefined} clickDisabled An optional boolean state to
+ * disable the click action.
+ * @param {boolean | undefined} tooltipDisabled an optional boolean state to
+ * disable the tooltip.
+ * @return {JSX.Element}
+ * @constructor
+ */
 const UserAvatar = ({
   user,
   className,
   avatarSize,
   clickDisabled,
+  tooltipDisabled,
 }: Props) => {
   const classes = useStyles({avatarSize: avatarSize?? 5, clickDisabled});
   const [modalOpen, setModalOpen] = useState(false);
@@ -75,6 +96,9 @@ const UserAvatar = ({
       <Tooltip
         title={user!.fullName}
         aria-label='User Avatar'
+        classes={{
+          popper: clsx( {[classes.hide]: tooltipDisabled}),
+        }}
       >
         <Fab
           size='medium'

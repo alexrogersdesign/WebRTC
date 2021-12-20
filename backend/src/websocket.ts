@@ -149,10 +149,10 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
         const watcher = MeetingModel.watch()
             .on('change', (change) => {
               if (change.operationType ===  'delete') {
-                io.emit('MeetingDeleted', change._id.id)
+                io.emit('MeetingDeleted', change.documentKey)
               }
               if (change.operationType ===  'insert') {
-                io.emit('MeetingAdded', change._id)
+                io.emit('MeetingAdded', change.fullDocument)
               }
              })
             .on('error', (error => {

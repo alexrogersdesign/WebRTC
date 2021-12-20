@@ -63,7 +63,7 @@ export interface _BaseIReceivedMessage {
 }
 export type IReceivedMessage = BaseIReceivedMessage & _BaseIReceivedMessage
 
-const parseId = (input: string | ObjectID):ObjectID => {
+export const parseId = (input: string | ObjectID):ObjectID => {
   if (input instanceof ObjectID) {
     return input;
   } else {

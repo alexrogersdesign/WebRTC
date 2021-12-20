@@ -13,13 +13,15 @@ import {ChildrenProps} from '../shared/types';
 import Meeting from '../shared/classes/Meeting';
 import {
   IReceivedMeeting,
-  IReceivedUser,
+  IReceivedUser, parseId,
   parseMeeting,
-  parseUser} from '../util/classParser';
+  parseUser,
+} from '../util/classParser';
 import {MediaControlContext} from './MediaControlContext';
 import {RestContext} from './RestContext';
 import {PeerConnectionContext} from './PeerConnectionContext';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
+import ObjectID from 'bson-objectid';
 
 /** The context that handles all the Socket connection. */
 const SocketIOContext = createContext<ISocketIOContext>(undefined!);
@@ -143,9 +145,14 @@ const SocketIOContextProvider: React.FC<ChildrenProps> = ({children}) => {
     socketToAlter?.on('ExpiredToken', () => {
       return handleExpiredToken();
     });
-    /* Keeps the application state up to date with database*/
-    socketToAlter?.on('MeetingDeleted', (meetingId: string)=> {
-      removeMeetingFromList(meetingId);
+    interface DocumentKey {
+      _id: ObjectID
+    }
+    /* The following event listeners keep the application state up
+        to date with database*/
+    socketToAlter?.on('MeetingDeleted', (message: DocumentKey)=> {
+      const meetingId = parseId(message._id);
+      removeMeetingFromList(meetingId.toString());
     });
     socketToAlter?.on('MeetingAdded', (receivedMeeting: IReceivedMeeting)=> {
       addMeetingToList(parseMeeting(receivedMeeting));

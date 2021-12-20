@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, {useEffect} from 'react';
 import Button, {ButtonProps} from '@material-ui/core/Button';
 import {Container} from '@material-ui/core';
@@ -8,12 +7,6 @@ import {OptionsObject, useSnackbar} from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    input: {
-
-    },
-    button: {
-
-    },
     imagePreview: {
       height: 100,
       width: 100,
@@ -21,21 +14,14 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     imageContainer: {
       height: 120,
-      // margin: theme.spacing(0, 1, 0),
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      // alignContent: 'stretch',
-      // flexGrow: 1,
       flexWrap: 'nowrap',
     },
   }),
 );
-
-interface ImageValue {
-    iconImage: string
-}
 
 interface Props {
     formik: FormikProps<any>
@@ -51,6 +37,16 @@ const snackbarErrorOptions :OptionsObject = {
   },
 };
 
+/**
+ * Renders a button which allows for an image to be uploaded
+ * via the browsers file upload API. The component is an extension
+ * of a Formik form and attaches the uploaded image to the Formik
+ * instance.
+ * @param {FormikProps<any>} formik The formik instance
+ * @param {ButtonProps} buttonProps Props to apply to the button.
+ * @return {JSX.Element}
+ * @constructor
+ */
 const UploadImage = ({formik, buttonProps}: Props)=> {
   const {enqueueSnackbar} = useSnackbar();
   const classes = useStyles();
@@ -63,40 +59,40 @@ const UploadImage = ({formik, buttonProps}: Props)=> {
   }, [formik.errors.iconImage, formik.touched.iconImage]);
   return (
     <Container className={classes.imageContainer}>
+      {/* The input that interacts with the browser API.
+            The element is hidden because the standard HTML implementation
+            is outdated and not very elegant*/}
       <input
-        accept="image/*"
-        className={classes.input}
+        accept='image/*'
         style={{display: 'none'}}
-        id="input-file-upload"
-        //multiple
+        id='input-file-upload'
         type='file'
         onChange={(event)=>{
           if (!event?.currentTarget?.files) return;
           formik.setFieldTouched('iconImage', true);
           formik.setFieldValue('iconImage', event?.currentTarget?.files[0]);
         }}
-
       />
-      <label htmlFor="raised-button-file" >
+      {/* Render a button as a label for the hidden input. This works by
+      referencing the id of the input above */}
+      <label htmlFor='input-file-upload' >
+        {/* If an image hasn't been uploaded, render the upload button*/}
         {!formik.values.iconImage && (
-          <>
-            <Button
-              variant="text"
-              component="span"
-              className={classes.button}
-              //onBlur={formik.handleBlur}
-              {...buttonProps}
-            >
+          <Button
+            variant='text'
+            component='span'
+            {...buttonProps}
+          >
                 Upload Icon
-            </Button>
-          </>
+          </Button>
         )}
       </label>
+      {/* If an image has been uploaded render the image and a
+          button to remove the image */}
       {formik.values.iconImage && (
         <>
           <Button
-            variant="text"
-            className={classes.button}
+            variant='text'
             onClick={()=> formik.setFieldValue('iconImage', undefined)}
           >
               Remove
@@ -104,6 +100,7 @@ const UploadImage = ({formik, buttonProps}: Props)=> {
           <img
             className={classes.imagePreview}
             src={URL.createObjectURL(formik.values.iconImage)}
+            alt='uploaded image preview'
           />
         </>
       )}

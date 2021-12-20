@@ -51,6 +51,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     primaryText: {
       marginBottom: -5,
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 16,
+      },
     },
     secondaryText: {
       color: theme.palette.grey[700],
@@ -59,6 +62,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const MeetingListItem = ({meeting, divider}: Props) => {
+  if (!meeting) return <></>;
   const classes = useStyles();
   const {deleteMeeting} = useContext(RestContext);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -67,8 +71,8 @@ const MeetingListItem = ({meeting, divider}: Props) => {
     void deleteMeeting(meeting.id.toString());
   };
 
-  const meetingPrimary = `${toTitleCase(meeting?.title)}`;
-  const meetingSecondary = toLocalStringMonth(meeting?.start);
+  const meetingPrimary = `${toTitleCase(meeting.title)}`;
+  const meetingSecondary = toLocalStringMonth(meeting.start);
   return (
     <>
       <ListItem

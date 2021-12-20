@@ -2,9 +2,9 @@
 import React, {useContext} from 'react';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
-import {Paper, Typography} from '@material-ui/core';
+import {Collapse, Paper, Typography} from '@material-ui/core';
 import List from '@material-ui/core/List';
-
+import {TransitionGroup} from 'react-transition-group';
 
 import {RestContext} from '../../context/RestContext';
 import MeetingListItem from './MeetingListItem';
@@ -16,18 +16,22 @@ import {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
-      width: '50em',
+      width: '40em',
+      transition: theme.transitions.create(['height'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
       [theme.breakpoints.down('sm')]: {
-        width: '45em',
+        width: '40em',
       },
       [theme.breakpoints.down('xs')]: {
-        width: '100vw',
+        width: '90vw',
       },
     },
     header: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       alignItems: 'stretch',
       border: `1px solid ${theme.palette.grey[500]}`,
       borderBottom: `1px solid ${theme.palette.grey[600]}`,
@@ -40,9 +44,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: 100,
       marginTop: 'auto',
       marginBottom: 'auto',
+      marginLeft: '5%',
       flexShrink: 0,
-      paddingLeft: '2%',
-      paddingRight: '2%',
     },
     titleContainer: {
       display: 'flex',
@@ -51,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: '5%',
       marginRight: '5%',
       padding: theme.spacing(1, 0, 1),
-      width: '35vh',
+      width: '11em',
       height: '9em',
     },
     title: {
@@ -86,7 +89,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 /**
- * Renders a the available meetings in a list of clickable buttons
+ * Renders the available meetings in a list of clickable buttons.
  * @return {JSX.Element}
  * @constructor
  */
@@ -124,14 +127,17 @@ const MeetingList = () => {
         id={'meeting-list'}
         disablePadding
       >
-        {meetingList?.map((meeting, index) =>
-          <MeetingListItem
-            key={meeting.id.toString()}
-            meeting={meeting}
-            /** Dont add divider to last item */
-            divider={index < meetingList.length -1}
-          />,
-        )}
+        <TransitionGroup>
+          {meetingList?.map((meeting, index) =>
+            <Collapse key={meeting.id.toString()}>
+              <MeetingListItem
+                meeting={meeting}
+                /** Dont add divider to last item */
+                divider={index < meetingList.length -1}
+              />
+            </Collapse>,
+          )}
+        </TransitionGroup>
         {meetingsLoading && (
           <LinearProgress variant='query'/>
         )}

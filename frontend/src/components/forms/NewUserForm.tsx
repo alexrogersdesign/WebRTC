@@ -13,6 +13,8 @@ import {Container, DialogContent, DialogTitle} from '@material-ui/core';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {AppStateContext} from '../../context/AppStateContext';
 import {FormProps} from '../../shared/types';
+import CancelIcon from '@material-ui/icons/Cancel';
+import IconButton from '@material-ui/core/IconButton';
 
 
 const validationSchema = yup.object({
@@ -22,15 +24,15 @@ const validationSchema = yup.object({
       .defined('Email is required'),
   password: yup
       .string()
-      .min(4, 'Password should be of minimum 4 characters length')
+      .min(4, 'Password should be at least 4 characters')
       .defined('Required'),
   firstName: yup
       .string()
-      .min(2, 'Password should be of minimum 2 characters length')
+      .min(2, 'First Name should be at least 4 characters')
       .defined('Required'),
   lastName: yup
       .string()
-      .min(2, 'Password should be of minimum 2 characters length')
+      .min(2, 'Last Name should be at least 4 characters')
       .defined('Required'),
   iconImage: yup
       .mixed()
@@ -51,22 +53,15 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: theme.shape.borderRadius,
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3),
+      minWidth: 800,
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'hidden',
       [theme.breakpoints.down('sm')]: {
-        height: '70%',
+        minWidth: 0,
         padding: theme.spacing(2, 0, 1),
       },
     },
-    title: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
     titleItem: {
-      padding: theme.spacing(1, 1, 0),
       [theme.breakpoints.down('sm')]: {
         alignSelf: 'center',
       },
@@ -77,14 +72,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flexWrap: 'nowrap',
       alignContent: 'center',
       width: '100%',
-      [theme.breakpoints.down('sm')]: {
-        width: '90%',
-        alignContent: 'center',
-        justifyContent: 'center',
-      },
     },
     formItem: {
-      margin: theme.spacing(1, 0, 2),
+      margin: theme.spacing(1, 0, 3),
       flexShrink: 1,
       flexWrap: 'nowrap',
       width: '70%',
@@ -93,15 +83,21 @@ const useStyles = makeStyles((theme: Theme) =>
         alignContent: 'center',
         justifyContent: 'center',
         padding: theme.spacing(1, 0, 1),
+        margin: theme.spacing(1, 0, 2),
       },
     },
     nameItem: {
       margin: theme.spacing(1, 1, 1),
-      [theme.breakpoints.down('sm')]: {
-        padding: theme.spacing(1, 0, 1),
-      },
       flexShrink: 1,
       width: '100%',
+
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        alignContent: 'center',
+        justifyContent: 'center',
+        padding: theme.spacing(1, 0, 1),
+        margin: theme.spacing(1, 0, 2),
+      },
     },
     nameContainer: {
       display: 'flex',
@@ -112,7 +108,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignContent: 'space-between',
       [theme.breakpoints.down('sm')]: {
         flexDirection: 'column-reverse',
-        padding: theme.spacing(0),
+        padding: 0,
         flexWrap: 'nowrap',
         width: '100%',
         justifyContent: 'center',
@@ -123,9 +119,22 @@ const useStyles = makeStyles((theme: Theme) =>
     helperText: {
       position: 'absolute',
       bottom: -20,
+      [theme.breakpoints.down('sm')]: {
+        bottom: -12,
+      },
     },
     upload: {
       boxShadow: theme.shadows[1],
+      backgroundColor: theme.palette.primary.light,
+    },
+    closeButton: {
+      position: 'absolute',
+      top: '3%',
+      left: '5%',
+      fontSize: 40,
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
     },
   }),
 );
@@ -175,21 +184,30 @@ const NewUserForm = forwardRef<HTMLDivElement, FormProps>(({
     <div className={classes.paper} ref={ref}>
       <DialogTitle
         className={classes.titleItem}
-        id="create-account-title"
+        id="create-account-form-title"
       >
           Create Account
       </DialogTitle>
       <DialogContent >
         <Container className={classes.formContainer}>
+          <IconButton
+            size={'medium'}
+            className={classes.closeButton}
+            color="secondary"
+            aria-label="cancel"
+            onClick={handleClose}
+          >
+            <CancelIcon fontSize={'inherit'}/>
+          </IconButton>
           <form onSubmit={formik.handleSubmit}>
             <Container className={classes.nameContainer}>
               <TextField
-                fullWidth={sm?? false}
                 className={classes.nameItem}
-                variant="outlined"
+                fullWidth={sm?? false}
                 id="firstName"
                 name="firstName"
                 label="First Name"
+                variant="outlined"
                 value={formik.values.firstName}
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
@@ -203,10 +221,10 @@ const NewUserForm = forwardRef<HTMLDivElement, FormProps>(({
               <TextField
                 fullWidth={sm?? false}
                 className={classes.nameItem}
-                variant="outlined"
                 id="lastName"
                 name="lastName"
                 label="Last Name"
+                variant="outlined"
                 value={formik.values.lastName}
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
@@ -220,7 +238,6 @@ const NewUserForm = forwardRef<HTMLDivElement, FormProps>(({
                 formik={formik}
                 buttonProps={{
                   variant: sm? 'contained': 'text',
-                  disableElevation: true,
                   className: classes.upload,
                 }}
               />
@@ -238,7 +255,6 @@ const NewUserForm = forwardRef<HTMLDivElement, FormProps>(({
               error={formik.touched.email && Boolean(formik.errors.email)}
               helperText={formik.touched.email && formik.errors.email}
               FormHelperTextProps={{className: classes.helperText}}
-
             />
             <TextField
               className={classes.formItem}

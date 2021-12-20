@@ -1,14 +1,16 @@
-/* eslint-disable no-unused-vars */
 import React, {useContext, forwardRef} from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import PropTypes from 'prop-types';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {Container} from '@material-ui/core';
+import CancelIcon from '@material-ui/icons/Cancel';
+import clsx from 'clsx';
 
 import {RestContext} from '../../context/RestContext';
 import UploadImage from '../common/UploadImage';
@@ -21,114 +23,15 @@ import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {AppStateContext} from '../../context/AppStateContext';
 import {FormProps} from '../../shared/types';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    paper: {
-      backgroundColor: theme.palette.background.paper,
-      borderRadius: theme.shape.borderRadius,
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3),
-      minWidth: 1020,
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      [theme.breakpoints.down('sm')]: {
-        minWidth: 600,
-        padding: theme.spacing(2, 0, 1),
-      },
-    },
-    titleItem: {
-      padding: theme.spacing(1, 1, 0),
-      [theme.breakpoints.down('sm')]: {
-        alignSelf: 'center',
-      },
-    },
-    formContainer: {
-      flexDirection: 'column',
-      alignItems: 'center',
-      flexWrap: 'nowrap',
-      alignContent: 'center',
-      width: '100%',
-      [theme.breakpoints.down('sm')]: {
-        width: '80%',
-        alignContent: 'center',
-        justifyContent: 'center',
-        // overflow: 'hidden',
-      },
-    },
-    dialogContent: {
-      // width: '70%',
-    },
-    formItem: {
-      margin: theme.spacing(1, 0, 3),
-      flexShrink: 1,
-      flexWrap: 'nowrap',
-      width: '70%',
-      [theme.breakpoints.down('sm')]: {
-        width: '100%',
-        alignContent: 'center',
-        justifyContent: 'center',
-        padding: theme.spacing(1, 0, 1),
-        margin: theme.spacing(1, 0, 2),
-
-      },
-    },
-    nameItem: {
-      // padding: theme.spacing(1, 1, 2),
-      margin: theme.spacing(1, 1, 1),
-      flexShrink: 1,
-      width: '100%',
-      [theme.breakpoints.down('sm')]: {
-        padding: theme.spacing(1, 0, 1),
-      },
-    },
-    helperText: {
-      position: 'absolute',
-      bottom: -20,
-    },
-    dateField: {
-      margin: theme.spacing(1, 2, 1),
-      minWidth: 220,
-      width: '100%',
-      [theme.breakpoints.down('sm')]: {
-        padding: theme.spacing(1, 0, 1),
-        margin: theme.spacing(1, 0, 2),
-      },
-    },
-    dateContainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-      alignContent: 'space-between',
-      [theme.breakpoints.down('sm')]: {
-        flexDirection: 'column-reverse',
-        padding: theme.spacing(0),
-        flexWrap: 'nowrap',
-        width: '100%',
-        justifyContent: 'center',
-        alignContent: 'center',
-        alignItems: 'center',
-        // margin: theme.spacing(1, 0, 2),
-      },
-    },
-    upload: {
-      boxShadow: theme.shadows[1],
-    },
-
-  }),
-);
-
 
 const validationSchema = yup.object({
   title: yup
       .string()
-      .min(4, 'Title should be of minimum 4 characters length')
+      .min(4, 'Title should be at least 4 characters')
       .defined('Title is required'),
   description: yup
       .string()
-      .min(4, 'Description should be of minimum 4 characters length')
+      .min(4, 'Description should be at least 4 characters')
       .defined('Description is required'),
   start: yup
       .date()
@@ -149,6 +52,115 @@ const validationSchema = yup.object({
           (value) => !value || SUPPORTED_FORMATS.includes(value.type),
       ),
 });
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    paper: {
+      backgroundColor: theme.palette.background.paper,
+      borderRadius: theme.shape.borderRadius,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing(2, 4, 3),
+      minWidth: 800,
+      display: 'flex',
+      flexDirection: 'column',
+      [theme.breakpoints.down('sm')]: {
+        minWidth: 0,
+        padding: theme.spacing(2, 0, 1),
+      },
+    },
+    titleItem: {
+      [theme.breakpoints.down('sm')]: {
+        alignSelf: 'center',
+      },
+    },
+    formContainer: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      flexWrap: 'nowrap',
+      alignContent: 'center',
+      width: '100%',
+    },
+    formItem: {
+      margin: theme.spacing(1, 0, 3),
+      flexShrink: 1,
+      flexWrap: 'nowrap',
+      width: '70%',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        alignContent: 'center',
+        justifyContent: 'center',
+        padding: theme.spacing(1, 0, 1),
+        margin: theme.spacing(1, 0, 2),
+      },
+    },
+    nameItem: {
+      margin: theme.spacing(1, 1, 1),
+      flexShrink: 1,
+      width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 0, 1),
+      },
+    },
+    dateField: {
+      margin: theme.spacing(1, 2, 1),
+      minWidth: 220,
+      width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        padding: theme.spacing(1, 0, 1),
+        margin: theme.spacing(1, 0, 2),
+      },
+    },
+    startDate: {
+      [theme.breakpoints.down('sm')]: {
+        order: 2,
+      },
+    },
+    endDate: {
+      [theme.breakpoints.down('sm')]: {
+        order: 3,
+      },
+    },
+    dateContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      alignContent: 'space-between',
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column',
+        padding: 0,
+        flexWrap: 'nowrap',
+        width: '100%',
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignItems: 'center',
+      },
+    },
+    helperText: {
+      position: 'absolute',
+      bottom: -20,
+      [theme.breakpoints.down('sm')]: {
+        bottom: -12,
+      },
+    },
+    upload: {
+      boxShadow: theme.shadows[1],
+      backgroundColor: theme.palette.secondary.light,
+    },
+    closeButton: {
+      position: 'absolute',
+      top: '3%',
+      left: '5%',
+      fontSize: 40,
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
+  }),
+);
+
+
 /**
  * A forward reference exotic component that renders new meeting form.
  * The component is intended to be rendered inside of a Modal.
@@ -210,17 +222,26 @@ const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
       >
           New Meeting
       </DialogTitle>
-      <DialogContent className={classes.dialogContent}>
+      <DialogContent >
         <Container className={classes.formContainer}>
+          <IconButton
+            size={'medium'}
+            className={classes.closeButton}
+            color="secondary"
+            aria-label="cancel"
+            onClick={handleClose}
+          >
+            <CancelIcon fontSize={'inherit'}/>
+          </IconButton>
           <form onSubmit={formik.handleSubmit}>
             <Container className={classes.dateContainer}>
               <TextField
+                className={clsx(classes.startDate, classes.dateField)}
                 fullWidth={sm?? false}
                 id="start"
-                label="Meeting start"
+                label="Starts"
                 type="datetime-local"
                 variant="outlined"
-                className={classes.dateField}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -234,12 +255,12 @@ const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
                 FormHelperTextProps={{className: classes.helperText}}
               />
               <TextField
+                className={clsx(classes.endDate, classes.dateField)}
                 fullWidth={sm?? false}
                 id="end"
-                label="Meeting end"
+                label="Ends"
                 type="datetime-local"
                 variant="outlined"
-                className={classes.dateField}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -255,7 +276,6 @@ const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
                 formik={formik}
                 buttonProps={{
                   variant: sm? 'contained': 'text',
-                  disableElevation: true,
                   className: classes.upload,
                 }}
               />
@@ -267,7 +287,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
               variant="outlined"
               id="title"
               name="title"
-              label="Meeting Title"
+              label="Title"
               value={formik.values.title}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
@@ -284,7 +304,7 @@ const NewMeetingForm = forwardRef<HTMLDivElement, FormProps>(({
               variant="outlined"
               id="description"
               name="description"
-              label="Meeting Description"
+              label="Description"
               value={formik.values.description}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}

@@ -13,7 +13,7 @@ const useStyles = makeStyles(() =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    dialogContent: {
+    div: {
       display: 'flex',
       justifyContent: 'center',
     },
@@ -92,7 +92,7 @@ const ModalWrapper= <P, T={}>({
       }}
     >
       <Fade in={modalOpen} timeout={{enter: 750, exit: fastExit? 100: 250}}>
-        <div className={classes.dialogContent}>
+        <div className={classes.div}>
           <WrappedComponent
             {...componentProps}
           />

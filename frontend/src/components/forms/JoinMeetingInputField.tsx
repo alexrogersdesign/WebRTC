@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '2px 4px',
       display: 'flex',
       alignItems: 'center',
-      width: 400,
+      minWidth: 250,
     },
     input: {
       marginLeft: theme.spacing(1),
@@ -39,6 +39,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+/**
+ * Renders a field and button to allow a user to directly
+ * join a meeting via its meeting id. If rendered when a
+ * meeting has been joined, a copy meeting id button
+ * is displayed allowing the end user to copy the
+ * meeting id.
+ * @param {string | undefined} placeholder
+ * @return {JSX.Element}
+ * @constructor
+ */
 const JoinMeetingInputField = ({placeholder}: Props) => {
   const classes = useStyles();
   const {joinMeeting} = useContext(AppStateContext);
@@ -46,11 +56,9 @@ const JoinMeetingInputField = ({placeholder}: Props) => {
   const [field, setField] = useState('');
   const [copied, setCopied] = useState(false);
 
-
   const handleClick = (event: any) => {
     joinMeeting && field && joinMeeting(field);
   };
-
 
   //* set delay for copied tooltip
   useEffect(() => {

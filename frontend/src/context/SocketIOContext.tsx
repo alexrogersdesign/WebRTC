@@ -3,7 +3,7 @@ import React, {
   createContext,
   useContext,
   useEffect,
-  useRef, useState,
+  useState,
 } from 'react';
 import {useNavigate} from 'react-router-dom';
 import {io, Socket} from 'socket.io-client';

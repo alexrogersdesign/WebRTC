@@ -337,4 +337,7 @@ NewMeetingForm.propTypes = {
   setOpen: PropTypes.func.isRequired,
 };
 
+NewMeetingForm.displayName = 'New Meeting Form';
+
+
 export default NewMeetingForm;

@@ -15,6 +15,7 @@ import {AppStateContext} from '../../context/AppStateContext';
 import {FormProps} from '../../shared/types';
 import CancelIcon from '@material-ui/icons/Cancel';
 import IconButton from '@material-ui/core/IconButton';
+import LoginForm from './LoginForm';
 
 
 const validationSchema = yup.object({
@@ -290,5 +291,7 @@ const NewUserForm = forwardRef<HTMLDivElement, FormProps>(({
 NewUserForm.propTypes = {
   setOpen: PropTypes.func.isRequired,
 };
+NewUserForm.displayName = 'New User Form';
+
 
 export default NewUserForm;

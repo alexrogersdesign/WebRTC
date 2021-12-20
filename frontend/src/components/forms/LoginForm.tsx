@@ -188,5 +188,7 @@ const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
 LoginForm.propTypes = {
   setOpen: PropTypes.func.isRequired,
 };
+LoginForm.displayName = 'Login Form';
+
 
 export default LoginForm;

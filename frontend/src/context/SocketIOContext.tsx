@@ -16,7 +16,7 @@ import {
   IReceivedUser, parseId,
   parseMeeting,
   parseUser,
-} from '../util/classParser';
+} from '../shared/util/classParser';
 import {MediaControlContext} from './MediaControlContext';
 import {RestContext} from './RestContext';
 import {PeerConnectionContext} from './PeerConnectionContext';

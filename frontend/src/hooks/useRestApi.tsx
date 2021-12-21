@@ -4,7 +4,7 @@ import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 import User from '../shared/classes/User';
 import {
   IReceivedUser,
-  parseUser} from '../util/classParser';
+  parseUser} from '../shared/util/classParser';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
 
 export type RefreshResponse = {

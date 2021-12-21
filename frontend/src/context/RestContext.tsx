@@ -13,7 +13,7 @@ import {
   IReceivedMeeting,
   parseMeeting,
   parseUser,
-} from '../util/classParser';
+} from '../shared/util/classParser';
 import Meeting from '../shared/classes/Meeting';
 import {RefreshResponse, useRestApi} from '../hooks/useRestApi';
 import useLocalStorageState from 'use-local-storage-state';

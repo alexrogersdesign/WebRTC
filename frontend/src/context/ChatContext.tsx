@@ -3,7 +3,7 @@ import {useSnackbar} from 'notistack';
 
 import {ChildrenProps} from '../shared/types';
 import Message from '../shared/classes/Message';
-import {IReceivedMessage, parseMessage} from '../util/classParser';
+import {IReceivedMessage, parseMessage} from '../shared/util/classParser';
 import {SocketIOContext} from './SocketIOContext';
 import {RestContext} from './RestContext';
 

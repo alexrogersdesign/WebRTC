@@ -5,12 +5,12 @@ import jwt from "jsonwebtoken";
 import {DefaultEventsMap} from "socket.io/dist/typed-events";
 
 import {MeetingModel, MessageModel, UserModel} from "./database/models.js";
-import * as classParser from '../../frontend/src/util/classParser.js'
+import * as classParser from '../../frontend/src/shared/util/classParser.js'
 import {
   IReceivedMeeting,
   IReceivedMessage,
   IReceivedUser,
-} from '../../frontend/src/util/classParser';
+} from '../../frontend/src/shared/util/classParser';
 const {
   parseMeeting,
   parseMessage,

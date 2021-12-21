@@ -5,7 +5,7 @@ import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
 import {RestContext} from './RestContext';
 import Peer, {MediaConnection} from 'peerjs';
 import EventEmitter from 'events';
-import {parseUser} from '../util/classParser';
+import {parseUser} from '../shared/util/classParser';
 import {MediaControlContext} from './MediaControlContext';
 import User from '../shared/classes/User';
 

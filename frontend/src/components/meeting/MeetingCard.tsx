@@ -19,6 +19,8 @@ import UserAvatar from '../common/UserAvatar';
 import {toTitleCase} from '../../util/helpers';
 import {Chip} from '@material-ui/core';
 import clsx from 'clsx';
+import CancelIcon from '@material-ui/icons/Cancel';
+import IconButton from '@material-ui/core/IconButton';
 
 export interface MeetingCardProps extends ChildrenProps{
     meeting: Meeting
@@ -41,9 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
       border: `1px solid ${theme.palette.primary.dark}`,
       margin: theme.spacing(1),
     },
-    icon: {
-      margin: theme.spacing(.25, .25, .25),
-    },
     avatar: {
       fontSize: '0.875rem',
       boxShadow: theme.shadows[0],
@@ -54,31 +53,76 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     cardDetails: {
       flex: 1,
+      [theme.breakpoints.down('xs')]: {
+        minHeight: '45vh',
+      },
     },
     cardMedia: {
       width: mediaWidth,
+      [theme.breakpoints.down('xs')]: {
+        width: '30%',
+      },
     },
     cardContent: {
-      // height: '100%',
+      [theme.breakpoints.down('xs')]: {
+        minHeight: '30vh',
+      },
     },
     descriptor: {
       fontWeight: 'bold',
       paddingRight: theme.spacing(1),
+      [theme.breakpoints.down('xs')]: {
+        display: 'none',
+      },
     },
     duration: {
-      position: 'absolute',
       bottom: theme.spacing(1),
-      right: theme.spacing(1),
       backgroundColor: theme.palette.secondary.light,
+      [theme.breakpoints.up('xs')]: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+      },
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 12,
+      },
     },
     users: {
       position: 'absolute',
-      top: theme.spacing(1),
-      right: theme.spacing(1),
+      [theme.breakpoints.up('xs')]: {
+        bottom: theme.spacing(1),
+        right: theme.spacing(1),
+
+      },
+      [theme.breakpoints.down('xs')]: {
+        bottom: theme.spacing(1),
+        left: theme.spacing(1),
+      },
     },
     iconOffset: {
       right: `calc(${mediaWidth}px + ${theme.spacing(1)}px)`,
     },
+    title: {
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 18,
+      },
+    },
+    start: {
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 12,
+      },
+    },
+    closeButton: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      fontSize: 40,
+      color: theme.palette.secondary.dark,
+      [theme.breakpoints.up('xs')]: {
+        display: 'none',
+      },
+    },
+
   }),
 );
 /**
@@ -120,11 +164,23 @@ const MeetingCard = forwardRef<HTMLDivElement, MeetingCardProps>(({
     <div className={classes.root} ref={ref}>
       <Card className={classes.card}>
         <div className={classes.cardDetails}>
+          <IconButton
+            size={'medium'}
+            className={classes.closeButton}
+            aria-label="cancel"
+            onClick={()=> setOpen(false)}
+          >
+            <CancelIcon fontSize={'inherit'}/>
+          </IconButton>
           <CardContent className={classes.cardContent}>
-            <Typography component="h2" variant="h5">
+            <Typography component="h2" variant="h5" className={classes.title}>
               {toTitleCase(title)}
             </Typography>
-            <Typography variant="subtitle1" color="textSecondary">
+            <Typography
+              variant="subtitle1"
+              color="textSecondary"
+              className={classes.start}
+            >
               <span className={classes.descriptor}>
                   Starts
               </span>

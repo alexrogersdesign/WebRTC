@@ -1,5 +1,4 @@
 import type {Theme} from '@material-ui/core/styles';
-// import active from './active';
 import normal from './normal';
 import inactive from './inactive';
 import light from './light';

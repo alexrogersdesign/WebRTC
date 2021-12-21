@@ -72,9 +72,10 @@
     "styleguide:build": "styleguidist build",
     "prebuild": "tsc -p ./build-options/tsconfig.webpack.json",
     "build": "react-scripts build",
+    "compile:shared": "tsc -p ./src/shared/tsconfig.shared.json",
     "clean1": "cd ./src/components && find . -name \"*.js\" -type f -delete",
     "clean2": "cd ./src/context && find . -name \"*.js\" -type f -delete",
-    "clean": "cd ./src/ && find . -name \"*.js\" -type f -delete",
+    "clean": "cd ./src/ && find . -name \"*.js\" -type f -delete && npm run compile:shared",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

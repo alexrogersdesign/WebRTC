@@ -24,8 +24,8 @@ import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
  }
 const breakpoints = createBreakpoints({
   values: {
-    xxs: 375,
-    xs: 400,
+    xxs: 400,
+    xs: 500,
     sm: 600,
     md: 960,
     lg: 1280,

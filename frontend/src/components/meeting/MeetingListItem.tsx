@@ -17,6 +17,7 @@ import {toTitleCase} from '../../util/helpers';
 import {alpha} from '@material-ui/core/styles/colorManipulator';
 import ModalWrapper from '../common/ModalWrapper';
 import MeetingCard, {MeetingCardProps} from './MeetingCard';
+import clsx from 'clsx';
 
 interface Props {
   meeting: Meeting
@@ -58,6 +59,9 @@ const useStyles = makeStyles((theme: Theme) =>
     secondaryText: {
       color: theme.palette.grey[700],
     },
+    hide: {
+      visibility: 'hidden',
+    },
   }),
 );
 
@@ -84,7 +88,9 @@ const MeetingListItem = ({meeting, divider}: Props) => {
         disableRipple
       >
         <Avatar
-          className={classes.logo}
+          className={clsx(classes.logo, {
+            [classes.hide]: !meeting.icon,
+          })}
           variant={'rounded'}
           src={meeting.icon}
         />

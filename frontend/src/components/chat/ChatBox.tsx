@@ -5,7 +5,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
 import {ChatContext} from '../../context/ChatContext';
-
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import {ScrollToBottom} from '../common/ScrollToBottom';
@@ -19,6 +18,12 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       width: '30vw',
+      [theme.breakpoints.down('sm')]: {
+        width: '50vw',
+      },
+      [theme.breakpoints.down('xs')]: {
+        width: '70vw',
+      },
     },
     paper: {
       width: '100%',
@@ -34,16 +39,12 @@ const useStyles = makeStyles((theme) =>
       padding: innerPadding,
       borderTopRightRadius: 0,
       borderBottomRightRadius: 0,
-    },
-    list: {
-      // width: '100%',
-    },
-    listItem: {
-      // width: '100%',
+      [theme.breakpoints.down(theme.breakpoints.values.xxs)]: {
+        maxHeight: '35vh',
+      },
     },
     chatContainer: {
       display: 'flex',
-      // backgroundColor: theme.palette.grey[700],
       backgroundColor: theme.palette.primary.dark,
       flexDirection: 'column',
       height: '100%',
@@ -79,7 +80,6 @@ const ChatBox = ({innerRef}: Props) => {
     return messageList?.map((message) => {
       return (
         <ListItem
-          className={classes.listItem}
           key={message.id.toString()}
           disableGutters
         >
@@ -93,7 +93,7 @@ const ChatBox = ({innerRef}: Props) => {
       <Paper className={classes.paper} elevation={0}>
         <div className={classes.chatContainer}>
           <div className={classes.chatWindow}>
-            <List className={classes.list} disablePadding>
+            <List disablePadding>
               {(messageList && messageList?.length > 0) && renderMessages()}
               <ScrollToBottom/>
             </List>

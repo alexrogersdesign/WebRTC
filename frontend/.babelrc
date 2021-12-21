@@ -3,5 +3,10 @@
     "production": {
       "plugins": ["transform-remove-console"]
     }
-  }
+  },
+  "presets": [
+    "env",
+    "react",
+    "stage-0"
+  ]
 }

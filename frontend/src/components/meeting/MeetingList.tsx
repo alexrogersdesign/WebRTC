@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {useContext} from 'react';
+import React, {useContext, useLayoutEffect, useState} from 'react';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import {Collapse, Paper, Typography} from '@material-ui/core';
@@ -86,6 +86,9 @@ const useStyles = makeStyles((theme: Theme) =>
       color: '#f44336',
       fill: '#f44336',
     },
+    loading: {
+      height: 6,
+    },
   }),
 );
 /**
@@ -96,6 +99,12 @@ const useStyles = makeStyles((theme: Theme) =>
 const MeetingList = () => {
   const classes = useStyles();
   const {meetingList, meetingsLoading} = useContext(RestContext);
+  const [loading, setLoading] = useState(false);
+  useLayoutEffect(() => {
+    if (meetingsLoading) setLoading(true);
+    else setTimeout(()=> setLoading(false), 500);
+  }, [meetingsLoading]);
+
   return (
     <Paper className={classes.paper} elevation={3} >
       <div className={classes.header}>
@@ -116,7 +125,7 @@ const MeetingList = () => {
             component='p'
           >
             {
-              meetingsLoading? 'Loading, please wait' :
+              meetingsLoading? 'Loading Meetings' :
                 'A list of the meetings available to join'
             }
           </Typography>
@@ -127,9 +136,19 @@ const MeetingList = () => {
         id={'meeting-list'}
         disablePadding
       >
+        <TransitionGroup timeout='auto'>
+          <Collapse>
+            {loading && (
+              <LinearProgress
+                variant='query'
+                className={classes.loading}
+              />
+            )}
+          </Collapse>
+        </TransitionGroup>
         <TransitionGroup>
           {meetingList?.map((meeting, index) =>
-            <Collapse key={meeting.id.toString()}>
+            <Collapse key={meeting.id.toString()} timeout='auto'>
               <MeetingListItem
                 meeting={meeting}
                 /** Dont add divider to last item */
@@ -138,9 +157,6 @@ const MeetingList = () => {
             </Collapse>,
           )}
         </TransitionGroup>
-        {meetingsLoading && (
-          <LinearProgress variant='query'/>
-        )}
       </List>
     </Paper>
   );

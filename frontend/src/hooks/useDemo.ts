@@ -2,7 +2,7 @@
 import {useEffect, useRef, useState} from 'react';
 import User from '../shared/classes/User';
 import {CallOption} from 'peerjs';
-import {demoUsers, demoVideoFiles} from '../util/demoItems';
+import {demoUsers, demoVideoFiles} from '../shared/util/demoItems';
 
 type AddUsers = (user:User, stream:MediaStream, data?:CallOption) => void;
 type RemoveUsers = (id:string) => void

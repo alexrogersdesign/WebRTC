@@ -18,7 +18,7 @@ import {
   addMinutes,
   dateRoundedToQuarterHour,
   formatDateForPicker,
-} from '../../util/timeHelper';
+} from '../../shared/util/timeHelpers';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {AppStateContext} from '../../context/AppStateContext';
 import {FormProps} from '../../shared/types';

@@ -1,5 +1,5 @@
-import Message from '../shared/classes/Message';
-import User from '../shared/classes/User';
+import Message from '../classes/Message';
+import User from '../classes/User';
 
 export const promiseWithTimeout = <T>
   (timeoutMs: number, promise: () => Promise<T>, failureMessage?: string) => {

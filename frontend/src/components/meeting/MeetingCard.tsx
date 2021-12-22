@@ -12,11 +12,14 @@ import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
 import Meeting from '../../shared/classes/Meeting';
 import PropTypes from 'prop-types';
 import {ChildrenProps} from '../../shared/types';
-import {getTimeDiffMinutes, toLocalStringMonth} from '../../util/timeHelper';
+import {
+  getTimeDiffMinutes,
+  toLocalStringMonth,
+} from '../../shared/util/timeHelpers';
 import {AppStateContext} from '../../context/AppStateContext';
-import {demoUsers} from 'src/util/demoItems';
+import {demoUsers} from 'src/shared/util/demoItems';
 import UserAvatar from '../common/UserAvatar';
-import {toTitleCase} from '../../util/helpers';
+import {toTitleCase} from '../../shared/util/helpers';
 import {Chip} from '@material-ui/core';
 import clsx from 'clsx';
 import CancelIcon from '@material-ui/icons/Cancel';

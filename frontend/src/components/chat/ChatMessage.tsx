@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Message from '../../shared/classes/Message';
 import UserAvatar from '../common/UserAvatar';
 import {RestContext} from '../../context/RestContext';
-import {getMessageTimeDifference} from '../../util/timeHelper';
+import {getMessageTimeDifference} from '../../shared/util/timeHelpers';
 
 interface StyleProps {
   incoming?: boolean

@@ -1,4 +1,4 @@
-import User from '../shared/classes/User';
+import User from '../classes/User';
 import iconA from './files/img/user-a-icon.jpeg';
 import iconB from './files/img/user-b-icon.jpeg';
 import iconC from './files/img/user-c-icon.jpeg';

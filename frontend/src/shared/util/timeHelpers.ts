@@ -1,4 +1,4 @@
-import Message from '../shared/classes/Message';
+import Message from '../classes/Message';
 // import Meeting from '../shared/classes/Meeting';
 
 const today = new Date();
@@ -80,12 +80,21 @@ export function getMessageTimeDifference(message:Message) {
 }
 
 /**
+ * Rounds up the current time, or a provided date time up to the nearest
+ * quarter hour (15 minute increment).
+ * @param {Date} date An optional date to use instead of the current date.
+ * @return {Date} A new Date object representing the rounded up time.
+ */
+export function roundDateToQuarterHour(date = new Date()) :Date {
+  /* 900_000 = amount of milliseconds in 15 minutes*/
+  return new Date( Math.ceil(date.getTime()/900_000)*900_000);
+}
+
+// TODO refactor so this variable is not needed.
+/**
  * The current time rounded up to the nearest quarter hour
  */
-export const dateRoundedToQuarterHour = new Date(
-    /* 900_000 = amount of milliseconds in 15 minutes*/
-    Math.ceil(new Date().getTime()/900_000)*900_000,
-);
+export const dateRoundedToQuarterHour = roundDateToQuarterHour();
 
 /**
  * Adds minutes to supplied Date object.

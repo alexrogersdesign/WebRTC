@@ -11,7 +11,7 @@ import MeetingListItem from './MeetingListItem';
 import {alpha} from '@material-ui/core/styles/colorManipulator';
 import {
   ReactComponent as VideoCall,
-} from '../../util/files/img/VideoCall.svg';
+} from '../../shared/util/files/img/VideoCall.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

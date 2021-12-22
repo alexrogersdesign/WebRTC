@@ -7,6 +7,7 @@
     "start": "tsc-watch --noClear -p ./tsconfig.json",
     "pretest": "rm -rf _results_ allure-report allure-results driver-logs",
     "test": "npx wdio run wdio.single.conf.ts",
+    "create:meeting": "npx wdio run wdio.single.conf.ts --spec createM",
     "test:multi": "npx wdio run wdio.multi.conf.ts"
   },
   "author": "",

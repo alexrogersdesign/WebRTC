@@ -3,22 +3,37 @@
 import {Server, Socket} from "socket.io";
 import jwt from "jsonwebtoken";
 import {DefaultEventsMap} from "socket.io/dist/typed-events";
+import ObjectID from "bson-objectid";
+
 
 import {MeetingModel, MessageModel, UserModel} from "./database/models.js";
-import * as classParser from '../../frontend/src/shared/util/classParser.js'
+//import {parseMeeting,
+//  parseMessage,
+//  parseUser} from '@webrtc/frontend/dist/shared/util/classParser';
+//
+//import {
+//  IReceivedMeeting,
+//  IReceivedMessage,
+//  IReceivedUser,
+//} from '@webrtc/frontend/dist/shared/util/classParser';
+
+import Message from '@webrtc/frontend/dist/shared/classes/Message';
 import {
   IReceivedMeeting,
   IReceivedMessage,
   IReceivedUser,
-} from '../../frontend/src/shared/util/classParser';
-const {
-  parseMeeting,
-  parseMessage,
-  parseUser
-} = classParser
-import User from "../../frontend/src/shared/classes/User.js";
-import Message from "../../frontend/src/shared/classes/Message";
-import ObjectID from "bson-objectid";
+  parseMeeting, parseMessage,
+  parseUser,
+  //@ts-ignore
+} from '@webrtc/frontend/classParser';
+
+//import {
+//  IReceivedMeeting,
+//  IReceivedMessage,
+//  IReceivedUser,
+//  parseMeeting, parseMessage,
+//  parseUser,
+//} from '@webrtc/frontend/dist/shared';
 
 const secretKey = process.env.SECRET_KEY
 

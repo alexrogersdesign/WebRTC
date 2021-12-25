@@ -3,7 +3,7 @@ import ObjectID from 'bson-objectid';
 
 import bcrypt from 'bcrypt';
 
-import User from "../../../frontend/src/shared/classes/User";
+import User from '@webrtc/frontend/dist/shared/classes/User';
 import {UserModel} from "../database/models.js";
 import {uploadMemory} from "../util/middleware/filesMiddleware.js";
 

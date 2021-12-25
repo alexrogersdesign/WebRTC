@@ -1,9 +1,9 @@
 // global.Buffer = global.Buffer || require('buffer').Buffer;
 import ObjectID from 'bson-objectid';
 import {Buffer} from 'buffer';
-import Meeting from '../classes/Meeting.js';
-import Message, {MessageImage, MessageType} from '../classes/Message.js';
-import User from '../classes/User.js';
+import Meeting from '../classes/Meeting';
+import Message, {MessageImage, MessageType} from '../classes/Message';
+import User from '../classes/User';
 // import {MeetingIcon} from '../shared/classes/MeetingIcon.js';
 // import {RequireAtLeastOne} from '../shared/types';
 

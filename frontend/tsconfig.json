@@ -1,21 +1,25 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2020",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext",
-      "es6",
+      "ES2020",
       "webworker"
     ],
     "types": [
       "node"
     ],
+    "rootDir": "src",
+    "outDir": "dist",
+    "sourceMap": true,
+    "declaration": true,
     "allowJs": true,
     "checkJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
@@ -39,12 +43,10 @@
     "./src/**/*.tsx",
     "types",
     "node_modules/@types/w3c-image-capture/index.d.ts",
-    "node_modules/@types/offscreencanvas/index.d.ts",
+    "node_modules/@types/offscreencanvas/index.d.ts"
   ],
   "exclude": [
     "src/**/*.js",
-    "src/**/*.jsx",
-    "src/**/*.jsx",
-//    "src/workers"
+    "src/**/*.jsx"
   ]
 }

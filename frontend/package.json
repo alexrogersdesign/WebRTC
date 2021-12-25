@@ -2,9 +2,23 @@
   "name": "@webrtc/frontend",
   "version": "0.1.0",
   "private": true,
-  "main": "src/index.tsx",
-  "type": "commonjs",
-  "proxy": "http://localhost:5000",
+  "main": "./dist/index.js",
+  "exports": {
+    "./classParser": "./dist/shared/util/classParser.js",
+    "./classes/*": "./dist/shared/classes/*.js",
+    "./util/*": "./dist/shared/util/*.js",
+    "./timeHelpers": "./dist/shared/util/timeHelpers.js"
+  },
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "classParser/": ["dist/shared/util/classParser.d.ts"],
+      "classes/*": ["dist/shared/classes/*"],
+      "util/*": ["dist/shared/util/*"]
+    }
+  },
+  "type": "module",
+  "proxy": "http://localhost:5001",
   "buildDate": "",
   "dependencies": {
     "@dannadori/bodypix-worker-js": "^1.0.42",
@@ -18,14 +32,11 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "@types/axios": "^0.14.0",
     "@types/offscreencanvas": "^2019.6.4",
-    "@types/peerjs": "^1.1.0",
     "@types/react": "^17.0.19",
     "@types/react-copy-to-clipboard": "^5.0.1",
     "@types/react-dom": "^17.0.9",
     "@types/react-router-dom": "^5.3.2",
-    "@types/socket.io-client": "^3.0.0",
     "@types/webfontloader": "^1.6.33",
     "@types/yup": "^0.29.13",
     "@typescript-eslint/eslint-plugin": "^4.30.0",

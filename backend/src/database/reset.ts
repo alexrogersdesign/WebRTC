@@ -2,10 +2,10 @@ import {fileTypeFromBuffer} from 'file-type';
 import {Document, Model} from 'mongoose';
 import ObjectID from 'bson-objectid';
 
-import {MeetingModel, MessageModel} from './models';
-import Meeting from '../../../frontend/src/shared/classes/Meeting.js'
-import Message from '../../../frontend/src/shared/classes/Message.js';
-import {generateManyMeetings, generateManyMessages} from './tempateData';
+import {MeetingModel, MessageModel} from './models.js';
+import Meeting from '@webrtc/frontend/dist/shared/classes/Meeting';
+import Message from '@webrtc/frontend/dist/shared/classes/Message';
+import {generateManyMeetings, generateManyMessages} from './templateData.js';
 
 interface UploadableItem<T> {
   id: ObjectID,

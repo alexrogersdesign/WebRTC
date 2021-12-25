@@ -17,7 +17,7 @@ import {
   toLocalStringMonth,
 } from '../../shared/util/timeHelpers';
 import {AppStateContext} from '../../context/AppStateContext';
-import {demoUsers} from 'src/shared/util/demoItems';
+import {demoUsers} from '../../shared/util/demoItems';
 import UserAvatar from '../common/UserAvatar';
 import {toTitleCase} from '../../shared/util/helpers';
 import {Chip} from '@material-ui/core';

@@ -1,4 +1,3 @@
-// TODO refactor application bar so the AttendeeDrawer logic is seperated
 import React, {useContext} from 'react';
 import clsx from 'clsx';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';

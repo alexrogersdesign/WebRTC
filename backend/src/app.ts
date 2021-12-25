@@ -4,13 +4,17 @@ import morgan from 'morgan';
 import cors from 'cors';
 import express from "express";
 import errorHandler from 'errorhandler'
+import path from 'path';
+
+import { fileURLToPath } from 'url'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 
 import usersRouter from './routes/users.router.js';
 import meetingsRouter from "./routes/meetings.router.js";
 import messagesRouter from "./routes/messages.router.js";
 import loginRouter from "./routes/login.router.js";
-import path from 'path';
 
 const app = express();
 

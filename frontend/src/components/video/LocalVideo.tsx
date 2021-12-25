@@ -13,7 +13,7 @@ import {MediaControlContext, StreamType,
 } from '../../context/MediaControlContext';
 import {useVideoStyles} from './VideoPlayer';
 import clsx from 'clsx';
-import {AppStateContext} from 'src/context/AppStateContext';
+import {AppStateContext} from '../../context/AppStateContext';
 import {LOCAL_VIDEO_WIDTH} from '../../util/constants';
 
 export interface LocalVideoProps {

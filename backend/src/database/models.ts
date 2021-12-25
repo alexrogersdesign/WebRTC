@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
 const {Schema, model} = mongoose;
-import User from "../../../frontend/src/shared/classes/User.js";
-import Meeting from "../../../frontend/src/shared/classes/Meeting.js";
-import Message from "../../../frontend/src/shared/classes/Message.js";
+
+import Meeting from '@webrtc/frontend/dist/shared/classes/Meeting';
+import User from '@webrtc/frontend/dist/shared/classes/User';
+import Message from '@webrtc/frontend/dist/shared/classes/Message';
+
 
 interface IUser extends User {
     passwordHash: string,

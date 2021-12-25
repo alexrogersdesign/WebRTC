@@ -60,6 +60,7 @@ function normalizePort(val:string) {
 /**
  * Get port from environment and store in Express.
  */
+if (process.env.NODE_ENV !== 'production') process.env.PORT = '5001'
 const port = normalizePort(process.env.PORT || '5000');
 app.set('port', port);
 

@@ -1,12 +1,14 @@
 import faker from 'faker';
 import fs from 'fs';
 import path from 'path';
+//@ts-ignore
+import {addMinutes, roundDateToQuarterHour} from '@webrtc/frontend/timeHelpers';
+import {toTitleCase} from '@webrtc/frontend/util/helpers';
+import {demoUsers} from '@webrtc/frontend/util/demoItems';
+import Message from '@webrtc/frontend/classes/Message';
+import Meeting from '@webrtc/frontend/classes/Meeting';
 
-import Meeting from '../../../frontend/src/shared/classes/Meeting.js';
-import Message from '../../../frontend/src/shared/classes/Message.js';
-import {toTitleCase} from '../../../frontend/src/shared/util/helpers.js';
-import {demoUsers} from '../../../frontend/src/shared/util/demoItems.js';
-import {addMinutes, roundDateToQuarterHour} from '../../../frontend/src/shared/util/timeHelpers.js';
+
 
 const iconDir = '/Volumes/Macintosh-HD-Data/development/react' +
   '/webstorm/WebRTC/tests/src/frontend-e2e/files/meeting-icon';

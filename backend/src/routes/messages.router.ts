@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import ObjectID from 'bson-objectid';
 
-import Message from "../../../frontend/src/shared/classes/Message";
+import Message from '@webrtc/frontend/dist/shared/classes/Message';
 import {MessageModel} from "../database/models.js";
 import {authRestricted} from "../util/middleware/authMiddleware.js";
 

@@ -1,6 +1,6 @@
 import {Request, Response, ErrorRequestHandler, NextFunction} from "express";
 import expressJwt from 'express-jwt'
-import HttpException from "../HttpException";
+import HttpException from "../HttpException.js";
 
 const secretKey = process.env.SECRET_KEY
 const refreshKey = process.env.SECRET_KEY_REFRESH

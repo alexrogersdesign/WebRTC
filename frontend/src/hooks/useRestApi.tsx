@@ -1,10 +1,10 @@
 import {useEffect, useRef, useState} from 'react';
 import axios, {AxiosError, AxiosRequestConfig} from 'axios';
 
-import User from '../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 import {
   IReceivedUser,
-  parseUser} from '../shared/util/classParser';
+  parseUser} from '@webrtc/backend/dist/shared/util/classParser';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
 
 export type RefreshResponse = {

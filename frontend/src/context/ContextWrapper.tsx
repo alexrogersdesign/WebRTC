@@ -2,7 +2,7 @@ import React from 'react';
 import {SegmentationContextProvider} from './SegmentationContext';
 import {ChatContextProvider} from './ChatContext';
 import {RestContextProvider} from './RestContext';
-import {ChildrenProps} from '../shared/types';
+import {ChildrenProps} from '../util/types';
 import {SocketIOContextProvider} from './SocketIOContext';
 import NotificationProvider from './NotificationProvider';
 import CustomThemeProvider from './CustomThemeProvider';

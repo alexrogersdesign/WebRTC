@@ -4,7 +4,7 @@ import {makeStyles, createStyles, Theme} from '@material-ui/core/styles';
 import {Tooltip, Avatar, Fab} from '@material-ui/core';
 
 
-import User from '../../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 
 import ModalWrapper from './ModalWrapper';
 import AttendeeInfo, {AttendeeInfoProps} from '../attendee/AttendeeInfo';

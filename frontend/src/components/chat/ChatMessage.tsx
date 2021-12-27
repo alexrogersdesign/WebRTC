@@ -3,10 +3,11 @@ import React, {useContext} from 'react';
 import {makeStyles, createStyles, Theme} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-import Message from '../../shared/classes/Message';
+import Message from '@webrtc/backend/dist/shared/classes/Message';
 import UserAvatar from '../common/UserAvatar';
 import {RestContext} from '../../context/RestContext';
-import {getMessageTimeDifference} from '../../shared/util/timeHelpers';
+import {getMessageTimeDifference}
+  from '@webrtc/backend/dist/shared/util/timeHelpers';
 
 interface StyleProps {
   incoming?: boolean

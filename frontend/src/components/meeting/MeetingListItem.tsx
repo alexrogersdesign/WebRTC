@@ -6,14 +6,14 @@ import IconButton from '@material-ui/core/IconButton';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
 import ToolTip from '@material-ui/core/Tooltip';
-import Meeting from '../../shared/classes/Meeting';
+import Meeting from '@webrtc/backend/dist/shared/classes/Meeting';
 import AlertDialog from '../common/AlertDialog';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import {RestContext} from '../../context/RestContext';
-import {toLocalStringMonth} from '../../shared/util/timeHelpers';
+import {toLocalStringMonth} from '@webrtc/backend/dist/shared/util/timeHelpers';
 import Avatar from '@material-ui/core/Avatar';
-import {toTitleCase} from '../../shared/util/helpers';
+import {toTitleCase} from '@webrtc/backend/dist/shared/util/helpers';
 import {alpha} from '@material-ui/core/styles/colorManipulator';
 import ModalWrapper from '../common/ModalWrapper';
 import MeetingCard, {MeetingCardProps} from './MeetingCard';

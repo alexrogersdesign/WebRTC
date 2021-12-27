@@ -6,7 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import Menu from './menu/Menu';
-import Meeting from '../shared/classes/Meeting';
+import Meeting from '@webrtc/backend/dist/shared/classes/Meeting';
 import AttendeeDrawer from './attendee/AttendeeDrawer';
 import AttendeeDrawerButton from './attendee/AttendeeDrawerButton';
 import {AppStateContext} from '../context/AppStateContext';

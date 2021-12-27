@@ -2,7 +2,7 @@ import React, {createContext} from 'react';
 import {ThemeProvider} from '@material-ui/core/styles';
 import getTheme, {ThemeOption, themes} from '../util/theme/getTheme';
 
-import {ChildrenProps} from '../shared/types';
+import {ChildrenProps} from '../util/types';
 import {FontLoader} from '../components/common/FontLoader';
 import useLocalStorageState from 'use-local-storage-state';
 

@@ -9,17 +9,17 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
 
-import Meeting from '../../shared/classes/Meeting';
+import Meeting from '@webrtc/backend/dist/shared/classes/Meeting';
 import PropTypes from 'prop-types';
-import {ChildrenProps} from '../../shared/types';
+import {ChildrenProps} from '../../util/types';
 import {
   getTimeDiffMinutes,
   toLocalStringMonth,
-} from '../../shared/util/timeHelpers';
+} from '@webrtc/backend/dist/shared/util/timeHelpers';
 import {AppStateContext} from '../../context/AppStateContext';
-import {demoUsers} from '../../shared/util/demoItems';
+import {demoUsers} from '@webrtc/backend/dist/shared/demoItems';
 import UserAvatar from '../common/UserAvatar';
-import {toTitleCase} from '../../shared/util/helpers';
+import {toTitleCase} from '@webrtc/backend/dist/shared/util/helpers';
 import {Chip} from '@material-ui/core';
 import clsx from 'clsx';
 import CancelIcon from '@material-ui/icons/Cancel';

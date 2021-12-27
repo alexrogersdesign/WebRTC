@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CancelIcon from '@material-ui/icons/Cancel';
 
 import JoinMeetingInputField from './JoinMeetingInputField';
-import {FormProps} from '../../shared/types';
+import {FormProps} from '../../util/types';
 
 
 const useStyles = makeStyles((theme: Theme) =>

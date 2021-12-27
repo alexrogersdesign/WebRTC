@@ -10,7 +10,7 @@ import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
 
 import UserAvatar from '../common/UserAvatar';
-import User from '../../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 
 
 interface Props {

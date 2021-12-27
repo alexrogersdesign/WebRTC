@@ -10,7 +10,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import TutorialPrompt from '../tutorial/TutorialPrompt';
 import {AppStateContext} from '../../context/AppStateContext';
-import {FormProps} from '../../shared/types';
+import {FormProps} from '../../util/types';
 import CancelIcon from '@material-ui/icons/Cancel';
 import IconButton from '@material-ui/core/IconButton';
 import {Container} from '@material-ui/core';

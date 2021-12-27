@@ -8,7 +8,7 @@ import Divider from '@material-ui/core/Divider';
 import CloseIcon from '@material-ui/icons/Close';
 
 
-import User from '../../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 import UserAvatar from '../common/UserAvatar';
 import {IconButton} from '@material-ui/core';
 import PropTypes from 'prop-types';

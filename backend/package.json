@@ -4,27 +4,30 @@
   "description": "Backend for WebRTC Video Chat App",
   "main": "./dist/main.js",
   "exports": {
-    "./lib/*": "./dist/*.js"
+    "./shared/*": "./dist/shared/*.js"
   },
   "typesVersions": {
     "*": {
-      "lib/*": ["dist/*"]
+      "shared/*": [
+        "dist/shared/*"
+      ]
     }
   },
   "type": "module",
   "scripts": {
     "test": "echo \\\"Error: no ../frontend/src/test specified\\\" && exit 1",
+    "prestart": "npm run copyFiles",
     "start": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node -r dotenv/config ./dist/index.js\"",
-    "prerun": "tsc -p ./tsconfig.json",
+    "prerun": "tsc -p ./tsconfig.json && npm run copyFiles",
     "run": "node -r dotenv/config ./dist/index.js",
     "start_inspect": "node  --inspect-brk  ./dist/index.js",
     "debug": "DEBUG=socket.io:* && tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/index.js\"",
     "peer": "peerjs --port 5001",
-    "reset2": "tsc -p ./tsconfig.json && node ./dist/database/reset.js",
-    "reset": "node --loader ts-node/esm ./dist/database/reset.js",
+    "reset": "npm run copyFiles && tsc -p ./tsconfig.json && node ./dist/database/reset.js",
     "clean:js": "cd ./src/ && find . -name \"*.js\" -type f -delete",
     "clean:dec": "cd ./src/ && find . -name \"*.d.ts\" -type f -delete",
-    "clean": "npm run clean:js && npm run clean:dec"
+    "clean": "npm run clean:js && npm run clean:dec",
+    "copyFiles": "copyfiles --error --up 1 src/shared/util/files/**/*.* dist"
   },
   "repository": {
     "type": "git",
@@ -57,6 +60,7 @@
     "bcrypt": "^5.0.1",
     "bson-objectid": "^2.0.1",
     "cookie-parser": "^1.4.5",
+    "copyfiles": "^2.4.1",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
@@ -69,6 +73,7 @@
     "file-type": "^17.0.2",
     "get-stream": "^6.0.1",
     "http-errors": "~1.6.3",
+    "jpeg-js": "^0.4.3",
     "jsonwebtoken": "^8.5.1",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",

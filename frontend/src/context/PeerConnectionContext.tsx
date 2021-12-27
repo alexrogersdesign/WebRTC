@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, {createContext, useContext, useEffect, useRef} from 'react';
 
-import {ChildrenProps, ICallMetadata, IPeers} from '../shared/types';
+import {ChildrenProps, ICallMetadata, IPeers} from '../util/types';
 import {RestContext} from './RestContext';
 import Peer, {MediaConnection} from 'peerjs';
 import EventEmitter from 'events';
-import {parseUser} from '../shared/util/classParser';
+import {parseUser} from '@webrtc/backend/dist/shared/util/classParser';
 import {MediaControlContext} from './MediaControlContext';
-import User from '../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 
 /** The Context that handles all of the Peer to Peer communication. */
 const PeerConnectionContext = createContext<IPeerConnectionContext>(undefined!);

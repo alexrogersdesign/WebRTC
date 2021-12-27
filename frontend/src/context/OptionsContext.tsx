@@ -2,7 +2,7 @@ import React, {createContext, useState} from 'react';
 import useLocalStorageState from 'use-local-storage-state';
 
 
-import {ChildrenProps} from '../shared/types';
+import {ChildrenProps} from '../util/types';
 
 /** The context for app options */
 const OptionsContext = createContext<IOptionsContext>(undefined!);

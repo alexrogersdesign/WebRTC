@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.FULL_DB_CONN_STRING as string
-console.log('Connecting to', MONGODB_URI)
 
 
-export default function connect () {
-    mongoose.connect(MONGODB_URI)
+export default function connect (uri = MONGODB_URI) {
+    console.log('Connecting to', uri)
+    mongoose.connect(uri)
         .then(() => {
             console.log('connected to MongoDB')
         })

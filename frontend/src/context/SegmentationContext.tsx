@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, {createContext, useContext, useEffect, useState} from 'react';
 
-import {ChildrenProps} from '../shared/types';
+import {ChildrenProps} from '../util/types';
 import {MediaControlContext, StreamType} from './MediaControlContext';
 import {
   SegmentationController,

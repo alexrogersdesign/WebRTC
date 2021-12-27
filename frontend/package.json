@@ -1,20 +1,16 @@
 {
   "name": "@webrtc/frontend",
   "version": "0.1.0",
-  "private": true,
   "main": "./dist/index.js",
   "exports": {
-    "./classParser": "./dist/shared/util/classParser.js",
-    "./classes/*": "./dist/shared/classes/*.js",
-    "./util/*": "./dist/shared/util/*.js",
-    "./timeHelpers": "./dist/shared/util/timeHelpers.js"
+    "./shared/*": "./dist/shared/*.js"
   },
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "classParser/": ["dist/shared/util/classParser.d.ts"],
-      "classes/*": ["dist/shared/classes/*"],
-      "util/*": ["dist/shared/util/*"]
+      "shared/*": [
+        "dist/shared/*"
+      ]
     }
   },
   "type": "module",
@@ -79,7 +75,7 @@
     "styleguide:build": "styleguidist build",
     "prebuild": "tsc -p ./build-options/tsconfig.webpack.json",
     "build": "react-scripts build",
-    "compile:shared": "tsc -p ./src/shared/tsconfig.shared.json",
+    "compile:shared": "tsc -p ../backend/src/shared/tsconfig.shared.json",
     "clean1": "cd ./src/components && find . -name \"*.js\" -type f -delete",
     "clean2": "cd ./src/context && find . -name \"*.js\" -type f -delete",
     "clean": "cd ./src/ && find . -name \"*.js\" -type f -delete && npm run compile:shared",
@@ -114,5 +110,17 @@
       "PEER_SERVER",
       "SERVER_PORT"
     ]
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexrogersdesign/WebRTC.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexrogersdesign/WebRTC/issues"
+  },
+  "homepage": "https://ar-webrtc.herokuapp.com/"
 }

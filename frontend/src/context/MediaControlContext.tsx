@@ -6,9 +6,9 @@ import React, {
   useRef,
   useState} from 'react';
 import {CallOption} from 'peerjs';
-import {ChildrenProps, IExternalMedia} from '../shared/types';
+import {ChildrenProps, IExternalMedia} from '../util/types';
 
-import User from '../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 import {RestContext} from './RestContext';
 
 import {useSnackbar} from 'notistack';

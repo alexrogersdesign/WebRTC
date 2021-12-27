@@ -1,9 +1,12 @@
 import React, {createContext, useEffect, useState, useContext} from 'react';
 import {useSnackbar} from 'notistack';
 
-import {ChildrenProps} from '../shared/types';
-import Message from '../shared/classes/Message';
-import {IReceivedMessage, parseMessage} from '../shared/util/classParser';
+import {ChildrenProps} from '../util/types';
+import Message from '@webrtc/backend/dist/shared/classes/Message';
+import {
+  IReceivedMessage,
+  parseMessage}
+  from '@webrtc/backend/dist/shared/util/classParser';
 import {SocketIOContext} from './SocketIOContext';
 import {RestContext} from './RestContext';
 

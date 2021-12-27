@@ -12,7 +12,7 @@ import UploadImage from '../common/UploadImage';
 import {Container, DialogContent, DialogTitle} from '@material-ui/core';
 import {FILE_SIZE, SUPPORTED_FORMATS} from '../../util/constants';
 import {AppStateContext} from '../../context/AppStateContext';
-import {FormProps} from '../../shared/types';
+import {FormProps} from '../../util/types';
 import CancelIcon from '@material-ui/icons/Cancel';
 import IconButton from '@material-ui/core/IconButton';
 import LoginForm from './LoginForm';

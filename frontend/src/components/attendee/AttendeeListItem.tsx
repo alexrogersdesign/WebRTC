@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 
-import User from '../../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 
 import UserAvatar from '../common/UserAvatar';
 import AttendeeInfo, {AttendeeInfoProps} from './AttendeeInfo';

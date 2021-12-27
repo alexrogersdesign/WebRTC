@@ -4,7 +4,7 @@ import {useTheme} from '@material-ui/core/styles';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 
-import {ChildrenProps} from '../shared/types';
+import {ChildrenProps} from '../util/types';
 
 const useStyles = makeStyles((theme) =>
   createStyles({

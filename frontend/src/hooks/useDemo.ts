@@ -1,8 +1,8 @@
 
 import {useEffect, useRef, useState} from 'react';
-import User from '../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 import {CallOption} from 'peerjs';
-import {demoUsers, demoVideoFiles} from '../shared/util/demoItems';
+import {demoUsers, demoVideoFiles} from '@webrtc/backend/dist/shared/demoItems';
 
 type AddUsers = (user:User, stream:MediaStream, data?:CallOption) => void;
 type RemoveUsers = (id:string) => void

@@ -6,7 +6,7 @@ import SendIcon from '@material-ui/icons/Send';
 import {alpha} from '@material-ui/core/styles/colorManipulator';
 
 import {ChatContext} from '../../context/ChatContext';
-import Message from '../../shared/classes/Message';
+import Message from '@webrtc/backend/dist/shared/classes/Message';
 import {SocketIOContext} from '../../context/SocketIOContext';
 import {RestContext} from '../../context/RestContext';
 

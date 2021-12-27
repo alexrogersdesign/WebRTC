@@ -1,6 +1,5 @@
 {
   "name": "@webrtc/monorepo",
-  "private": true,
   "version": "0.0.1",
   "engines": {
     "node": "16.x",
@@ -18,5 +17,9 @@
   "devDependencies": {
     "concurrently": "^6.4.0",
     "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "@webrtc/backend": "file:backend",
+    "@webrtc/frontend": "file:frontend"
   }
 }

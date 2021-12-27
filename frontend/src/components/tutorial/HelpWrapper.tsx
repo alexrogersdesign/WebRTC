@@ -8,7 +8,7 @@ import {
 import ToolTip, {TooltipProps} from '@material-ui/core/Tooltip';
 import Fade from '@material-ui/core/Fade';
 import {OptionsContext} from '../../context/OptionsContext';
-import {ChildrenPropsMandatory} from '../../shared/types';
+import {ChildrenPropsMandatory} from '../../util/types';
 import clsx from 'clsx';
 
 type StyleProps = React.CSSProperties

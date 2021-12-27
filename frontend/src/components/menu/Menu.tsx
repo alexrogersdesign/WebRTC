@@ -8,7 +8,7 @@ import NewUserForm from '../forms/NewUserForm';
 import NewMeetingForm from '../forms/NewMeetingForm';
 import RenderTutorial from '../tutorial/RenderTutorial';
 import MenuDrawer from './MenuDrawer';
-import {FormProps} from '../../shared/types';
+import {FormProps} from '../../util/types';
 
 const useStyles = makeStyles(() =>
   createStyles({

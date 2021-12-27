@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import {useSnackbar} from 'notistack';
 
-import {ChildrenProps} from '../shared/types';
+import {ChildrenProps} from '../util/types';
 import {SocketIOContext} from './SocketIOContext';
 import {ILoginCredentials, RestContext} from './RestContext';
 import {useNavigate} from 'react-router-dom';
@@ -18,7 +18,7 @@ import {MediaControlContext} from './MediaControlContext';
 import {AuthenticationError} from '../util/errors/AuthenticationError';
 import {useTheme} from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import User from '../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 import {
   snackbarErrorOptions,
   snackbarInfoOptions,

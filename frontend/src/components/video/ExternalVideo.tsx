@@ -4,7 +4,7 @@ import {CircularProgress} from '@material-ui/core';
 import UserAvatar from '../common/UserAvatar';
 import {useVideoStyles} from './VideoPlayer';
 import clsx from 'clsx';
-import User from '../../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 
 export interface ExternalVideoProps {
     stream: MediaStream;

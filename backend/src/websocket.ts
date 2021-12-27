@@ -9,15 +9,15 @@ import ObjectID from "bson-objectid";
 import {MeetingModel, MessageModel, UserModel} from "./database/models.js";
 //import {parseMeeting,
 //  parseMessage,
-//  parseUser} from '@webrtc/frontend/dist/shared/util/classParser';
+//  parseUser} from '@webrtc/frontend/dist/shared/util/classParser.js';
 //
 //import {
 //  IReceivedMeeting,
 //  IReceivedMessage,
 //  IReceivedUser,
-//} from '@webrtc/frontend/dist/shared/util/classParser';
+//} from '@webrtc/frontend/dist/shared/util/classParser.js';
 
-import Message from '@webrtc/frontend/dist/shared/classes/Message';
+import Message from './shared/classes/Message.js';
 import {
   IReceivedMeeting,
   IReceivedMessage,
@@ -25,7 +25,7 @@ import {
   parseMeeting, parseMessage,
   parseUser,
   //@ts-ignore
-} from '@webrtc/frontend/classParser';
+} from './shared/util/classParser.js';
 
 //import {
 //  IReceivedMeeting,

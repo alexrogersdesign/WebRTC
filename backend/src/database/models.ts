@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 const {Schema, model} = mongoose;
 
-import Meeting from '@webrtc/frontend/dist/shared/classes/Meeting';
-import User from '@webrtc/frontend/dist/shared/classes/User';
-import Message from '@webrtc/frontend/dist/shared/classes/Message';
+import Meeting from '../shared/classes/Meeting.js';
+import User from '../shared/classes/User.js';
+import Message from '../shared/classes/Message.js';
 
+// TODO: Cascade delete messages when meeting is deleted
 
 interface IUser extends User {
     passwordHash: string,
@@ -85,7 +86,6 @@ meetingSchema.set('toObject', {
         return ret
       }
 })
-
 export const MeetingModel = model<Meeting>('Meeting', meetingSchema);
 
 const messageSchema = new Schema<Message>({

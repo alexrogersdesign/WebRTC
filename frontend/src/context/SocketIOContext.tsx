@@ -9,14 +9,14 @@ import {useNavigate} from 'react-router-dom';
 import {io, Socket} from 'socket.io-client';
 import {useSnackbar} from 'notistack';
 
-import {ChildrenProps} from '../shared/types';
-import Meeting from '../shared/classes/Meeting';
+import {ChildrenProps} from '../util/types';
+import Meeting from '@webrtc/backend/dist/shared/classes/Meeting';
 import {
   IReceivedMeeting,
   IReceivedUser, parseId,
   parseMeeting,
   parseUser,
-} from '../shared/util/classParser';
+} from '@webrtc/backend/dist/shared/util/classParser';
 import {MediaControlContext} from './MediaControlContext';
 import {RestContext} from './RestContext';
 import {PeerConnectionContext} from './PeerConnectionContext';

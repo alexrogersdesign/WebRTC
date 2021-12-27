@@ -7,14 +7,14 @@ import React, {
 import {useSnackbar} from 'notistack';
 import ObjectID from 'bson-objectid';
 
-import {ChildrenProps} from '../shared/types';
-import User from '../shared/classes/User.js';
+import {ChildrenProps} from '../util/types';
+import User from '@webrtc/backend/dist/shared/classes/User.js';
 import {
   IReceivedMeeting,
   parseMeeting,
   parseUser,
-} from '../shared/util/classParser';
-import Meeting from '../shared/classes/Meeting';
+} from '@webrtc/backend/dist/shared/util/classParser';
+import Meeting from '@webrtc/backend/dist/shared/classes/Meeting';
 import {RefreshResponse, useRestApi} from '../hooks/useRestApi';
 import useLocalStorageState from 'use-local-storage-state';
 import {AuthenticationError} from '../util/errors/AuthenticationError';

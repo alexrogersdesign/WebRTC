@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import ObjectID from 'bson-objectid';
 
-import Meeting from '@webrtc/frontend/dist/shared/classes/Meeting';
+import Meeting from '../shared/classes/Meeting.js';
 import {MeetingModel} from "../database/models.js";
 import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
 import {uploadMemory} from "../util/middleware/filesMiddleware.js";

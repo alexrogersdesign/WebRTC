@@ -2,7 +2,7 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
-import User from '../../shared/classes/User';
+import User from '@webrtc/backend/dist/shared/classes/User';
 import {MemoizedExternalVideo} from './ExternalVideo';
 import {MemoizedLocalVideo} from './LocalVideo';
 

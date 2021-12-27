@@ -4,6 +4,7 @@ import {Buffer} from 'buffer';
 import Meeting from '../classes/Meeting.js';
 import Message, {MessageImage, MessageType} from '../classes/Message.js';
 import User from '../classes/User.js';
+import {fileTypeFromBuffer} from 'file-type';
 // import {MeetingIcon} from '../shared/classes/MeetingIcon.js';
 // import {RequireAtLeastOne} from '../shared/types';
 
@@ -121,11 +122,8 @@ interface ImageBuffer {
 type ParseBuffer = ImageBuffer| string | undefined
 
 const parseBuffer = (input: ParseBuffer): string | undefined => {
-  //console.log('input buffer ', input);
   /* if input is a valid string buffer, return it */
-  if (typeof input === 'string') {
-    return Buffer.isBuffer(input)? input: undefined;
-  }
+  if (typeof input === 'string') return input;
   if (!input || !input?.data) return;
   const buffer = Buffer.from(input.data);
   const bufferString = buffer.toString('base64');

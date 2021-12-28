@@ -72,9 +72,6 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'none',
       },
     },
-    submitButton: {
-      // paddingBottom: theme.spacing(2),
-    },
   }),
 
 );
@@ -173,7 +170,6 @@ const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
               FormHelperTextProps={{className: classes.helperText}}
             />
             <Button
-              className={classes.submitButton}
               fullWidth
               color="primary"
               variant="contained"

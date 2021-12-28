@@ -8,6 +8,7 @@ import {ChatContext} from '../../context/ChatContext';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import {ScrollToBottom} from '../common/ScrollToBottom';
+import {compareMessagesByDate} from '@webrtc/backend/dist/shared/util/helpers';
 interface Props {
   innerRef: React.MutableRefObject<any>
 }
@@ -76,8 +77,10 @@ const ChatBox = ({innerRef}: Props) => {
   const classes = useStyles();
   const {messageList} = useContext(ChatContext);
 
+  const sortedMessages = messageList.sort(compareMessagesByDate);
+
   const renderMessages = () => {
-    return messageList?.map((message) => {
+    return sortedMessages.map((message) => {
       return (
         <ListItem
           key={message.id.toString()}
@@ -94,7 +97,7 @@ const ChatBox = ({innerRef}: Props) => {
         <div className={classes.chatContainer}>
           <div className={classes.chatWindow}>
             <List disablePadding>
-              {(messageList && messageList?.length > 0) && renderMessages()}
+              { sortedMessages.length > 0 && renderMessages()}
               <ScrollToBottom/>
             </List>
           </div>

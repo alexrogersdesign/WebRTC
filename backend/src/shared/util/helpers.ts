@@ -118,3 +118,15 @@ export function isBase64(string: string) {
     return false;
   }
 }
+
+/**
+ * A comparator to be used to sort messages by date.
+ * @param {Message} a The first message
+ * @param {Message} b The second message
+ * @return {number} Positive number if the first message has the a later
+ * date than the second message or negative number if not. The returned
+ * number is the difference in milliseconds
+ */
+export function compareMessagesByDate(a: Message, b: Message) {
+  return a.timeStamp.getTime() - b.timeStamp.getTime()
+}

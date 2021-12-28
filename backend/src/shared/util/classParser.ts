@@ -5,6 +5,7 @@ import Meeting from '../classes/Meeting.js';
 import Message, {MessageImage, MessageType} from '../classes/Message.js';
 import User from '../classes/User.js';
 import {fileTypeFromBuffer} from 'file-type';
+import {isBase64} from './helpers.js';
 // import {MeetingIcon} from '../shared/classes/MeetingIcon.js';
 // import {RequireAtLeastOne} from '../shared/types';
 
@@ -119,14 +120,28 @@ interface ImageBuffer {
     data: Buffer,
     mimeType: string
 }
-type ParseBuffer = ImageBuffer| string | undefined
+type ParseBuffer = ImageBuffer | string | undefined
 
+/**
+ * Attempts to parse the provided argument into the expected string format used by
+ * other classes in the application. If the provided argument is a string, it is
+ * returned. Otherwise. The buffer is checked to be in base64 format, or converted
+ * if not.
+ * @param {ParseBuffer} input The input to be parsed
+ * @return {string | undefined} The parsed string or undefined if an invalid
+ * object was provide.
+ */
 const parseBuffer = (input: ParseBuffer): string | undefined => {
   /* if input is a valid string buffer, return it */
   if (typeof input === 'string') return input;
   if (!input || !input?.data) return;
-  const buffer = Buffer.from(input.data);
-  const bufferString = buffer.toString('base64');
+  let bufferString;
+  if (isBase64(input.data.toString())) {
+    bufferString = input.data.toString()
+  } else {
+    const newBuffer = Buffer.from(input.data);
+    bufferString = newBuffer.toString('base64');
+  }
   return `data:${input.mimeType};base64,${bufferString}`;
 };
 

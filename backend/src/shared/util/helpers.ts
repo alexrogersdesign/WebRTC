@@ -104,3 +104,17 @@ export function stripData(item: Object) {
 export function selectRandom<T>(array: Array<T>) {
   return array[Math.floor(Math.random() * array.length)]
 }
+
+/**
+ * Validates if a string is in a valid base64 encoding
+ * @param {string} string The string to validate
+ * @return {boolean}
+ */
+export function isBase64(string: string) {
+  if (string ==='' || string.trim() ==='')return false
+  try {
+    return btoa(atob(string)) == string;
+  } catch (err) {
+    return false;
+  }
+}

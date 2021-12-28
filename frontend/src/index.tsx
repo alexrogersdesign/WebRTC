@@ -17,6 +17,12 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {};
+  console.error = () => {};
+  console.debug = () => {};
+}
+
 
 ReactDOM.render(
     // <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>

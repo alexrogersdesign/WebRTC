@@ -14,7 +14,8 @@
     "heroku-postbuild": "npm run compile:backend && npm run build:frontend",
     "build:frontend": "cd frontend && npm install && npm run build",
     "compile:backend": "cd backend && npm run compile",
-    "start": "cd backend && npm install && npm run run"
+    "start": "cd backend && npm install && npm run run",
+    "reset:database": "cd backend && npm run reset"
   },
   "devDependencies": {
     "concurrently": "^6.4.0",

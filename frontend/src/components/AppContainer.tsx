@@ -9,7 +9,6 @@ import {
 
 import {ControlBar} from './ControlBar';
 import ChatDrawer from './chat/ChatDrawer';
-import {CustomThemeContext} from '../context/CustomThemeProvider';
 import MeetingList from './meeting/MeetingList';
 import {RestContext} from '../context/RestContext';
 import DemoPrompt from './tutorial/DemoPrompt';

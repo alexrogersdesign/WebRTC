@@ -85,7 +85,6 @@ const RestContextProvider = ({children}: ChildrenProps) => {
     } catch (error) {
       if (error instanceof AuthenticationError) {
         setCurrentUser(null);
-        console.log('Not logged in');
       } else throw error;
     }
   };

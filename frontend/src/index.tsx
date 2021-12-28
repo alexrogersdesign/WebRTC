@@ -25,13 +25,11 @@ if (process.env.NODE_ENV === 'production') {
 
 
 ReactDOM.render(
-    // <Sentry.ErrorBoundary fallback={<p>An error has occurred</p>}>
     <Router>
       <ContextWrapper>
         <App />
       </ContextWrapper>
     </Router>
-    // </Sentry.ErrorBoundary>,
     ,
     document.getElementById('root'),
 );

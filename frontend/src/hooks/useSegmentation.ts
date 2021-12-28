@@ -1,14 +1,13 @@
 /* eslint-disable no-unused-vars */
 import {useState, useRef} from 'react';
 import * as workerTimers from 'worker-timers';
-
-
 import {
   BodypixWorkerManager,
   generateBodyPixDefaultConfig,
   generateDefaultBodyPixParams,
   SemanticPersonSegmentation,
 } from '@dannadori/bodypix-worker-js';
+
 import * as bodyPix from '@tensorflow-models/body-pix';
 
 const config = generateBodyPixDefaultConfig();
@@ -48,7 +47,9 @@ const useSegmentation = (inputStream: MediaStream| undefined) => {
   const tempVideo = useRef<HTMLVideoElement>(null!);
 
   const manager = useRef(new BodypixWorkerManager());
-
+  /**
+   * Attempts to stop the rendering cycle
+   */
   const stopCycle = () => {
     try {
       if (timeoutID.current) {

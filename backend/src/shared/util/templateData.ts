@@ -6,8 +6,7 @@ import {selectRandom, toTitleCase} from './helpers.js';
 import {demoUsers} from '../demoItemsNode.js';
 import Message from '../classes/Message.js';
 import Meeting from '../classes/Meeting.js';
-
-
+import ObjectID from 'bson-objectid';
 
 /**
  * Selects an icon from the meeting-icon folder
@@ -17,9 +16,7 @@ function selectMeetingIcon() {
   const iconDir = './dist/shared/util/files/meeting-icon';
   const files = fs.readdirSync(iconDir);
   const foundFile = selectRandom(files);
-  console.log('found file', foundFile);
   const pathToFile = path.join(iconDir, foundFile)
-  console.log('path to file', pathToFile);
   return fs.readFileSync(pathToFile, {encoding: 'base64'})
 }
 
@@ -51,14 +48,17 @@ export function generateManyMeetings(length: number) {
 }
 
 /**
- * Generates a random message.
+ * Generates a random message with dummy data.
  * @param {Meeting} meeting The meeting the message should be generated to.
  * @param {User} user An optional value for messages user. If not provided,
  * a random user is selected from the demo user list.
  * @return {Message} The generated message
  */
 export function generateMessage(meeting:Meeting, user = selectRandom(demoUsers)) {
-    return new Message(meeting.id, user, faker.lorem.sentence())
+  /** An array of possible days to used as the message origin time */
+  const days = [1, 1, 1, 2, 3, 7, 20]
+  const id = new ObjectID(faker.date.recent(selectRandom(days)).getTime()/1000)
+    return new Message(meeting.id, user, faker.lorem.sentence(), id)
 }
 
 /**

@@ -11,7 +11,7 @@ import {generateManyMeetings, generateManyMessages} from '../shared/util/templat
 import {stripData} from '../shared/util/helpers.js';
 import {demoUsers} from '../shared/demoItemsNode.js';
 import User from '../shared/classes/User.js';
-import database from './database.js'
+import database, {disconnect} from './database.js';
 
 
 dotenv.config()
@@ -78,14 +78,15 @@ async function reset() {
   /** Replace demo users */
   await upload(UserModel, demoUsers)
   /** Delete all existing meetings */
-  //MeetingModel.deleteMany({}, {callback : (info) => console.log(info)} )
-  const newMeetings = generateManyMeetings(3)
+  await MeetingModel.deleteMany({})
+  await MessageModel.deleteMany({})
+  const newMeetings = generateManyMeetings(5)
   /** Upload new generated meetings */
   await upload(MeetingModel, newMeetings)
-  /**  */
+  /** Generate new messages for each meeting and upload them*/
   for (const meeting of newMeetings) {
-    upload(MessageModel, generateManyMessages(meeting, 5));
+    await upload(MessageModel, generateManyMessages(meeting, 15));
   }
 }
 
-reset();
+reset().then( () => disconnect());

@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexWrap: 'nowrap',
       alignContent: 'center',
       width: '100%',
+      padding: theme.spacing(2),
     },
     helperText: {
       position: 'absolute',
@@ -71,8 +72,10 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'none',
       },
     },
+    submitButton: {
+      // paddingBottom: theme.spacing(2),
+    },
   }),
-
 
 );
 /**
@@ -169,7 +172,13 @@ const LoginForm = forwardRef<HTMLDivElement, FormProps>(({
               helperText={formik.touched.password && formik.errors.password}
               FormHelperTextProps={{className: classes.helperText}}
             />
-            <Button color="primary" variant="contained" fullWidth type="submit">
+            <Button
+              className={classes.submitButton}
+              fullWidth
+              color="primary"
+              variant="contained"
+              type="submit"
+            >
                         Login
             </Button>
           </form>

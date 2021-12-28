@@ -2,21 +2,10 @@ import faker from 'faker';
 import fs from 'fs';
 import path from 'path';
 import {addMinutes, roundDateToQuarterHour} from './timeHelpers.js';
-import {toTitleCase} from './helpers.js';
+import {selectRandom, toTitleCase} from './helpers.js';
 import {demoUsers} from '../demoItemsNode.js';
 import Message from '../classes/Message.js';
 import Meeting from '../classes/Meeting.js';
-
-
-/**
- * Selects a random item from a provided array.
- * @template T
- * @param {Array<T>} array The array to select from.
- * @return {T} The selected item from the array.
- */
-function selectRandom<T>(array: Array<T>) {
-  return array[Math.floor(Math.random() * array.length)]
-}
 
 
 

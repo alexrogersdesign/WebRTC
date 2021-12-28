@@ -94,3 +94,13 @@ export function stripData(item: Object) {
   return Object.fromEntries(Object.entries(item).map(([key, value]) => [removeUnderscore(key), value]))
 
 }
+
+/**
+ * Selects a random item from a provided array.
+ * @template T
+ * @param {Array<T>} array The array to select from.
+ * @return {T} The selected item from the array.
+ */
+export function selectRandom<T>(array: Array<T>) {
+  return array[Math.floor(Math.random() * array.length)]
+}

@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import ObjectID from 'bson-objectid';
 
-import Meeting from '../shared/classes/Meeting.js';
 import {MeetingModel} from "../database/models.js";
 import {authErrorHandler, authRestricted} from "../util/middleware/authMiddleware.js";
 import {uploadMemory} from "../util/middleware/filesMiddleware.js";
@@ -15,9 +14,7 @@ meetingsRouter.get("/", async (_req: Request, res: Response) => {
     try {
         const meetings = await MeetingModel
             .find({})
-            // .populate('icon');
-        meetings.map(meeting => meeting.toObject() as unknown as Meeting)
-
+        meetings.map(meeting => meeting.toObject())
         res.status(200).send(meetings);
     } catch (error) {
         console.log(error)
@@ -35,7 +32,6 @@ meetingsRouter.get("/:id", async (req: Request, res: Response) => {
         const query = { _id: new ObjectID(id) };
         const meeting = await MeetingModel
             .findOne(query)
-            // .populate('icon') as Meeting;
         if (meeting) {
             res.status(200).send(meeting);
         }
@@ -45,8 +41,7 @@ meetingsRouter.get("/:id", async (req: Request, res: Response) => {
     }
 });
 
-// meetingsRouter.post('/icon', uploadFile)
-
+/** Use uploadMemory middleware to retrieve icon image from "icon" formdata field */
 meetingsRouter.post("/", uploadMemory.single('icon'), async (req: Request, res: Response) => {
     try {
         const {id,  ...rest} = req.body;
@@ -95,7 +90,6 @@ meetingsRouter.put("/:id", async (req: Request, res: Response) => {
 
 meetingsRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
         const query = { _id: new ObjectID(id) };
         const result = await MeetingModel.deleteOne(query);

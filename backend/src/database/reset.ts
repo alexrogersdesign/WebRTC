@@ -1,5 +1,5 @@
 import {fileTypeFromBuffer} from 'file-type';
-import {Document, Model} from 'mongoose';
+import {Model} from 'mongoose';
 import ObjectID from 'bson-objectid';
 import * as dotenv from 'dotenv'
 

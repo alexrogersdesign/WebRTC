@@ -24,6 +24,7 @@ export type DecodedToken = {
     email: string,
     id: string
 }
+/** The issued tokens stored in memory */
 const tokenList: TokenList = {}
 const refreshTokenOptions = {
     httpOnly:true,
@@ -32,7 +33,7 @@ const refreshTokenOptions = {
 
 const loginRouter = express.Router();
 loginRouter.use(authErrorHandler)
-
+/** Use authNonRestricted middleware so login can happen without an issued token  */
 loginRouter.post('/', authNonRestricted, async (req, res) => {
     const {email, password} = req.body
     try {
@@ -72,9 +73,9 @@ loginRouter.post('/', authNonRestricted, async (req, res) => {
         console.log(error)
     }
 })
-
+/** Use authRefresh middleware to extract refresh token from the request without requiring
+ * a valid token */
 loginRouter.post('/refresh', authRefresh, async (req,res) => {
-    //TODO! verify token
     const {refreshToken} = req.cookies
     //* Decode token to retrieve email information.
     try {

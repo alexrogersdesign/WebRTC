@@ -10,6 +10,7 @@ messagesRouter.use(authRestricted);
 
 messagesRouter.get("/", async (_req: Request, res: Response) => {
     try {
+        /** Populate the user and meeting fields when a message is retrieved */
         const messages = (await MessageModel.find({}).populate('User','Meeting'));
         messages.map(message => message.toObject() as unknown as Message)
         res.status(200).send(messages);
@@ -27,10 +28,7 @@ messagesRouter.get("/:id", async (req: Request, res: Response) => {
     try {
         const query = { _id: new ObjectID(id) };
         const message = (await MessageModel.findOne(query)?.populate('User','Meeting')) as Message;
-
-        if (message) {
-            res.status(200).send(message);
-        }
+        if (message) res.status(200).send(message);
     } catch (error) {
         res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
     }
@@ -60,7 +58,6 @@ messagesRouter.post("/", async (req: Request, res: Response) => {
 
 messagesRouter.put("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
         const query = { _id: new ObjectID(id) };
         const {title} = req.body;
@@ -83,7 +80,6 @@ messagesRouter.put("/:id", async (req: Request, res: Response) => {
 
 messagesRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
         const query = { _id: new ObjectID(id) };
         const result = await MessageModel.deleteOne(query);

@@ -1,3 +1,6 @@
+/**
+ * HTTP E
+ */
 export default class HttpException extends Error {
     status: number;
     message: string;

@@ -9,11 +9,12 @@ import {uploadMemory} from "../util/middleware/filesMiddleware.js";
 
 const usersRouter = express.Router();
 
+
 usersRouter.get("/", async (_req: Request, res: Response) => {
     try {
        const users = (await UserModel.find({}));
-       users.map(user => user.toObject() as unknown as User)
-
+       /** Convert the documents to plain objects (and remove sensitive information) */
+       users.map(user => user.toObject())
         res.status(200).send(users);
     } catch (error) {
         if (error instanceof Error) {
@@ -26,7 +27,6 @@ usersRouter.get("/", async (_req: Request, res: Response) => {
 
 usersRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
-
     try {
         const query = { _id: new ObjectID(id) };
         const user = (await UserModel.findOne(query,{},{maxTime: 30_000})) as User;
@@ -37,7 +37,7 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
         res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
     }
 });
-
+/** Use uploadMemory middleware to retrieve icon image from "icon" formdata field */
 usersRouter.post("/", uploadMemory.single('icon'), async (req: Request, res: Response) => {
     try {
         const {id, firstName, lastName, password, email} = req.body;

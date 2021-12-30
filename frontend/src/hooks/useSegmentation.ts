@@ -11,12 +11,15 @@ import {
 import * as bodyPix from '@tensorflow-models/body-pix';
 
 const config = generateBodyPixDefaultConfig();
+config.model.multiplier= .5;
+config.model.outputStride= 16;
+config.model.quantBytes = 2;
 // config.useTFWasmBackend = true;
 const params = generateDefaultBodyPixParams();
 /** The resolution that determines accuracy (time tradeoff) */
-params.segmentPersonParams.internalResolution = 'low';
+params.segmentPersonParams.internalResolution = .15;
 /** To what confidence level background is removed */
-params.segmentPersonParams.segmentationThreshold = .3;
+params.segmentPersonParams.segmentationThreshold = .7;
 params.type = 0;
 params.processHeight = 480;
 params.processWidth = 640;
@@ -118,8 +121,8 @@ const useSegmentation = (inputStream: MediaStream| undefined) => {
           dstCanvas.current, //* The destination
           tempVideo.current, //* The input source
            pred as SemanticPersonSegmentation, //* The segmentation prediction
-           14, //* The background blur amount
-           10, //* the edge blur amount
+           12, //* The background blur amount
+           8, //* the edge blur amount
       );
       !segmentationReady && renderStream();
       setSegmentationLoading(false);

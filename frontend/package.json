@@ -80,7 +80,8 @@
     "clean2": "cd ./src/context && find . -name \"*.js\" -type f -delete",
     "clean": "cd ./src/ && find . -name \"*.js\" -type f -delete && npm run compile:shared",
     "clean:deps": "rm -rf node_modules package-lock.json && npm install",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "mock": "open -a /"
   },
   "eslintConfig": {
     "extends": [

@@ -1,88 +1,18 @@
 /* jshint esversion: 6 */
+/**
+ * Holds all of the logic associated with websocket communication.
+ */
 
 import {Server, Socket} from "socket.io";
 import jwt from "jsonwebtoken";
 import {DefaultEventsMap} from "socket.io/dist/typed-events";
-import ObjectID from "bson-objectid";
 
-
-import {MeetingModel, MessageModel, UserModel} from "./database/models.js";
-//import {parseMeeting,
-//  parseMessage,
-//  parseUser} from '@webrtc/frontend/dist/shared/util/classParser.js';
-//
-//import {
-//  IReceivedMeeting,
-//  IReceivedMessage,
-//  IReceivedUser,
-//} from '@webrtc/frontend/dist/shared/util/classParser.js';
-
-import Message from './shared/classes/Message.js';
-import {
-  IReceivedMeeting,
-  IReceivedMessage,
-  IReceivedUser,
-  parseMeeting, parseMessage,
-  parseUser,
-  //@ts-ignore
-} from './shared/util/classParser.js';
-
-//import {
-//  IReceivedMeeting,
-//  IReceivedMessage,
-//  IReceivedUser,
-//  parseMeeting, parseMessage,
-//  parseUser,
-//} from '@webrtc/frontend/dist/shared';
+import {MeetingModel} from "./database/models.js";
+import {findAllMessages, findUser, sendMessageToDatabase} from './database/databaseHelpers.js';
 
 const secretKey = process.env.SECRET_KEY
 
-const findUser = async (id: string) => {
-  try {
-  const foundUser = await UserModel.findById(id) as unknown as IReceivedUser;
-  return parseUser(foundUser);
-  } catch (error) {
-    console.log(error)
-  }
-}
-const findMeeting = async (id: string) => {
-  try {
-  const foundMeeting = await MeetingModel.findById(id) as unknown as IReceivedMeeting;
-  return parseMeeting(foundMeeting);
-  } catch (error) {
-    console.log(error)
-  }
-}
-const findAllMessages = async (meetingId: string): Promise<Message[]>=> {
-  try {
-  const foundMessages = await MessageModel
-      .find({meetingId: new ObjectID(meetingId)})
-      .populate('user') as unknown as IReceivedMessage[]
-  return foundMessages.map((message) => parseMessage(message));
-  } catch (error) {
-    throw (error)
-  }
-}
-const updateMeetingList = async (id:string) => {
-  return await findMeeting(id);
-};
-const sendMessageToDatabase = async (message: IReceivedMessage) : Promise<Message> => {
-  try {
-  const {id, meetingId, user, contents, type, alt} = parseMessage(message);
-  const newMessage = new MessageModel({
-    _id: id,
-    meetingId,
-    user: user.id,
-    contents,
-    type,
-    alt,
-  });
-  return await newMessage.save()
-  } catch (error) {
-    console.log(error)
-    throw error
-  }
-}
+
 
 /**
  * Authentication middleware that retrieves the access token from the
@@ -171,13 +101,15 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
               }
              })
             .on('error', (error => {
+              /** Reboot watcher when an error occurs */
               console.error('Watcher error: ', error)
               watcher.close();
               watchMeetings()
             }))
       })()
 
-
+      /** The "JoinMeeting" event is used to signal that the client is
+       * attempting to join a meeting */
       socket.on('JoinMeeting', (meetingData) => {
         ({roomID} = meetingData);
         if (!roomID) return
@@ -186,22 +118,27 @@ const websocket = (io:Server<DefaultEventsMap,DefaultEventsMap>) => {
         joinRoom(socket, roomID);
         // TODO add user to meeting attendees
       });
+      /**
+       * Informs all attendees that the user client has disconnected
+       * @param {string} id The room ID
+       */
       const leaveRoom = (id: string) => {
         socket.to(id).emit('UserDisconnected', user);
         socket.leave(id)
       };
-
+      /** The "SendMessage" event is used to signal the client is sending a
+       * new message to a meeting */
       socket.on('SendMessage', (message) => {
         if (!roomID) return
         sendMessageToDatabase(message);
         io.in(roomID).emit('ReceivedMessage', message);
       });
-
+      /** The "LeaveRoom" event is used to signal the client is leaving the room */
       socket.on('LeaveRoom', () => {
         if (!roomID) return
         leaveRoom(roomID);
       });
-
+      /** The "disconnect" event us used to signal that the client has disconnected */
       socket.on('disconnect', () => {
         if (!roomID) return
         leaveRoom(roomID);

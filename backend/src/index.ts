@@ -1,27 +1,18 @@
 
 import debugFactory from 'debug';
 const debug = debugFactory('WebRTC:server');
-import {ExpressPeerServer} from 'peer'
 import * as http from 'http';
-
 
 import app from './app.js';
 
 const server = http.createServer(app);
-
-/* host webRTC server */
-// const peerServer = ExpressPeerServer(server, {
-//   path: '/connect',
-//   proxied: true,
-// });
-//
-// app.use('/peer', peerServer)
 
 
 /**
  * Setup cors to allow all origins with GET, POST requests
  */
 import {Server as IoFactory} from 'socket.io';
+/** Create socket IO instance */
 const io = new IoFactory(server, {
   cors: {
     origin: '*',
@@ -30,10 +21,11 @@ const io = new IoFactory(server, {
 });
 
 import database from './database/database.js'
+/** initialize database connection */
 database();
 
-// bring in websocket configuration
 import websocket from './websocket.js';
+/**  Pass the socket instance to websc */
 websocket(io);
 
 /**

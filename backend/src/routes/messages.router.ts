@@ -15,11 +15,8 @@ messagesRouter.get("/", async (_req: Request, res: Response) => {
         messages.map(message => message.toObject() as unknown as Message)
         res.status(200).send(messages);
     } catch (error) {
-        if (error instanceof Error) {
-            res.status(500).send(error.message);
-        } else {
-            res.status(500).send('Unknown Error Occurred');
-        }
+        if (error instanceof Error) res.status(500).send(error.message)
+        else res.status(500).send('Unknown Error Occurred');
     }
 });
 

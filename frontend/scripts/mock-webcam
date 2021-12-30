@@ -1,0 +1,20 @@
+#!/bin/bash
+
+PARAMS=(
+-a "Google Chrome"
+"http://localhost:3000"
+#"https://webcammictest.com/"
+--args
+#--disable-gpu
+--new-window
+#--allow-file-access-from-files
+--profile-directory="Profile 2"
+#--use-fake-ui-for-media-stream
+--use-fake-device-for-media-stream
+--use-file-for-fake-video-capture=/Volumes/Macintosh-HD-Data/development/util/mock/webcam-mock-4.y4m
+
+)
+
+killall "Google Chrome" || :
+sleep 1
+open "${PARAMS[@]}"

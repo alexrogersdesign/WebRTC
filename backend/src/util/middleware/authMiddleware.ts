@@ -8,7 +8,11 @@ if (!secretKey) throw new Error('Secret key not found')
 if (!refreshKey) throw new Error('refresh key not found')
 
 /**
- * Token authentication middleware for restricted routes where credentials are  required
+ * All auth middleware handles extraction and validation of tokens.
+ */
+
+/**
+ * Token authentication middleware for restricted routes where credentials are required
  */
 export const authRestricted = expressJwt({
     secret: secretKey, algorithms: ['HS256'], requestProperty: 'token', credentialsRequired: true

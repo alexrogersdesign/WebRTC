@@ -1,37 +1,75 @@
-## Welcome to GitHub Pages
+# WebRTC Video Chat 
 
-You can use the [editor on GitHub](https://github.com/alexrogersx/WebRTC/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+![img](https://custom-icon-badges.herokuapp.com/badge/WebRTC-Try%20It-blue.svg?label=WebRTC&logo=video-call&logoColor=white)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alexrogersdesign/WebRTC/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/alexrogersdesign/WebRTC/?branch=main)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+https://user-images.githubusercontent.com/51722825/147791058-d156c86c-4169-4b77-8157-dd77190015c5.mp4
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+## Features 
+- **Group Video Calls**
+  - Peer to Peer streaming solution using WebRTC
+    - Server does not need to touch or distribute video streams
+- **Video Controls**
 
-1. Numbered
-2. List
 
-**Bold** and _Italic_ and `Code` text
+https://user-images.githubusercontent.com/51722825/147789826-aa8f9dde-cefc-48b4-b447-45d75a557576.mp4
 
-[Link](url) and ![Image](src)
-```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+  - **Screen Sharing**
 
-### Jekyll Themes
+https://user-images.githubusercontent.com/51722825/147789151-892bf106-8b6c-46de-a18d-84380cf90def.mp4
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/alexrogersx/WebRTC/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
-### Support or Contact
+- **Background Removal**
+    - The user can hide their background 
+    - Machine Learning body segmentation and background masking
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+
+https://user-images.githubusercontent.com/51722825/147789122-1701939c-3b87-4b35-933e-62a145d05135.mp4 
+
+
+- **Fully Responsive**
+
+https://user-images.githubusercontent.com/51722825/147789026-fec6a9e1-c68f-4d71-b8d2-b0b436814afb.mp4
+
+- **Text Chat** 
+  - Messages can be sent between participants in a meeting
+  - Messages are persisted in database and referenced to the meeting
+    - A user can see messages sent before they joined 
+
+https://user-images.githubusercontent.com/51722825/147789064-19da1c0a-e8dd-4762-8dc9-c344e2030f85.mp4
+
+- **WebSocket Signaling**
+  - External event notifications
+    - User Join / Depature
+    - Changes to meeting avalibility
+  - User text messages 
+- **Security Focused**
+  - JWT authentication
+  - HttpOnly cookies
+    - Tokens are never placed in localStorage  
+  - Refresh Tokens
+  - Token are shared and validated between both WebSocket and HTTP endpoints 
+- **User Accounts / Profiles**
+  - Users can upload profile images
+  - User information is communicated between users
+- **Meeting Creation**
+  - Meetings can have icon images
+  - Title, description, start and end times are stored. 
+- **End to End Testing**
+  - Multi-browser simultaneous tests simulating multiple users interacting with each other
+    - Signalling between users in a the same call (user join and departure messages)
+    - Video call streams between users
+    - Chat functionality
+  - Allure reports
+
+
+Written in React / Typescript.
+
+
+
+ 
